@@ -1,32 +1,49 @@
-services:     
-  database:
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: Dockerfile.postgres
-      target: service
-    init: true
-    tty: true
-    ports:
-      - 15432:5432
-    environment:
-      - POSTGRES_USER=crystalbank
-      - POSTGRES_PASSWORD=crystalbank
-      - POSTGRES_DB=eventstore
-    volumes:
-      - ./_data/postgres/data:/var/lib/postgresql/data
 
-  app:
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: service
-    init: true
-    tty: true
+x-app: &app
+  platform: linux/amd64
+  image: crystalbank:dev
+  depends_on:
+    - database
+  env_file:
+    - .env-dev
+  volumes: &backend_volumes
+    - ./app:/app
+
+services:
+  cmd:
+    <<: *app
+    deploy:
+      replicas: 0
+    entrypoint: /bin/bash
+    command: -c
+
+  console:
+    <<: *app
+    entrypoint: /bin/bash
+    command: ""
     ports:
-      - 3000:3000
+      - 23000:3000
+    stdin_open: true
+    tty: true
+
+  # app:
+  #   <<: *app
+  #   deploy:
+  #     replicas: 0
+  #   command: bin/rails server -b 0.0.0.0 -p 3000
+  #   ports:
+  #     - 23001:3000
+  #   restart: always
+
+  database:
+    image: postgres:17
     env_file:
       - .env-dev
+    restart: always
+    ports:
+      - 15432:5432
     volumes:
-      - "./app:/app"
+      - ./storage/postgres/data:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

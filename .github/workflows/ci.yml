@@ -1,0 +1,40 @@
+name: Crystalbank (Unit-Tests-Docker)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v3
+  
+    - name: setup docker-compose
+      run: |
+        curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+
+    - name: environment info
+      run: make docker-info
+
+    - name: run linter
+      run: make lint
+
+    - name: test setup
+      run: make test-setup
+
+    - name: unit-test
+      run: make test-run
+
+    - name: linter
+      run: make test-lint
+
+    - name: cleanup
+      run: make test-down
