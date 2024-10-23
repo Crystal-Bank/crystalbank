@@ -1,0 +1,14 @@
+version: 2.0
+shards:
+  crystal-es:
+    git: https://github.com/tristanholl/crystal-es.git
+    version: 0.1.0+git.commit.a786310902313fe88ec125bd9220e08326ca73c3
+
+  db:
+    git: https://github.com/crystal-lang/crystal-db.git
+    version: 0.13.1
+
+  pg:
+    git: https://github.com/will/crystal-pg.git
+    version: 0.28.0
+
