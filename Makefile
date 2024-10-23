@@ -1,6 +1,7 @@
 # Project configuration
 PROJECT_NAME := crystalbank
 COMPOSE_FILE := docker-compose.yml
+COMPOSE_TEST_FILE := docker-compose.test.yml
 COMPOSE_PROJECT_NAME := $(PROJECT_NAME)
 COMPOSE_CMD := docker compose
 
@@ -14,10 +15,13 @@ ENV_TEMPLATE := .env-dev.template
 
 # Compose arguments
 COMPOSE_ARGS := -f $(COMPOSE_FILE) -p $(COMPOSE_PROJECT_NAME)
+COMPOSE_TEST_ARGS := -f $(COMPOSE_TEST_FILE) -p $(COMPOSE_PROJECT_NAME)
 
 # Docker compose command helpers
 dc        = $(COMPOSE_CMD) $(COMPOSE_ARGS) $(1)
+dct       = $(COMPOSE_CMD) $(COMPOSE_TEST_ARGS) $(1)
 dc-run    = $(call dc, run --entrypoint "bash -c" --rm cmd $(1))
+dct-run    = $(call dct, run --entrypoint "bash -c" --rm cmd $(1))
 dc-exec   = $(call dc, exec console $(1))
 
 # Function to check if image exists
@@ -126,11 +130,11 @@ setup-db:
 
 # Run tests
 test:
-	$(call dc-run, "crystal spec spec/")
+	$(call dct-run, "crystal spec spec/")
 
 # Run Linter
 lint:
-	$(call dc-run, "crystal tool format --check")
+	$(call dct-run, "crystal tool format --check")
 
 docker-info:
 	docker -v
