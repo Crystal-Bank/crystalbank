@@ -34,4 +34,4 @@ jobs:
       run: make test
 
     - name: cleanup
-      run: make clean
+      run: make test-clean

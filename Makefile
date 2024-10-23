@@ -132,6 +132,10 @@ setup-db:
 test:
 	$(call dct-run, "crystal spec spec/")
 
+# Remove all persisted test data
+test-clean:
+	$(call dct, down --remove-orphans -v)
+
 # Run Linter
 lint:
 	$(call dct-run, "crystal tool format --check")
