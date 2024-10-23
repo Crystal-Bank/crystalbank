@@ -1,4 +1,4 @@
-name: Crystalbank (Unit-Tests-Docker)
+name: Crystalbank CI
 
 on:
   push:
@@ -27,14 +27,11 @@ jobs:
     - name: run linter
       run: make lint
 
-    - name: test setup
-      run: make test-setup
-
-    - name: unit-test
-      run: make test-run
+    - name: test
+      run: make test
 
     - name: linter
-      run: make test-lint
+      run: make lint
 
     - name: cleanup
-      run: make test-down
+      run: make cleanup
