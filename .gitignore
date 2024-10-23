@@ -1,6 +1,5 @@
 .DS_Store
 .env-dev
-.env-test
 app/lib/**
 app/REVISION.txt
 storage
