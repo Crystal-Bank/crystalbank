@@ -24,6 +24,9 @@ jobs:
     - name: environment info
       run: make docker-info
 
+    - name: build
+      run: make build
+
     - name: run linter
       run: make lint
 
