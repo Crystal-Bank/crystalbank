@@ -1,0 +1,26 @@
+#
+# BASE artifact
+#
+FROM --platform=linux/amd64 postgres:17 AS base
+
+RUN apt-get update && apt-get install -y git make
+
+#
+# BUILDER artifact
+#
+FROM base AS builder
+
+RUN git clone https://github.com/tembo-io/pgmq.git
+WORKDIR /pgmq/pgmq-extension
+
+# Install pgmq
+RUN make && make install
+
+#
+# SERVICE 
+#
+FROM builder AS service
+
+ENV image_name=eventstore
+
+EXPOSE 5432

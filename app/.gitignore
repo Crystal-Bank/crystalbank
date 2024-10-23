@@ -1,0 +1,11 @@
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
+
+.DS_Store
+app/lib/**
+app/REVISION.txt
+data/**
+docs/**

@@ -1,0 +1,26 @@
+services:     
+  database:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+      target: service
+    init: true
+    tty: true
+    environment:
+      - POSTGRES_USER=crystalbank
+      - POSTGRES_PASSWORD=crystalbank
+      - POSTGRES_DB=eventstore
+
+  app:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: service
+    init: true
+    tty: true
+    env_file:
+      - .env-dev
+    volumes:
+      - "./app:/app"
