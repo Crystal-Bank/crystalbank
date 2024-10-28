@@ -14,13 +14,15 @@ module CrystalBank::Domains::Accounts
           @body = Body.from_json(body.to_json)
         end
 
-        def initialize(actor : UUID,
-                       command_handler : String,
-                       aggregate_id : UUID,
-                       aggregate_version : Int32,
-                       comment = "")
+        def initialize(
+          command_handler : String,
+          aggregate_id : UUID,
+          aggregate_version : Int32,
+          actor : UUID?,
+          comment = ""
+        )
           @header = Header.new(
-            # actor: actor,
+            actor: actor,
             aggregate_id: aggregate_id,
             aggregate_type: @@type,
             aggregate_version: aggregate_version,

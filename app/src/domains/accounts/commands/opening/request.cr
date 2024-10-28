@@ -3,9 +3,12 @@ module CrystalBank::Domains::Accounts
     module Commands
       class Request < ES::Command
         def call : UUID
+          # TODO: Replace with actir frin context
+          dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+
           # Create the account creation request event
           event = Accounts::Opening::Events::Requested.new(
-            actor: UUID.v7,
+            actor: dummy_actor,
             command_handler: self.class.to_s
           )
 

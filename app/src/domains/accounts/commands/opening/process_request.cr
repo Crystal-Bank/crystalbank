@@ -14,7 +14,7 @@ module CrystalBank::Domains::Accounts
 
           # Create the account creation acceptance event
           event = Accounts::Opening::Events::Accepted.new(
-            actor: UUID.v7,
+            actor: nil,
             aggregate_id: aggregate_id,
             aggregate_version: next_version,
             command_handler: self.class.to_s
