@@ -36,7 +36,10 @@ services:
   #   restart: always
 
   database:
-    image: postgres:17
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+      target: service
     env_file:
       - .env-dev
     restart: always
