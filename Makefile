@@ -52,10 +52,10 @@ help:
 	@echo "  test    			- Run tests"
 
 # Development environment
-dev: env build up bundle setup-db console
+dev: env build up setup-db console
 
 # Start app, jobs, and css containers
-start: env build up bundle setup-db
+start: env build up setup-db
 	$(call dc, up -d --scale app=1)
 
 # Build image if it doesn't exist
