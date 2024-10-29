@@ -16,11 +16,18 @@ module CrystalBank::Domains::Accounts
       @state.set_type(@@type)
     end
 
-    # Apply 'Accounts::Opening::Events::Requested' to the aggregate state
-    def apply(event : CrystalBank::Domains::Accounts::Opening::Events::Requested)
+    # Apply 'Accounts::Opening::Events::Accepted' to the aggregate state
+    def apply(event : Accounts::Opening::Events::Accepted)
       @state.increase_version(event.header.aggregate_version)
 
-      body = event.body.as(CrystalBank::Domains::Accounts::Opening::Events::Requested::Body)
+      body = event.body.as(Accounts::Opening::Events::Accepted::Body)
+    end
+
+    # Apply 'Accounts::Opening::Events::Requested' to the aggregate state
+    def apply(event : Accounts::Opening::Events::Requested)
+      @state.increase_version(event.header.aggregate_version)
+
+      body = event.body.as(Accounts::Opening::Events::Requested::Body)
     end
   end
 end
