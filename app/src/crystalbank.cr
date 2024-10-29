@@ -1,5 +1,4 @@
 # Load libs
-require "db"
 require "pg"
 require "crystal-es"
 
