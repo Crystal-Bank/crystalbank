@@ -6,6 +6,10 @@ module CrystalBank
       @@eventstore_uri ||= ENV["EVENTSTORE_URI"]
     end
 
+    def projection_database_uri
+      @@projection_database_uri ||= ENV["PROJECTION_DB_URI"]
+    end
+
     def queue_uri : String
       @@queue_uri ||= ENV["QUEUE_URI"]
     end
