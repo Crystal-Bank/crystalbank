@@ -6,8 +6,6 @@ x-app: &app
     - database
   env_file:
     - .env-test
-  volumes: &backend_volumes
-    - ./app:/app
 
 services:
   cmd:
@@ -22,6 +20,3 @@ services:
     env_file:
       - .env-test
     restart: always
-
-volumes:
-  pgdata:
