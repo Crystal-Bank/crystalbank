@@ -10,6 +10,7 @@ module CrystalBank::Domains::Accounts
           aggregate = Accounts::Aggregate.new(aggregate_id)
           aggregate.hydrate
 
+          # Calculate the next aggregate version
           next_version = aggregate.state.next_version
 
           # Create the account creation acceptance event
