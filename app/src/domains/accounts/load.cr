@@ -1,6 +1,9 @@
 # Define alias
 alias Accounts = CrystalBank::Domains::Accounts
 
+# Api
+# require "./api/accounts"
+
 # Aggregate
 require "./aggregate"
 

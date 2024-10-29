@@ -3,7 +3,7 @@ module CrystalBank::Domains::Accounts
     module Commands
       class ProcessRequest < ES::Command
         def call
-          aggregate_id : UUID = @aggregate_id
+          aggregate_id = @aggregate_id.as(UUID)
           # TODO: Run checks to check the legitimacy of the account opening
 
           # Build the account aggregate
