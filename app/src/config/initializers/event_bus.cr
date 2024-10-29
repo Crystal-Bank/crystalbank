@@ -4,3 +4,4 @@ bus = ES::Config.event_bus
 
 # Subscribing command handlers to events
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands::ProcessRequest)
+bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
