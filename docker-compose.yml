@@ -22,18 +22,9 @@ services:
     entrypoint: /bin/bash
     command: ""
     ports:
-      - 23000:3000
+      - 4000:3000
     stdin_open: true
     tty: true
-
-  # app:
-  #   <<: *app
-  #   deploy:
-  #     replicas: 0
-  #   command: bin/rails server -b 0.0.0.0 -p 3000
-  #   ports:
-  #     - 23001:3000
-  #   restart: always
 
   database:
     build:
@@ -44,7 +35,7 @@ services:
       - .env-dev
     restart: always
     ports:
-      - 15432:5432
+      - 4010:5432
     volumes:
       - ./storage/postgres/data:/var/lib/postgresql/data
 
