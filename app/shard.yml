@@ -15,6 +15,10 @@ dependencies:
   pg:
     github: will/crystal-pg
 
+  action-controller:
+    github: spider-gazelle/action-controller
+    version: ~> 7.4
+
 crystal: '>= 1.14.0'
 
 license: MIT
