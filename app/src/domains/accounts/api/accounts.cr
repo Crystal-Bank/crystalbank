@@ -27,10 +27,10 @@ module CrystalBank::Domains::Accounts
       # - **read:accounts.list**
       @[AC::Route::GET("/")]
       def list_accounts : ListResponse(Responses::Account)
-        accounts = ::Accounts::Queries::Accounts.new.call.map do |a| 
+        accounts = ::Accounts::Queries::Accounts.new.call.map do |a|
           Responses::Account.new(
             a.id,
-            a.currencies, 
+            a.currencies,
             a.type
           )
         end

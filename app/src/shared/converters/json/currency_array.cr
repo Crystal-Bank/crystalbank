@@ -8,7 +8,7 @@ module CrystalBank::Converters
 
       pull = r.as(JSON::PullParser)
 
-      pull.read_array do 
+      pull.read_array do
         result << CrystalBank::Types::Currency.new(pull.read_string)
       end
 
