@@ -1,5 +1,8 @@
 # Aggregate
-require "./aggregate"
+require "./aggregates/aggregate"
+
+# Domain
+require "./api/accounts"
 
 # Commands
 require "./commands/opening/request"
@@ -11,6 +14,9 @@ require "./events/opening/requested"
 
 # Projections
 require "./projections/accounts"
+
+# Queries
+require "./queries/accounts"
 
 # Domain
 require "./accounts"
