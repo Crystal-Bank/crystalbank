@@ -7,7 +7,14 @@ module CrystalBank::Domains::Accounts
 
         # Data Object for the body of the event
         struct Body < ES::Event::Body
-          def initialize(@comment); end
+          getter currencies : Array(CrystalBank::Types::Currency)
+          getter type : CrystalBank::Types::AccountType
+
+          def initialize(
+            @comment : String,
+            @currencies : Array(CrystalBank::Types::Currency),
+            @type : CrystalBank::Types::AccountType
+          ); end
         end
 
         def initialize(@header : ES::Event::Header, body : JSON::Any)
@@ -17,6 +24,8 @@ module CrystalBank::Domains::Accounts
         def initialize(
           actor : UUID,
           command_handler : String,
+          currencies : Array(CrystalBank::Types::Currency),
+          type : CrystalBank::Types::AccountType,
           comment = "",
           aggregate_id = UUID.v7
         )
@@ -28,7 +37,11 @@ module CrystalBank::Domains::Accounts
             command_handler: command_handler,
             event_handle: @@handle
           )
-          @body = Body.new(comment)
+          @body = Body.new(
+            comment: comment,
+            currencies: currencies,
+            type: type
+          )
         end
       end
     end
