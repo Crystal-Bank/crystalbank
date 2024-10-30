@@ -5,7 +5,7 @@ def process_queue(queue : ES::Queue)
   event_handlers = ES::Config.event_handlers
   store = ES::Config.event_store
 
-  channel = queue.listen
+  channel = queue.listen(polling_sleep: 500.milliseconds)
 
   loop do
     message = channel.receive
