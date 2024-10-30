@@ -12,7 +12,7 @@ module CrystalBank::Domains::Accounts
             "uuid" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
             "created_at" timestamp NOT NULL,
-            "currencies" varchar NOT NULL,
+            "currencies" jsonb NOT NULL,
             "type" varchar NOT NULL
           );
         )
@@ -31,12 +31,12 @@ module CrystalBank::Domains::Accounts
         aggregate_version = event.header.aggregate_version
 
         # Build the account aggregate up to the version of the event
-        aggregate = ::Accounts::Aggregate.new(aggregate_id, event_store: @event_store, event_handlers: @event_handlers)
+        aggregate = ::Accounts::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
         # Extract attributes to local variables
-        currencies = ["eur", "usd"] # aggregate.state.currencies
-        type = "checking"           # aggregagte.state.type
+        currencies = aggregate.state.supported_currencies.to_json
+        type = aggregate.state.type
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
