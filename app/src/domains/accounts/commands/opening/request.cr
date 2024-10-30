@@ -2,14 +2,22 @@ module CrystalBank::Domains::Accounts
   module Opening
     module Commands
       class Request < ES::Command
-        def call : UUID
+        def call(r : Accounts::Api::Requests::OpeningRequest) : UUID
           # TODO: Replace with actor from context
           dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+
+          # Parse and validate provided currencies
+          parsed_currencies = r.currencies.map { |c| CrystalBank::Types::Currency.new(c).supported! }
+
+          # Parse and validate provided account type
+          parsed_type = CrystalBank::Types::AccountType.new(r.type).validate!
 
           # Create the account creation request event
           event = Accounts::Opening::Events::Requested.new(
             actor: dummy_actor,
-            command_handler: self.class.to_s
+            command_handler: self.class.to_s,
+            currencies: parsed_currencies,
+            type: parsed_type
           )
 
           # Append event to event store
