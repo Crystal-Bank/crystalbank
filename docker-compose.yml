@@ -1,6 +1,5 @@
 
 x-app: &app
-  platform: linux/amd64
   image: crystalbank:dev
   depends_on:
     - database
