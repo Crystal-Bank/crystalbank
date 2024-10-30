@@ -36,13 +36,13 @@ module CrystalBank::Domains::Accounts
 
         # Extract attributes to local variables
         currencies = ["eur", "usd"] # aggregate.state.currencies
-        type = "checking" # aggregagte.state.type
+        type = "checking"           # aggregagte.state.type
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
-            INSERT INTO 
+            INSERT INTO
               "projections"."accounts" (
                 uuid,
                 aggregate_version,
