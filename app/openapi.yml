@@ -73,8 +73,14 @@ components:
           description: List of supported currencies
           items:
             type: string
+            enum:
+            - eur
+            - usd
         type:
           type: string
+          enum:
+          - checking
+          - overnight_money
           description: Type of the account
       required:
       - currencies
@@ -113,9 +119,15 @@ components:
                 type: array
                 description: Supported currencies of the account
                 items:
-                  type: object
+                  type: string
+                  enum:
+                  - eur
+                  - usd
               type:
                 type: string
+                enum:
+                - checking
+                - overnight_money
                 description: Type of the account
             required:
             - id
