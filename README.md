@@ -4,7 +4,7 @@ An open source project to showcase a banking system writtein in Crystal.
 
 [![CrystalBank (CI)](https://github.com/Crystal-Bank/crystalbank/actions/workflows/ci.yml/badge.svg)](https://github.com/Crystal-Bank/crystalbank/actions/workflows/ci.yml)
 
-## Usage
+## Preparation
 
 ### Start of the environment
 
@@ -51,6 +51,38 @@ The PostgreSQL database can be accessed from the host via
 [postgres://es:es/eventstore@localhost:4001](postgres://es:es/eventstore@localhost:4001)
 ``
 
+## Usage
+_TODO: This section needs to be moved to a Wiki once the project grows to keep the README file clean_
+
+### Accounts
+
+The account domain allows to create accounts to the system. An account is an entity that can hold postings, as well as calculate one or multiple balances. CrystalBank allows accounts to support multiple currencies that need to be pre-defined in the opening process.
+
+The following request creates an account of the type `checking` that supports both `eur`, as well as `usd` as currency
+
+
+**Request**
+```JSON
+POST /accounts
+
+{
+  "currencies": [
+    "eur",
+    "usd"
+  ],
+  "type": "checking"
+}
+```
+
+**Response**
+
+```
+# 200 OK
+
+{
+    "id": "0192f7fd-0225-75d6-82be-f278f7548073"
+}
+```
 
 ## Contributing
 
