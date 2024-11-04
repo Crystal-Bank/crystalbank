@@ -5,8 +5,9 @@ x-app: &app
     - database
   env_file:
     - .env-dev
-  volumes: &backend_volumes
+  volumes:
     - ./app:/app
+    - openapi:/openapi
 
 services:
   cmd:
@@ -38,5 +39,18 @@ services:
     volumes:
       - ./storage/postgres/data:/var/lib/postgresql/data
 
+  redoc:
+    image: redocly/redoc
+    restart: always
+    ports:
+      - 4002:80
+    environment:
+      - SPEC_URL=openapi/openapi.yml
+    volumes:
+      - openapi:/usr/share/nginx/html/openapi/
+
 volumes:
-  pgdata:
+  openapi:
+
+
+

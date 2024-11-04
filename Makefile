@@ -78,7 +78,7 @@ rebuild:
 
 # Start services
 up:
-	$(call dc, up -d database console)
+	$(call dc, up -d database console redoc)
 
 # Open console
 console:
