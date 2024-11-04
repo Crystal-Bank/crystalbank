@@ -10,9 +10,9 @@ module CrystalBank::Domains::Accounts
         getter id : UUID
         getter object : String = "account"
 
-        getter currencies = Array(CrystalBank::Types::Currencies::Supported).new
+        getter currencies = Array(String).new
 
-        getter type : CrystalBank::Types::Accounts::Type
+        getter type : String
       end
 
       def initialize
