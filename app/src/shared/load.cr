@@ -1,6 +1,3 @@
-# Load Types
-require "./converters/json/currency_array"
-
 # Load Exceptions
 require "./api/base"
 
