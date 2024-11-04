@@ -28,7 +28,7 @@ module CrystalBank::Types
       @value
     end
 
-    def validate! : AccountType
+    private def validate! : AccountType
       raise CrystalBank::Exception::InvalidArgument.new("Account type not supported '#{@value}'. Supported types are: [#{supported_types}]") unless self.class.valid?(@value)
       self
     end
