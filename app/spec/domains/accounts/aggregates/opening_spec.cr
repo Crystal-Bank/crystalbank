@@ -5,8 +5,8 @@ describe CrystalBank::Domains::Accounts::Aggregates::Concerns::Opening do
     it "Properly populates the aggregate on account opening" do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-      currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currency.new(c).supported! }
-      type = CrystalBank::Types::AccountType.new("checking")
+      currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currencies::Supported.parse(c) }
+      type = CrystalBank::Types::Accounts::Type.parse("checking")
 
       aggregate = Accounts::Aggregate.new(aggregate_id)
 
