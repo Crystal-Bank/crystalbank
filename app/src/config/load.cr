@@ -5,3 +5,6 @@ require "./initializers/event_bus"
 require "./initializers/projections"
 require "./initializers/queue"
 require "./initializers/types"
+
+require "./types/accounts"
+require "./types/currencies"
