@@ -1,8 +1,15 @@
+[![CrystalBank (CI)](https://github.com/Crystal-Bank/crystalbank/actions/workflows/ci.yml/badge.svg)](https://github.com/Crystal-Bank/crystalbank/actions/workflows/ci.yml)
+
 # crystalbank
 
-An open source project to showcase a banking system writtein in Crystal.
+An open source project to showcase a banking system written in Crystal. The project will progress along the following domains:
 
-[![CrystalBank (CI)](https://github.com/Crystal-Bank/crystalbank/actions/workflows/ci.yml/badge.svg)](https://github.com/Crystal-Bank/crystalbank/actions/workflows/ci.yml)
+1. Accounts
+2. Transfers
+3. Customers
+4. Roles & Permissions (Data access rights)
+5. Scopes (Data ownership)
+6. ...
 
 ## Preparation
 
