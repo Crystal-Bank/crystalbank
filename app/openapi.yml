@@ -5,37 +5,12 @@ info:
   title: CrystalBank
   version: 0.2.0
 paths:
-  /accounts:
-    get:
-      summary: List
-      description: 'List
-
-        List all accounts
-
-
-        Required permission:
-
-        - **read:accounts.list**'
-      tags:
-      - Accounts
-      operationId: CrystalBank::Domains::Accounts::Api::Accounts_list_accounts
-      parameters: []
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_'
-        400:
-          description: Bad Request
-        500:
-          description: Internal Server Error
+  /accounts/open:
     post:
-      summary: Request creation
-      description: 'Request creation
+      summary: Request opening
+      description: 'Request opening
 
-        Request the creation of a new account
+        Request the opening of a new account
 
 
         Required permission:
@@ -58,6 +33,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse'
+        400:
+          description: Bad Request
+        500:
+          description: Internal Server Error
+  /accounts:
+    get:
+      summary: List
+      description: 'List
+
+        List all accounts
+
+
+        Required permission:
+
+        - **read:accounts.list**'
+      tags:
+      - Accounts
+      operationId: CrystalBank::Domains::Accounts::Api::Accounts_list_accounts
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_'
         400:
           description: Bad Request
         500:

@@ -8,12 +8,12 @@ module CrystalBank::Domains::Accounts
       include CrystalBank::Domains::Accounts::Api::Responses
       base "/accounts"
 
-      # Request creation
-      # Request the creation of a new account
+      # Request opening
+      # Request the opening of a new account
       #
       # Required permission:
       # - **write:accounts.opening**
-      @[AC::Route::POST("/", body: :r)]
+      @[AC::Route::POST("/open", body: :r)]
       def open(r : OpeningRequest) : OpeningResponse
         aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r)
 
