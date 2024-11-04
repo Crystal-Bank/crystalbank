@@ -14,7 +14,7 @@ module CrystalBank::Domains::Accounts
 
           # Create the account creation request event
           event = Accounts::Opening::Events::Requested.new(
-            actor: dummy_actor,
+            actor_id: dummy_actor,
             command_handler: self.class.to_s,
             currencies: parsed_currencies,
             type: parsed_type

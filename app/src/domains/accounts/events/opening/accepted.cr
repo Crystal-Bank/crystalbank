@@ -18,11 +18,11 @@ module CrystalBank::Domains::Accounts
           command_handler : String,
           aggregate_id : UUID,
           aggregate_version : Int32,
-          actor : UUID?,
+          actor_id : UUID?,
           comment = ""
         )
           @header = Header.new(
-            actor: actor,
+            actor_id: actor_id,
             aggregate_id: aggregate_id,
             aggregate_type: @@type,
             aggregate_version: aggregate_version,

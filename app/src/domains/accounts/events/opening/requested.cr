@@ -22,7 +22,7 @@ module CrystalBank::Domains::Accounts
         end
 
         def initialize(
-          actor : UUID,
+          actor_id : UUID,
           command_handler : String,
           currencies : Array(CrystalBank::Types::Currency),
           type : CrystalBank::Types::AccountType,
@@ -30,7 +30,7 @@ module CrystalBank::Domains::Accounts
           aggregate_id = UUID.v7
         )
           @header = Header.new(
-            actor: actor,
+            actor_id: actor_id,
             aggregate_id: aggregate_id,
             aggregate_type: @@type,
             aggregate_version: 1,
