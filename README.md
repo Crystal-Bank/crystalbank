@@ -48,8 +48,9 @@ In order to easily navigate the API specs, the project contains reDoc, which can
 
 The PostgreSQL database can be accessed from the host via 
 
-[postgres://es:es/eventstore@localhost:4001](postgres://es:es/eventstore@localhost:4001)
-``
+`postgres://<user>:<password>/eventstore@localhost:4001`
+
+
 
 ## Usage
 _TODO: This section needs to be moved to a Wiki once the project grows to keep the README file clean_
