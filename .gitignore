@@ -1,5 +1,4 @@
 .DS_Store
-.env-dev
 app/lib/**
 app/REVISION.txt
 app/tools/**
