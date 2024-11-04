@@ -1,7 +1,7 @@
-module Crystalbank
+module CrystalBank
   module Server
     module Config
-      NAME = "Crystalbank"
+      NAME = "CrystalBank"
       {% begin %}
         VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
       {% end %}

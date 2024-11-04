@@ -1,4 +1,4 @@
-module Crystalbank
+module CrystalBank
   module Server
     module CLI
       docs = nil

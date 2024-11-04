@@ -15,10 +15,10 @@ require "action-controller/server"
 require "./config"
 require "./cli"
 
-module Crystalbank
+module CrystalBank
   module Server
-    include Crystalbank::Server::Config
-    include Crystalbank::Server::CLI
+    include CrystalBank::Server::Config
+    include CrystalBank::Server::CLI
 
     # flag to indicate if we're outputting trace logs
     class_getter? trace : Bool = false

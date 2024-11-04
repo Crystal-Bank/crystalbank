@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-describe Crystalbank do
+describe CrystalBank do
   # TODO: Write tests
 
   it "works" do
