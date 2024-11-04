@@ -25,7 +25,11 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "Type of the account")]
         getter type : CrystalBank::Types::Accounts::Type
 
-        def initialize(@id : UUID, @currencies : Array(CrystalBank::Types::Currencies::Supported), @type : String); end
+        def initialize(
+          @id : UUID,
+          @currencies : Array(CrystalBank::Types::Currencies::Supported),
+          @type : CrystalBank::Types::Accounts::Type
+        ); end
       end
     end
   end
