@@ -8,8 +8,8 @@ module CrystalBank::Domains::Accounts
 
     struct State < ES::Aggregate::State
       property open : Bool = false
-      property supported_currencies = Array(CrystalBank::Types::Currency).new
-      property type : CrystalBank::Types::AccountType?
+      property supported_currencies = Array(CrystalBank::Types::Currencies::Supported).new
+      property type : CrystalBank::Types::Accounts::Type?
     end
 
     getter state : State

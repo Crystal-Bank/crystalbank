@@ -5,10 +5,10 @@ module CrystalBank::Domains::Accounts
         include JSON::Serializable
 
         @[JSON::Field(description: "List of supported currencies")]
-        getter currencies : Array(String)
+        getter currencies : Array(CrystalBank::Types::Currencies::Supported)
 
         @[JSON::Field(description: "Type of the account")]
-        getter type : String
+        getter type : CrystalBank::Types::Accounts::Type
       end
     end
   end

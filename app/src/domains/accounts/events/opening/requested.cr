@@ -7,13 +7,13 @@ module CrystalBank::Domains::Accounts
 
         # Data Object for the body of the event
         struct Body < ES::Event::Body
-          getter currencies : Array(CrystalBank::Types::Currency)
-          getter type : CrystalBank::Types::AccountType
+          getter currencies : Array(CrystalBank::Types::Currencies::Supported)
+          getter type : CrystalBank::Types::Accounts::Type
 
           def initialize(
             @comment : String,
-            @currencies : Array(CrystalBank::Types::Currency),
-            @type : CrystalBank::Types::AccountType
+            @currencies : Array(CrystalBank::Types::Currencies::Supported),
+            @type : CrystalBank::Types::Accounts::Type
           ); end
         end
 
@@ -24,8 +24,8 @@ module CrystalBank::Domains::Accounts
         def initialize(
           actor_id : UUID,
           command_handler : String,
-          currencies : Array(CrystalBank::Types::Currency),
-          type : CrystalBank::Types::AccountType,
+          currencies : Array(CrystalBank::Types::Currencies::Supported),
+          type : CrystalBank::Types::Accounts::Type,
           comment = "",
           aggregate_id = UUID.v7
         )
