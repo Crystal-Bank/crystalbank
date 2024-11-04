@@ -7,7 +7,6 @@ x-app: &app
     - .env-dev
   volumes:
     - ./app:/app
-    - openapi:/openapi
 
 services:
   cmd:
@@ -47,10 +46,4 @@ services:
     environment:
       - SPEC_URL=openapi/openapi.yml
     volumes:
-      - openapi:/usr/share/nginx/html/openapi/
-
-volumes:
-  openapi:
-
-
-
+      - ./app/openapi.yml:/usr/share/nginx/html/openapi/openapi.yml
