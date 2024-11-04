@@ -76,8 +76,8 @@ POST /accounts
 
 **Response**
 
-```
-# 200 OK
+```JSON
+200 OK
 
 {
     "id": "0192f7fd-0225-75d6-82be-f278f7548073"
