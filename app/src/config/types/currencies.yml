@@ -1,0 +1,11 @@
+---
+currencies:
+- eur
+- usd
+- gbp
+- jpy
+- chf
+
+supported_currencies:
+- eur
+- usd

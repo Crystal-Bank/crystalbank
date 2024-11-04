@@ -1,12 +1,11 @@
 
 x-app: &app
-  platform: linux/amd64
   image: crystalbank:dev
   depends_on:
     - database
   env_file:
     - .env-dev
-  volumes: &backend_volumes
+  volumes:
     - ./app:/app
 
 services:
@@ -22,28 +21,29 @@ services:
     entrypoint: /bin/bash
     command: ""
     ports:
-      - 23000:3000
+      - 4000:3000
     stdin_open: true
     tty: true
 
-  # app:
-  #   <<: *app
-  #   deploy:
-  #     replicas: 0
-  #   command: bin/rails server -b 0.0.0.0 -p 3000
-  #   ports:
-  #     - 23001:3000
-  #   restart: always
-
   database:
-    image: postgres:17
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+      target: service
     env_file:
       - .env-dev
     restart: always
     ports:
-      - 15432:5432
+      - 4010:5432
     volumes:
       - ./storage/postgres/data:/var/lib/postgresql/data
 
-volumes:
-  pgdata:
+  redoc:
+    image: redocly/redoc
+    restart: always
+    ports:
+      - 4002:80
+    environment:
+      - SPEC_URL=openapi/openapi.yml
+    volumes:
+      - ./app/openapi.yml:/usr/share/nginx/html/openapi/openapi.yml

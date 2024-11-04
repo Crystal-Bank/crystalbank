@@ -6,8 +6,6 @@ x-app: &app
     - database
   env_file:
     - .env-test
-  volumes: &backend_volumes
-    - ./app:/app
 
 services:
   cmd:
@@ -18,10 +16,10 @@ services:
     command: -c
 
   database:
-    image: postgres:17
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+      target: service
     env_file:
       - .env-test
     restart: always
-
-volumes:
-  pgdata:

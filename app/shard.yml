@@ -1,5 +1,5 @@
 name: crystalbank
-version: 0.1.0
+version: 0.2.0
 
 authors:
   - Tristan Holl <mail@tristanholl.com>
@@ -14,6 +14,10 @@ dependencies:
     
   pg:
     github: will/crystal-pg
+
+  action-controller:
+    github: spider-gazelle/action-controller
+    version: ~> 7.4
 
 crystal: '>= 1.14.0'
 

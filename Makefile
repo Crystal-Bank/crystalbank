@@ -4,6 +4,7 @@ COMPOSE_FILE := docker-compose.yml
 COMPOSE_TEST_FILE := docker-compose.test.yml
 COMPOSE_PROJECT_NAME := $(PROJECT_NAME)
 COMPOSE_CMD := docker compose
+DOCKER_FILE := "Dockerfile.dev"
 
 # Docker image configuration
 SERVICE_IMAGE := $(PROJECT_NAME):dev
@@ -52,17 +53,17 @@ help:
 	@echo "  test    			- Run tests"
 
 # Development environment
-dev: env build up bundle setup-db console
+dev: env build up setup-db console
 
 # Start app, jobs, and css containers
-start: env build up bundle setup-db
+start: env build up setup-db
 	$(call dc, up -d --scale app=1)
 
 # Build image if it doesn't exist
 build-image:
 	@if [ "$(call check_image_exists)" = "false" ]; then \
 		echo "Building Docker image $(SERVICE_IMAGE)..."; \
-		docker build -t $(SERVICE_IMAGE) -f Dockerfile.dev .; \
+		docker build -t $(SERVICE_IMAGE) -f $(DOCKER_FILE) .; \
 	else \
 		echo "Docker image $(SERVICE_IMAGE) already exists. Skipping build."; \
 	fi
@@ -73,11 +74,11 @@ build: build-image
 # Force rebuild of the Docker image
 rebuild:
 	@echo "Forcing rebuild of Docker image $(SERVICE_IMAGE)..."
-	docker build --no-cache -t $(SERVICE_IMAGE) -f Dockerfile.dev .
+	docker build --no-cache -t $(SERVICE_IMAGE) -f $(DOCKER_FILE) .
 
 # Start services
 up:
-	$(call dc, up -d database console)
+	$(call dc, up -d database console redoc)
 
 # Open console
 console:

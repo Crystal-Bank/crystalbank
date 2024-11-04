@@ -1,7 +1,7 @@
 #
 # BASE artifact
 #
-FROM --platform=linux/amd64 postgres:17 AS base
+FROM postgres:17 AS base
 
 RUN apt-get update && apt-get install -y git make
 

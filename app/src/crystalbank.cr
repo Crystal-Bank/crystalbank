@@ -1,6 +1,7 @@
-# TODO: Write documentation for `Crystalbank`
-module Crystalbank
-  VERSION = "0.1.0"
+require "./load"
 
-  # TODO: Put your code here
+module CrystalBank
+  {% begin %}
+    VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+  {% end %}
 end

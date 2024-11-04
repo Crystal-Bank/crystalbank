@@ -1,4 +1,4 @@
-name: Crystalbank CI
+name: CrystalBank (CI)
 
 on:
   push:
