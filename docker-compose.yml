@@ -44,6 +44,6 @@ services:
     ports:
       - 4002:80
     environment:
-      - SPEC_URL=openapi/openapi.yml
+      - SPEC_URL=openapi/openapi.json
     volumes:
-      - ./app/openapi.yml:/usr/share/nginx/html/openapi/openapi.yml
+      - ./app/openapi.json:/usr/share/nginx/html/openapi/openapi.json

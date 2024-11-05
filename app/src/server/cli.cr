@@ -42,7 +42,7 @@ module CrystalBank
             title: NAME,
             version: VERSION,
             description: "App description for OpenAPI docs"
-          ).merge(NamedTuple.new(servers: [{url: API_DOMAIN}])).to_yaml
+          ).merge(NamedTuple.new(servers: [{url: API_DOMAIN}])).to_json
 
           parser.on("-f FILE", "--file=FILE", "Save the docs to a file") do |file|
             docs_file = file

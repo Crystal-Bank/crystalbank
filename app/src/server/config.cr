@@ -9,7 +9,7 @@ module CrystalBank
       Log         = ::Log.for(NAME)
       LOG_BACKEND = ActionController.default_backend(formatter: ActionController.json_formatter)
 
-      ENVIRONMENT   = "development" # CrystalBank::Env.environment
+      ENVIRONMENT   = CrystalBank::Env.environment
       IS_PRODUCTION = (ENVIRONMENT == "production")
 
       DEFAULT_PORT          = CrystalBank::Env.server_port

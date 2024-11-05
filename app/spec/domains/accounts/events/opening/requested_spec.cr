@@ -5,9 +5,9 @@ module Test::Account::Events
     class Requested
       def create : Accounts::Opening::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        account_type = CrystalBank::Types::AccountType.new("checking")
+        account_type = CrystalBank::Types::Accounts::Type.parse("checking")
         aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currency.new(c).supported! }
+        currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currencies::Supported.parse(c) }
         command_handler = "test"
         comment = "test comment"
 
