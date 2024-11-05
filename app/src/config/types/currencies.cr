@@ -75,7 +75,7 @@ module CrystalBank::Types::Currencies
     KES # 404 - Kenyan Shilling
     KGS # 417 - Som
     KHR # 116 - Riel
-    KMF # 174 - Comorian Franc 
+    KMF # 174 - Comorian Franc
     KPW # 408 - North Korean Won
     KRW # 410 - Won
     KWD # 414 - Kuwaiti Dinar
