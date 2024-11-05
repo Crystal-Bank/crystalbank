@@ -10,7 +10,8 @@ module CrystalBank::Domains::Accounts
         getter id : UUID
         getter object : String = "account"
 
-        getter currencies = Array(String).new
+        @[DB::Field(converter: CrystalBank::Converters::CurrencyArray(CrystalBank::Types::Currencies::Available))]
+        getter currencies = Array(CrystalBank::Types::Currencies::Available).new
 
         getter type : String
       end

@@ -30,7 +30,7 @@ module CrystalBank::Domains::Accounts
         accounts = ::Accounts::Queries::Accounts.new.call.map do |a|
           Responses::Account.new(
             a.id,
-            a.currencies.map { |c| CrystalBank::Types::Currencies::Supported.parse(c) },
+            a.currencies,
             CrystalBank::Types::Accounts::Type.parse(a.type)
           )
         end
