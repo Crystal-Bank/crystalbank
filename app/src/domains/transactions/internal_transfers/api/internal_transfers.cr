@@ -15,7 +15,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
       # - **write:transactions.internal_transfers.initiation**
       @[AC::Route::POST("/initiate", body: :r)]
       def open(r : InitiationRequest) : InitiationResponse
-        aggregate_id = ::Transactions::InternalTransfers::Commands::Request.new.call(r)
+        aggregate_id = ::Transactions::InternalTransfers::Initiation::Commands::Request.new.call(r)
 
         InitiationResponse.new(aggregate_id)
       end
