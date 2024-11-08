@@ -9,7 +9,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
 
         @[JSON::Field(description: "Account ID of the creditor")]
         getter creditor_account_id : UUID
-        
+
         @[JSON::Field(description: "Currency of the internal transfer")]
         getter currency : CrystalBank::Types::Currencies::Supported
 

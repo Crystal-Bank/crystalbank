@@ -7,7 +7,6 @@ module CrystalBank::Domains::Transactions::InternalTransfers
     include CrystalBank::Domains::Transactions::InternalTransfers::Aggregates::Concerns::Initiation
 
     struct State < ES::Aggregate::State
-
     end
 
     getter state : State
