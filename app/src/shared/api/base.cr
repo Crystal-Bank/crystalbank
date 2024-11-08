@@ -20,6 +20,7 @@ module CrystalBank
       # Error handling
       # TODO: Annotation do not properly work when included from a module
       @[AC::Route::Exception(CrystalBank::Exception::InvalidArgument, status_code: HTTP::Status::BAD_REQUEST)]
+      @[AC::Route::Exception(ES::Exception::NotFound, status_code: HTTP::Status::NOT_FOUND)]
       def error_reponse(error : ES::Exception::Error) : ErrorResponse
         Log.error { error.info.to_json }
         Log.error { error.backtrace } if error.print_backtrace?
