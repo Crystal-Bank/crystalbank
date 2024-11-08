@@ -1,1 +1,342 @@
-{"openapi":"3.0.3","info":{"description":"App description for OpenAPI docs","title":"CrystalBank","version":"0.2.1"},"paths":{"/accounts/open":{"post":{"summary":"Request opening","description":"Request opening\nRequest the opening of a new account\n\nRequired permission:\n- **write:accounts.opening**","tags":["Accounts"],"operationId":"CrystalBank::Domains::Accounts::Api::Accounts_open","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Domains__Accounts__Api__Requests__OpeningRequest"}}},"required":true},"parameters":[],"responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse"}}}},"400":{"description":"Bad Request"},"404":{"description":"Not Found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"}}}},"500":{"description":"Internal Server Error"}}}},"/accounts":{"get":{"summary":"List","description":"List\nList all accounts\n\nRequired permission:\n- **read:accounts.list**","tags":["Accounts"],"operationId":"CrystalBank::Domains::Accounts::Api::Accounts_list_accounts","parameters":[],"responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_"}}}},"400":{"description":"Bad Request"},"404":{"description":"Not Found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"}}}},"500":{"description":"Internal Server Error"}}}},"/transactions/internal_transfers/initiate":{"post":{"summary":"Request initiation","description":"Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write:transactions.internal_transfers.initiation**","tags":["InternalTransfers"],"operationId":"CrystalBank::Domains::Transactions::InternalTransfers::Api::InternalTransfers_open","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest"}}},"required":true},"parameters":[],"responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse"}}}},"400":{"description":"Bad Request"},"404":{"description":"Not Found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"}}}},"500":{"description":"Internal Server Error"}}}}},"components":{"schemas":{"CrystalBank__Domains__Accounts__Api__Requests__OpeningRequest":{"type":"object","properties":{"currencies":{"type":"array","description":"List of supported currencies","items":{"type":"string","enum":["chf","eur","gbp","jpy","usd"]}},"type":{"type":"string","enum":["checking","overnight_money"],"description":"Type of the account"}},"required":["currencies","type"]},"CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse":{"type":"object","properties":{"id":{"type":"string","format":"uuid","description":"ID of the requested account"}},"required":["id"],"description":"Response to an account opening request"},"CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_":{"type":"object","properties":{"object":{"type":"string","description":"Object type of the response"},"url":{"type":"string","format":"uuid","description":"Url of the entity"},"data":{"type":"array","description":"Array of entities","items":{"type":"object","properties":{"id":{"type":"string","format":"uuid","description":"ID of the requested account"},"currencies":{"type":"array","description":"Supported currencies of the account","items":{"type":"string","enum":["chf","eur","gbp","jpy","usd"]}},"type":{"type":"string","enum":["checking","overnight_money"],"description":"Type of the account"}},"required":["id","currencies","type"]}}},"required":["object","url","data"]},"CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest":{"type":"object","properties":{"amount":{"type":"integer","format":"Int64","description":"Amount for the internal transfer"},"creditor_account_id":{"type":"string","format":"uuid","description":"Account ID of the creditor"},"currency":{"type":"string","enum":["chf","eur","gbp","jpy","usd"],"description":"Currency of the internal transfer"},"debtor_account_id":{"type":"string","format":"uuid","description":"Account ID of the debtor"}},"required":["amount","creditor_account_id","currency","debtor_account_id"]},"CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse":{"type":"object","properties":{"id":{"type":"string","format":"uuid","description":"ID of the requested account"}},"required":["id"],"description":"Response to an internal transfer initiation request"},"CrystalBank__Api__Responses__ErrorResponse":{"type":"object","properties":{"id":{"type":"string","format":"uuid","description":"ID of the error"},"message":{"type":"string","description":"Error message"},"timestamp":{"type":"string","format":"iso8601","description":"Timestamp of the error"},"type":{"type":"string","description":"Type of the error"}},"required":["id","message","timestamp","type"],"description":"Default Error Response"}}},"servers":[{"url":"https://api.crystalbank.xyz"}]}
+{
+    "openapi": "3.0.3",
+    "info": {
+        "description": "App description for OpenAPI docs",
+        "title": "CrystalBank",
+        "version": "0.2.1"
+    },
+    "paths": {
+        "/accounts/open": {
+            "post": {
+                "summary": "Request opening",
+                "description": "Request opening\nRequest the opening of a new account\n\nRequired permission:\n- **write:accounts.opening**",
+                "tags": [
+                    "Accounts"
+                ],
+                "operationId": "CrystalBank::Domains::Accounts::Api::Accounts_open",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Accounts__Api__Requests__OpeningRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/accounts": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList all accounts\n\nRequired permission:\n- **read:accounts.list**",
+                "tags": [
+                    "Accounts"
+                ],
+                "operationId": "CrystalBank::Domains::Accounts::Api::Accounts_list_accounts",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/transactions/internal_transfers/initiate": {
+            "post": {
+                "summary": "Request initiation",
+                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write:transactions.internal_transfers.initiation**",
+                "tags": [
+                    "InternalTransfers"
+                ],
+                "operationId": "CrystalBank::Domains::Transactions::InternalTransfers::Api::InternalTransfers_open",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CrystalBank__Domains__Accounts__Api__Requests__OpeningRequest": {
+                "type": "object",
+                "properties": {
+                    "currencies": {
+                        "type": "array",
+                        "description": "List of supported currencies",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "chf",
+                                "eur",
+                                "gbp",
+                                "jpy",
+                                "usd"
+                            ]
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "checking",
+                            "overnight_money"
+                        ],
+                        "description": "Type of the account"
+                    }
+                },
+                "required": [
+                    "currencies",
+                    "type"
+                ]
+            },
+            "CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the requested account"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "Response to an account opening request"
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the requested account"
+                                },
+                                "currencies": {
+                                    "type": "array",
+                                    "description": "Supported currencies of the account",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "chf",
+                                            "eur",
+                                            "gbp",
+                                            "jpy",
+                                            "usd"
+                                        ]
+                                    }
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "checking",
+                                        "overnight_money"
+                                    ],
+                                    "description": "Type of the account"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "currencies",
+                                "type"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "data"
+                ]
+            },
+            "CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "integer",
+                        "format": "Int64",
+                        "description": "Amount for the internal transfer"
+                    },
+                    "creditor_account_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Account ID of the creditor"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "chf",
+                            "eur",
+                            "gbp",
+                            "jpy",
+                            "usd"
+                        ],
+                        "description": "Currency of the internal transfer"
+                    },
+                    "debtor_account_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Account ID of the debtor"
+                    }
+                },
+                "required": [
+                    "amount",
+                    "creditor_account_id",
+                    "currency",
+                    "debtor_account_id"
+                ]
+            },
+            "CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the requested account"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "Response to an internal transfer initiation request"
+            },
+            "CrystalBank__Api__Responses__ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the error"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "iso8601",
+                        "description": "Timestamp of the error"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Type of the error"
+                    }
+                },
+                "required": [
+                    "id",
+                    "message",
+                    "timestamp",
+                    "type"
+                ],
+                "description": "Default Error Response"
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "https://api.crystalbank.xyz"
+        }
+    ]
+}
