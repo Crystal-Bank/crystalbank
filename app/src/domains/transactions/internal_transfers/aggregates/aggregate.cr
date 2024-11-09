@@ -7,6 +7,12 @@ module CrystalBank::Domains::Transactions::InternalTransfers
     include CrystalBank::Domains::Transactions::InternalTransfers::Aggregates::Concerns::Initiation
 
     struct State < ES::Aggregate::State
+      property account_id : UUID?
+      property amount : Int64?
+      property creditor_account_id : UUID?
+      property currency : CrystalBank::Types::Currencies::Supported?
+      property debtor_account_id : UUID?
+      property remittance_information : String?
     end
 
     getter state : State
