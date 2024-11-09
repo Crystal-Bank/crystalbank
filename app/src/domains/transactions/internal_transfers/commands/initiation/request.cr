@@ -6,9 +6,13 @@ module CrystalBank::Domains::Transactions::InternalTransfers
           # TODO: Replace with actor from context
           dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
 
+          amount = r.amount
           creditor_account_id = r.creditor_account_id
           currency = r.currency
           debtor_account_id = r.debtor_account_id
+
+          # Check if transfer amount is valid
+          raise CrystalBank::Exception::InvalidArgument.new("Transfer amount must be greater than zero") if amount <= 0
 
           # Check if accounts are the same
           raise CrystalBank::Exception::InvalidArgument.new("Debtor and creditor account cannot be the same") if creditor_account_id == debtor_account_id
@@ -35,10 +39,11 @@ module CrystalBank::Domains::Transactions::InternalTransfers
           event = Transactions::InternalTransfers::Initiation::Events::Requested.new(
             actor_id: dummy_actor,
             command_handler: self.class.to_s,
-            currency: r.currency,
-            amount: r.amount,
+            currency: currency,
+            amount: amount,
             debtor_account_id: debtor_account_id,
-            creditor_account_id: creditor_account_id
+            creditor_account_id: creditor_account_id,
+            remittance_information: r.remittance_information
           )
 
           # Append event to event store
