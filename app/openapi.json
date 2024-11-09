@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.2.1"
+        "version": "0.2.2"
     },
     "paths": {
         "/accounts/open": {
@@ -279,13 +279,18 @@
                         "type": "string",
                         "format": "uuid",
                         "description": "Account ID of the debtor"
+                    },
+                    "remittance_information": {
+                        "type": "string",
+                        "description": "Remittance information for the transfer"
                     }
                 },
                 "required": [
                     "amount",
                     "creditor_account_id",
                     "currency",
-                    "debtor_account_id"
+                    "debtor_account_id",
+                    "remittance_information"
                 ]
             },
             "CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse": {
