@@ -15,6 +15,9 @@ module CrystalBank::Domains::Transactions::InternalTransfers
 
         @[JSON::Field(description: "Account ID of the debtor")]
         getter debtor_account_id : UUID
+
+        @[JSON::Field(description: "Remittance information for the transfer")]
+        getter remittance_information : String
       end
     end
   end
