@@ -127,6 +127,38 @@ POST /transactions/internal_transfers/initiate
 }
 ```
 
+### Transactions :: Postings
+
+The `Postings` subdomain is providing a view into the postings projection
+
+**Request**
+```JSON
+GET /transactions/postings
+
+```
+
+**Response**
+
+```JSON
+200 OK
+
+{
+    "object": "list",
+    "url": "/transactions/postings",
+    "data": [
+        {
+            "id": "00000000-0000-0000-0000-900000000001",
+            "account_id": "00000000-0000-0000-0000-100000000000",
+            "amount": -50,
+            "creditor_account_id": "00000000-0000-0000-0000-200000000000",
+            "debtor_account_id": "00000000-0000-0000-0000-100000000000",
+            "remittance_information": "Transfer no: 1"
+        }
+    ]
+]
+```
+
+
 ## Contributing
 
 1. Fork it (<https://github.com/your-github-user/crystalbank/fork>)

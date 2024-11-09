@@ -1,7 +1,7 @@
 # Aggregate
 require "./aggregates/aggregate"
 
-# Domain
+# API
 require "./api/accounts"
 
 # Commands
