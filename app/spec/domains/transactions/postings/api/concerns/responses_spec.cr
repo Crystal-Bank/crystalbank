@@ -1,4 +1,4 @@
-require "../../../../spec_helper"
+require "../../../../../spec_helper"
 
 describe CrystalBank::Domains::Transactions::Postings::Api::Responses do
   pending "pending" do
