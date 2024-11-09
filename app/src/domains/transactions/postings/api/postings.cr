@@ -4,7 +4,7 @@ module CrystalBank::Domains::Transactions::Postings
   module Api
     class Postings < CrystalBank::Api::Base
       include CrystalBank::Domains::Transactions::Postings::Api::Responses
-      base "/postings"
+      base "/transactions/postings"
 
       # List
       # List all postings
