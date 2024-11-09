@@ -155,7 +155,7 @@ GET /transactions/postings
             "remittance_information": "Transfer no: 1"
         }
     ]
-]
+}
 ```
 
 
