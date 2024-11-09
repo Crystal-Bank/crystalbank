@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.2.1"
+        "version": "0.2.2"
     },
     "paths": {
         "/accounts/open": {
@@ -39,6 +39,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error"
                     }
@@ -67,6 +77,65 @@
                     },
                     "400": {
                         "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/transactions/internal_transfers/initiate": {
+            "post": {
+                "summary": "Request initiation",
+                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write:transactions.internal_transfers.initiation**",
+                "tags": [
+                    "InternalTransfers"
+                ],
+                "operationId": "CrystalBank::Domains::Transactions::InternalTransfers::Api::InternalTransfers_open",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
                     },
                     "500": {
                         "description": "Internal Server Error"
@@ -181,6 +250,62 @@
                     "url",
                     "data"
                 ]
+            },
+            "CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "integer",
+                        "format": "Int64",
+                        "description": "Amount for the internal transfer"
+                    },
+                    "creditor_account_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Account ID of the creditor"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "chf",
+                            "eur",
+                            "gbp",
+                            "jpy",
+                            "usd"
+                        ],
+                        "description": "Currency of the internal transfer"
+                    },
+                    "debtor_account_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Account ID of the debtor"
+                    },
+                    "remittance_information": {
+                        "type": "string",
+                        "description": "Remittance information for the transfer"
+                    }
+                },
+                "required": [
+                    "amount",
+                    "creditor_account_id",
+                    "currency",
+                    "debtor_account_id",
+                    "remittance_information"
+                ]
+            },
+            "CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the requested account"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "Response to an internal transfer initiation request"
             },
             "CrystalBank__Api__Responses__ErrorResponse": {
                 "type": "object",

@@ -7,6 +7,7 @@ module CrystalBank::Domains::Accounts
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(Accounts::Opening::Events::Accepted::Body)
+          @state.open = true
         end
 
         # Apply 'Accounts::Opening::Events::Requested' to the aggregate state
