@@ -142,6 +142,45 @@
                     }
                 }
             }
+        },
+        "/postings": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList all postings\n\nRequired permission:\n- **read:postings.list**",
+                "tags": [
+                    "Postings"
+                ],
+                "operationId": "CrystalBank::Domains::Transactions::Postings::Api::Postings_list_postings",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Transactions__Postings__Api__Responses__Posting_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -306,6 +345,71 @@
                     "id"
                 ],
                 "description": "Response to an internal transfer initiation request"
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Transactions__Postings__Api__Responses__Posting_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the posting"
+                                },
+                                "account_id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the account the posting belongs to"
+                                },
+                                "amount": {
+                                    "type": "integer",
+                                    "format": "Int64",
+                                    "description": "Amount"
+                                },
+                                "creditor_account_id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the creditor account"
+                                },
+                                "debtor_account_id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the debtor account"
+                                },
+                                "remittance_information": {
+                                    "type": "string",
+                                    "description": "Remittance information"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "account_id",
+                                "amount",
+                                "creditor_account_id",
+                                "debtor_account_id",
+                                "remittance_information"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "data"
+                ]
             },
             "CrystalBank__Api__Responses__ErrorResponse": {
                 "type": "object",
