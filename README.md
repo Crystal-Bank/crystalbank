@@ -60,7 +60,12 @@ The PostgreSQL database can be accessed from the host via
 
 
 ## Usage
+
 _TODO: This section needs to be moved to a Wiki once the project grows to keep the README file clean_
+
+### Examples
+
+The project contains script examples in the folder `app/examples`
 
 ### Accounts
 
@@ -71,14 +76,14 @@ The following request creates an account of the type `checking` that supports bo
 
 **Request**
 ```JSON
-POST /accounts
+POST /accounts/open
 
 {
-  "currencies": [
-    "eur",
-    "usd"
-  ],
-  "type": "checking"
+    "currencies": [
+        "eur",
+        "usd"
+    ],
+    "type": "checking"
 }
 ```
 
@@ -88,7 +93,37 @@ POST /accounts
 200 OK
 
 {
-    "id": "0192f7fd-0225-75d6-82be-f278f7548073"
+    "id": "00000000-0000-0000-0000-000000000001"
+}
+```
+
+### Transactions :: InternalTransfers
+
+The `InternalTransfer` is a subdomain of `Transactions` and allows to move money between existing accounts. The internal transfer requires two existing and open accounts, which both support the requested currency. Transfer amounts are always expected to be positive `> 0`
+
+The following request intiates an internal transfer of 50 EUR cents, between the debtor account `00000000-0000-0000-0000-100000000000` and the creditor account `00000000-0000-0000-0000-200000000000` with the remittance information `test`
+
+
+**Request**
+```JSON
+POST /transactions/internal_transfers/initiate
+
+{
+    "amount": 50,
+    "creditor_account_id": "00000000-0000-0000-0000-200000000000",
+    "currency": "eur",
+    "debtor_account_id": "00000000-0000-0000-0000-100000000000",
+    "remittance_information": "test"
+}
+```
+
+**Response**
+
+```JSON
+200 OK
+
+{
+    "id": "00000000-0000-0000-0000-900000000001"
 }
 ```
 
