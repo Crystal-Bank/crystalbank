@@ -18,7 +18,7 @@ module CrystalBank::Domains::Transactions::Postings
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20
       ) : ListResponse(Responses::Posting)
-        postings = ::Postings::Queries::Postings.new.list(cursor: cursor, limit: limit).map do |a|
+        postings = ::Postings::Queries::Postings.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Posting.new(
             id: a.id,
             account_id: a.account_id,
@@ -32,7 +32,8 @@ module CrystalBank::Domains::Transactions::Postings
 
         ListResponse(Responses::Posting).new(
           url: request.resource,
-          data: postings
+          data: postings,
+          limit: limit
         )
       end
     end

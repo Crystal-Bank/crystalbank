@@ -36,7 +36,7 @@ module CrystalBank::Domains::Accounts
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20
       ) : ListResponse(Responses::Account)
-        accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit).map do |a|
+        accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(
             a.id,
             a.currencies,
@@ -46,7 +46,8 @@ module CrystalBank::Domains::Accounts
 
         ListResponse(Responses::Account).new(
           url: request.resource,
-          data: accounts
+          data: accounts,
+          limit: limit
         )
       end
     end
