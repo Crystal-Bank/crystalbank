@@ -12,15 +12,12 @@ module CrystalBank::Domains::Customers
         end
       end
 
-      # Respond with a single account entity
+      # Respond with a single customer entity
       struct Customer
         include JSON::Serializable
 
         @[JSON::Field(format: "uuid", description: "ID of the requested customer")]
         getter id : UUID
-
-        # @[JSON::Field(description: "Address of the customer")]
-        # getter address : String
 
         @[JSON::Field(description: "Name of the customer")]
         getter name : String
