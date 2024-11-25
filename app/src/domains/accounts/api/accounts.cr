@@ -14,7 +14,11 @@ module CrystalBank::Domains::Accounts
       # Required permission:
       # - **write:accounts.opening**
       @[AC::Route::POST("/open", body: :r)]
-      def open(r : OpeningRequest) : OpeningResponse
+      def open(
+        r : OpeningRequest,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID
+      ) : OpeningResponse
         aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r)
 
         OpeningResponse.new(aggregate_id)
