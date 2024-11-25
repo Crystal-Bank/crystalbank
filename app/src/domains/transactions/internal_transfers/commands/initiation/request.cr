@@ -23,7 +23,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
 
           raise CrystalBank::Exception::InvalidArgument.new("Debtor account is not open") unless debtor_account_aggr.state.open
           raise CrystalBank::Exception::InvalidArgument.new(
-            "The requested currency '#{currency.to_s}' is not supported by the debtor account. Available currencies are: '#{debtor_account_aggr.state.supported_currencies.join(", ")}'"
+            "The requested currency '#{currency.to_s.downcase}' is not supported by the debtor account. Available currencies are: '#{debtor_account_aggr.state.supported_currencies.join(", ")}'"
           ) unless debtor_account_aggr.state.supported_currencies.includes?(currency)
 
           # Check creditor account state
@@ -32,7 +32,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
 
           raise CrystalBank::Exception::InvalidArgument.new("Creditor account is not open") unless creditor_account_aggr.state.open
           raise CrystalBank::Exception::InvalidArgument.new(
-            "The requested currency '#{currency.to_s}' is not supported by the creditor account. Available currencies are: '#{creditor_account_aggr.state.supported_currencies.join(", ")}'"
+            "The requested currency '#{currency.to_s.downcase}' is not supported by the creditor account. Available currencies are: '#{creditor_account_aggr.state.supported_currencies.join(", ")}'"
           ) unless creditor_account_aggr.state.supported_currencies.includes?(currency)
 
           # Create the account creation request event
