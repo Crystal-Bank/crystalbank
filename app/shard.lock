@@ -2,7 +2,7 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 7.4.3
+    version: 7.5.0
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
@@ -10,7 +10,7 @@ shards:
 
   crystal-es:
     git: https://github.com/tristanholl/crystal-es.git
-    version: 0.1.0+git.commit.52908e92d3bf66a19a30d901917ab1a7b09b9a0c
+    version: 0.1.0+git.commit.651ad39f295334c20cc6b6caa418a743b9a129ab
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
@@ -38,5 +38,5 @@ shards:
 
   pg:
     git: https://github.com/will/crystal-pg.git
-    version: 0.28.0
+    version: 0.29.0
 
