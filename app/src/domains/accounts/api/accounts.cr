@@ -26,8 +26,13 @@ module CrystalBank::Domains::Accounts
       # Required permission:
       # - **read:accounts.list**
       @[AC::Route::GET("/")]
-      def list_accounts : ListResponse(Responses::Account)
-        accounts = ::Accounts::Queries::Accounts.new.call.map do |a|
+      def list_accounts(
+        @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
+        cursor : UUID?,
+        @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
+        limit : Int32 = 20
+      ) : ListResponse(Responses::Account)
+        accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit).map do |a|
           Responses::Account.new(
             a.id,
             a.currencies,
