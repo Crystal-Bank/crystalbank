@@ -40,7 +40,7 @@ The project will expose the API on [http://localhost:4000](http://localhost:4000
 In order to generate updated API specs, run:
 
 ```bash 
-$ crystal src/server/start.cr -d -f openapi.yml 
+$ crystal src/server/start.cr -d -f openapi.json 
 ```
 
 This will automatically be shared with the running redoc application
