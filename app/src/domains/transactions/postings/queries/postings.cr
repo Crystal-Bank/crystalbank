@@ -26,6 +26,8 @@ module CrystalBank::Domains::Transactions::Postings
         cursor : UUID?,
         limit : Int32
       ) : Array(Posting)
+        query_param_counter = 0
+
         query = [] of String
         query_params = Array(UUID? | Int32).new
 
@@ -33,12 +35,12 @@ module CrystalBank::Domains::Transactions::Postings
 
         # Add pagination cursor to query
         unless cursor.nil?
-          query << %(AND "uuid" >= $1)
+          query << %(AND "uuid" >= $#{query_param_counter += 1})
           query_params << cursor
         end
 
         query << %(ORDER BY "uuid" ASC)
-        query << %(LIMIT $2)
+        query << %(LIMIT $#{query_param_counter += 1})
         query_params << limit
 
         @db.query_all(query.join(" "), args: query_params, as: Posting)
