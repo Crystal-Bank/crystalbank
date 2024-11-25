@@ -17,6 +17,9 @@ module CrystalBank::Domains::Transactions::Postings
         @[JSON::Field(format: "uuid", description: "ID of the creditor account")]
         getter creditor_account_id : UUID
 
+        @[JSON::Field(description: "currency of the posting")]
+        getter currency : CrystalBank::Types::Currencies::Available
+
         @[JSON::Field(format: "uuid", description: "ID of the debtor account")]
         getter debtor_account_id : UUID
 
@@ -28,6 +31,7 @@ module CrystalBank::Domains::Transactions::Postings
           @account_id : UUID,
           @amount : Int64,
           @creditor_account_id : UUID,
+          @currency : CrystalBank::Types::Currencies::Available,
           @debtor_account_id : UUID,
           @remittance_information : String
         ); end
