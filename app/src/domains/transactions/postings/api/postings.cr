@@ -12,13 +12,19 @@ module CrystalBank::Domains::Transactions::Postings
       # Required permission:
       # - **read:postings.list**
       @[AC::Route::GET("/")]
-      def list_postings : ListResponse(Responses::Posting)
-        postings = ::Postings::Queries::Postings.new.call.map do |a|
+      def list_postings(
+        @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
+        cursor : UUID?,
+        @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
+        limit : Int32 = 20
+      ) : ListResponse(Responses::Posting)
+        postings = ::Postings::Queries::Postings.new.list(cursor: cursor, limit: limit).map do |a|
           Responses::Posting.new(
             id: a.id,
             account_id: a.account_id,
             amount: a.amount,
             creditor_account_id: a.creditor_account_id,
+            currency: a.currency,
             debtor_account_id: a.debtor_account_id,
             remittance_information: a.remittance_information
           )
