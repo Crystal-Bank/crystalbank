@@ -2,6 +2,7 @@ require "../src/crystalbank"
 
 # ---------------------------------------------------------
 # This showcases
+#  - the onboarding of a customer
 #  - the opening of two accounts, debtor and creditor
 #  - internal transfers between the two accounts
 #  - projection into the "projections"."accounts" table
@@ -10,11 +11,29 @@ require "../src/crystalbank"
 
 NUMBER_OF_TRANSFERS = 1000
 
-puts "Opening debtor and creditor account"
-creditor_account_openeing_request = Accounts::Api::Requests::OpeningRequest.from_json(%({"currencies": ["eur", "usd", "jpy"], "type": "checking"}))
-creditor_account_id = Accounts::Opening::Commands::Request.new.call(creditor_account_openeing_request)
+puts "Create customer"
+customer_onboarding_request = Customers::Api::Requests::OnboardingRequest.from_json(%({"name": "John Doe", "type": "individual"}))
+customer_id = Customers::Onboarding::Commands::Request.new.call(customer_onboarding_request)
 
-debtor_account_opening_request = Accounts::Api::Requests::OpeningRequest.from_json(%({"currencies": ["eur", "usd"], "type": "checking"}))
+# Wait 10 seconds until customer is fully onboarded
+puts "Waiting for customer onboarding requests to be accepted"
+customer_onboarded = false
+attempt = 0
+while !customer_onboarded && attempt < 10
+  customer_aggregate = Customers::Aggregate.new(customer_id)
+  customer_aggregate.hydrate
+  customer_onboarded = customer_aggregate.state.onboarded
+
+  attempt += 1
+  puts "Check if customer is fully onboarded, attempt no: #{attempt}"
+  sleep 1.seconds
+end
+
+puts "Opening debtor and creditor account"
+creditor_account_opening_request = Accounts::Api::Requests::OpeningRequest.from_json(%({"currencies": ["eur", "usd", "jpy"], "type": "checking", "customer_ids": ["#{customer_id}"]}))
+creditor_account_id = Accounts::Opening::Commands::Request.new.call(creditor_account_opening_request)
+
+debtor_account_opening_request = Accounts::Api::Requests::OpeningRequest.from_json(%({"currencies": ["eur", "usd"], "type": "checking", "customer_ids": ["#{customer_id}"]}))
 debtor_account_id = Accounts::Opening::Commands::Request.new.call(debtor_account_opening_request)
 puts "Account opening requested: Creditor account ID: #{creditor_account_id}, Debtor account ID: #{debtor_account_id}"
 
