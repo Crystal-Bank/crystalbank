@@ -17,6 +17,7 @@ module CrystalBank::Domains::Accounts
           body = event.body.as(Accounts::Opening::Events::Requested::Body)
           @state.supported_currencies = body.currencies
           @state.type = body.type
+          @state.customer_ids = body.customer_ids
         end
       end
     end

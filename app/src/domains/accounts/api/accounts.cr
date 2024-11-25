@@ -40,6 +40,7 @@ module CrystalBank::Domains::Accounts
           Responses::Account.new(
             a.id,
             a.currencies,
+            a.customer_ids,
             CrystalBank::Types::Accounts::Type.parse(a.type)
           )
         end

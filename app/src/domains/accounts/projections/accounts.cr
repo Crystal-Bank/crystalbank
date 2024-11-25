@@ -13,6 +13,7 @@ module CrystalBank::Domains::Accounts
             "aggregate_version" int8 NOT NULL,
             "created_at" timestamp NOT NULL,
             "currencies" jsonb NOT NULL,
+            "customer_ids" jsonb NOT NULL,
             "type" varchar NOT NULL
           );
         )
@@ -36,6 +37,7 @@ module CrystalBank::Domains::Accounts
 
         # Extract attributes to local variables
         currencies = aggregate.state.supported_currencies.to_json
+        customer_ids = aggregate.state.customer_ids.to_json
         type = aggregate.state.type.to_s.downcase
 
         # Insert the account projection into the projection database
@@ -48,15 +50,17 @@ module CrystalBank::Domains::Accounts
                 aggregate_version,
                 created_at,
                 type,
-                currencies
+                currencies,
+                customer_ids
               )
-              VALUES ($1, $2, $3, $4, $5)
+              VALUES ($1, $2, $3, $4, $5, $6)
           ),
             aggregate_id,
             aggregate_version,
             created_at,
             type.to_s,
-            currencies
+            currencies,
+            customer_ids
         end
       end
     end

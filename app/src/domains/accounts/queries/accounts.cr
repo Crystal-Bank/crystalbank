@@ -13,6 +13,9 @@ module CrystalBank::Domains::Accounts
         @[DB::Field(converter: CrystalBank::Converters::CurrencyArray(CrystalBank::Types::Currencies::Supported))]
         getter currencies = Array(CrystalBank::Types::Currencies::Supported).new
 
+        @[DB::Field(converter: CrystalBank::Converters::UUIDArray)]
+        getter customer_ids = Array(UUID).new
+
         getter type : String
       end
 
