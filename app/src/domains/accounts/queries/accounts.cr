@@ -21,17 +21,17 @@ module CrystalBank::Domains::Accounts
       end
 
       def list(
-        cursor : UUID?, 
+        cursor : UUID?,
         limit : Int32
       ) : Array(Account)
         query = [] of String
         query_params = Array(UUID? | Int32).new
 
         query << %(SELECT * FROM "projections"."accounts" WHERE 1=1)
-  
+
         # Add pagination cursor to query
         unless cursor.nil?
-          query << %(AND "uuid" >= $1) 
+          query << %(AND "uuid" >= $1)
           query_params << cursor
         end
 

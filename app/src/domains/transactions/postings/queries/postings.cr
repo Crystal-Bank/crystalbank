@@ -21,9 +21,9 @@ module CrystalBank::Domains::Transactions::Postings
       def initialize
         @db = ES::Config.projection_database
       end
-      
+
       def list(
-        cursor : UUID?, 
+        cursor : UUID?,
         limit : Int32
       ) : Array(Posting)
         query = [] of String
@@ -33,7 +33,7 @@ module CrystalBank::Domains::Transactions::Postings
 
         # Add pagination cursor to query
         unless cursor.nil?
-          query << %(AND "uuid" >= $1) 
+          query << %(AND "uuid" >= $1)
           query_params << cursor
         end
 
