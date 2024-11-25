@@ -97,6 +97,33 @@ POST /accounts/open
 }
 ```
 
+### Customers
+
+The customers domain allows to onboard customers to the system. A customer is an entity that can be the sole or shared owner of an account. 
+
+The following request creates a customer of the type `business`
+
+
+**Request**
+```JSON
+POST /customers/onboard
+
+{
+    "name": "Business customer",
+    "type": "business"
+}
+```
+
+**Response**
+
+```JSON
+200 OK
+
+{
+    "id": "00000000-0000-0000-0000-000000000011"
+}
+```
+
 ### Transactions :: InternalTransfers
 
 The `InternalTransfer` is a subdomain of `Transactions` and allows to move money between existing accounts. The internal transfer requires two existing and open accounts, which both support the requested currency. Transfer amounts are always expected to be positive `> 0`
