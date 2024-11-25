@@ -5,10 +5,8 @@ module Test::Customer::Events
     class Accepted
       def create : Customers::Onboarding::Events::Accepted
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        account_type = CrystalBank::Types::Customers::Type.parse("individual")
         aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
         aggregate_version = 1
-        name = "Peter Pan"
         command_handler = "test"
         comment = "test comment"
 

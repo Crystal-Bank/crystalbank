@@ -5,7 +5,7 @@ module Test::Customer::Events
     class Requested
       def create : Customers::Onboarding::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        account_type = CrystalBank::Types::Customers::Type.parse("individual")
+        customer_type = CrystalBank::Types::Customers::Type.parse("individual")
         aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
         name = "Peter Pan"
         command_handler = "test"
@@ -15,7 +15,7 @@ module Test::Customer::Events
           actor_id: actor_id,
           aggregate_id: aggregate_id,
           name: name,
-          type: account_type,
+          type: customer_type,
           command_handler: command_handler,
           comment: comment
         )
