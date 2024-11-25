@@ -15,8 +15,10 @@ def process_queue(queue : ES::Queue)
     event = event_handlers.event_class(h.event_handle).new(h, es_event.body)
 
     if event_bus.publish(event)
-      queue.archive(message.msg_id)
+      queue.delete(message.msg_id)
     end
+  rescue
+    queue.archive(message.msg_id) unless message.nil?
   end
 end
 
