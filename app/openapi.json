@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.2.2"
+        "version": "0.3.1"
     },
     "paths": {
         "/accounts/open": {
@@ -105,6 +105,128 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/customers/onboard": {
+            "post": {
+                "summary": "Request onboarding",
+                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write:customers.opening**",
+                "tags": [
+                    "Customers"
+                ],
+                "operationId": "CrystalBank::Domains::Customers::Api::Customers_onboard",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Customers__Api__Requests__OnboardingRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Customers__Api__Responses__OnboardingResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/customers": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList all customers\n\nRequired permission:\n- **read:customers.list**",
+                "tags": [
+                    "Customers"
+                ],
+                "operationId": "CrystalBank::Domains::Customers::Api::Customers_list_customers",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Customers__Api__Responses__Customer_"
                                 }
                             }
                         }
@@ -360,6 +482,116 @@
                             "required": [
                                 "id",
                                 "currencies",
+                                "type"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "meta",
+                    "data"
+                ]
+            },
+            "CrystalBank__Domains__Customers__Api__Requests__OnboardingRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the customer. Needs to be at least 2 characters long"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "business",
+                            "individual"
+                        ],
+                        "description": "Type of the customer"
+                    }
+                },
+                "required": [
+                    "name",
+                    "type"
+                ]
+            },
+            "CrystalBank__Domains__Customers__Api__Responses__OnboardingResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the requested customer"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "Response to a customer onboarding request"
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Customers__Api__Responses__Customer_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID of the requested customer"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "Name of the customer"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "business",
+                                        "individual"
+                                    ],
+                                    "description": "Type of the customer"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "name",
                                 "type"
                             ]
                         }

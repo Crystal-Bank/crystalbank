@@ -11,5 +11,6 @@ require "./shared/load"
 
 # Load domains
 require "./domains/accounts/load"
+require "./domains/customers/load"
 require "./domains/transactions/internal_transfers/load"
 require "./domains/transactions/postings/load"

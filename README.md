@@ -97,6 +97,33 @@ POST /accounts/open
 }
 ```
 
+### Customers
+
+The customers domain allows to onboard customers to the system. A customer is an entity that can be the sole or shared owner of an account. 
+
+The following request creates a customer of the type `business`
+
+
+**Request**
+```JSON
+POST /customers/onboard
+
+{
+    "name": "Business customer",
+    "type": "business"
+}
+```
+
+**Response**
+
+```JSON
+200 OK
+
+{
+    "id": "00000000-0000-0000-0000-000000000011"
+}
+```
+
 ### Transactions :: InternalTransfers
 
 The `InternalTransfer` is a subdomain of `Transactions` and allows to move money between existing accounts. The internal transfer requires two existing and open accounts, which both support the requested currency. Transfer amounts are always expected to be positive `> 0`
@@ -133,7 +160,7 @@ The `Postings` subdomain is providing a view into the postings projection
 
 **Request**
 ```JSON
-GET /transactions/postings
+GET /transactions/postings?limit=10
 
 ```
 
@@ -144,7 +171,12 @@ GET /transactions/postings
 
 {
     "object": "list",
-    "url": "/transactions/postings",
+    "url": "/transactions/postings?limit=10",
+    "meta": {
+        "has_more": true,
+        "limit": 2,
+        "next_cursor": "00000000-0000-0000-0000-900000000002"
+    },
     "data": [
         {
             "id": "00000000-0000-0000-0000-900000000001",
@@ -152,6 +184,14 @@ GET /transactions/postings
             "amount": -50,
             "creditor_account_id": "00000000-0000-0000-0000-200000000000",
             "debtor_account_id": "00000000-0000-0000-0000-100000000000",
+            "remittance_information": "Transfer no: 1"
+        },
+        {
+            "id": "00000000-0000-0000-0000-900000000001",
+            "account_id": "00000000-0000-0000-0000-100000000000",
+            "amount": 50,
+            "creditor_account_id": "00000000-0000-0000-0000-100000000000",
+            "debtor_account_id": "00000000-0000-0000-0000-200000000000",
             "remittance_information": "Transfer no: 1"
         }
     ]
