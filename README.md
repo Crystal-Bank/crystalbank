@@ -174,8 +174,8 @@ GET /transactions/postings?limit=10
     "url": "/transactions/postings?limit=10",
     "meta": {
         "has_more": true,
-        "limit": 10,
-        "next_cursor": "019363e4-49af-7f27-8db4-7becf9f1f832"
+        "limit": 2,
+        "next_cursor": "00000000-0000-0000-0000-900000000002"
     },
     "data": [
         {
@@ -184,6 +184,14 @@ GET /transactions/postings?limit=10
             "amount": -50,
             "creditor_account_id": "00000000-0000-0000-0000-200000000000",
             "debtor_account_id": "00000000-0000-0000-0000-100000000000",
+            "remittance_information": "Transfer no: 1"
+        },
+        {
+            "id": "00000000-0000-0000-0000-900000000001",
+            "account_id": "00000000-0000-0000-0000-100000000000",
+            "amount": 50,
+            "creditor_account_id": "00000000-0000-0000-0000-100000000000",
+            "debtor_account_id": "00000000-0000-0000-0000-200000000000",
             "remittance_information": "Transfer no: 1"
         }
     ]
