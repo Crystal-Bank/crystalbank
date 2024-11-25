@@ -15,14 +15,40 @@ module CrystalBank
       struct ListResponse(T)
         include JSON::Serializable
 
+        struct Meta
+          include JSON::Serializable
+
+          @[JSON::Field(description: "Indicator if there are more entries")]
+          getter has_more : Bool
+          @[JSON::Field(description: "Number of entries in the response")]
+          getter limit : Int32
+          @[JSON::Field(format: "uuid", description: "Next cursor of the list")]
+          getter next_cursor : UUID?
+
+          def initialize(@limit : Int32, @next_cursor : UUID?)
+            @has_more = !@next_cursor.nil?
+          end
+        end
+
         @[JSON::Field(description: "Object type of the response", example: "/entities")]
         getter object : String = "list"
         @[JSON::Field(format: "uuid", description: "Url of the entity")]
         getter url : String
+        @[JSON::Field(description: "Meta information about the dataset")]
+        getter meta : Meta
         @[JSON::Field(format: "array", description: "Array of entities")]
         getter data : Array(T)
 
-        def initialize(@url : String, @data : Array(T))
+        def initialize(@url : String, data : Array(T), limit : Int32)
+          # Remove last element and set cursor
+          next_cursor_id = if data.size > limit
+                             last = data.last
+                             data.pop
+                             last.nil? ? nil : last.id
+                           end
+
+          @meta = Meta.new(limit, next_cursor_id)
+          @data = data
         end
       end
 

@@ -16,8 +16,11 @@ dependencies:
     github: will/crystal-pg
 
   action-controller:
+    # path: /action-controller
+    # github: tristanholl/action-controller
+    # branch: add-support-for-header-params
     github: spider-gazelle/action-controller
-    version: ~> 7.4
+    version: ~> 7.5
 
 crystal: '>= 1.14.0'
 

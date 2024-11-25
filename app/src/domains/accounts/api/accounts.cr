@@ -14,7 +14,11 @@ module CrystalBank::Domains::Accounts
       # Required permission:
       # - **write:accounts.opening**
       @[AC::Route::POST("/open", body: :r)]
-      def open(r : OpeningRequest) : OpeningResponse
+      def open(
+        r : OpeningRequest,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID
+      ) : OpeningResponse
         aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r)
 
         OpeningResponse.new(aggregate_id)
@@ -26,8 +30,13 @@ module CrystalBank::Domains::Accounts
       # Required permission:
       # - **read:accounts.list**
       @[AC::Route::GET("/")]
-      def list_accounts : ListResponse(Responses::Account)
-        accounts = ::Accounts::Queries::Accounts.new.call.map do |a|
+      def list_accounts(
+        @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
+        cursor : UUID?,
+        @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
+        limit : Int32 = 20
+      ) : ListResponse(Responses::Account)
+        accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(
             a.id,
             a.currencies,
@@ -37,7 +46,8 @@ module CrystalBank::Domains::Accounts
 
         ListResponse(Responses::Account).new(
           url: request.resource,
-          data: accounts
+          data: accounts,
+          limit: limit
         )
       end
     end

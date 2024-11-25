@@ -179,6 +179,10 @@ module CrystalBank::Types::Currencies
     ZAR # 710 - Rand
     ZMW # 967 - Zambian Kwacha
     ZWG # 924 - Zimbabwe Gold
+
+    def to_s
+      super.to_s.downcase
+    end
   end
 
   enum Supported
@@ -187,5 +191,9 @@ module CrystalBank::Types::Currencies
     GBP # 826 - Pound Sterling
     JPY # 392 - Yen
     USD # 840 - US Dollar
+
+    def to_s
+      super.to_s.downcase
+    end
   end
 end

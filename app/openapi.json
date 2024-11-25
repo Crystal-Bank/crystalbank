@@ -24,7 +24,18 @@
                     },
                     "required": true
                 },
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -63,7 +74,30 @@
                     "Accounts"
                 ],
                 "operationId": "CrystalBank::Domains::Accounts::Api::Accounts_list_accounts",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -151,7 +185,30 @@
                     "Postings"
                 ],
                 "operationId": "CrystalBank::Domains::Transactions::Postings::Api::Postings_list_postings",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -242,6 +299,30 @@
                         "format": "uuid",
                         "description": "Url of the entity"
                     },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
                     "data": {
                         "type": "array",
                         "description": "Array of entities",
@@ -287,6 +368,7 @@
                 "required": [
                     "object",
                     "url",
+                    "meta",
                     "data"
                 ]
             },
@@ -358,6 +440,30 @@
                         "format": "uuid",
                         "description": "Url of the entity"
                     },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
                     "data": {
                         "type": "array",
                         "description": "Array of entities",
@@ -384,6 +490,191 @@
                                     "format": "uuid",
                                     "description": "ID of the creditor account"
                                 },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "aed",
+                                        "afn",
+                                        "all",
+                                        "amd",
+                                        "ang",
+                                        "aoa",
+                                        "ars",
+                                        "aud",
+                                        "awg",
+                                        "azn",
+                                        "bam",
+                                        "bbd",
+                                        "bdt",
+                                        "bgn",
+                                        "bhd",
+                                        "bif",
+                                        "bmd",
+                                        "bnd",
+                                        "bob",
+                                        "bov",
+                                        "brl",
+                                        "bsd",
+                                        "btn",
+                                        "bwp",
+                                        "byn",
+                                        "bzd",
+                                        "cad",
+                                        "cdf",
+                                        "che",
+                                        "chf",
+                                        "chw",
+                                        "clf",
+                                        "clp",
+                                        "cny",
+                                        "cop",
+                                        "cou",
+                                        "crc",
+                                        "cuc",
+                                        "cup",
+                                        "cve",
+                                        "czk",
+                                        "djf",
+                                        "dkk",
+                                        "dop",
+                                        "dzd",
+                                        "egp",
+                                        "ern",
+                                        "etb",
+                                        "eur",
+                                        "fjd",
+                                        "fkp",
+                                        "gbp",
+                                        "gel",
+                                        "ghs",
+                                        "gip",
+                                        "gmd",
+                                        "gnf",
+                                        "gtq",
+                                        "gyd",
+                                        "hkd",
+                                        "hnl",
+                                        "htg",
+                                        "huf",
+                                        "idr",
+                                        "ils",
+                                        "inr",
+                                        "iqd",
+                                        "irr",
+                                        "isk",
+                                        "jmd",
+                                        "jod",
+                                        "jpy",
+                                        "kes",
+                                        "kgs",
+                                        "khr",
+                                        "kmf",
+                                        "kpw",
+                                        "krw",
+                                        "kwd",
+                                        "kyd",
+                                        "kzt",
+                                        "lak",
+                                        "lbp",
+                                        "lkr",
+                                        "lrd",
+                                        "lsl",
+                                        "lyd",
+                                        "mad",
+                                        "mdl",
+                                        "mga",
+                                        "mkd",
+                                        "mmk",
+                                        "mnt",
+                                        "mop",
+                                        "mru",
+                                        "mur",
+                                        "mvr",
+                                        "mwk",
+                                        "mxn",
+                                        "mxv",
+                                        "myr",
+                                        "mzn",
+                                        "nad",
+                                        "ngn",
+                                        "nio",
+                                        "nok",
+                                        "npr",
+                                        "nzd",
+                                        "omr",
+                                        "pab",
+                                        "pen",
+                                        "pgk",
+                                        "php",
+                                        "pkr",
+                                        "pln",
+                                        "pyg",
+                                        "qar",
+                                        "ron",
+                                        "rsd",
+                                        "rub",
+                                        "rwf",
+                                        "sar",
+                                        "sbd",
+                                        "scr",
+                                        "sdg",
+                                        "sek",
+                                        "sgd",
+                                        "shp",
+                                        "sle",
+                                        "sos",
+                                        "srd",
+                                        "ssp",
+                                        "stn",
+                                        "svc",
+                                        "syp",
+                                        "szl",
+                                        "thb",
+                                        "tjs",
+                                        "tmt",
+                                        "tnd",
+                                        "top",
+                                        "try",
+                                        "ttd",
+                                        "twd",
+                                        "tzs",
+                                        "uah",
+                                        "ugx",
+                                        "usd",
+                                        "usn",
+                                        "uyi",
+                                        "uyu",
+                                        "uyw",
+                                        "uzs",
+                                        "ved",
+                                        "ves",
+                                        "vnd",
+                                        "vuv",
+                                        "wst",
+                                        "xaf",
+                                        "xag",
+                                        "xau",
+                                        "xba",
+                                        "xbb",
+                                        "xbc",
+                                        "xbd",
+                                        "xcd",
+                                        "xdr",
+                                        "xof",
+                                        "xpd",
+                                        "xpf",
+                                        "xpt",
+                                        "xsu",
+                                        "xts",
+                                        "xua",
+                                        "xxx",
+                                        "yer",
+                                        "zar",
+                                        "zmw",
+                                        "zwg"
+                                    ],
+                                    "description": "currency of the posting"
+                                },
                                 "debtor_account_id": {
                                     "type": "string",
                                     "format": "uuid",
@@ -399,6 +690,7 @@
                                 "account_id",
                                 "amount",
                                 "creditor_account_id",
+                                "currency",
                                 "debtor_account_id",
                                 "remittance_information"
                             ]
@@ -408,6 +700,7 @@
                 "required": [
                     "object",
                     "url",
+                    "meta",
                     "data"
                 ]
             },

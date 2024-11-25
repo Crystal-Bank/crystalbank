@@ -36,7 +36,7 @@ module CrystalBank::Domains::Accounts
 
         # Extract attributes to local variables
         currencies = aggregate.state.supported_currencies.to_json
-        type = aggregate.state.type
+        type = aggregate.state.type.to_s.downcase
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
@@ -55,7 +55,7 @@ module CrystalBank::Domains::Accounts
             aggregate_id,
             aggregate_version,
             created_at,
-            type,
+            type.to_s,
             currencies
         end
       end

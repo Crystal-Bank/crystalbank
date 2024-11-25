@@ -13,6 +13,7 @@ module CrystalBank::Domains::Transactions::Postings
         getter account_id : UUID
         getter amount : Int64
         getter creditor_account_id : UUID
+        getter currency : CrystalBank::Types::Currencies::Available
         getter debtor_account_id : UUID
         getter remittance_information : String
       end
@@ -21,12 +22,28 @@ module CrystalBank::Domains::Transactions::Postings
         @db = ES::Config.projection_database
       end
 
-      def call : Array(Posting)
-        list
-      end
+      def list(
+        cursor : UUID?,
+        limit : Int32
+      ) : Array(Posting)
+        query_param_counter = 0
 
-      private def list : Array(Posting)
-        @db.query_all(%(SELECT * FROM "projections"."postings"), as: Posting)
+        query = [] of String
+        query_params = Array(UUID? | Int32).new
+
+        query << %(SELECT * FROM "projections"."postings" WHERE 1=1)
+
+        # Add pagination cursor to query
+        unless cursor.nil?
+          query << %(AND "uuid" >= $#{query_param_counter += 1})
+          query_params << cursor
+        end
+
+        query << %(ORDER BY "uuid" ASC)
+        query << %(LIMIT $#{query_param_counter += 1})
+        query_params << limit
+
+        @db.query_all(query.join(" "), args: query_params, as: Posting)
       end
     end
   end
