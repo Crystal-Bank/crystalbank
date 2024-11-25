@@ -6,11 +6,15 @@ module CrystalBank::Domains::Customers
           # TODO: Replace with actor from context
           dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
 
+          # Check if name is valid
+          name = r.name
+          raise CrystalBank::Exception::InvalidArgument.new("Name must be at least 2 characters") if name.strip.size < 2
+
           # Create the customer onboarding request event
           event = Customers::Onboarding::Events::Requested.new(
             actor_id: dummy_actor,
             command_handler: self.class.to_s,
-            name: r.name,
+            name: name,
             type: r.type
           )
 

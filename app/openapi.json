@@ -499,7 +499,7 @@
                 "properties": {
                     "name": {
                         "type": "string",
-                        "description": "Name of the customer"
+                        "description": "Name of the customer. Needs to be at least 2 characters long"
                     },
                     "type": {
                         "type": "string",
