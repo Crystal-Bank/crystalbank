@@ -83,7 +83,10 @@ POST /accounts/open
         "eur",
         "usd"
     ],
-    "type": "checking"
+    "type": "checking",
+    "customer_ids": [
+        "00000000-0000-0000-0000-000000000011"
+    ]
 }
 ```
 

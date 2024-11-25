@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.3.1"
+        "version": "0.3.2"
     },
     "paths": {
         "/accounts/open": {
@@ -381,6 +381,14 @@
                             ]
                         }
                     },
+                    "customer_ids": {
+                        "type": "array",
+                        "description": "List of account owners (customers)",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
                     "type": {
                         "type": "string",
                         "enum": [
@@ -392,6 +400,7 @@
                 },
                 "required": [
                     "currencies",
+                    "customer_ids",
                     "type"
                 ]
             },
@@ -470,6 +479,14 @@
                                         ]
                                     }
                                 },
+                                "customer_ids": {
+                                    "type": "array",
+                                    "description": "List of account owners (customers)",
+                                    "items": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    }
+                                },
                                 "type": {
                                     "type": "string",
                                     "enum": [
@@ -482,6 +499,7 @@
                             "required": [
                                 "id",
                                 "currencies",
+                                "customer_ids",
                                 "type"
                             ]
                         }

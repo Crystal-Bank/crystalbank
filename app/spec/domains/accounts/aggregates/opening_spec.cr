@@ -6,6 +6,7 @@ describe CrystalBank::Domains::Accounts::Aggregates::Concerns::Opening do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currencies::Supported.parse(c) }
+      customer_ids = [UUID.new("00000000-0000-0000-0000-200000000001"), UUID.new("00000000-0000-0000-0000-200000000002")]
       type = CrystalBank::Types::Accounts::Type.parse("checking")
 
       aggregate = Accounts::Aggregate.new(aggregate_id)
@@ -15,6 +16,7 @@ describe CrystalBank::Domains::Accounts::Aggregates::Concerns::Opening do
         actor_id: actor_id,
         command_handler: "test",
         currencies: currencies,
+        customer_ids: customer_ids,
         type: type
       )
       aggregate.apply(event_1)

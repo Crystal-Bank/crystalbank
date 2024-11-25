@@ -7,6 +7,9 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "List of supported currencies")]
         getter currencies : Array(CrystalBank::Types::Currencies::Supported)
 
+        @[JSON::Field(description: "List of account owners (customers)")]
+        getter customer_ids : Array(UUID)
+
         @[JSON::Field(description: "Type of the account")]
         getter type : CrystalBank::Types::Accounts::Type
       end
