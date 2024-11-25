@@ -299,6 +299,30 @@
                         "format": "uuid",
                         "description": "Url of the entity"
                     },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
                     "data": {
                         "type": "array",
                         "description": "Array of entities",
@@ -344,6 +368,7 @@
                 "required": [
                     "object",
                     "url",
+                    "meta",
                     "data"
                 ]
             },
@@ -414,6 +439,30 @@
                         "type": "string",
                         "format": "uuid",
                         "description": "Url of the entity"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
                     },
                     "data": {
                         "type": "array",
@@ -651,6 +700,7 @@
                 "required": [
                     "object",
                     "url",
+                    "meta",
                     "data"
                 ]
             },
