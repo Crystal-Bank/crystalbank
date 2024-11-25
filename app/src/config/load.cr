@@ -7,3 +7,4 @@ require "./initializers/queue"
 
 require "./types/accounts"
 require "./types/currencies"
+require "./types/customers"
