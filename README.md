@@ -4,9 +4,9 @@
 
 An open source project to showcase a banking system written in Crystal. The project will progress along the following domains:
 
-1. Accounts
-2. Transfers
-3. Customers
+1. Accounts :white_check_mark:
+2. Transfers :white_check_mark:
+3. Customers :white_check_mark:
 4. Roles & Permissions (Data access rights)
 5. Scopes (Data ownership)
 6. ...
