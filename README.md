@@ -160,7 +160,7 @@ The `Postings` subdomain is providing a view into the postings projection
 
 **Request**
 ```JSON
-GET /transactions/postings
+GET /transactions/postings?limit=10
 
 ```
 
@@ -171,7 +171,12 @@ GET /transactions/postings
 
 {
     "object": "list",
-    "url": "/transactions/postings",
+    "url": "/transactions/postings?limit=10",
+    "meta": {
+        "has_more": true,
+        "limit": 10,
+        "next_cursor": "019363e4-49af-7f27-8db4-7becf9f1f832"
+    },
     "data": [
         {
             "id": "00000000-0000-0000-0000-900000000001",
