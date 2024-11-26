@@ -3,10 +3,10 @@ require "../../../../spec_helper"
 module Test::Customer::Events
   module Onboarding
     class Requested
-      def create : Customers::Onboarding::Events::Requested
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")): Customers::Onboarding::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         customer_type = CrystalBank::Types::Customers::Type.parse("individual")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
+        aggregate_id = aggr_id
         name = "Peter Pan"
         command_handler = "test"
         comment = "test comment"
