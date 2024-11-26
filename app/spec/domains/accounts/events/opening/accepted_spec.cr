@@ -3,10 +3,10 @@ require "../../../../spec_helper"
 module Test::Account::Events
   module Opening
     class Accepted
-      def create : Accounts::Opening::Events::Accepted
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Accounts::Opening::Events::Accepted
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        aggregate_version = 1
+        aggregate_id = aggr_id
+        aggregate_version = 2
         command_handler = "test"
         comment = "test comment"
 
@@ -35,7 +35,7 @@ describe CrystalBank::Domains::Accounts::Opening::Events::Accepted do
     event.header.actor_id.should eq(UUID.new("00000000-0000-0000-0000-000000000000"))
     event.header.aggregate_id.should eq(UUID.new("00000000-0000-0000-0000-000000000001"))
     event.header.aggregate_type.should eq("Account")
-    event.header.aggregate_version.should eq(1)
+    event.header.aggregate_version.should eq(2)
     event.header.command_handler.should eq("test")
     event.header.event_handle.should eq("account.opening.accepted")
     event.body.comment.should eq("test comment")

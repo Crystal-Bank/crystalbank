@@ -3,10 +3,10 @@ require "../../../../spec_helper"
 module Test::Account::Events
   module Opening
     class Requested
-      def create : Accounts::Opening::Events::Requested
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Accounts::Opening::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         account_type = CrystalBank::Types::Accounts::Type.parse("checking")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
+        aggregate_id = aggr_id
         currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currencies::Supported.parse(c) }
         customer_ids = [UUID.new("00000000-0000-0000-0000-200000000001"), UUID.new("00000000-0000-0000-0000-200000000002")]
         command_handler = "test"
