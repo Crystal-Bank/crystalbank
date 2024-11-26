@@ -1,38 +1,5 @@
 require "../../../../../spec_helper"
 
-module Test::Transactions::InternalTransfers::Events
-  module Initiation
-    class Accepted
-      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Transactions::InternalTransfers::Initiation::Events::Accepted
-        account_type = CrystalBank::Types::Accounts::Type.parse("checking")
-        actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        aggregate_id = aggr_id
-        aggregate_version = 2
-        amount = 100
-        command_handler = "test"
-        comment = "test comment"
-        creditor_account_id = UUID.new("00000000-0000-0000-0000-200000000000")
-        currency = CrystalBank::Types::Currencies::Supported.parse("eur")
-        debtor_account_id = UUID.new("00000000-0000-0000-0000-100000000000")
-
-        ::Transactions::InternalTransfers::Initiation::Events::Accepted.new(
-          actor_id: actor_id,
-          aggregate_id: aggregate_id,
-          aggregate_version: aggregate_version,
-          command_handler: command_handler,
-          comment: comment
-        )
-      end
-
-      def json_string : String
-        {
-          "comment": "test comment",
-        }.to_json
-      end
-    end
-  end
-end
-
 describe CrystalBank::Domains::Transactions::InternalTransfers::Initiation::Events::Accepted do
   it "can be initialized" do
     event = Test::Transactions::InternalTransfers::Events::Initiation::Accepted.new.create
