@@ -3,11 +3,11 @@ require "../../../../../spec_helper"
 module Test::Transactions::InternalTransfers::Events
   module Initiation
     class Accepted
-      def create : ::Transactions::InternalTransfers::Initiation::Events::Accepted
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Transactions::InternalTransfers::Initiation::Events::Accepted
         account_type = CrystalBank::Types::Accounts::Type.parse("checking")
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        aggregate_version = 1
+        aggregate_id = aggr_id
+        aggregate_version = 2
         amount = 100
         command_handler = "test"
         comment = "test comment"
@@ -40,7 +40,7 @@ describe CrystalBank::Domains::Transactions::InternalTransfers::Initiation::Even
     event.header.actor_id.should eq(UUID.new("00000000-0000-0000-0000-000000000000"))
     event.header.aggregate_id.should eq(UUID.new("00000000-0000-0000-0000-000000000001"))
     event.header.aggregate_type.should eq("Transaction")
-    event.header.aggregate_version.should eq(1)
+    event.header.aggregate_version.should eq(2)
     event.header.command_handler.should eq("test")
     event.header.event_handle.should eq("transactions.internal_transfer.initiation.accepted")
     event.body.comment.should eq("test comment")

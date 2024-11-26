@@ -3,11 +3,10 @@ require "../../../../../spec_helper"
 module Test::Transactions::InternalTransfers::Events
   module Initiation
     class Requested
-      def create : ::Transactions::InternalTransfers::Initiation::Events::Requested
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Transactions::InternalTransfers::Initiation::Events::Requested
         account_type = CrystalBank::Types::Accounts::Type.parse("checking")
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        aggregate_version = 1
+        aggregate_id = aggr_id
         amount = 100
         command_handler = "test"
         comment = "test comment"
