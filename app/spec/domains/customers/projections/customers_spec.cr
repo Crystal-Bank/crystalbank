@@ -5,7 +5,7 @@ require "../events/onboarding/requested_spec"
 describe CrystalBank::Domains::Customers::Projections::Customers do
   it "correctly applies 'Customers::Onboarding::Events::Accepted' event" do
     projection = ::Customers::Projections::Customers.new
-    uuid =  UUID.v7
+    uuid = UUID.v7
 
     event_1 = Test::Customer::Events::Onboarding::Requested.new.create(aggr_id: uuid)
     event_2 = Test::Customer::Events::Onboarding::Accepted.new.create(aggr_id: uuid)

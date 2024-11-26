@@ -8,7 +8,7 @@ describe CrystalBank::Domains::Customers::Aggregate do
     aggr.state.aggregate_id.should eq(uuid)
     aggr.state.aggregate_type.should eq("Customer")
     aggr.state.aggregate_version.should eq(0)
-    
+
     aggr.state.name.should eq(nil)
     aggr.state.onboarded.should eq(false)
     aggr.state.type.should eq(nil)

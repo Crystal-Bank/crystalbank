@@ -5,7 +5,7 @@ require "../events/opening/requested_spec"
 describe CrystalBank::Domains::Customers::Projections::Customers do
   it "correctly applies 'Accounts::Opening::Events::Accepted' event" do
     projection = Accounts::Projections::Accounts.new
-    uuid =  UUID.v7
+    uuid = UUID.v7
 
     event_1 = Test::Account::Events::Opening::Requested.new.create(aggr_id: uuid)
     event_2 = Test::Account::Events::Opening::Accepted.new.create(aggr_id: uuid)
