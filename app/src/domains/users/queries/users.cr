@@ -38,7 +38,7 @@ module CrystalBank::Domains::Users
         query << %(LIMIT $#{query_param_counter += 1})
         query_params << limit
 
-        @db.query_all(query.join(" "), args: query_params, as:User)
+        @db.query_all(query.join(" "), args: query_params, as: User)
       end
     end
   end

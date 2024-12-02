@@ -36,7 +36,7 @@ module CrystalBank::Domains::Users
 
         # Extract attributes to local variables
         name = aggregate.state.name
-        email = aggregate.state.email 
+        email = aggregate.state.email
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
