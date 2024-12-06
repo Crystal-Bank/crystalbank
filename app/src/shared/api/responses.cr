@@ -44,7 +44,6 @@ module CrystalBank
           end
         end
 
-
         @[JSON::Field(description: "Object type of the response", example: "/entities")]
         getter object : String = "list"
         @[JSON::Field(format: "uuid", description: "Url of the entity")]
