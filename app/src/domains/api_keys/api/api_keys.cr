@@ -28,7 +28,7 @@ module CrystalBank::Domains::ApiKeys
       # List api keys
       #
       # Required permission:
-      # - **write:api_keys.list**
+      # - **read:api_keys.list**
       @[AC::Route::GET("/")]
       def list_api_keys(
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]

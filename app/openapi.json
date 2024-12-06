@@ -191,7 +191,7 @@
         "/api_keys": {
             "get": {
                 "summary": "List",
-                "description": "List\nList api keys\n\nRequired permission:\n- **write:api_key.list**",
+                "description": "List\nList api keys\n\nRequired permission:\n- **read:api_keys.list**",
                 "tags": [
                     "ApiKeys"
                 ],
