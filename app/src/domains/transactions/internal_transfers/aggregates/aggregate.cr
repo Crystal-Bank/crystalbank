@@ -2,7 +2,7 @@ require "./initiation"
 
 module CrystalBank::Domains::Transactions::InternalTransfers
   class Aggregate < ES::Aggregate
-    @@type = "Account"
+    @@type = "Transactions.InternalTransfer"
 
     include CrystalBank::Domains::Transactions::InternalTransfers::Aggregates::Concerns::Initiation
 
