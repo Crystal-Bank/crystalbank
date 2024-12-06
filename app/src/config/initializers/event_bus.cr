@@ -8,6 +8,11 @@ bus = ES::Config.event_bus
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands::ProcessRequest)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
+# ApiKeys
+bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
+bus.subscribe(ApiKeys::Generation::Events::Accepted, ApiKeys::Projections::ApiKeys)
+
+
 # Customers
 bus.subscribe(Customers::Onboarding::Events::Requested, Customers::Onboarding::Commands::ProcessRequest)
 bus.subscribe(Customers::Onboarding::Events::Accepted, Customers::Projections::Customers)
