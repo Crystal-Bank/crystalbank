@@ -1,5 +1,4 @@
 .DS_Store
 app/lib/**
 app/REVISION.txt
-app/tools/**
 storage
