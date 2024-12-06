@@ -1,4 +1,6 @@
 require "../../../spec_helper"
+require "../events/onboarding/accepted_spec"
+require "../events/onboarding/requested_spec"
 
 describe CrystalBank::Domains::Customers::Projections::Customers do
   it "correctly applies 'Customers::Onboarding::Events::Accepted' event" do

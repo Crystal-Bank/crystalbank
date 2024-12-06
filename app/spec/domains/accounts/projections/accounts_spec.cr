@@ -1,4 +1,6 @@
 require "../../../spec_helper"
+require "../events/opening/accepted_spec"
+require "../events/opening/requested_spec"
 
 describe CrystalBank::Domains::Accounts::Projections::Accounts do
   it "correctly applies 'Accounts::Opening::Events::Accepted' event" do
