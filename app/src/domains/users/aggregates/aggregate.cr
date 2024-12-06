@@ -2,7 +2,7 @@ require "./onboarding"
 
 module CrystalBank::Domains::Users
   class Aggregate < ES::Aggregate
-    @@type = "Users"
+    @@type = "User"
 
     include CrystalBank::Domains::Users::Aggregates::Concerns::Onboarding
 
