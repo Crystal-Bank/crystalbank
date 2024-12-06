@@ -15,3 +15,7 @@ bus.subscribe(Customers::Onboarding::Events::Accepted, Customers::Projections::C
 # Transactions
 bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Requested, Transactions::InternalTransfers::Initiation::Commands::ProcessRequest)
 bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Accepted, Transactions::InternalTransfers::Projections::Postings)
+
+# Users
+bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands::ProcessRequest)
+bus.subscribe(Users::Onboarding::Events::Accepted, Users::Projections::Users)

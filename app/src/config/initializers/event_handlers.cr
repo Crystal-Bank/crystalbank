@@ -13,3 +13,7 @@ event_handlers.register(Customers::Onboarding::Events::Requested)
 # Transactions
 event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Accepted)
 event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Requested)
+
+# Users
+event_handlers.register(Users::Onboarding::Events::Accepted)
+event_handlers.register(Users::Onboarding::Events::Requested)
