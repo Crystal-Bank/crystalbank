@@ -10,7 +10,7 @@ shards:
 
   crystal-es:
     git: https://github.com/tristanholl/crystal-es.git
-    version: 0.1.0+git.commit.651ad39f295334c20cc6b6caa418a743b9a129ab
+    version: 0.1.1+git.commit.63dda53c1a4af3d2f03f33cb1cd6801bd2b39b12
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
