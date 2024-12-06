@@ -1,6 +1,4 @@
 require "../../../../spec_helper"
-require "../events/initiation/accepted_spec"
-require "../events/initiation/requested_spec"
 
 describe CrystalBank::Domains::Transactions::InternalTransfers::Projections::Postings do
   it "correctly applies 'Transactions::InternalTransfers::Initiation::Events::Accepted' event" do
