@@ -1,38 +1,5 @@
 require "../../../../../spec_helper"
 
-module Test::Transactions::InternalTransfers::Events
-  module Initiation
-    class Accepted
-      def create : ::Transactions::InternalTransfers::Initiation::Events::Accepted
-        account_type = CrystalBank::Types::Accounts::Type.parse("checking")
-        actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        aggregate_version = 1
-        amount = 100
-        command_handler = "test"
-        comment = "test comment"
-        creditor_account_id = UUID.new("00000000-0000-0000-0000-200000000000")
-        currency = CrystalBank::Types::Currencies::Supported.parse("eur")
-        debtor_account_id = UUID.new("00000000-0000-0000-0000-100000000000")
-
-        ::Transactions::InternalTransfers::Initiation::Events::Accepted.new(
-          actor_id: actor_id,
-          aggregate_id: aggregate_id,
-          aggregate_version: aggregate_version,
-          command_handler: command_handler,
-          comment: comment
-        )
-      end
-
-      def json_string : String
-        {
-          "comment": "test comment",
-        }.to_json
-      end
-    end
-  end
-end
-
 describe CrystalBank::Domains::Transactions::InternalTransfers::Initiation::Events::Accepted do
   it "can be initialized" do
     event = Test::Transactions::InternalTransfers::Events::Initiation::Accepted.new.create
@@ -40,7 +7,7 @@ describe CrystalBank::Domains::Transactions::InternalTransfers::Initiation::Even
     event.header.actor_id.should eq(UUID.new("00000000-0000-0000-0000-000000000000"))
     event.header.aggregate_id.should eq(UUID.new("00000000-0000-0000-0000-000000000001"))
     event.header.aggregate_type.should eq("Transaction")
-    event.header.aggregate_version.should eq(1)
+    event.header.aggregate_version.should eq(2)
     event.header.command_handler.should eq("test")
     event.header.event_handle.should eq("transactions.internal_transfer.initiation.accepted")
     event.body.comment.should eq("test comment")

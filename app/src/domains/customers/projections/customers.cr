@@ -22,7 +22,7 @@ module CrystalBank::Domains::Customers
         m.each { |s| @projection_database.exec s }
       end
 
-      # Created
+      # Accepted
       def apply(event : ::Customers::Onboarding::Events::Accepted)
         # Extract attributes to local variables
         uuid = event.header.event_id

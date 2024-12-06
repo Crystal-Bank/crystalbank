@@ -1,33 +1,5 @@
 require "../../../../spec_helper"
 
-module Test::Customer::Events
-  module Onboarding
-    class Accepted
-      def create : Customers::Onboarding::Events::Accepted
-        actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        aggregate_version = 1
-        command_handler = "test"
-        comment = "test comment"
-
-        Customers::Onboarding::Events::Accepted.new(
-          actor_id: actor_id,
-          aggregate_id: aggregate_id,
-          aggregate_version: aggregate_version,
-          command_handler: command_handler,
-          comment: comment
-        )
-      end
-
-      def json_string : String
-        {
-          "comment": "test comment",
-        }.to_json
-      end
-    end
-  end
-end
-
 describe CrystalBank::Domains::Customers::Onboarding::Events::Accepted do
   it "can be initialized" do
     event = Test::Customer::Events::Onboarding::Accepted.new.create
@@ -35,7 +7,7 @@ describe CrystalBank::Domains::Customers::Onboarding::Events::Accepted do
     event.header.actor_id.should eq(UUID.new("00000000-0000-0000-0000-000000000000"))
     event.header.aggregate_id.should eq(UUID.new("00000000-0000-0000-0000-000000000001"))
     event.header.aggregate_type.should eq("Customer")
-    event.header.aggregate_version.should eq(1)
+    event.header.aggregate_version.should eq(2)
     event.header.command_handler.should eq("test")
     event.header.event_handle.should eq("customer.onboarding.accepted")
     event.body.comment.should eq("test comment")

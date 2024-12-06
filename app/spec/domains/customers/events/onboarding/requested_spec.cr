@@ -1,37 +1,5 @@
 require "../../../../spec_helper"
 
-module Test::Customer::Events
-  module Onboarding
-    class Requested
-      def create : Customers::Onboarding::Events::Requested
-        actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
-        customer_type = CrystalBank::Types::Customers::Type.parse("individual")
-        aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
-        name = "Peter Pan"
-        command_handler = "test"
-        comment = "test comment"
-
-        Customers::Onboarding::Events::Requested.new(
-          actor_id: actor_id,
-          aggregate_id: aggregate_id,
-          name: name,
-          type: customer_type,
-          command_handler: command_handler,
-          comment: comment
-        )
-      end
-
-      def json_string : String
-        {
-          "comment": "test comment",
-          "name":    "Peter Pan",
-          "type":    "individual",
-        }.to_json
-      end
-    end
-  end
-end
-
 describe CrystalBank::Domains::Customers::Onboarding::Events::Requested do
   it "can be initialized" do
     event = Test::Customer::Events::Onboarding::Requested.new.create
