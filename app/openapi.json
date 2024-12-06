@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.4.0"
+        "version": "0.5.0"
     },
     "paths": {
         "/accounts/open": {
@@ -105,6 +105,128 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api_keys/generate": {
+            "post": {
+                "summary": "Request generation",
+                "description": "Request generation\nRequest the generation of a new api-key\n\nRequired permission:\n- **write:api_keys.generation**",
+                "tags": [
+                    "ApiKeys"
+                ],
+                "operationId": "CrystalBank::Domains::ApiKeys::Api::ApiKeys_generate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Requests__GenerationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Responses__GenerationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api_keys": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList api keys\n\nRequired permission:\n- **write:api_key.list**",
+                "tags": [
+                    "ApiKeys"
+                ],
+                "operationId": "CrystalBank::Domains::ApiKeys::Api::ApiKeys_list_api_keys",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__ApiKeys__Api__Responses__ApiKey_"
                                 }
                             }
                         }
@@ -630,6 +752,132 @@
                                         "currencies",
                                         "customer_ids",
                                         "type"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "object",
+                                "attributes"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "meta",
+                    "data"
+                ]
+            },
+            "CrystalBank__Domains__ApiKeys__Api__Requests__GenerationRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Custom name of the api-key"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "User id the api-key should be associated with"
+                    }
+                },
+                "required": [
+                    "name",
+                    "user_id"
+                ]
+            },
+            "CrystalBank__Domains__ApiKeys__Api__Responses__GenerationResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the api-key"
+                    },
+                    "secret": {
+                        "type": "string",
+                        "description": "Secret of the api-key (only displayed once on creation)"
+                    }
+                },
+                "required": [
+                    "id",
+                    "secret"
+                ]
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__ApiKeys__Api__Responses__ApiKey_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "object": {
+                                    "type": "string",
+                                    "description": "Object type of the entity"
+                                },
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the api-key"
+                                        },
+                                        "object": {
+                                            "type": "string",
+                                            "description": "Object type of the entity"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "iso8601",
+                                            "description": "Timestamp of the creation of the api-key"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Custom name of the api-key"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "object",
+                                        "created_at",
+                                        "name"
                                     ]
                                 }
                             },
