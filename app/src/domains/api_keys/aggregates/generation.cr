@@ -15,7 +15,7 @@ module CrystalBank::Domains::ApiKeys
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(ApiKeys::Generation::Events::Requested::Body)
-          
+
           @state.name = body.name
           @state.user_id = body.user_id
           @state.api_secret = body.api_secret
