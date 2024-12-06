@@ -1,8 +1,6 @@
 require "../../../spec_helper"
-require "../events/opening/accepted_spec"
-require "../events/opening/requested_spec"
 
-describe CrystalBank::Domains::Customers::Projections::Customers do
+describe CrystalBank::Domains::Accounts::Projections::Accounts do
   it "correctly applies 'Accounts::Opening::Events::Accepted' event" do
     projection = Accounts::Projections::Accounts.new
     uuid = UUID.v7
