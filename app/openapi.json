@@ -582,47 +582,60 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "id": {
+                                "object": {
                                     "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the requested account"
+                                    "description": "Object type of the entity"
                                 },
-                                "currencies": {
-                                    "type": "array",
-                                    "description": "Supported currencies of the account",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": [
-                                            "chf",
-                                            "eur",
-                                            "gbp",
-                                            "jpy",
-                                            "usd"
-                                        ]
-                                    }
-                                },
-                                "customer_ids": {
-                                    "type": "array",
-                                    "description": "List of account owners (customers)",
-                                    "items": {
-                                        "type": "string",
-                                        "format": "uuid"
-                                    }
-                                },
-                                "type": {
-                                    "type": "string",
-                                    "enum": [
-                                        "checking",
-                                        "overnight_money"
-                                    ],
-                                    "description": "Type of the account"
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the requested account"
+                                        },
+                                        "currencies": {
+                                            "type": "array",
+                                            "description": "Supported currencies of the account",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "chf",
+                                                    "eur",
+                                                    "gbp",
+                                                    "jpy",
+                                                    "usd"
+                                                ]
+                                            }
+                                        },
+                                        "customer_ids": {
+                                            "type": "array",
+                                            "description": "List of account owners (customers)",
+                                            "items": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            }
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "checking",
+                                                "overnight_money"
+                                            ],
+                                            "description": "Type of the account"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "currencies",
+                                        "customer_ids",
+                                        "type"
+                                    ]
                                 }
                             },
                             "required": [
-                                "id",
-                                "currencies",
-                                "customer_ids",
-                                "type"
+                                "object",
+                                "attributes"
                             ]
                         }
                     }
@@ -711,28 +724,41 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "id": {
+                                "object": {
                                     "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the requested customer"
+                                    "description": "Object type of the entity"
                                 },
-                                "name": {
-                                    "type": "string",
-                                    "description": "Name of the customer"
-                                },
-                                "type": {
-                                    "type": "string",
-                                    "enum": [
-                                        "business",
-                                        "individual"
-                                    ],
-                                    "description": "Type of the customer"
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the requested customer"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Name of the customer"
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "business",
+                                                "individual"
+                                            ],
+                                            "description": "Type of the customer"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "type"
+                                    ]
                                 }
                             },
                             "required": [
-                                "id",
-                                "name",
-                                "type"
+                                "object",
+                                "attributes"
                             ]
                         }
                     }
@@ -842,229 +868,242 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "id": {
+                                "object": {
                                     "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the posting"
+                                    "description": "Object type of the entity"
                                 },
-                                "account_id": {
-                                    "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the account the posting belongs to"
-                                },
-                                "amount": {
-                                    "type": "integer",
-                                    "format": "Int64",
-                                    "description": "Amount"
-                                },
-                                "creditor_account_id": {
-                                    "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the creditor account"
-                                },
-                                "currency": {
-                                    "type": "string",
-                                    "enum": [
-                                        "aed",
-                                        "afn",
-                                        "all",
-                                        "amd",
-                                        "ang",
-                                        "aoa",
-                                        "ars",
-                                        "aud",
-                                        "awg",
-                                        "azn",
-                                        "bam",
-                                        "bbd",
-                                        "bdt",
-                                        "bgn",
-                                        "bhd",
-                                        "bif",
-                                        "bmd",
-                                        "bnd",
-                                        "bob",
-                                        "bov",
-                                        "brl",
-                                        "bsd",
-                                        "btn",
-                                        "bwp",
-                                        "byn",
-                                        "bzd",
-                                        "cad",
-                                        "cdf",
-                                        "che",
-                                        "chf",
-                                        "chw",
-                                        "clf",
-                                        "clp",
-                                        "cny",
-                                        "cop",
-                                        "cou",
-                                        "crc",
-                                        "cuc",
-                                        "cup",
-                                        "cve",
-                                        "czk",
-                                        "djf",
-                                        "dkk",
-                                        "dop",
-                                        "dzd",
-                                        "egp",
-                                        "ern",
-                                        "etb",
-                                        "eur",
-                                        "fjd",
-                                        "fkp",
-                                        "gbp",
-                                        "gel",
-                                        "ghs",
-                                        "gip",
-                                        "gmd",
-                                        "gnf",
-                                        "gtq",
-                                        "gyd",
-                                        "hkd",
-                                        "hnl",
-                                        "htg",
-                                        "huf",
-                                        "idr",
-                                        "ils",
-                                        "inr",
-                                        "iqd",
-                                        "irr",
-                                        "isk",
-                                        "jmd",
-                                        "jod",
-                                        "jpy",
-                                        "kes",
-                                        "kgs",
-                                        "khr",
-                                        "kmf",
-                                        "kpw",
-                                        "krw",
-                                        "kwd",
-                                        "kyd",
-                                        "kzt",
-                                        "lak",
-                                        "lbp",
-                                        "lkr",
-                                        "lrd",
-                                        "lsl",
-                                        "lyd",
-                                        "mad",
-                                        "mdl",
-                                        "mga",
-                                        "mkd",
-                                        "mmk",
-                                        "mnt",
-                                        "mop",
-                                        "mru",
-                                        "mur",
-                                        "mvr",
-                                        "mwk",
-                                        "mxn",
-                                        "mxv",
-                                        "myr",
-                                        "mzn",
-                                        "nad",
-                                        "ngn",
-                                        "nio",
-                                        "nok",
-                                        "npr",
-                                        "nzd",
-                                        "omr",
-                                        "pab",
-                                        "pen",
-                                        "pgk",
-                                        "php",
-                                        "pkr",
-                                        "pln",
-                                        "pyg",
-                                        "qar",
-                                        "ron",
-                                        "rsd",
-                                        "rub",
-                                        "rwf",
-                                        "sar",
-                                        "sbd",
-                                        "scr",
-                                        "sdg",
-                                        "sek",
-                                        "sgd",
-                                        "shp",
-                                        "sle",
-                                        "sos",
-                                        "srd",
-                                        "ssp",
-                                        "stn",
-                                        "svc",
-                                        "syp",
-                                        "szl",
-                                        "thb",
-                                        "tjs",
-                                        "tmt",
-                                        "tnd",
-                                        "top",
-                                        "try",
-                                        "ttd",
-                                        "twd",
-                                        "tzs",
-                                        "uah",
-                                        "ugx",
-                                        "usd",
-                                        "usn",
-                                        "uyi",
-                                        "uyu",
-                                        "uyw",
-                                        "uzs",
-                                        "ved",
-                                        "ves",
-                                        "vnd",
-                                        "vuv",
-                                        "wst",
-                                        "xaf",
-                                        "xag",
-                                        "xau",
-                                        "xba",
-                                        "xbb",
-                                        "xbc",
-                                        "xbd",
-                                        "xcd",
-                                        "xdr",
-                                        "xof",
-                                        "xpd",
-                                        "xpf",
-                                        "xpt",
-                                        "xsu",
-                                        "xts",
-                                        "xua",
-                                        "xxx",
-                                        "yer",
-                                        "zar",
-                                        "zmw",
-                                        "zwg"
-                                    ],
-                                    "description": "currency of the posting"
-                                },
-                                "debtor_account_id": {
-                                    "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the debtor account"
-                                },
-                                "remittance_information": {
-                                    "type": "string",
-                                    "description": "Remittance information"
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the posting"
+                                        },
+                                        "account_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the account the posting belongs to"
+                                        },
+                                        "amount": {
+                                            "type": "integer",
+                                            "format": "Int64",
+                                            "description": "Amount"
+                                        },
+                                        "creditor_account_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the creditor account"
+                                        },
+                                        "currency": {
+                                            "type": "string",
+                                            "enum": [
+                                                "aed",
+                                                "afn",
+                                                "all",
+                                                "amd",
+                                                "ang",
+                                                "aoa",
+                                                "ars",
+                                                "aud",
+                                                "awg",
+                                                "azn",
+                                                "bam",
+                                                "bbd",
+                                                "bdt",
+                                                "bgn",
+                                                "bhd",
+                                                "bif",
+                                                "bmd",
+                                                "bnd",
+                                                "bob",
+                                                "bov",
+                                                "brl",
+                                                "bsd",
+                                                "btn",
+                                                "bwp",
+                                                "byn",
+                                                "bzd",
+                                                "cad",
+                                                "cdf",
+                                                "che",
+                                                "chf",
+                                                "chw",
+                                                "clf",
+                                                "clp",
+                                                "cny",
+                                                "cop",
+                                                "cou",
+                                                "crc",
+                                                "cuc",
+                                                "cup",
+                                                "cve",
+                                                "czk",
+                                                "djf",
+                                                "dkk",
+                                                "dop",
+                                                "dzd",
+                                                "egp",
+                                                "ern",
+                                                "etb",
+                                                "eur",
+                                                "fjd",
+                                                "fkp",
+                                                "gbp",
+                                                "gel",
+                                                "ghs",
+                                                "gip",
+                                                "gmd",
+                                                "gnf",
+                                                "gtq",
+                                                "gyd",
+                                                "hkd",
+                                                "hnl",
+                                                "htg",
+                                                "huf",
+                                                "idr",
+                                                "ils",
+                                                "inr",
+                                                "iqd",
+                                                "irr",
+                                                "isk",
+                                                "jmd",
+                                                "jod",
+                                                "jpy",
+                                                "kes",
+                                                "kgs",
+                                                "khr",
+                                                "kmf",
+                                                "kpw",
+                                                "krw",
+                                                "kwd",
+                                                "kyd",
+                                                "kzt",
+                                                "lak",
+                                                "lbp",
+                                                "lkr",
+                                                "lrd",
+                                                "lsl",
+                                                "lyd",
+                                                "mad",
+                                                "mdl",
+                                                "mga",
+                                                "mkd",
+                                                "mmk",
+                                                "mnt",
+                                                "mop",
+                                                "mru",
+                                                "mur",
+                                                "mvr",
+                                                "mwk",
+                                                "mxn",
+                                                "mxv",
+                                                "myr",
+                                                "mzn",
+                                                "nad",
+                                                "ngn",
+                                                "nio",
+                                                "nok",
+                                                "npr",
+                                                "nzd",
+                                                "omr",
+                                                "pab",
+                                                "pen",
+                                                "pgk",
+                                                "php",
+                                                "pkr",
+                                                "pln",
+                                                "pyg",
+                                                "qar",
+                                                "ron",
+                                                "rsd",
+                                                "rub",
+                                                "rwf",
+                                                "sar",
+                                                "sbd",
+                                                "scr",
+                                                "sdg",
+                                                "sek",
+                                                "sgd",
+                                                "shp",
+                                                "sle",
+                                                "sos",
+                                                "srd",
+                                                "ssp",
+                                                "stn",
+                                                "svc",
+                                                "syp",
+                                                "szl",
+                                                "thb",
+                                                "tjs",
+                                                "tmt",
+                                                "tnd",
+                                                "top",
+                                                "try",
+                                                "ttd",
+                                                "twd",
+                                                "tzs",
+                                                "uah",
+                                                "ugx",
+                                                "usd",
+                                                "usn",
+                                                "uyi",
+                                                "uyu",
+                                                "uyw",
+                                                "uzs",
+                                                "ved",
+                                                "ves",
+                                                "vnd",
+                                                "vuv",
+                                                "wst",
+                                                "xaf",
+                                                "xag",
+                                                "xau",
+                                                "xba",
+                                                "xbb",
+                                                "xbc",
+                                                "xbd",
+                                                "xcd",
+                                                "xdr",
+                                                "xof",
+                                                "xpd",
+                                                "xpf",
+                                                "xpt",
+                                                "xsu",
+                                                "xts",
+                                                "xua",
+                                                "xxx",
+                                                "yer",
+                                                "zar",
+                                                "zmw",
+                                                "zwg"
+                                            ],
+                                            "description": "currency of the posting"
+                                        },
+                                        "debtor_account_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the debtor account"
+                                        },
+                                        "remittance_information": {
+                                            "type": "string",
+                                            "description": "Remittance information"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "account_id",
+                                        "amount",
+                                        "creditor_account_id",
+                                        "currency",
+                                        "debtor_account_id",
+                                        "remittance_information"
+                                    ]
                                 }
                             },
                             "required": [
-                                "id",
-                                "account_id",
-                                "amount",
-                                "creditor_account_id",
-                                "currency",
-                                "debtor_account_id",
-                                "remittance_information"
+                                "object",
+                                "attributes"
                             ]
                         }
                     }
@@ -1150,25 +1189,38 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "id": {
+                                "object": {
                                     "type": "string",
-                                    "format": "uuid",
-                                    "description": "ID of the requested user"
+                                    "description": "Object type of the entity"
                                 },
-                                "name": {
-                                    "type": "string",
-                                    "description": "Name of the user"
-                                },
-                                "email": {
-                                    "type": "string",
-                                    "format": "email",
-                                    "description": "Email address of the user"
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the requested user"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Name of the user"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "format": "email",
+                                            "description": "Email address of the user"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "email"
+                                    ]
                                 }
                             },
                             "required": [
-                                "id",
-                                "name",
-                                "email"
+                                "object",
+                                "attributes"
                             ]
                         }
                     }

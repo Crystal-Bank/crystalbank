@@ -30,6 +30,21 @@ module CrystalBank
           end
         end
 
+        struct Entity(T)
+          include JSON::Serializable
+
+          @[JSON::Field(description: "Object type of the entity")]
+          getter object : String = T.name
+
+          @[JSON::Field(description: "Attributes of the entity")]
+          getter attributes : T
+
+          def initialize(@attributes : T)
+            @object = T.to_s.split("::").last.downcase
+          end
+        end
+
+
         @[JSON::Field(description: "Object type of the response", example: "/entities")]
         getter object : String = "list"
         @[JSON::Field(format: "uuid", description: "Url of the entity")]
@@ -37,7 +52,7 @@ module CrystalBank
         @[JSON::Field(description: "Meta information about the dataset")]
         getter meta : Meta
         @[JSON::Field(format: "array", description: "Array of entities")]
-        getter data : Array(T)
+        getter data : Array(Entity(T))
 
         def initialize(@url : String, data : Array(T), limit : Int32)
           # Remove last element and set cursor
@@ -48,7 +63,7 @@ module CrystalBank
                            end
 
           @meta = Meta.new(limit, next_cursor_id)
-          @data = data
+          @data = data.map { |d| Entity(T).new(d) }
         end
       end
 
