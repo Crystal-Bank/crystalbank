@@ -7,6 +7,7 @@ require "./aggregates/revocation"
 
 # API
 require "./api/api_keys"
+require "./api/authentication"
 
 # Commands
 require "./commands/generation/request"
