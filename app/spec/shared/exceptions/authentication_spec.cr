@@ -18,6 +18,6 @@ describe CrystalBank::Exception::Authentication do
 
   it "should initialize with a default status code" do
     exception = CrystalBank::Exception::Authentication.new
-    exception.status_code.should eq HTTP::Status::BAD_REQUEST
+    exception.status_code.should eq HTTP::Status::UNAUTHORIZED
   end
 end
