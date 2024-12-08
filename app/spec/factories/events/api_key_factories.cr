@@ -58,10 +58,10 @@ module Test::ApiKey::Events
 
   module Revocation
     class Accepted
-      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ApiKeys::Revocation::Events::Accepted
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001"), version = 1) : ApiKeys::Revocation::Events::Accepted
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
-        aggregate_version = 2
+        aggregate_version = version
         command_handler = "test"
         comment = "test comment"
 
@@ -82,10 +82,10 @@ module Test::ApiKey::Events
     end
 
     class Requested
-      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ApiKeys::Revocation::Events::Requested
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001"), version = 2) : ApiKeys::Revocation::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
-        aggregate_version = 1
+        aggregate_version = version
         reason = "revocation reason"
         command_handler = "test"
         comment = "test comment"
