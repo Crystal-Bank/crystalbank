@@ -14,6 +14,7 @@ module CrystalBank::Domains::ApiKeys
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
             "user_id" UUID NOT NULL,
+            "encrypted_secret" varchar NOT NULL,
             "active" boolean NOT NULL default false,
             "revoked_at" timestamp NULL
           );
@@ -39,6 +40,7 @@ module CrystalBank::Domains::ApiKeys
         # Extract attributes to local variables
         name = aggregate.state.name
         user_id = aggregate.state.user_id
+        encrypted_secret = aggregate.state.api_secret
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
@@ -51,15 +53,17 @@ module CrystalBank::Domains::ApiKeys
                 created_at,
                 name,
                 user_id,
+                encrypted_secret,
                 active
               )
-              VALUES ($1, $2, $3, $4, $5, $6)
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
           ),
             aggregate_id,
             aggregate_version,
             created_at,
             name,
             user_id,
+            encrypted_secret,
             true
         end
       end
