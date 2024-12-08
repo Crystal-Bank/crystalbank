@@ -2,6 +2,7 @@
 require "./api/base"
 
 # Load Exceptions
+require "./exceptions/authentication"
 require "./exceptions/invalid_argument"
 
 # Load Converters
