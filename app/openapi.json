@@ -188,6 +188,59 @@
                 }
             }
         },
+        "/api_keys/{id}/revoke": {
+            "patch": {
+                "summary": "Request revocation",
+                "description": "Request revocation\nRequest the revocation of a new api-key\n\nRequired permission:\n- **write:api_keys.revocation**",
+                "tags": [
+                    "ApiKeys"
+                ],
+                "operationId": "CrystalBank::Domains::ApiKeys::Api::ApiKeys_revoke",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Requests__RevocationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the api key",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/api_keys": {
             "get": {
                 "summary": "List",
@@ -805,6 +858,18 @@
                     "secret"
                 ]
             },
+            "CrystalBank__Domains__ApiKeys__Api__Requests__RevocationRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "Reson to revoke the api-key"
+                    }
+                },
+                "required": [
+                    "reason"
+                ]
+            },
             "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__ApiKeys__Api__Responses__ApiKey_": {
                 "type": "object",
                 "properties": {
@@ -859,23 +924,29 @@
                                             "format": "uuid",
                                             "description": "ID of the api-key"
                                         },
-                                        "object": {
-                                            "type": "string",
-                                            "description": "Object type of the entity"
+                                        "active": {
+                                            "type": "boolean",
+                                            "description": "Is the api-key active?"
                                         },
                                         "created_at": {
                                             "type": "string",
                                             "format": "iso8601",
-                                            "description": "Timestamp of the creation of the api-key"
+                                            "description": "Timestamp of the generation of the api-key"
                                         },
                                         "name": {
                                             "type": "string",
                                             "description": "Custom name of the api-key"
+                                        },
+                                        "revoked_at": {
+                                            "type": "string",
+                                            "format": "iso8601",
+                                            "description": "Timestamp of the revocation of the api-key",
+                                            "nullable": true
                                         }
                                     },
                                     "required": [
                                         "id",
-                                        "object",
+                                        "active",
                                         "created_at",
                                         "name"
                                     ]
