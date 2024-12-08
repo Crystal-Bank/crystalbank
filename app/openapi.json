@@ -9,7 +9,7 @@
         "/accounts/open": {
             "post": {
                 "summary": "Request opening",
-                "description": "Request opening\nRequest the opening of a new account\n\nRequired permission:\n- **write:accounts.opening**",
+                "description": "Request opening\nRequest the opening of a new account\n\nRequired permission:\n- **write:accounts.opening.request**",
                 "tags": [
                     "Accounts"
                 ],
@@ -131,7 +131,7 @@
         "/api_keys/generate": {
             "post": {
                 "summary": "Request generation",
-                "description": "Request generation\nRequest the generation of a new api-key\n\nRequired permission:\n- **write:api_keys.generation**",
+                "description": "Request generation\nRequest the generation of a new api-key\n\nRequired permission:\n- **write:api_keys.generation.request**",
                 "tags": [
                     "ApiKeys"
                 ],
@@ -191,7 +191,7 @@
         "/api_keys/{id}/revoke": {
             "patch": {
                 "summary": "Request revocation",
-                "description": "Request revocation\nRequest the revocation of a new api-key\n\nRequired permission:\n- **write:api_keys.revocation**",
+                "description": "Request revocation\nRequest the revocation of a new api-key\n\nRequired permission:\n- **write:api_keys.revocation.request**",
                 "tags": [
                     "ApiKeys"
                 ],
@@ -306,7 +306,7 @@
         "/customers/onboard": {
             "post": {
                 "summary": "Request onboarding",
-                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write:customers.opening**",
+                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write:customers.opening.request**",
                 "tags": [
                     "Customers"
                 ],
@@ -428,7 +428,7 @@
         "/transactions/internal_transfers/initiate": {
             "post": {
                 "summary": "Request initiation",
-                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write:transactions.internal_transfers.initiation**",
+                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write:transactions.internal_transfers.initiation.request**",
                 "tags": [
                     "InternalTransfers"
                 ],
@@ -539,7 +539,7 @@
         "/users/onboard": {
             "post": {
                 "summary": "Request onboarding",
-                "description": "Request onboarding\nRequest the onboarding of a new user\n\nRequired permission:\n- **write:users.onboarding**",
+                "description": "Request onboarding\nRequest the onboarding of a new user\n\nRequired permission:\n- **write:users.onboarding.request**",
                 "tags": [
                     "Users"
                 ],
