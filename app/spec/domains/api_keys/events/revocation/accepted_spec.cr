@@ -1,6 +1,6 @@
 require "../../../../spec_helper"
 
-describe CrystalBank::Domains::ApiKeys::Generation::Events::Requested do
+describe CrystalBank::Domains::ApiKeys::Revocation::Events::Accepted do
   pending "pending" do
     false.should eq(true)
   end
