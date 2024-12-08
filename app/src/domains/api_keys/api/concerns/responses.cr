@@ -6,15 +6,17 @@ module CrystalBank::Domains::ApiKeys
 
         @[JSON::Field(format: "uuid", description: "ID of the api-key")]
         getter id : UUID
-        @[JSON::Field(description: "Object type of the entity")]
-        getter object : String = "api-key"
 
-        @[JSON::Field(format: "iso8601", description: "Timestamp of the creation of the api-key")]
+        @[JSON::Field(description: "Is the api-key active?")]
+        getter active : Bool
+        @[JSON::Field(format: "iso8601", description: "Timestamp of the generation of the api-key")]
         getter created_at : Time
         @[JSON::Field(description: "Custom name of the api-key")]
         getter name : String
+        @[JSON::Field(format: "iso8601", description: "Timestamp of the revocation of the api-key")]
+        getter revoked_at : Time?
 
-        def initialize(@id, @name, @created_at)
+        def initialize(@id, @active, @name, @created_at, @revoked_at)
         end
       end
 
@@ -27,6 +29,16 @@ module CrystalBank::Domains::ApiKeys
         getter secret : String
 
         def initialize(@id, @secret)
+        end
+      end
+
+      struct RevocationResponse
+        include JSON::Serializable
+
+        @[JSON::Field(format: "uuid", description: "ID of the api-key")]
+        getter id : UUID
+
+        def initialize(@id)
         end
       end
     end

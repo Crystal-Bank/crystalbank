@@ -24,6 +24,22 @@ module CrystalBank::Domains::ApiKeys
         response
       end
 
+      # Request revocation
+      # Request the revocation of a new api-key
+      #
+      # Required permission:
+      # - **write:api_keys.revocation**
+      @[AC::Route::PATCH("/:id/revoke", body: :r)]
+      def revoke(
+        @[AC::Param::Info(description: "ID of the api key")]
+        id : UUID,
+        r : RevocationRequest,
+      )
+        response = ::ApiKeys::Revocation::Commands::Request.new.call(id, r)
+
+        response ? head(:accepted) : head(:internal_server_error)
+      end
+
       # List
       # List api keys
       #
@@ -39,8 +55,10 @@ module CrystalBank::Domains::ApiKeys
         api_keys = ::ApiKeys::Queries::ApiKeys.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::ApiKey.new(
             a.id,
+            a.active,
             a.name,
-            a.created_at
+            a.created_at,
+            a.revoked_at
           )
         end
 

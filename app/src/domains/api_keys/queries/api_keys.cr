@@ -10,9 +10,11 @@ module CrystalBank::Domains::ApiKeys
         getter id : UUID
         getter object : String = "api_key"
 
+        getter active : Bool
         getter name : String
         getter user_id : UUID
         getter created_at : Time
+        getter revoked_at : Time?
       end
 
       def initialize

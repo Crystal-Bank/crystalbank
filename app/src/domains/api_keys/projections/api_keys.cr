@@ -13,7 +13,9 @@ module CrystalBank::Domains::ApiKeys
             "aggregate_version" int8 NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
-            "user_id" UUID NOT NULL
+            "user_id" UUID NOT NULL,
+            "active" boolean NOT NULL default false,
+            "revoked_at" timestamp NULL
           );
         )
 
@@ -22,7 +24,7 @@ module CrystalBank::Domains::ApiKeys
         m.each { |s| @projection_database.exec s }
       end
 
-      # Created
+      # ApiKeys::Generation::Events::Accepted
       def apply(event : ::ApiKeys::Generation::Events::Accepted)
         # Extract attributes to local variables
         uuid = event.header.event_id
@@ -48,15 +50,39 @@ module CrystalBank::Domains::ApiKeys
                 aggregate_version,
                 created_at,
                 name,
-                user_id
+                user_id,
+                active
               )
-              VALUES ($1, $2, $3, $4, $5)
+              VALUES ($1, $2, $3, $4, $5, $6)
           ),
             aggregate_id,
             aggregate_version,
             created_at,
             name,
-            user_id
+            user_id,
+            true
+        end
+      end
+
+      # ApiKeys::Revocation::Events::Accepted
+      def apply(event : ::ApiKeys::Revocation::Events::Accepted)
+        # Extract attributes to local variables
+        uuid = event.header.event_id
+        created_at = event.header.created_at
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        # Build the account aggregate up to the version of the event
+        aggregate = ::ApiKeys::Aggregate.new(aggregate_id)
+        aggregate.hydrate(version: aggregate_version)
+
+        # Extract attributes to local variables
+        revoked_at = aggregate.state.revoked_at
+
+        # Insert the account projection into the projection database
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."api_keys" SET active=$1, revoked_at=$2 WHERE uuid=$3), false, revoked_at, aggregate_id
         end
       end
     end
