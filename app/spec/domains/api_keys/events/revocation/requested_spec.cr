@@ -2,7 +2,7 @@ require "../../../../spec_helper"
 
 describe CrystalBank::Domains::ApiKeys::Revocation::Events::Requested do
   it "can be initialized" do
-    event = Test::ApiKey::Events::Revocation::Requested.new.create
+    event = Test::ApiKey::Events::Revocation::Requested.new.create(version: 1)
 
     event.header.actor_id.should eq(UUID.new("00000000-0000-0000-0000-000000000000"))
     event.header.aggregate_id.should eq(UUID.new("00000000-0000-0000-0000-000000000001"))
