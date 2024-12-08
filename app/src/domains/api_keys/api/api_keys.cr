@@ -12,7 +12,7 @@ module CrystalBank::Domains::ApiKeys
       # Request the generation of a new api-key
       #
       # Required permission:
-      # - **write:api_keys.generation**
+      # - **write:api_keys.generation.request**
       @[AC::Route::POST("/generate", body: :r)]
       def generate(
         r : GenerationRequest,
@@ -28,7 +28,7 @@ module CrystalBank::Domains::ApiKeys
       # Request the revocation of a new api-key
       #
       # Required permission:
-      # - **write:api_keys.revocation**
+      # - **write:api_keys.revocation.request**
       @[AC::Route::PATCH("/:id/revoke", body: :r)]
       def revoke(
         @[AC::Param::Info(description: "ID of the api key")]

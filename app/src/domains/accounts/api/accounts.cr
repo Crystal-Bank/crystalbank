@@ -12,7 +12,7 @@ module CrystalBank::Domains::Accounts
       # Request the opening of a new account
       #
       # Required permission:
-      # - **write:accounts.opening**
+      # - **write:accounts.opening.request**
       @[AC::Route::POST("/open", body: :r)]
       def open(
         r : OpeningRequest,

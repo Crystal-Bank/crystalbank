@@ -12,7 +12,7 @@ module CrystalBank::Domains::Customers
       # Request the onboarding of a new customer
       #
       # Required permission:
-      # - **write:customers.opening**
+      # - **write:customers.opening.request**
       @[AC::Route::POST("/onboard", body: :r)]
       def onboard(
         r : OnboardingRequest,
