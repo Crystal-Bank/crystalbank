@@ -35,7 +35,8 @@ module CrystalBank::Domains::ApiKeys
       def authenticate(r : Request) : Response
         raise CrystalBank::Exception::Authentication.new("invalid grant_type #{r.grant_type}") unless r.grant_type == "client_credentials"
 
-        token = "dummy_token"
+        token = ::ApiKeys::Authentication::Commands::Request.new.call(r.client_id, r.client_secret)
+
         Response.new(token)
       end
     end

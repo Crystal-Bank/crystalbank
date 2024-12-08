@@ -10,6 +10,7 @@ require "./api/api_keys"
 require "./api/authentication"
 
 # Commands
+require "./commands/authentication/request"
 require "./commands/generation/request"
 require "./commands/generation/process_request"
 require "./commands/revocation/request"

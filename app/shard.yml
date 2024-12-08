@@ -18,6 +18,9 @@ dependencies:
   action-controller:
     github: spider-gazelle/action-controller
     version: ~> 7.5
+    
+  jwt:
+    github: crystal-community/jwt
 
 crystal: '>= 1.14.0'
 
