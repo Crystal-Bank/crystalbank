@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.5.0"
+        "version": "0.5.1"
     },
     "paths": {
         "/accounts/open": {
@@ -280,6 +280,55 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__ApiKeys__Api__Responses__ApiKey_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/oauth/token": {
+            "post": {
+                "summary": "Authenticate an API client",
+                "description": "Authenticate an API client\nAuthenticate an API client\n\nRequired permission:\n- none",
+                "tags": [
+                    "Authentication"
+                ],
+                "operationId": "CrystalBank::Domains::ApiKeys::Api::Authentication_authenticate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Request"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Response"
                                 }
                             }
                         }
@@ -964,6 +1013,43 @@
                     "url",
                     "meta",
                     "data"
+                ]
+            },
+            "CrystalBank__Domains__ApiKeys__Api__Authentication__Request": {
+                "type": "object",
+                "properties": {
+                    "grant_type": {
+                        "type": "string",
+                        "description": "Grant type of the token request, always 'client_credentials'"
+                    },
+                    "client_id": {
+                        "type": "string",
+                        "description": "ID of the api key"
+                    },
+                    "client_secret": {
+                        "type": "string",
+                        "description": "Secret of the api key"
+                    }
+                },
+                "required": [
+                    "grant_type",
+                    "client_id",
+                    "client_secret"
+                ]
+            },
+            "CrystalBank__Domains__ApiKeys__Api__Authentication__Response": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "token_type": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "token",
+                    "token_type"
                 ]
             },
             "CrystalBank__Domains__Customers__Api__Requests__OnboardingRequest": {
