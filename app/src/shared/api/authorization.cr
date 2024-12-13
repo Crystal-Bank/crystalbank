@@ -1,7 +1,6 @@
 module CrystalBank
   module Api
     module Authorization
-
       def authorized?(permission : String? = nil, request_scope : Bool = true)
         token = request.headers["authorization"]?
         raise CrystalBank::Exception::InvalidArgument.new("authorization header is missing") if token.nil?
@@ -30,7 +29,6 @@ module CrystalBank
     end
   end
 end
-
 
 # def authorized?(permission : String? = nil, request_scope : Bool = true)
 #   token = request.headers["authorization"]?
