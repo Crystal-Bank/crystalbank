@@ -17,7 +17,8 @@ def process_queue(queue : ES::Queue)
     if event_bus.publish(event)
       queue.delete(message.msg_id)
     end
-  rescue
+  rescue e : Exception
+    Log.warn(exception: e) { "Unable to process queue event" }
     queue.archive(message.msg_id) unless message.nil?
   end
 end
