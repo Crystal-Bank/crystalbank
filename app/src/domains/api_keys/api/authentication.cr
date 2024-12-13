@@ -26,14 +26,14 @@ module CrystalBank::Domains::ApiKeys
         end
       end
 
-      # Authenticate an API client
+      # Authenticate
       # Authenticate an API client
       #
       # Required permission:
       # - none
       @[AC::Route::POST("/token", body: :r)]
       def authenticate(r : Request) : Response
-        raise CrystalBank::Exception::Authentication.new("invalid grant_type #{r.grant_type}") unless r.grant_type == "client_credentials"
+        raise CrystalBank::Exception::Authentication.new("Invalid grant_type #{r.grant_type}") unless r.grant_type == "client_credentials"
 
         token = ::ApiKeys::Authentication::Commands::Request.new.call(r.client_id, r.client_secret)
 
