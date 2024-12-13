@@ -10,7 +10,7 @@ module CrystalBank::Domains::ApiKeys
           aggregate.hydrate
 
           api_key_active = aggregate.state.active
-          user_id = aggregate.state.user_id 
+          user_id = aggregate.state.user_id
           encrypted_secret = aggregate.state.encrypted_secret
 
           # Check integrity of aggregate state
@@ -30,7 +30,7 @@ module CrystalBank::Domains::ApiKeys
           user = ApiKeys::Repositories::Users.new.fetch!(user_id)
 
           # TODO: Extract user roles
-          
+
           # TODO: Create JWT and return it
           # payload = CrystalBank::Objects::JWTPayload.new(roles: user_roles, user_id: @aggregate_id)
           # JWT.encode(payload, CrystalBank::Env.jwt_private_key, JWT::Algorithm::ES256)
