@@ -28,5 +28,8 @@ require "./projections/api_keys"
 # Queries
 require "./queries/api_keys"
 
+# Repositories
+require "./repositories/users"
+
 # Domain
 require "./api_keys"
