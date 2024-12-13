@@ -16,7 +16,7 @@ module CrystalBank
                      UUID.new(request_scope_value)
                    end
 
-        # return if no permission is requested
+        # authorize if no permission is requested
         return true if permission.nil?
       end
 
