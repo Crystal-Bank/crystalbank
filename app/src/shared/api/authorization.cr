@@ -6,7 +6,18 @@ module CrystalBank
         raise CrystalBank::Exception::InvalidArgument.new("authorization header is missing") if token.nil?
         raise CrystalBank::Exception::InvalidArgument.new("Invalid token format") unless token.includes?("Bearer")
 
+        # Check jwt and extract data from it
         jwt = parse_jwt(token)
+
+        # Get the request scope from the header
+        request_scope_value = request.headers["x-scope"]?
+        scope_id = if request_scope
+                     raise CrystalBank::Exception::InvalidArgument.new("proving 'x-scope' header is mandatory") if (request_scope_value.nil? || request_scope_value.empty?)
+                     UUID.new(request_scope_value)
+                   end
+
+        # return if no permission is requested
+        return true if permission.nil?
       end
 
       private def parse_jwt(token : String) : CrystalBank::Api::JWT
@@ -31,19 +42,7 @@ module CrystalBank
 end
 
 # def authorized?(permission : String? = nil, request_scope : Bool = true)
-#   token = request.headers["authorization"]?
-#   raise CrystalBank::Exception::InvalidArgument.new("authorization header is missing") if token.nil?
-#   raise CrystalBank::Exception::InvalidArgument.new("Invalid token format") unless token.includes?("Bearer")
-
-#   jwt = parse_jwt(token)
-
-#   request_scope_value = request.headers["x-scope"]?
-#   scope_id = if request_scope
-#                raise CrystalBank::Exception::InvalidArgument.new("proving 'x-scope' header is mandatory") if (request_scope_value.nil? || request_scope_value.empty?)
-#                UUID.new(request_scope_value)
-#              end
-
-#   return true if permission.nil?
+# ....
 
 #   available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(permission)
 
