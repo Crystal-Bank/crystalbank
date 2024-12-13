@@ -43,5 +43,17 @@ module CrystalBank
     def server_process_count : Int32
       @@server_process_count ||= (ENV["SERVER_PROCESS_COUNT"]? || 1).to_i
     end
+
+    def jwt_private_key : String
+      @@jwt_priv_key ||= ENV["JWT_PRIVATE_KEY"]
+    end
+
+    def jwt_public_key : String
+      @@jwt_pub_key ||= ENV["JWT_PUBLIC_KEY"]
+    end
+
+    def jwt_ttl : Int32
+      3600
+    end
   end
 end
