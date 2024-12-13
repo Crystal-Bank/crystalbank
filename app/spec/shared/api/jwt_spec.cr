@@ -8,7 +8,7 @@ describe CrystalBank::Api::JWT do
 
     payload.exp.should_not be_nil
     payload.iat.should_not be_nil
-    payload.iss.should eq("CrystalBank")
+    payload.iss.should eq("crystalbank")
     payload.jti.should_not be_nil
     payload.data.should_not be_nil
     payload.data.roles.should eq(roles)
