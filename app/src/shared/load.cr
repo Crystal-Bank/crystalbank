@@ -1,5 +1,6 @@
 # Load Exceptions
 require "./api/base"
+require "./api/jwt"
 
 # Load Exceptions
 require "./exceptions/authentication"
