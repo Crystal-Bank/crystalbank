@@ -1,6 +1,3 @@
-require "crypto/bcrypt"
-require "jwt"
-
 # Aggregate
 require "./aggregates/aggregate"
 require "./aggregates/generation"

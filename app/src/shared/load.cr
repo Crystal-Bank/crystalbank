@@ -1,4 +1,8 @@
+require "crypto/bcrypt"
+require "jwt"
+
 # Load Exceptions
+require "./api/authorization"
 require "./api/base"
 require "./api/jwt"
 
