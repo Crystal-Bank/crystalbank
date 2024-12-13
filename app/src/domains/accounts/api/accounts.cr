@@ -19,6 +19,8 @@ module CrystalBank::Domains::Accounts
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID
       ) : OpeningResponse
+        authorized?("write:accounts.opening.request")
+
         aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r)
 
         OpeningResponse.new(aggregate_id)
@@ -36,6 +38,8 @@ module CrystalBank::Domains::Accounts
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20
       ) : ListResponse(Responses::Account)
+        authorized?("read:accounts.list", request_scope: false)
+
         accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(
             a.id,

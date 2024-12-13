@@ -19,6 +19,8 @@ module CrystalBank::Domains::ApiKeys
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID
       ) : GenerationResponse
+        authorized?("write:api_keys.generation.request")
+
         response = ::ApiKeys::Generation::Commands::Request.new.call(r)
 
         response
@@ -35,6 +37,8 @@ module CrystalBank::Domains::ApiKeys
         id : UUID,
         r : RevocationRequest,
       )
+        authorized?("write:api_keys.revocation.request", request_scope: false)
+
         response = ::ApiKeys::Revocation::Commands::Request.new.call(id, r)
 
         response ? head(:accepted) : head(:internal_server_error)
@@ -52,6 +56,8 @@ module CrystalBank::Domains::ApiKeys
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20
       ) : ListResponse(Responses::ApiKey)
+        authorized?("read:api_keys.list", request_scope: false)
+
         api_keys = ::ApiKeys::Queries::ApiKeys.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::ApiKey.new(
             a.id,

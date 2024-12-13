@@ -14,7 +14,9 @@ module CrystalBank::Domains::Transactions::InternalTransfers
       # Required permission:
       # - **write:transactions.internal_transfers.initiation.request**
       @[AC::Route::POST("/initiate", body: :r)]
-      def open(r : InitiationRequest) : InitiationResponse
+      def initiate(r : InitiationRequest) : InitiationResponse
+        authorized?("write:transactions.internal_transfers.initiation.request")
+
         aggregate_id = ::Transactions::InternalTransfers::Initiation::Commands::Request.new.call(r)
 
         InitiationResponse.new(aggregate_id)
