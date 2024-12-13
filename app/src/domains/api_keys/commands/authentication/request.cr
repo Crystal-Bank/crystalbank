@@ -30,22 +30,16 @@ module CrystalBank::Domains::ApiKeys
           user = ApiKeys::Repositories::Users.new.fetch!(user_id)
 
           # TODO: Extract user roles
+          uuid = UUID.new("00000000-0000-0000-0000-000000000000")
+          user_roles = [uuid]
 
-          # TODO: Create JWT and return it
-          # payload = CrystalBank::Objects::JWTPayload.new(roles: user_roles, user_id: @aggregate_id)
-          # JWT.encode(payload, CrystalBank::Env.jwt_private_key, JWT::Algorithm::ES256)
+          # Create JWT and return it
+          payload = CrystalBank::Api::JWT.new(roles: user_roles, user_id: user_id)
+          token = JWT.encode(payload, CrystalBank::Env.jwt_private_key, JWT::Algorithm::ES256)
 
-          CrystalBank.print_verbose("User", user)
+          CrystalBank.print_verbose("User", payload)
 
-          # # Fetch roles the user is assigned to
-          # user_roles = user.roles
-
-          # # # Create JWT and return it
-          # payload = CrystalBank::Objects::JWTPayload.new(roles: user_roles, user_id: @aggregate_id)
-          # token = JWT.encode(payload, CrystalBank::Env.jwt_private_key, JWT::Algorithm::ES256)
-          # token
-
-          "dummy_token"
+          token
         end
       end
     end

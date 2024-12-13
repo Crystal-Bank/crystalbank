@@ -1,4 +1,5 @@
 require "crypto/bcrypt"
+require "jwt"
 
 # Aggregate
 require "./aggregates/aggregate"
