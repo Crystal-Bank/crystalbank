@@ -2,11 +2,16 @@ module CrystalBank
   module Env
     extend self
 
+    @@application_name : String?
     @@api_domain : String?
     @@server_environment : String?
     @@server_port : Int32?
     @@server_host : String?
     @@server_process_count : Int32?
+
+    def application_name
+      @@application_name ||= ENV["APPLICATION_NAME"]? || "crystalbank"
+    end
 
     def api_domain : String
       @@api_domain ||= ENV["API_DOMAIN"]? || "https://api.crystalbank.xyz"

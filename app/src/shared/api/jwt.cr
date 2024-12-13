@@ -11,9 +11,7 @@ module CrystalBank
         getter user : UUID         # User ID associated with the JWT
 
         # Initialize JWTData with user ID and roles
-
-        def initialize(@roles : Array(UUID), @user : UUID)
-        end
+        def initialize(@roles : Array(UUID), @user : UUID); end
       end
 
       # JWT properties
@@ -26,7 +24,7 @@ module CrystalBank
       def initialize(roles : Array(UUID), user_id : UUID)
         @exp = Time.utc.to_unix + CrystalBank::Env.jwt_ttl
         @iat = Time.utc.to_unix
-        @iss = "CrystalBank"
+        @iss = CrystalBank::Env.application_name
         @jti = UUID.random
 
         @data = JWTData.new(roles, user_id)
