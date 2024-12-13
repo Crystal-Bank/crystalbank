@@ -40,7 +40,7 @@ module CrystalBank::Domains::ApiKeys
         # Extract attributes to local variables
         name = aggregate.state.name
         user_id = aggregate.state.user_id
-        encrypted_secret = aggregate.state.api_secret
+        encrypted_secret = aggregate.state.encrypted_secret
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|

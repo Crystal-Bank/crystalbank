@@ -12,7 +12,7 @@ module CrystalBank::Domains::ApiKeys
       property active : Bool = false
       property name : String?
       property user_id : UUID?
-      property api_secret : String?
+      property encrypted_secret : String?
       property revoked_at : Time?
     end
 
