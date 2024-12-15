@@ -28,6 +28,22 @@ Other options of the environment can be displayed by running:
 $ make help
 ```
 
+### Seed the environment
+In order to access the API, the initial API credentials need to be seeded
+```bash
+$ crystal src/seed.cr
+```
+
+This will result in the following console output:
+```
+-----------------------------------------------------
+--- Seed credentials
+client_id: '0193cc51-cc9b-7955-82ca-7a6482587201'
+client_secret: 'secret'
+-----------------------------------------------------
+-----------------------------------------------------
+```
+
 ### Start of the API server
 
 In order to start the API server, just run the following command:

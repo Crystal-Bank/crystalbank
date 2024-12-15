@@ -9,11 +9,11 @@ module CrystalBank::Domains::ApiKeys
           # Check if user is active
           user_active!(UUID.new(r.user_id))
 
-          # Generate an api secret # TODO: API secrets should be an entity linked to the user
+          # Generate an api secret
           api_secret = UUID.random.to_s
           api_secret_encrypted = Crypto::Bcrypt::Password.create(api_secret, cost: 10).to_s
 
-          # Create the account creation request event
+          # Create the api key generation request event
           event = ApiKeys::Generation::Events::Requested.new(
             actor_id: dummy_actor,
             api_secret: api_secret_encrypted,
@@ -25,7 +25,7 @@ module CrystalBank::Domains::ApiKeys
           # Append event to event store
           @event_store.append(event)
 
-          # Return the aggregate ID of the newly created account aggregate
+          # Return the aggregate ID of the newly created api key aggregate
           uuid = UUID.new(event.header.aggregate_id.to_s)
           ApiKeys::Api::Responses::GenerationResponse.new(id: uuid, secret: api_secret)
         end

@@ -19,6 +19,8 @@ module CrystalBank::Domains::Users
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID
       ) : OnboardingResponse
+        authorized?("write:users.onboarding.request")
+
         aggregate_id = ::Users::Onboarding::Commands::Request.new.call(r)
 
         OnboardingResponse.new(aggregate_id)
@@ -36,6 +38,8 @@ module CrystalBank::Domains::Users
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20
       ) : ListResponse(Responses::User)
+        authorized?("read:users.list", request_scope: false)
+
         users = ::Users::Queries::Users.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::User.new(
             a.id,

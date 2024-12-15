@@ -305,8 +305,8 @@
         },
         "/oauth/token": {
             "post": {
-                "summary": "Authenticate an API client",
-                "description": "Authenticate an API client\nAuthenticate an API client\n\nRequired permission:\n- none",
+                "summary": "Authenticate",
+                "description": "Authenticate\nAuthenticate an API client\n\nRequired permission:\n- none",
                 "tags": [
                     "Authentication"
                 ],

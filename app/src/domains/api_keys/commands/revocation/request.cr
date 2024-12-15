@@ -15,7 +15,7 @@ module CrystalBank::Domains::ApiKeys
           aggregate_id = aggregate.state.aggregate_id
           aggregate_type = aggregate.state.aggregate_type
 
-          # Raise exception if ApiKey is not active
+          # Raise exception if api key is not active
           raise CrystalBank::Exception::InvalidArgument.new("ApiKey '#{aggregate_id}' is in a non-active state and cannot be revoked") unless aggregate.state.active
 
           # Create the revocation request

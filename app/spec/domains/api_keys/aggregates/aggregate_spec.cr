@@ -12,7 +12,7 @@ describe CrystalBank::Domains::ApiKeys::Aggregate do
     aggr.state.active.should eq(false)
     aggr.state.name.should eq(nil)
     aggr.state.user_id.should eq(nil)
-    aggr.state.api_secret.should eq(nil)
+    aggr.state.encrypted_secret.should eq(nil)
     aggr.state.revoked_at.should eq(nil)
   end
 end

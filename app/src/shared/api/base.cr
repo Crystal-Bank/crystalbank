@@ -4,7 +4,7 @@ require "./responses"
 module CrystalBank
   module Api
     abstract class Base < ActionController::Base
-      # include CrystalBank::Api::Authorization
+      include CrystalBank::Api::Authorization
       include CrystalBank::Api::Responses
 
       @[AC::Route::Filter(:before_action)]
