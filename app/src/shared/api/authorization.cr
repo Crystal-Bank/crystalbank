@@ -20,7 +20,7 @@ module CrystalBank
         # available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(permission)
 
         # TODO: Create a session object
-        # session = CrystalBank::Objects::SessionContext.new(jwt.data.user, jwt.data.roles, permission, scope_id, available_scopes)
+        # session = CrystalBank::Objects::SessionContext.new(jwt, permission, scope_id, available_scopes)
 
         # return true unless available_scopes.empty?
         # raise CrystalBank::Exception::Authorization.new("No permission to perform this action '#{permission}'")
