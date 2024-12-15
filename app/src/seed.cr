@@ -36,6 +36,6 @@ event_store.append(event)
 # Return the aggregate ID of the newly created user aggregate
 output = [
   "client_id: '#{UUID.new(event.header.aggregate_id.to_s)}'",
-  "client_secret: 'secret'"
+  "client_secret: 'secret'",
 ]
 CrystalBank.print_verbose("Seed credentials", output.join("\n"))
