@@ -16,5 +16,3 @@ require "./services/access_control"
 # Load Exceptions
 require "./exceptions/authentication"
 require "./exceptions/invalid_argument"
-
-

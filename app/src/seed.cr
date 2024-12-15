@@ -21,7 +21,7 @@ event_store.append(event)
 # Return the aggregate ID of the newly created user aggregate
 user_id = UUID.new(event.header.aggregate_id.to_s)
 
-# Create API key          
+# Create API key
 event = ApiKeys::Generation::Events::Requested.new(
   actor_id: dummy_uuid,
   api_secret: api_secret_encrypted,

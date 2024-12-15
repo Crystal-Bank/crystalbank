@@ -1,5 +1,5 @@
 # TODO: Adjust
-# 
+#
 module CrystalBank
   module Services
     class AccessControl
