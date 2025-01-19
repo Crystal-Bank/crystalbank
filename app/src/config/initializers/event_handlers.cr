@@ -16,6 +16,10 @@ event_handlers.register(ApiKeys::Revocation::Events::Requested)
 event_handlers.register(Customers::Onboarding::Events::Accepted)
 event_handlers.register(Customers::Onboarding::Events::Requested)
 
+# Scopes
+event_handlers.register(Scopes::Creation::Events::Accepted)
+event_handlers.register(Scopes::Creation::Events::Requested)
+
 # Transactions
 event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Accepted)
 event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Requested)
