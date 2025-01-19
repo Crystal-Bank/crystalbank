@@ -45,9 +45,9 @@ module Test::Scope::Events
 
       def json_string : String
         {
-          "comment":          "test comment",
-          "name":             "Scope name test",
-          "parent_scope_id": "00000000-0000-0000-0000-200000000001"
+          "comment":         "test comment",
+          "name":            "Scope name test",
+          "parent_scope_id": "00000000-0000-0000-0000-200000000001",
         }.to_json
       end
     end
