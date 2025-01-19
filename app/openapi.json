@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.5.1"
+        "version": "0.6.1"
     },
     "paths": {
         "/accounts/open": {
@@ -355,7 +355,7 @@
         "/customers/onboard": {
             "post": {
                 "summary": "Request onboarding",
-                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write:customers.opening.request**",
+                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write:customers.onboarding.request**",
                 "tags": [
                     "Customers"
                 ],
@@ -474,6 +474,128 @@
                 }
             }
         },
+        "/scopes/create": {
+            "post": {
+                "summary": "Request creation",
+                "description": "Request creation\nRequest the creation of a new scope\n\nRequired permission:\n- **write:scopes.creation.request**",
+                "tags": [
+                    "Scopes"
+                ],
+                "operationId": "CrystalBank::Domains::Scopes::Api::Scopes_create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Scopes__Api__Requests__CreationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Scopes__Api__Responses__CreationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/scopes": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList all scopes\n\nRequired permission:\n- **read:scopes.list**",
+                "tags": [
+                    "Scopes"
+                ],
+                "operationId": "CrystalBank::Domains::Scopes::Api::Scopes_list_scopes",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Scopes__Api__Responses__Scope_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/transactions/internal_transfers/initiate": {
             "post": {
                 "summary": "Request initiation",
@@ -481,7 +603,7 @@
                 "tags": [
                     "InternalTransfers"
                 ],
-                "operationId": "CrystalBank::Domains::Transactions::InternalTransfers::Api::InternalTransfers_open",
+                "operationId": "CrystalBank::Domains::Transactions::InternalTransfers::Api::InternalTransfers_initiate",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1158,6 +1280,124 @@
                                         "id",
                                         "name",
                                         "type"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "object",
+                                "attributes"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "meta",
+                    "data"
+                ]
+            },
+            "CrystalBank__Domains__Scopes__Api__Requests__CreationRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the scope"
+                    },
+                    "parent_scope_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the parent scope",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "CrystalBank__Domains__Scopes__Api__Responses__CreationResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the requested scope"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "Response to an scope creation request"
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Scopes__Api__Responses__Scope_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "object": {
+                                    "type": "string",
+                                    "description": "Object type of the entity"
+                                },
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the requested scope"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Name of the scope"
+                                        },
+                                        "parent_scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the parent scope",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name"
                                     ]
                                 }
                             },
