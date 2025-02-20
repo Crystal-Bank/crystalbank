@@ -3,13 +3,13 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.6.1"
+        "version": "0.7.0"
     },
     "paths": {
         "/accounts/open": {
             "post": {
                 "summary": "Request opening",
-                "description": "Request opening\nRequest the opening of a new account\n\nRequired permission:\n- **write:accounts.opening.request**",
+                "description": "Request opening\nRequest the opening of a new account\n\nRequired permission:\n- **write_accounts_opening_request**",
                 "tags": [
                     "Accounts"
                 ],
@@ -50,6 +50,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -69,7 +79,7 @@
         "/accounts": {
             "get": {
                 "summary": "List",
-                "description": "List\nList all accounts\n\nRequired permission:\n- **read:accounts.list**",
+                "description": "List\nList all accounts\n\nRequired permission:\n- **read_accounts_list**",
                 "tags": [
                     "Accounts"
                 ],
@@ -112,6 +122,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -131,7 +151,7 @@
         "/api_keys/generate": {
             "post": {
                 "summary": "Request generation",
-                "description": "Request generation\nRequest the generation of a new api-key\n\nRequired permission:\n- **write:api_keys.generation.request**",
+                "description": "Request generation\nRequest the generation of a new api-key\n\nRequired permission:\n- **write_api_keys_generation_request**",
                 "tags": [
                     "ApiKeys"
                 ],
@@ -172,6 +192,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -191,7 +221,7 @@
         "/api_keys/{id}/revoke": {
             "patch": {
                 "summary": "Request revocation",
-                "description": "Request revocation\nRequest the revocation of a new api-key\n\nRequired permission:\n- **write:api_keys.revocation.request**",
+                "description": "Request revocation\nRequest the revocation of a new api-key\n\nRequired permission:\n- **write_api_keys_revocation_request**",
                 "tags": [
                     "ApiKeys"
                 ],
@@ -225,6 +255,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -244,7 +284,7 @@
         "/api_keys": {
             "get": {
                 "summary": "List",
-                "description": "List\nList api keys\n\nRequired permission:\n- **read:api_keys.list**",
+                "description": "List\nList api keys\n\nRequired permission:\n- **read_api_keys_list**",
                 "tags": [
                     "ApiKeys"
                 ],
@@ -286,6 +326,16 @@
                     },
                     "400": {
                         "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -336,6 +386,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -355,7 +415,7 @@
         "/customers/onboard": {
             "post": {
                 "summary": "Request onboarding",
-                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write:customers.onboarding.request**",
+                "description": "Request onboarding\nRequest the onboarding of a new customer\n\nRequired permission:\n- **write_customers_onboarding_request**",
                 "tags": [
                     "Customers"
                 ],
@@ -396,6 +456,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -415,7 +485,7 @@
         "/customers": {
             "get": {
                 "summary": "List",
-                "description": "List\nList all customers\n\nRequired permission:\n- **read:customers.list**",
+                "description": "List\nList all customers\n\nRequired permission:\n- **read_customers_list**",
                 "tags": [
                     "Customers"
                 ],
@@ -458,6 +528,158 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/roles/create": {
+            "post": {
+                "summary": "Request creation",
+                "description": "Request creation\nRequest the creation of a new role\n\nRequired permission:\n- **write_roles_creation_request**",
+                "tags": [
+                    "Roles"
+                ],
+                "operationId": "CrystalBank::Domains::Roles::Api::Roles_create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Roles__Api__Requests__CreationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Roles__Api__Responses__CreationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList all roles\n\nRequired permission:\n- **read_roles_list**",
+                "tags": [
+                    "Roles"
+                ],
+                "operationId": "CrystalBank::Domains::Roles::Api::Roles_list_roles",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Roles__Api__Responses__Role_"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -477,7 +699,7 @@
         "/scopes/create": {
             "post": {
                 "summary": "Request creation",
-                "description": "Request creation\nRequest the creation of a new scope\n\nRequired permission:\n- **write:scopes.creation.request**",
+                "description": "Request creation\nRequest the creation of a new scope\n\nRequired permission:\n- **write_scopes_creation_request**",
                 "tags": [
                     "Scopes"
                 ],
@@ -518,6 +740,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -537,7 +769,7 @@
         "/scopes": {
             "get": {
                 "summary": "List",
-                "description": "List\nList all scopes\n\nRequired permission:\n- **read:scopes.list**",
+                "description": "List\nList all scopes\n\nRequired permission:\n- **read_scopes_list**",
                 "tags": [
                     "Scopes"
                 ],
@@ -580,6 +812,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -599,7 +841,7 @@
         "/transactions/internal_transfers/initiate": {
             "post": {
                 "summary": "Request initiation",
-                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write:transactions.internal_transfers.initiation.request**",
+                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write_transactions_internal_transfers_initiation_request**",
                 "tags": [
                     "InternalTransfers"
                 ],
@@ -629,6 +871,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -648,7 +900,7 @@
         "/transactions/postings": {
             "get": {
                 "summary": "List",
-                "description": "List\nList all postings\n\nRequired permission:\n- **read:postings.list**",
+                "description": "List\nList all postings\n\nRequired permission:\n- **read_postings_list**",
                 "tags": [
                     "Postings"
                 ],
@@ -691,6 +943,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -710,7 +972,7 @@
         "/users/onboard": {
             "post": {
                 "summary": "Request onboarding",
-                "description": "Request onboarding\nRequest the onboarding of a new user\n\nRequired permission:\n- **write:users.onboarding.request**",
+                "description": "Request onboarding\nRequest the onboarding of a new user\n\nRequired permission:\n- **write_users_onboarding_request**",
                 "tags": [
                     "Users"
                 ],
@@ -751,6 +1013,16 @@
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "content": {
@@ -770,7 +1042,7 @@
         "/users": {
             "get": {
                 "summary": "List",
-                "description": "List\nList all users\n\nRequired permission:\n- **read:users.list**",
+                "description": "List\nList all users\n\nRequired permission:\n- **read_users_list**",
                 "tags": [
                     "Users"
                 ],
@@ -812,6 +1084,16 @@
                     },
                     "400": {
                         "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -1297,6 +1579,176 @@
                     "data"
                 ]
             },
+            "CrystalBank__Domains__Roles__Api__Requests__CreationRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "read_accounts_list",
+                                "write_accounts_opening_request",
+                                "write_api_keys_generation_request",
+                                "write_api_keys_revocation_request",
+                                "read_api_keys_list",
+                                "write_customers_onboarding_request",
+                                "read_customers_list",
+                                "read_roles_list",
+                                "write_roles_creation",
+                                "read_scopes_list",
+                                "write_scopes_creation",
+                                "write_transactions_internal_transfers_initiation_request",
+                                "read_postings_list",
+                                "write_users_onboarding_request",
+                                "read_users_list"
+                            ]
+                        }
+                    },
+                    "scopes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "required": [
+                    "name",
+                    "permissions",
+                    "scopes"
+                ]
+            },
+            "CrystalBank__Domains__Roles__Api__Responses__CreationResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the requested role"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "Response to an role creation request"
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Roles__Api__Responses__Role_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "object": {
+                                    "type": "string",
+                                    "description": "Object type of the entity"
+                                },
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the requested role"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Name of the role"
+                                        },
+                                        "permissions": {
+                                            "type": "array",
+                                            "description": "Permissions of the role",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "read_accounts_list",
+                                                    "write_accounts_opening_request",
+                                                    "write_api_keys_generation_request",
+                                                    "write_api_keys_revocation_request",
+                                                    "read_api_keys_list",
+                                                    "write_customers_onboarding_request",
+                                                    "read_customers_list",
+                                                    "read_roles_list",
+                                                    "write_roles_creation",
+                                                    "read_scopes_list",
+                                                    "write_scopes_creation",
+                                                    "write_transactions_internal_transfers_initiation_request",
+                                                    "read_postings_list",
+                                                    "write_users_onboarding_request",
+                                                    "read_users_list"
+                                                ]
+                                            }
+                                        },
+                                        "scopes": {
+                                            "type": "array",
+                                            "description": "Scope the role has access to",
+                                            "items": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "permissions",
+                                        "scopes"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "object",
+                                "attributes"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "meta",
+                    "data"
+                ]
+            },
             "CrystalBank__Domains__Scopes__Api__Requests__CreationRequest": {
                 "type": "object",
                 "properties": {
@@ -1385,7 +1837,6 @@
                                         },
                                         "name": {
                                             "type": "string",
-                                            "format": "uuid",
                                             "description": "Name of the scope"
                                         },
                                         "parent_scope_id": {
