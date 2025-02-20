@@ -2,9 +2,10 @@ module CrystalBank::Domains::Accounts
   module Opening
     module Commands
       class Request < ES::Command
-        def call(r : Accounts::Api::Requests::OpeningRequest) : UUID
-          # TODO: Replace with actor from context
-          dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+        def call(r : Accounts::Api::Requests::OpeningRequest, c : CrystalBank::Api::Context) : UUID
+          actor = c.user_id
+          scope = c.scope
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           customer_ids = r.customer_ids
 
@@ -13,10 +14,11 @@ module CrystalBank::Domains::Accounts
 
           # Create the account creation request event
           event = Accounts::Opening::Events::Requested.new(
-            actor_id: dummy_actor,
+            actor_id: actor,
             command_handler: self.class.to_s,
             currencies: r.currencies,
             customer_ids: r.customer_ids,
+            scope_id: scope,
             type: r.type
           )
 

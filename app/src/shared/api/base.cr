@@ -17,6 +17,12 @@ module CrystalBank
         response.headers["X-Request-ID"] = request_id
       end
 
+      def context : CrystalBank::Api::Context
+        ctx = @context
+        raise CrystalBank::Exception::InvalidContext.new("Invalid context error") unless ctx
+        ctx
+      end
+
       # Error handling
       # TODO: Annotation do not properly work when included from a module
       @[AC::Route::Exception(CrystalBank::Exception::Authentication, status_code: HTTP::Status::UNAUTHORIZED)]

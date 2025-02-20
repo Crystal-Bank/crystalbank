@@ -33,12 +33,14 @@ module Test::Account::Events
         customer_ids = [UUID.new("00000000-0000-0000-0000-200000000001"), UUID.new("00000000-0000-0000-0000-200000000002")]
         command_handler = "test"
         comment = "test comment"
+        scope_id = UUID.new("00000000-0000-0000-0000-300000000001")
 
         Accounts::Opening::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
           currencies: currencies,
           customer_ids: customer_ids,
+          scope_id: scope_id,
           type: account_type,
           command_handler: command_handler,
           comment: comment
@@ -50,6 +52,7 @@ module Test::Account::Events
           "comment":      "test comment",
           "currencies":   ["eur", "usd"],
           "customer_ids": ["00000000-0000-0000-0000-200000000001", "00000000-0000-0000-0000-200000000002"],
+          "scope_id":     "00000000-0000-0000-0000-300000000001",
           "type":         "checking",
         }.to_json
       end

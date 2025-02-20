@@ -9,12 +9,14 @@ module CrystalBank::Domains::Accounts
         struct Body < ES::Event::Body
           getter currencies : Array(CrystalBank::Types::Currencies::Supported)
           getter customer_ids : Array(UUID)
+          getter scope_id : UUID
           getter type : CrystalBank::Types::Accounts::Type
 
           def initialize(
             @comment : String,
             @currencies : Array(CrystalBank::Types::Currencies::Supported),
             @customer_ids : Array(UUID),
+            @scope_id : UUID,
             @type : CrystalBank::Types::Accounts::Type,
           ); end
         end
@@ -28,6 +30,7 @@ module CrystalBank::Domains::Accounts
           command_handler : String,
           currencies : Array(CrystalBank::Types::Currencies::Supported),
           customer_ids : Array(UUID),
+          scope_id : UUID,
           type : CrystalBank::Types::Accounts::Type,
           comment = "",
           aggregate_id = UUID.v7,
@@ -44,6 +47,7 @@ module CrystalBank::Domains::Accounts
             comment: comment,
             currencies: currencies,
             customer_ids: customer_ids,
+            scope_id: scope_id,
             type: type
           )
         end
