@@ -12,14 +12,14 @@ module CrystalBank::Domains::Roles
       # Request the creation of a new role
       #
       # Required permission:
-      # - **write:roles.creation.request**
+      # - **write_roles_creation_request**
       @[AC::Route::POST("/create", body: :r)]
       def create(
         r : CreationRequest,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID,
       ) : CreationResponse
-        authorized?("write:roles.creation.request")
+        authorized?("write_roles_creation_request")
 
         aggregate_id = ::Roles::Creation::Commands::Request.new.call(r)
 
@@ -30,7 +30,7 @@ module CrystalBank::Domains::Roles
       # List all roles
       #
       # Required permission:
-      # - **read:roles.list**
+      # - **read_roles_list**
       @[AC::Route::GET("/")]
       def list_roles(
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
@@ -38,7 +38,7 @@ module CrystalBank::Domains::Roles
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::Role)
-        authorized?("read:roles.list", request_scope: false)
+        authorized?("read_roles_list", request_scope: false)
 
         roles = ::Roles::Queries::Roles.new.list(cursor: cursor, limit: limit + 1).map do |s|
           Responses::Role.new(
