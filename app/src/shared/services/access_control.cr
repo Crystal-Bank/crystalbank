@@ -12,6 +12,16 @@ module CrystalBank
         @event_handlers : ES::EventHandlers = ES::Config.event_handlers
       )
       end
+
+      def available_scopes(permission : String) : Array(UUID)
+        CrystalBank.print_verbose("Permissions requested", permission)
+        accessible_scopes = [] of UUID  
+
+        # Check all roles against the requested permission
+
+        # Fetch all child scopes 
+        Scopes::Queries::ScopesTree.new.child_scopes(UUID.new("01951dca-85b2-7fda-82cb-bbef5f8915e4"))
+      end
     end
   end
 end
