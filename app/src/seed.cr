@@ -45,7 +45,6 @@ client_id = UUID.new(event.header.aggregate_id.to_s)
 # API key seed {END}
 # +++++++++++++++++++++++
 
-
 # +++++++++++++++++++++++
 # Scope seed {START}
 # +++++++++++++++++++++++
@@ -63,7 +62,6 @@ scope_id = UUID.new(event.header.aggregate_id.to_s)
 # +++++++++++++++++++++++
 # Scope seed {END}
 # +++++++++++++++++++++++
-
 
 # +++++++++++++++++++++++
 # Role seed {START}
