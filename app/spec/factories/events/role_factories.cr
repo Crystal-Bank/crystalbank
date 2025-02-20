@@ -29,7 +29,7 @@ module Test::Role::Events
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
         name = "Scope name test"
-        permissions = ["write:role.creation"]
+        permissions = [CrystalBank::Permissions::WRITE_roles_creation]
         scopes = [UUID.new("00000000-0000-0000-0000-200000000001")]
         command_handler = "test"
         comment = "test comment"
@@ -49,7 +49,7 @@ module Test::Role::Events
         {
           "comment":     "test comment",
           "name":        "Scope name test",
-          "permissions": ["write:role.creation"],
+          "permissions": ["write_roles_creation"],
           "scopes":      ["00000000-0000-0000-0000-200000000001"],
         }.to_json
       end

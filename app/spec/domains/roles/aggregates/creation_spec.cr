@@ -6,7 +6,7 @@ describe CrystalBank::Domains::Roles::Aggregates::Concerns::Creation do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Scope name"
-      permissions = ["write:role.creation"]
+      permissions = [CrystalBank::Permissions::WRITE_roles_creation]
       scopes = [UUID.new("00000000-0000-0000-0000-200000000001")]
 
       aggregate = Roles::Aggregate.new(aggregate_id)
