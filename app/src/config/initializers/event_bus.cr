@@ -18,6 +18,10 @@ bus.subscribe(ApiKeys::Revocation::Events::Accepted, ApiKeys::Projections::ApiKe
 bus.subscribe(Customers::Onboarding::Events::Requested, Customers::Onboarding::Commands::ProcessRequest)
 bus.subscribe(Customers::Onboarding::Events::Accepted, Customers::Projections::Customers)
 
+# Roles
+bus.subscribe(Roles::Creation::Events::Requested, Roles::Creation::Commands::ProcessRequest)
+bus.subscribe(Roles::Creation::Events::Accepted, Roles::Projections::Roles)
+
 # Scopes
 bus.subscribe(Scopes::Creation::Events::Requested, Scopes::Creation::Commands::ProcessRequest)
 bus.subscribe(Scopes::Creation::Events::Accepted, Scopes::Projections::Scopes)
