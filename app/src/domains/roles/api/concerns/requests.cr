@@ -5,7 +5,7 @@ module CrystalBank::Domains::Roles
         include JSON::Serializable
 
         getter name : String
-        getter permissions : Array(String)
+        getter permissions : Array(CrystalBank::Permissions)
         getter scopes : Array(UUID)
       end
     end

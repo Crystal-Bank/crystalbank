@@ -8,13 +8,13 @@ module CrystalBank::Domains::Roles
         # Data Object for the body of the event
         struct Body < ES::Event::Body
           getter name : String
-          getter permissions : Array(String)
+          getter permissions : Array(CrystalBank::Permissions)
           getter scopes : Array(UUID)
 
           def initialize(
             @comment : String,
             @name : String,
-            @permissions : Array(String),
+            @permissions : Array(CrystalBank::Permissions),
             @scopes : Array(UUID),
           ); end
         end
@@ -27,7 +27,7 @@ module CrystalBank::Domains::Roles
           actor_id : UUID,
           command_handler : String,
           name : String,
-          permissions : Array(String),
+          permissions : Array(CrystalBank::Permissions),
           scopes : Array(UUID),
           comment = "",
           aggregate_id = UUID.v7,

@@ -11,7 +11,8 @@ module CrystalBank::Domains::Roles
         getter object : String = "role"
 
         getter name : String
-        getter permissions : Array(String)
+        @[DB::Field(converter: CrystalBank::Converters::GenericArray(CrystalBank::Permissions))]
+        getter permissions : Array(CrystalBank::Permissions)
         getter scopes : Array(UUID)
       end
 

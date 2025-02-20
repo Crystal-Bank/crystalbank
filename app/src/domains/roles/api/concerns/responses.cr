@@ -22,7 +22,7 @@ module CrystalBank::Domains::Roles
         getter name : String
 
         @[JSON::Field(description: "Permissions of the role")]
-        getter permissions : Array(String)
+        getter permissions : Array(Permissions)
 
         @[JSON::Field(description: "Scope the role has access to")]
         getter scopes : Array(UUID)
@@ -30,7 +30,7 @@ module CrystalBank::Domains::Roles
         def initialize(
           @id : UUID,
           @name : String,
-          @permissions : Array(String),
+          @permissions : Array(CrystalBank::Permissions),
           @scopes : Array(UUID),
         ); end
       end

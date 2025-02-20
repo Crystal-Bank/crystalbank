@@ -8,7 +8,7 @@ module CrystalBank::Domains::Roles
 
     struct State < ES::Aggregate::State
       property name : String?
-      property permissions : Array(String)?
+      property permissions : Array(CrystalBank::Permissions)?
       property scopes : Array(UUID)?
     end
 
