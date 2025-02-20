@@ -58,4 +58,3 @@ module CrystalBank::Domains::Accounts
     end
   end
 end
-

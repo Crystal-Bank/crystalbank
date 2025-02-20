@@ -30,7 +30,7 @@ module CrystalBank
     # Users
     WRITE_users_onboarding_request
     READ_users_list
-    
+
     def to_s
       super.to_s.downcase
     end
