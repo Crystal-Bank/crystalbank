@@ -15,7 +15,7 @@ module CrystalBank::Domains::Accounts
             @comment : String,
             @currencies : Array(CrystalBank::Types::Currencies::Supported),
             @customer_ids : Array(UUID),
-            @type : CrystalBank::Types::Accounts::Type
+            @type : CrystalBank::Types::Accounts::Type,
           ); end
         end
 
@@ -30,7 +30,7 @@ module CrystalBank::Domains::Accounts
           customer_ids : Array(UUID),
           type : CrystalBank::Types::Accounts::Type,
           comment = "",
-          aggregate_id = UUID.v7
+          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,

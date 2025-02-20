@@ -11,7 +11,7 @@ module CrystalBank::Domains::ApiKeys
 
           def initialize(
             @comment : String,
-            @reason : String
+            @reason : String,
           ); end
         end
 
@@ -25,7 +25,7 @@ module CrystalBank::Domains::ApiKeys
           aggregate_version : Int32,
           command_handler : String,
           reason : String,
-          comment = ""
+          comment = "",
         )
           @header = Header.new(
             actor_id: actor_id,

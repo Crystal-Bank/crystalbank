@@ -18,7 +18,7 @@ module CrystalBank::Domains::Accounts
     def initialize(
       aggregate_id : UUID,
       @event_store : ES::EventStore = ES::Config.event_store,
-      @event_handlers : ES::EventHandlers = ES::Config.event_handlers
+      @event_handlers : ES::EventHandlers = ES::Config.event_handlers,
     )
       @aggregate_version = 0
       @state = State.new(aggregate_id)

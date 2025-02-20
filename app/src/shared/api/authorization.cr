@@ -7,7 +7,7 @@ module CrystalBank
 
         raise CrystalBank::Exception::InvalidArgument.new("authorization header is missing") if token.nil?
         raise CrystalBank::Exception::InvalidArgument.new("Invalid token format") unless token.includes?("Bearer")
-        raise CrystalBank::Exception::InvalidArgument.new("x-scope header is missing") if request_scope && (scope.nil? || scope.empty?) 
+        raise CrystalBank::Exception::InvalidArgument.new("x-scope header is missing") if request_scope && (scope.nil? || scope.empty?)
 
         # Check jwt and extract data from it
         jwt = parse_jwt(token)

@@ -13,7 +13,7 @@ module CrystalBank::Domains::Customers
           def initialize(
             @comment : String,
             @name : String,
-            @type : CrystalBank::Types::Customers::Type
+            @type : CrystalBank::Types::Customers::Type,
           ); end
         end
 
@@ -27,7 +27,7 @@ module CrystalBank::Domains::Customers
           name : String,
           type : CrystalBank::Types::Customers::Type,
           comment = "",
-          aggregate_id = UUID.v7
+          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,

@@ -28,7 +28,7 @@ module CrystalBank::Domains::Users
         def initialize(
           @id : UUID,
           @name : String,
-          @email : String
+          @email : String,
         ); end
       end
     end

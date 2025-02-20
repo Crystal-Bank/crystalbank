@@ -19,7 +19,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
             @creditor_account_id : UUID,
             @currency : CrystalBank::Types::Currencies::Supported,
             @debtor_account_id : UUID,
-            @remittance_information : String
+            @remittance_information : String,
           ); end
         end
 
@@ -36,7 +36,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
           debtor_account_id : UUID,
           remittance_information = "",
           comment = "",
-          aggregate_id = UUID.v7
+          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,

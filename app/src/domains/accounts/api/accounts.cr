@@ -17,7 +17,7 @@ module CrystalBank::Domains::Accounts
       def open(
         r : OpeningRequest,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
-        idempotency_key : UUID
+        idempotency_key : UUID,
       ) : OpeningResponse
         authorized?("write:accounts.opening.request")
 
@@ -36,7 +36,7 @@ module CrystalBank::Domains::Accounts
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
-        limit : Int32 = 20
+        limit : Int32 = 20,
       ) : ListResponse(Responses::Account)
         authorized?("read:accounts.list", request_scope: false)
 

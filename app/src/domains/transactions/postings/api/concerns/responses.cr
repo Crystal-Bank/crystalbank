@@ -33,7 +33,7 @@ module CrystalBank::Domains::Transactions::Postings
           @creditor_account_id : UUID,
           @currency : CrystalBank::Types::Currencies::Available,
           @debtor_account_id : UUID,
-          @remittance_information : String
+          @remittance_information : String,
         ); end
       end
     end

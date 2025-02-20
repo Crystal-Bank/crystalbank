@@ -20,7 +20,7 @@ module CrystalBank::Domains::Scopes
 
       def list(
         cursor : UUID?,
-        limit : Int32
+        limit : Int32,
       ) : Array(Scope)
         query_param_counter = 0
         query = [] of String

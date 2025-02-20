@@ -13,7 +13,7 @@ module CrystalBank::Domains::Scopes
           def initialize(
             @comment : String,
             @name : String,
-            @parent_scope_id : UUID?
+            @parent_scope_id : UUID?,
           ); end
         end
 
@@ -27,7 +27,7 @@ module CrystalBank::Domains::Scopes
           name : String,
           parent_scope_id : UUID?,
           comment = "",
-          aggregate_id = UUID.v7
+          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,

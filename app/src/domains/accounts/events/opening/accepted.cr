@@ -19,7 +19,7 @@ module CrystalBank::Domains::Accounts
           aggregate_id : UUID,
           aggregate_version : Int32,
           actor_id : UUID?,
-          comment = ""
+          comment = "",
         )
           @header = Header.new(
             actor_id: actor_id,

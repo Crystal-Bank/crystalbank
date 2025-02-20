@@ -25,7 +25,7 @@ module CrystalBank::Domains::Accounts
 
       def list(
         cursor : UUID?,
-        limit : Int32
+        limit : Int32,
       ) : Array(Account)
         query_param_counter = 0
         query = [] of String

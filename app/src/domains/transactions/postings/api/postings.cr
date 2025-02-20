@@ -16,7 +16,7 @@ module CrystalBank::Domains::Transactions::Postings
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
-        limit : Int32 = 20
+        limit : Int32 = 20,
       ) : ListResponse(Responses::Posting)
         authorized?("read:postings.list", request_scope: false)
 

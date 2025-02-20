@@ -27,7 +27,7 @@ module CrystalBank::Domains::Scopes
         def initialize(
           @id : UUID,
           @name : String,
-          @parent_scope_id : UUID?
+          @parent_scope_id : UUID?,
         ); end
       end
     end
