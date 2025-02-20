@@ -1,6 +1,6 @@
 require "../../../spec_helper"
 
-describe CrystalBank::Converters::CurrencyArray do
+describe CrystalBank::Domains::Roles::Queries::RolesPermissions do
   pending "pending" do
     false.should eq(true)
   end

@@ -18,6 +18,10 @@ module CrystalBank::Domains::Scopes
         @db = ES::Config.projection_database
       end
 
+      def get(uuid : UUID) : Scope?
+        @db.query_one("SELECT * FROM projections.scopes WHERE uuid = $1", args: uuid, as: Scope)
+      end
+
       def list(
         cursor : UUID?,
         limit : Int32,

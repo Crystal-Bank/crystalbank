@@ -1,5 +1,5 @@
 module CrystalBank::Converters
-  struct CurrencyArray(T)
+  struct GenericArray(T)
     def self.from_rs(rs : DB::ResultSet) : Array(T)
       result = Array(T).new
       r = rs.read

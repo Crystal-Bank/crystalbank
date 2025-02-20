@@ -12,14 +12,14 @@ module CrystalBank::Domains::Customers
       # Request the onboarding of a new customer
       #
       # Required permission:
-      # - **write:customers.onboarding.request**
+      # - **write_customers_onboarding_request**
       @[AC::Route::POST("/onboard", body: :r)]
       def onboard(
         r : OnboardingRequest,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID,
       ) : OnboardingResponse
-        authorized?("write:customers.onboarding.request")
+        authorized?("write_customers_onboarding_request")
 
         aggregate_id = ::Customers::Onboarding::Commands::Request.new.call(r)
 
@@ -30,7 +30,7 @@ module CrystalBank::Domains::Customers
       # List all customers
       #
       # Required permission:
-      # - **read:customers.list**
+      # - **read_customers_list**
       @[AC::Route::GET("/")]
       def list_customers(
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
@@ -38,7 +38,7 @@ module CrystalBank::Domains::Customers
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::Customer)
-        authorized?("read:customers.list", request_scope: false)
+        authorized?("read_customers_list", request_scope: false)
 
         customers = ::Customers::Queries::Customers.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Customer.new(

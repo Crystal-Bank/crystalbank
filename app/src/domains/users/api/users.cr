@@ -12,14 +12,14 @@ module CrystalBank::Domains::Users
       # Request the onboarding of a new user
       #
       # Required permission:
-      # - **write:users.onboarding.request**
+      # - **write_users_onboarding_request**
       @[AC::Route::POST("/onboard", body: :r)]
       def open(
         r : OnboardingRequest,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID,
       ) : OnboardingResponse
-        authorized?("write:users.onboarding.request")
+        authorized?("write_users_onboarding_request")
 
         aggregate_id = ::Users::Onboarding::Commands::Request.new.call(r)
 
@@ -30,7 +30,7 @@ module CrystalBank::Domains::Users
       # List all users
       #
       # Required permission:
-      # - **read:users.list**
+      # - **read_users_list**
       @[AC::Route::GET("/")]
       def list_users(
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
@@ -38,7 +38,7 @@ module CrystalBank::Domains::Users
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::User)
-        authorized?("read:users.list", request_scope: false)
+        authorized?("read_users_list", request_scope: false)
 
         users = ::Users::Queries::Users.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::User.new(

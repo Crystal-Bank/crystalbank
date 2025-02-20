@@ -10,7 +10,7 @@ module CrystalBank::Domains::Transactions::Postings
       # List all postings
       #
       # Required permission:
-      # - **read:postings.list**
+      # - **read_postings_list**
       @[AC::Route::GET("/")]
       def list_postings(
         @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
@@ -18,7 +18,7 @@ module CrystalBank::Domains::Transactions::Postings
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::Posting)
-        authorized?("read:postings.list", request_scope: false)
+        authorized?("read_postings_list", request_scope: false)
 
         postings = ::Postings::Queries::Postings.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Posting.new(

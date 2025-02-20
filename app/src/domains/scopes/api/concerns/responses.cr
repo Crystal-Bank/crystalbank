@@ -18,7 +18,7 @@ module CrystalBank::Domains::Scopes
         @[JSON::Field(format: "uuid", description: "ID of the requested scope")]
         getter id : UUID
 
-        @[JSON::Field(format: "uuid", description: "Name of the scope")]
+        @[JSON::Field(description: "Name of the scope")]
         getter name : String
 
         @[JSON::Field(description: "ID of the parent scope")]

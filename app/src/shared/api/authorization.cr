@@ -17,21 +17,16 @@ module CrystalBank
 
         # Authorize if no permission is requested
         return true if permission.nil?
+        parsed_permissions = CrystalBank::Permissions.parse(permission)
 
         # Fetch available scopes
-        available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(permission)
-        CrystalBank.print_verbose("Available scopes", available_scopes)
+        available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(parsed_permissions)
 
-        # TODO: Create a session object
-        # session = CrystalBank::Objects::SessionContext.new(jwt, permission, scope_id, available_scopes)
+        # Create a session object
+        @context = CrystalBank::Api::Context.new(jwt.data.user, jwt.data.roles, parsed_permissions, scope_id, available_scopes)
 
-        # return true unless available_scopes.empty?
-        # raise CrystalBank::Exception::Authorization.new("No permission to perform this action '#{permission}'")
-      end
-
-      private def parse_request_scope(scope : String?) : UUID
-        raise CrystalBank::Exception::InvalidArgument.new("proving 'x-scope' header is mandatory") if (scope.nil? || scope.empty?)
-        UUID.new(scope)
+        return true unless available_scopes.empty?
+        raise CrystalBank::Exception::Authorization.new("No permission to perform this action '#{permission}'")
       end
 
       private def parse_jwt(token : String) : CrystalBank::Api::JWT
