@@ -29,11 +29,6 @@ module CrystalBank
         raise CrystalBank::Exception::Authorization.new("No permission to perform this action '#{permission}'")
       end
 
-      private def parse_request_scope(scope : String?) : UUID
-        raise CrystalBank::Exception::InvalidArgument.new("proving 'x-scope' header is mandatory") if (scope.nil? || scope.empty?)
-        UUID.new(scope)
-      end
-
       private def parse_jwt(token : String) : CrystalBank::Api::JWT
         jwt = token.split(" ").last
         payload, _ = begin
