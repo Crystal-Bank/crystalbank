@@ -13,14 +13,13 @@ module CrystalBank
       )
       end
 
-      def available_scopes(permission : String) : Array(UUID)
-        CrystalBank.print_verbose("Permissions requested", permission)
-        accessible_scopes = [] of UUID
-
+      def available_scopes(permission : CrystalBank::Permissions) : Array(UUID)
         # Check all roles against the requested permission
+        roles_scopes = Roles::Queries::RolesPermissions.new.available_scopes(@roles, permission)
+        return Array(UUID).new if roles_scopes.empty?
 
         # Fetch all child scopes
-        Scopes::Queries::ScopesTree.new.child_scopes(UUID.new("01951dca-85b2-7fda-82cb-bbef5f8915e4"))
+        Scopes::Queries::ScopesTree.new.child_scopes(roles_scopes)
       end
     end
   end
