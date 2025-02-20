@@ -21,7 +21,7 @@ module CrystalBank::Domains::Accounts
       ) : OpeningResponse
         authorized?("write_accounts_opening_request")
 
-        aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r)
+        aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r, context)
 
         OpeningResponse.new(aggregate_id)
       end
