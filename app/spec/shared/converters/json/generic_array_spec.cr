@@ -1,6 +1,6 @@
 require "../../../spec_helper"
 
-describe CrystalBank::Converters::CurrencyArray do
+describe CrystalBank::Converters::GenericArray do
   pending "pending" do
     false.should eq(true)
   end
