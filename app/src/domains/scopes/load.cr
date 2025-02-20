@@ -17,6 +17,7 @@ require "./projections/scopes"
 
 # Queries
 require "./queries/scopes"
+require "./queries/scopes_tree"
 
 # Domain
 require "./scopes"
