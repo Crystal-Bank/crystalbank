@@ -2,7 +2,7 @@
 # BASE artifact
 #
 # FROM --platform=linux/amd64 ubuntu:22.04 AS base
-FROM 84codes/crystal:1.14.0-ubuntu-24.04 AS base
+FROM 84codes/crystal:1.15.1-ubuntu-24.04 AS base
 
 
 #

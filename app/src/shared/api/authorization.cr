@@ -3,21 +3,24 @@ module CrystalBank
     module Authorization
       def authorized?(permission : String? = nil, request_scope : Bool = true)
         token = request.headers["authorization"]?
+        scope = request.headers["x-scope"]?
+
         raise CrystalBank::Exception::InvalidArgument.new("authorization header is missing") if token.nil?
         raise CrystalBank::Exception::InvalidArgument.new("Invalid token format") unless token.includes?("Bearer")
+        raise CrystalBank::Exception::InvalidArgument.new("x-scope header is missing") if request_scope && (scope.nil? || scope.empty?)
 
         # Check jwt and extract data from it
         jwt = parse_jwt(token)
 
-        # TODO: require scope
         # Get the request scope from the header
-        # scope_id = request_scope ? parse_request_scope(request.headers["x-scope"]?) : nil
+        scope_id = UUID.new(scope.to_s) if request_scope
 
-        # authorize if no permission is requested
+        # Authorize if no permission is requested
         return true if permission.nil?
 
-        # TODO: Fetch available scopes
-        # available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(permission)
+        # Fetch available scopes
+        available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(permission)
+        CrystalBank.print_verbose("Available scopes", available_scopes)
 
         # TODO: Create a session object
         # session = CrystalBank::Objects::SessionContext.new(jwt, permission, scope_id, available_scopes)

@@ -28,7 +28,7 @@ module CrystalBank::Domains::Customers
         def initialize(
           @id : UUID,
           @name : String,
-          @type : CrystalBank::Types::Customers::Type
+          @type : CrystalBank::Types::Customers::Type,
         ); end
       end
     end

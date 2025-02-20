@@ -32,7 +32,7 @@ module CrystalBank::Domains::Accounts
           @id : UUID,
           @currencies : Array(CrystalBank::Types::Currencies::Supported),
           @customer_ids : Array(UUID),
-          @type : CrystalBank::Types::Accounts::Type
+          @type : CrystalBank::Types::Accounts::Type,
         ); end
       end
     end

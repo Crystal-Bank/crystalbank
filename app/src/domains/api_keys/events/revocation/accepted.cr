@@ -19,7 +19,7 @@ module CrystalBank::Domains::ApiKeys
           aggregate_version : Int32,
           command_handler : String,
           actor_id : UUID?,
-          comment = ""
+          comment = "",
         )
           @header = Header.new(
             actor_id: actor_id,

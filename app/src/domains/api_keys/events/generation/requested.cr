@@ -15,7 +15,7 @@ module CrystalBank::Domains::ApiKeys
             @api_secret : String,
             @comment : String,
             @name : String,
-            @user_id : UUID
+            @user_id : UUID,
           ); end
         end
 
@@ -30,7 +30,7 @@ module CrystalBank::Domains::ApiKeys
           name : String,
           user_id : UUID,
           comment = "",
-          aggregate_id = UUID.v7
+          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,

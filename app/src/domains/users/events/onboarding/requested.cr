@@ -13,7 +13,7 @@ module CrystalBank::Domains::Users
           def initialize(
             @comment : String,
             @name : String,
-            @email : String
+            @email : String,
           ); end
         end
 
@@ -27,7 +27,7 @@ module CrystalBank::Domains::Users
           name : String,
           email : String,
           comment = "",
-          aggregate_id = UUID.v7
+          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,
