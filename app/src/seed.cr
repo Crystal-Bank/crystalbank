@@ -40,9 +40,30 @@ event = ApiKeys::Generation::Events::Requested.new(
 )
 # Append event to event store
 event_store.append(event)
+client_id = UUID.new(event.header.aggregate_id.to_s)
 # +++++++++++++++++++++++
 # API key seed {END}
 # +++++++++++++++++++++++
+
+
+# +++++++++++++++++++++++
+# Scope seed {START}
+# +++++++++++++++++++++++
+# Create Root Scope
+event = Scopes::Creation::Events::Requested.new(
+  actor_id: dummy_uuid,
+  command_handler: "seed",
+  name: "Root Scope",
+  parent_scope_id: nil
+)
+# Append event to event store
+event_store.append(event)
+
+scope_id = UUID.new(event.header.aggregate_id.to_s)
+# +++++++++++++++++++++++
+# Scope seed {END}
+# +++++++++++++++++++++++
+
 
 # +++++++++++++++++++++++
 # Role seed {START}
@@ -54,7 +75,7 @@ event = Roles::Creation::Events::Requested.new(
   command_handler: "seed",
   name: "Admin Role",
   permissions: CrystalBank::Permissions.values,
-  scopes: [] of UUID # TODO: Add top level admin scope
+  scopes: [scope_id]
 )
 # Append event to event store
 event_store.append(event)
@@ -65,13 +86,13 @@ role_id = UUID.new(event.header.aggregate_id.to_s)
 
 # Return the aggregate ID of the newly created user aggregate
 output = [
-  "client_id: '#{UUID.new(event.header.aggregate_id.to_s)}'",
+  "client_id: '#{client_id}'",
   "client_secret: 'secret'",
 ]
 CrystalBank.print_verbose("Seed credentials", output.join("\n"))
 
 entities = [
   "Admin Role: '#{role_id}'",
-  "Root Scope: 'TBD'",
+  "Root Scope: '#{scope_id}'",
 ]
-CrystalBank.print_verbose("Created entities", output.join("\n"))
+CrystalBank.print_verbose("Created entities", entities.join("\n"))
