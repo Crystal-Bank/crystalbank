@@ -18,6 +18,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
           @state.debtor_account_id = body.debtor_account_id
           @state.creditor_account_id = body.creditor_account_id
           @state.remittance_information = body.remittance_information
+          @state.scope_id = body.scope_id
         end
       end
     end

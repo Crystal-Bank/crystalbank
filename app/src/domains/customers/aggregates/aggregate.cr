@@ -9,6 +9,7 @@ module CrystalBank::Domains::Customers
     struct State < ES::Aggregate::State
       property name : String?
       property onboarded : Bool = false
+      property scope_id : UUID?
       property type : CrystalBank::Types::Customers::Type?
     end
 

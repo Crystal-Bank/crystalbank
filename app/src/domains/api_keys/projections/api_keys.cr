@@ -11,6 +11,7 @@ module CrystalBank::Domains::ApiKeys
             "id" SERIAL PRIMARY KEY,
             "uuid" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
             "user_id" UUID NOT NULL,
@@ -38,9 +39,10 @@ module CrystalBank::Domains::ApiKeys
         aggregate.hydrate(version: aggregate_version)
 
         # Extract attributes to local variables
-        name = aggregate.state.name
-        user_id = aggregate.state.user_id
         encrypted_secret = aggregate.state.encrypted_secret
+        name = aggregate.state.name
+        scope_id = aggregate.state.scope_id
+        user_id = aggregate.state.user_id
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
@@ -50,16 +52,18 @@ module CrystalBank::Domains::ApiKeys
               "projections"."api_keys" (
                 uuid,
                 aggregate_version,
+                scope_id,
                 created_at,
                 name,
                 user_id,
                 encrypted_secret,
                 active
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
           ),
             aggregate_id,
             aggregate_version,
+            scope_id,
             created_at,
             name,
             user_id,

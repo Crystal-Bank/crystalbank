@@ -10,6 +10,7 @@ module CrystalBank::Domains::Users
       property onboarded : Bool = false
       property name : String?
       property email : String?
+      property scope_id : UUID?
     end
 
     getter state : State
