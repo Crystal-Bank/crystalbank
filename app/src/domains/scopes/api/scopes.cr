@@ -43,6 +43,7 @@ module CrystalBank::Domains::Scopes
         scopes = ::Scopes::Queries::Scopes.new.list(cursor: cursor, limit: limit + 1).map do |s|
           Responses::Scope.new(
             s.id,
+            s.scope_id,
             s.name,
             s.parent_scope_id
           )

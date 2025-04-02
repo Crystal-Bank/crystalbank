@@ -43,6 +43,7 @@ module CrystalBank::Domains::Accounts
         accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(
             a.id,
+            a.scope_id,
             a.currencies,
             a.customer_ids,
             CrystalBank::Types::Accounts::Type.parse(a.type)

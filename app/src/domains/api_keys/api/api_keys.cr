@@ -61,6 +61,7 @@ module CrystalBank::Domains::ApiKeys
         api_keys = ::ApiKeys::Queries::ApiKeys.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::ApiKey.new(
             a.id,
+            a.scope_id,
             a.active,
             a.name,
             a.created_at,

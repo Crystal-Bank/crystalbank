@@ -18,6 +18,9 @@ module CrystalBank::Domains::Roles
         @[JSON::Field(format: "uuid", description: "ID of the requested role")]
         getter id : UUID
 
+        @[JSON::Field(format: "uuid", description: "Scope of the data point")]
+        getter scope_id : UUID
+
         @[JSON::Field(description: "Name of the role")]
         getter name : String
 
@@ -29,6 +32,7 @@ module CrystalBank::Domains::Roles
 
         def initialize(
           @id : UUID,
+          @scope_id : UUID,
           @name : String,
           @permissions : Array(CrystalBank::Permissions),
           @scopes : Array(UUID),

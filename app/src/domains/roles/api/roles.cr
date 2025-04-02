@@ -43,6 +43,7 @@ module CrystalBank::Domains::Roles
         roles = ::Roles::Queries::Roles.new.list(cursor: cursor, limit: limit + 1).map do |s|
           Responses::Role.new(
             s.id,
+            s.scope_id,
             s.name,
             s.permissions,
             s.scopes

@@ -43,6 +43,7 @@ module CrystalBank::Domains::Customers
         customers = ::Customers::Queries::Customers.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Customer.new(
             a.id,
+            a.scope_id,
             a.name,
             CrystalBank::Types::Customers::Type.parse(a.type)
           )

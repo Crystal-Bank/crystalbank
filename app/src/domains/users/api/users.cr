@@ -43,6 +43,7 @@ module CrystalBank::Domains::Users
         users = ::Users::Queries::Users.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::User.new(
             a.id,
+            a.scope_id,
             a.name,
             a.email
           )
