@@ -10,6 +10,7 @@ module CrystalBank::Domains::Accounts
       property open : Bool = false
       property customer_ids = Array(UUID).new
       property supported_currencies = Array(CrystalBank::Types::Currencies::Supported).new
+      property scope_id : UUID?
       property type : CrystalBank::Types::Accounts::Type?
     end
 
