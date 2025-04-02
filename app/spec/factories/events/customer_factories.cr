@@ -49,7 +49,7 @@ module Test::Customer::Events
         {
           "comment":  "test comment",
           "name":     "Peter Pan",
-          "scope_id": "00000000-0000-0000-0000-000000000002",
+          "scope_id": "00000000-0000-0000-0000-000000000001",
           "type":     "individual",
         }.to_json
       end
