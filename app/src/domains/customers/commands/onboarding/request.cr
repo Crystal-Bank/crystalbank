@@ -3,7 +3,6 @@ module CrystalBank::Domains::Customers
     module Commands
       class Request < ES::Command
         def call(r : Customers::Api::Requests::OnboardingRequest, c : CrystalBank::Api::Context) : UUID
-          # TODO: Replace with actor from context
           actor = c.user_id
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
