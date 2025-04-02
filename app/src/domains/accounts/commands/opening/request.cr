@@ -30,6 +30,7 @@ module CrystalBank::Domains::Accounts
         end
 
         private def customer_eligable!(customer_id : UUID)
+          # TODO: Don't use aggregate here, use a service instead
           customer_aggregate = CrystalBank::Domains::Customers::Aggregate.new(customer_id)
           customer_aggregate.hydrate
 
