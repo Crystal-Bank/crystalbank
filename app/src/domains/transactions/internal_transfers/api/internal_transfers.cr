@@ -17,7 +17,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
       def initiate(r : InitiationRequest) : InitiationResponse
         authorized?("write_transactions_internal_transfers_initiation_request")
 
-        aggregate_id = ::Transactions::InternalTransfers::Initiation::Commands::Request.new.call(r)
+        aggregate_id = ::Transactions::InternalTransfers::Initiation::Commands::Request.new.call(r, context)
 
         InitiationResponse.new(aggregate_id)
       end

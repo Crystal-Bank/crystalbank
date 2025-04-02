@@ -9,6 +9,7 @@ describe CrystalBank::Domains::Transactions::InternalTransfers::Initiation do
       creditor_account_id = UUID.new("00000000-0000-0000-0000-100000000000")
       currency = CrystalBank::Types::Currencies::Supported.parse("eur")
       debtor_account_id = UUID.new("00000000-0000-0000-0000-200000000000")
+      scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
       aggregate = Transactions::InternalTransfers::Aggregate.new(aggregate_id)
 
@@ -19,7 +20,8 @@ describe CrystalBank::Domains::Transactions::InternalTransfers::Initiation do
         command_handler: "test",
         creditor_account_id: creditor_account_id,
         currency: currency,
-        debtor_account_id: debtor_account_id
+        debtor_account_id: debtor_account_id,
+        scope_id: scope_id,
       )
       aggregate.apply(event_1)
 

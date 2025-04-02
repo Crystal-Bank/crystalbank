@@ -2,9 +2,10 @@ module CrystalBank::Domains::Transactions::InternalTransfers
   module Initiation
     module Commands
       class Request < ES::Command
-        def call(r : Transactions::InternalTransfers::Api::Requests::InitiationRequest) : UUID
-          # TODO: Replace with actor from context
-          dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+        def call(r : Transactions::InternalTransfers::Api::Requests::InitiationRequest, c : CrystalBank::Api::Context) : UUID
+          actor = c.user_id
+          scope = c.scope
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           amount = r.amount
           creditor_account_id = r.creditor_account_id
@@ -37,13 +38,14 @@ module CrystalBank::Domains::Transactions::InternalTransfers
 
           # Create the account creation request event
           event = Transactions::InternalTransfers::Initiation::Events::Requested.new(
-            actor_id: dummy_actor,
+            actor_id: actor,
             command_handler: self.class.to_s,
             currency: currency,
             amount: amount,
             debtor_account_id: debtor_account_id,
             creditor_account_id: creditor_account_id,
-            remittance_information: r.remittance_information
+            remittance_information: r.remittance_information,
+            scope_id: scope,
           )
 
           # Append event to event store
