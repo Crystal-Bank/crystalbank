@@ -7,14 +7,16 @@ module CrystalBank::Domains::ApiKeys
 
         # Data Object for the body of the event
         struct Body < ES::Event::Body
-          getter name : String
-          getter user_id : UUID
           getter api_secret : String
+          getter name : String
+          getter scope_id : UUID
+          getter user_id : UUID
 
           def initialize(
             @api_secret : String,
             @comment : String,
             @name : String,
+            @scope_id : UUID,
             @user_id : UUID,
           ); end
         end
@@ -28,6 +30,7 @@ module CrystalBank::Domains::ApiKeys
           api_secret : String,
           command_handler : String,
           name : String,
+          scope_id : UUID,
           user_id : UUID,
           comment = "",
           aggregate_id = UUID.v7,
@@ -44,6 +47,7 @@ module CrystalBank::Domains::ApiKeys
             api_secret: api_secret,
             comment: comment,
             name: name,
+            scope_id: scope_id,
             user_id: user_id
           )
         end

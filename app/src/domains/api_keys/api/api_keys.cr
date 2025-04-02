@@ -21,7 +21,7 @@ module CrystalBank::Domains::ApiKeys
       ) : GenerationResponse
         authorized?("write_api_keys_generation_request")
 
-        response = ::ApiKeys::Generation::Commands::Request.new.call(r)
+        response = ::ApiKeys::Generation::Commands::Request.new.call(r, context)
 
         response
       end

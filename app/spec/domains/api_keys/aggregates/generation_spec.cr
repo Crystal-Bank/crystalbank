@@ -6,6 +6,7 @@ describe CrystalBank::Domains::ApiKeys::Aggregates::Concerns::Generation do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Test key name"
+      scope_id = UUID.new("00000000-0000-0000-0000-000000000001")
       user_id = UUID.new("00000000-0000-0000-0000-200000000000")
 
       aggregate = ApiKeys::Aggregate.new(aggregate_id)
@@ -16,6 +17,7 @@ describe CrystalBank::Domains::ApiKeys::Aggregates::Concerns::Generation do
         api_secret: "secret",
         command_handler: "test",
         name: name,
+        scope_id: scope_id,
         user_id: user_id
       )
       aggregate.apply(event_1)

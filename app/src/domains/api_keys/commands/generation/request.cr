@@ -2,9 +2,10 @@ module CrystalBank::Domains::ApiKeys
   module Generation
     module Commands
       class Request < ES::Command
-        def call(r : ApiKeys::Api::Requests::GenerationRequest) : ::ApiKeys::Api::Responses::GenerationResponse
-          # TODO: Replace with actor from context
-          dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+        def call(r : ApiKeys::Api::Requests::GenerationRequest, c : CrystalBank::Api::Context) : ::ApiKeys::Api::Responses::GenerationResponse
+          actor = c.user_id
+          scope = c.scope
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           # Check if user is active
           user_active!(UUID.new(r.user_id))
@@ -15,10 +16,11 @@ module CrystalBank::Domains::ApiKeys
 
           # Create the api key generation request event
           event = ApiKeys::Generation::Events::Requested.new(
-            actor_id: dummy_actor,
+            actor_id: actor,
             api_secret: api_secret_encrypted,
             command_handler: self.class.to_s,
             name: r.name,
+            scope_id: scope,
             user_id: r.user_id
           )
 
@@ -31,6 +33,7 @@ module CrystalBank::Domains::ApiKeys
         end
 
         private def user_active!(user_id : UUID)
+          # TODO: Don't use aggregate here, use a service instead
           user_aggregate = CrystalBank::Domains::Users::Aggregate.new(user_id)
           user_aggregate.hydrate
 
