@@ -8,6 +8,24 @@ api_secret = "secret"
 api_secret_encrypted = Crypto::Bcrypt::Password.create(api_secret, cost: 10).to_s
 
 # +++++++++++++++++++++++
+# Scope seed {START}
+# +++++++++++++++++++++++
+# Create Root Scope
+event = Scopes::Creation::Events::Requested.new(
+  actor_id: dummy_uuid,
+  command_handler: "seed",
+  name: "Root Scope",
+  parent_scope_id: nil
+)
+# Append event to event store
+event_store.append(event)
+
+scope_id = UUID.new(event.header.aggregate_id.to_s)
+# +++++++++++++++++++++++
+# Scope seed {END}
+# +++++++++++++++++++++++
+
+# +++++++++++++++++++++++
 # User seed {START}
 # +++++++++++++++++++++++
 # Create User
@@ -36,6 +54,7 @@ event = ApiKeys::Generation::Events::Requested.new(
   api_secret: api_secret_encrypted,
   command_handler: "seed",
   name: "admin api key",
+  scope_id: scope_id,
   user_id: user_id
 )
 # Append event to event store
@@ -43,24 +62,6 @@ event_store.append(event)
 client_id = UUID.new(event.header.aggregate_id.to_s)
 # +++++++++++++++++++++++
 # API key seed {END}
-# +++++++++++++++++++++++
-
-# +++++++++++++++++++++++
-# Scope seed {START}
-# +++++++++++++++++++++++
-# Create Root Scope
-event = Scopes::Creation::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  name: "Root Scope",
-  parent_scope_id: nil
-)
-# Append event to event store
-event_store.append(event)
-
-scope_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# Scope seed {END}
 # +++++++++++++++++++++++
 
 # +++++++++++++++++++++++
