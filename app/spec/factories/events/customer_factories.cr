@@ -32,7 +32,7 @@ module Test::Customer::Events
         name = "Peter Pan"
         command_handler = "test"
         comment = "test comment"
-        scope_id = UUID.new("00000000-0000-0000-0000-000000000002")
+        scope_id = UUID.new("00000000-0000-0000-0000-000000000001")
 
         Customers::Onboarding::Events::Requested.new(
           actor_id: actor_id,
