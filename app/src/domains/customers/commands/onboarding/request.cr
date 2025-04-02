@@ -2,9 +2,11 @@ module CrystalBank::Domains::Customers
   module Onboarding
     module Commands
       class Request < ES::Command
-        def call(r : Customers::Api::Requests::OnboardingRequest) : UUID
+        def call(r : Customers::Api::Requests::OnboardingRequest, c : CrystalBank::Api::Context) : UUID
           # TODO: Replace with actor from context
-          dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+          actor = c.user_id
+          scope = c.scope
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           # Check if name is valid
           name = r.name
@@ -12,9 +14,10 @@ module CrystalBank::Domains::Customers
 
           # Create the customer onboarding request event
           event = Customers::Onboarding::Events::Requested.new(
-            actor_id: dummy_actor,
+            actor_id: actor,
             command_handler: self.class.to_s,
             name: name,
+            scope_id: scope,
             type: r.type
           )
 

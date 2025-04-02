@@ -21,7 +21,7 @@ module CrystalBank::Domains::Customers
       ) : OnboardingResponse
         authorized?("write_customers_onboarding_request")
 
-        aggregate_id = ::Customers::Onboarding::Commands::Request.new.call(r)
+        aggregate_id = ::Customers::Onboarding::Commands::Request.new.call(r, context)
 
         OnboardingResponse.new(aggregate_id)
       end

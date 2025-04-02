@@ -6,6 +6,7 @@ describe CrystalBank::Domains::Customers::Aggregates::Concerns::Onboarding do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Peter Pan"
+      scope_id = UUID.new("00000000-0000-0000-0000-000000000002")
       type = CrystalBank::Types::Customers::Type.parse("individual")
 
       aggregate = Customers::Aggregate.new(aggregate_id)
@@ -15,6 +16,7 @@ describe CrystalBank::Domains::Customers::Aggregates::Concerns::Onboarding do
         actor_id: actor_id,
         command_handler: "test",
         name: name,
+        scope_id: scope_id,
         type: type
       )
       aggregate.apply(event_1)

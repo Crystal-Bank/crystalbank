@@ -32,11 +32,13 @@ module Test::Customer::Events
         name = "Peter Pan"
         command_handler = "test"
         comment = "test comment"
+        scope_id = UUID.new("00000000-0000-0000-0000-000000000002")
 
         Customers::Onboarding::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
           name: name,
+          scope_id: scope_id,
           type: customer_type,
           command_handler: command_handler,
           comment: comment
@@ -47,6 +49,7 @@ module Test::Customer::Events
         {
           "comment": "test comment",
           "name":    "Peter Pan",
+          "scope_id": "00000000-0000-0000-0000-000000000002",
           "type":    "individual",
         }.to_json
       end
