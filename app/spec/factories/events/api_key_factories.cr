@@ -32,6 +32,7 @@ module Test::ApiKey::Events
         command_handler = "test"
         comment = "test comment"
         name = "test name"
+        scope_id = UUID.new("00000000-0000-0000-0000-000000000001")
         user_id = UUID.new("00000000-0000-0000-0000-000000000000")
 
         ApiKeys::Generation::Events::Requested.new(
@@ -41,6 +42,7 @@ module Test::ApiKey::Events
           command_handler: command_handler,
           comment: comment,
           name: name,
+          scope_id: scope_id,
           user_id: user_id
         )
       end
@@ -48,9 +50,10 @@ module Test::ApiKey::Events
       def json_string : String
         {
           "comment":    "test comment",
-          "name":       "test name",
-          "user_id":    "00000000-0000-0000-0000-000000000000",
           "api_secret": "api_secret",
+          "name":       "test name",
+          "scope_id":   "00000000-0000-0000-0000-000000000001",
+          "user_id":    "00000000-0000-0000-0000-000000000000",
         }.to_json
       end
     end
