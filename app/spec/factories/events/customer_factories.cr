@@ -47,10 +47,10 @@ module Test::Customer::Events
 
       def json_string : String
         {
-          "comment": "test comment",
-          "name":    "Peter Pan",
+          "comment":  "test comment",
+          "name":     "Peter Pan",
           "scope_id": "00000000-0000-0000-0000-000000000002",
-          "type":    "individual",
+          "type":     "individual",
         }.to_json
       end
     end
