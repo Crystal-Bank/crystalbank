@@ -29,7 +29,8 @@ module Test::Role::Events
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
         name = "Scope name test"
-        permissions = [CrystalBank::Permissions::WRITE_roles_creation]
+        permissions = [
+          CrystalBank::Permissions::WRITE_roles_creation_request]
         scopes = [UUID.new("00000000-0000-0000-0000-200000000001")]
         command_handler = "test"
         comment = "test comment"
