@@ -10,6 +10,7 @@ module CrystalBank::Domains::Scopes
       end
 
       def child_scopes(uuids : Array(UUID)) : Array(UUID)
+        CrystalBank.print_verbose("Child scopes requested", uuids)
         query = [] of String
         query << %(
           WITH RECURSIVE available_scopes (

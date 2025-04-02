@@ -21,7 +21,7 @@ module CrystalBank::Domains::Scopes
       ) : CreationResponse
         authorized?("write_scopes_creation_request")
 
-        aggregate_id = ::Scopes::Creation::Commands::Request.new.call(r)
+        aggregate_id = ::Scopes::Creation::Commands::Request.new.call(r, context)
 
         CreationResponse.new(aggregate_id)
       end
