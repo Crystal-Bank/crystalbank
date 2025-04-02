@@ -15,7 +15,8 @@ event = Scopes::Creation::Events::Requested.new(
   actor_id: dummy_uuid,
   command_handler: "seed",
   name: "Root Scope",
-  parent_scope_id: nil
+  parent_scope_id: nil,
+  scope_id: dummy_uuid,
 )
 # Append event to event store
 event_store.append(event)
@@ -33,7 +34,8 @@ event = Users::Onboarding::Events::Requested.new(
   actor_id: dummy_uuid,
   command_handler: "seed",
   name: "Admin",
-  email: "admin@crystalbank.xyz"
+  email: "admin@crystalbank.xyz",
+  scope_id: scope_id,
 )
 
 # Append event to event store
@@ -74,6 +76,7 @@ event = Roles::Creation::Events::Requested.new(
   command_handler: "seed",
   name: "Admin Role",
   permissions: CrystalBank::Permissions.values,
+  scope_id: scope_id,
   scopes: [scope_id]
 )
 # Append event to event store
