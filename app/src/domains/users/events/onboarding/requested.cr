@@ -9,11 +9,13 @@ module CrystalBank::Domains::Users
         struct Body < ES::Event::Body
           getter name : String
           getter email : String
+          getter scope_id : UUID
 
           def initialize(
             @comment : String,
             @name : String,
             @email : String,
+            @scope_id : UUID,
           ); end
         end
 
@@ -26,6 +28,7 @@ module CrystalBank::Domains::Users
           command_handler : String,
           name : String,
           email : String,
+          scope_id : UUID,
           comment = "",
           aggregate_id = UUID.v7,
         )
@@ -40,7 +43,8 @@ module CrystalBank::Domains::Users
           @body = Body.new(
             comment: comment,
             name: name,
-            email: email
+            email: email,
+            scope_id: scope_id
           )
         end
       end

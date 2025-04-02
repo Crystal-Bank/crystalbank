@@ -7,6 +7,7 @@ describe CrystalBank::Domains::Users::Aggregates::Concerns::Onboarding do
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Test user"
       email = "test@crystalbank.xyz"
+      scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
       aggregate = Users::Aggregate.new(aggregate_id)
 
@@ -15,7 +16,8 @@ describe CrystalBank::Domains::Users::Aggregates::Concerns::Onboarding do
         actor_id: actor_id,
         command_handler: "test",
         name: name,
-        email: email
+        email: email,
+        scope_id: scope_id,
       )
       aggregate.apply(event_1)
 
