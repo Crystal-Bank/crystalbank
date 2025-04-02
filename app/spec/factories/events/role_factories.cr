@@ -32,6 +32,7 @@ module Test::Role::Events
         permissions = [
           CrystalBank::Permissions::WRITE_roles_creation_request,
         ]
+        scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
         scopes = [UUID.new("00000000-0000-0000-0000-200000000001")]
         command_handler = "test"
         comment = "test comment"
@@ -41,6 +42,7 @@ module Test::Role::Events
           aggregate_id: aggregate_id,
           name: name,
           permissions: permissions,
+          scope_id: scope_id,
           scopes: scopes,
           command_handler: command_handler,
           comment: comment
@@ -52,6 +54,7 @@ module Test::Role::Events
           "comment":     "test comment",
           "name":        "Scope name test",
           "permissions": ["write_roles_creation"],
+          "scope_id":    "00000000-0000-0000-0000-100000000001",
           "scopes":      ["00000000-0000-0000-0000-200000000001"],
         }.to_json
       end

@@ -21,7 +21,7 @@ module CrystalBank::Domains::Roles
       ) : CreationResponse
         authorized?("write_roles_creation_request")
 
-        aggregate_id = ::Roles::Creation::Commands::Request.new.call(r)
+        aggregate_id = ::Roles::Creation::Commands::Request.new.call(r, context)
 
         CreationResponse.new(aggregate_id)
       end

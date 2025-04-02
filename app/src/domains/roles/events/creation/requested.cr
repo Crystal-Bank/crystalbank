@@ -9,12 +9,14 @@ module CrystalBank::Domains::Roles
         struct Body < ES::Event::Body
           getter name : String
           getter permissions : Array(CrystalBank::Permissions)
+          getter scope_id : UUID
           getter scopes : Array(UUID)
 
           def initialize(
             @comment : String,
             @name : String,
             @permissions : Array(CrystalBank::Permissions),
+            @scope_id : UUID,
             @scopes : Array(UUID),
           ); end
         end
@@ -28,6 +30,7 @@ module CrystalBank::Domains::Roles
           command_handler : String,
           name : String,
           permissions : Array(CrystalBank::Permissions),
+          scope_id : UUID,
           scopes : Array(UUID),
           comment = "",
           aggregate_id = UUID.v7,
@@ -44,6 +47,7 @@ module CrystalBank::Domains::Roles
             comment: comment,
             name: name,
             permissions: permissions,
+            scope_id: scope_id,
             scopes: scopes
           )
         end
