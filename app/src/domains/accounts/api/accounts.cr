@@ -21,7 +21,7 @@ module CrystalBank::Domains::Accounts
       ) : OpeningResponse
         authorized?("write_accounts_opening_request")
 
-        aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r)
+        aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r, context)
 
         OpeningResponse.new(aggregate_id)
       end
@@ -43,6 +43,7 @@ module CrystalBank::Domains::Accounts
         accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(
             a.id,
+            a.scope_id,
             a.currencies,
             a.customer_ids,
             CrystalBank::Types::Accounts::Type.parse(a.type)

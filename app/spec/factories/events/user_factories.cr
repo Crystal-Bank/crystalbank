@@ -28,26 +28,29 @@ module Test::User::Events
       def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Users::Onboarding::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
-        name = "Peter Pan"
-        email = "test@crystalbank.xyz"
         command_handler = "test"
         comment = "test comment"
+        email = "test@crystalbank.xyz"
+        name = "Peter Pan"
+        scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
         Users::Onboarding::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
-          name: name,
-          email: email,
           command_handler: command_handler,
-          comment: comment
+          comment: comment,
+          email: email,
+          name: name,
+          scope_id: scope_id,
         )
       end
 
       def json_string : String
         {
-          "comment": "test comment",
-          "name":    "Peter Pan",
-          "email":   "test@crystalbank.xyz",
+          "comment":  "test comment",
+          "name":     "Peter Pan",
+          "email":    "test@crystalbank.xyz",
+          "scope_id": "00000000-0000-0000-0000-100000000001",
         }.to_json
       end
     end

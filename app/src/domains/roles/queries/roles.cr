@@ -8,6 +8,7 @@ module CrystalBank::Domains::Roles
 
         @[DB::Field(key: "uuid")]
         getter id : UUID
+        getter scope_id : UUID
         getter object : String = "role"
 
         getter name : String

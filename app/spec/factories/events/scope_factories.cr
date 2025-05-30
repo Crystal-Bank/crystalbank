@@ -30,6 +30,7 @@ module Test::Scope::Events
         aggregate_id = aggr_id
         name = "Scope name test"
         parent_scope_id = UUID.new("00000000-0000-0000-0000-200000000001")
+        scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
         command_handler = "test"
         comment = "test comment"
 
@@ -38,6 +39,7 @@ module Test::Scope::Events
           aggregate_id: aggregate_id,
           name: name,
           parent_scope_id: parent_scope_id,
+          scope_id: scope_id,
           command_handler: command_handler,
           comment: comment
         )
@@ -48,6 +50,7 @@ module Test::Scope::Events
           "comment":         "test comment",
           "name":            "Scope name test",
           "parent_scope_id": "00000000-0000-0000-0000-200000000001",
+          "scope_id":        "00000000-0000-0000-0000-100000000001",
         }.to_json
       end
     end

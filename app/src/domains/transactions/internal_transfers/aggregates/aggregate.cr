@@ -13,6 +13,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
       property currency : CrystalBank::Types::Currencies::Supported?
       property debtor_account_id : UUID?
       property remittance_information : String?
+      property scope_id : UUID?
     end
 
     getter state : State

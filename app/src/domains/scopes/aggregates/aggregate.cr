@@ -9,6 +9,7 @@ module CrystalBank::Domains::Scopes
     struct State < ES::Aggregate::State
       property name : String?
       property parent_scope_id : UUID?
+      property scope_id : UUID?
     end
 
     getter state : State

@@ -11,6 +11,7 @@ module CrystalBank::Domains::Roles
             "id" SERIAL PRIMARY KEY,
             "uuid" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
             "permissions" JSONB NOT NULL,
@@ -38,6 +39,7 @@ module CrystalBank::Domains::Roles
         # Extract attributes to local variables
         name = aggregate.state.name
         permissions = aggregate.state.permissions
+        scope_id = aggregate.state.scope_id
         scopes = aggregate.state.scopes
 
         # Insert the account projection into the projection database
@@ -48,15 +50,17 @@ module CrystalBank::Domains::Roles
               "projections"."roles" (
                 uuid,
                 aggregate_version,
+                scope_id,
                 created_at,
                 name,
                 permissions,
                 scopes
               )
-              VALUES ($1, $2, $3, $4, $5, $6)
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
           ),
             aggregate_id,
             aggregate_version,
+            scope_id,
             created_at,
             name,
             permissions.to_json,

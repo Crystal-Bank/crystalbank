@@ -8,6 +8,7 @@ module CrystalBank::Domains::ApiKeys
 
         @[DB::Field(key: "uuid")]
         getter id : UUID
+        getter scope_id : UUID
         getter object : String = "api_key"
 
         getter active : Bool

@@ -21,7 +21,7 @@ module CrystalBank::Domains::Customers
       ) : OnboardingResponse
         authorized?("write_customers_onboarding_request")
 
-        aggregate_id = ::Customers::Onboarding::Commands::Request.new.call(r)
+        aggregate_id = ::Customers::Onboarding::Commands::Request.new.call(r, context)
 
         OnboardingResponse.new(aggregate_id)
       end
@@ -43,6 +43,7 @@ module CrystalBank::Domains::Customers
         customers = ::Customers::Queries::Customers.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::Customer.new(
             a.id,
+            a.scope_id,
             a.name,
             CrystalBank::Types::Customers::Type.parse(a.type)
           )

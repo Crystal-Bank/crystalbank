@@ -15,11 +15,11 @@ module CrystalBank
 
     # Roles
     READ_roles_list
-    WRITE_roles_creation
+    WRITE_roles_creation_request
 
     # Scopes
     READ_scopes_list
-    WRITE_scopes_creation
+    WRITE_scopes_creation_request
 
     # Transactions -> Internal Transfers
     WRITE_transactions_internal_transfers_initiation_request

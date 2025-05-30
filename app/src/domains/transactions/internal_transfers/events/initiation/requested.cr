@@ -12,6 +12,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
           getter creditor_account_id : UUID
           getter debtor_account_id : UUID
           getter remittance_information : String
+          getter scope_id : UUID
 
           def initialize(
             @amount : Int64,
@@ -20,6 +21,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
             @currency : CrystalBank::Types::Currencies::Supported,
             @debtor_account_id : UUID,
             @remittance_information : String,
+            @scope_id : UUID,
           ); end
         end
 
@@ -34,6 +36,7 @@ module CrystalBank::Domains::Transactions::InternalTransfers
           creditor_account_id : UUID,
           currency : CrystalBank::Types::Currencies::Supported,
           debtor_account_id : UUID,
+          scope_id : UUID,
           remittance_information = "",
           comment = "",
           aggregate_id = UUID.v7,
@@ -52,7 +55,8 @@ module CrystalBank::Domains::Transactions::InternalTransfers
             creditor_account_id: creditor_account_id,
             currency: currency,
             debtor_account_id: debtor_account_id,
-            remittance_information: remittance_information
+            remittance_information: remittance_information,
+            scope_id: scope_id
           )
         end
       end

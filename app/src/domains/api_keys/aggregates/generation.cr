@@ -19,6 +19,7 @@ module CrystalBank::Domains::ApiKeys
           @state.name = body.name
           @state.user_id = body.user_id
           @state.encrypted_secret = body.api_secret
+          @state.scope_id = body.scope_id
         end
       end
     end

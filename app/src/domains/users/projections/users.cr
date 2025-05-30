@@ -11,6 +11,7 @@ module CrystalBank::Domains::Users
             "id" SERIAL PRIMARY KEY,
             "uuid" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
             "email" varchar NOT NULL
@@ -37,6 +38,7 @@ module CrystalBank::Domains::Users
         # Extract attributes to local variables
         name = aggregate.state.name
         email = aggregate.state.email
+        scope_id = aggregate.state.scope_id
 
         # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
@@ -46,14 +48,16 @@ module CrystalBank::Domains::Users
               "projections"."users" (
                 uuid,
                 aggregate_version,
+                scope_id,
                 created_at,
                 name,
                 email
               )
-              VALUES ($1, $2, $3, $4, $5)
+              VALUES ($1, $2, $3, $4, $5, $6)
           ),
             aggregate_id,
             aggregate_version,
+            scope_id,
             created_at,
             name,
             email

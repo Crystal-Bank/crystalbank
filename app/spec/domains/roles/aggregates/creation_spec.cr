@@ -6,7 +6,8 @@ describe CrystalBank::Domains::Roles::Aggregates::Concerns::Creation do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Scope name"
-      permissions = [CrystalBank::Permissions::WRITE_roles_creation]
+      permissions = [CrystalBank::Permissions::WRITE_roles_creation_request]
+      scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
       scopes = [UUID.new("00000000-0000-0000-0000-200000000001")]
 
       aggregate = Roles::Aggregate.new(aggregate_id)
@@ -17,6 +18,7 @@ describe CrystalBank::Domains::Roles::Aggregates::Concerns::Creation do
         command_handler: "test",
         name: name,
         permissions: permissions,
+        scope_id: scope_id,
         scopes: scopes
       )
       aggregate.apply(event_1)

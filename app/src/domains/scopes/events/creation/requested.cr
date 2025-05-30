@@ -9,10 +9,12 @@ module CrystalBank::Domains::Scopes
         struct Body < ES::Event::Body
           getter name : String
           getter parent_scope_id : UUID?
+          getter scope_id : UUID
 
           def initialize(
             @comment : String,
             @name : String,
+            @scope_id : UUID,
             @parent_scope_id : UUID?,
           ); end
         end
@@ -25,6 +27,7 @@ module CrystalBank::Domains::Scopes
           actor_id : UUID,
           command_handler : String,
           name : String,
+          scope_id : UUID,
           parent_scope_id : UUID?,
           comment = "",
           aggregate_id = UUID.v7,
@@ -40,6 +43,7 @@ module CrystalBank::Domains::Scopes
           @body = Body.new(
             comment: comment,
             name: name,
+            scope_id: scope_id,
             parent_scope_id: parent_scope_id
           )
         end

@@ -19,6 +19,9 @@ module CrystalBank::Domains::Users
         @[JSON::Field(format: "uuid", description: "ID of the requested user")]
         getter id : UUID
 
+        @[JSON::Field(format: "uuid", description: "Scope of the data point")]
+        getter scope_id : UUID
+
         @[JSON::Field(description: "Name of the user")]
         getter name : String
 
@@ -27,6 +30,7 @@ module CrystalBank::Domains::Users
 
         def initialize(
           @id : UUID,
+          @scope_id : UUID,
           @name : String,
           @email : String,
         ); end

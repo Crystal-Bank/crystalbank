@@ -7,6 +7,7 @@ describe CrystalBank::Domains::Scopes::Aggregates::Concerns::Creation do
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Scope name"
       parent_scope_id = UUID.new("00000000-0000-0000-0000-200000000001")
+      scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
       aggregate = Scopes::Aggregate.new(aggregate_id)
 
@@ -15,6 +16,7 @@ describe CrystalBank::Domains::Scopes::Aggregates::Concerns::Creation do
         actor_id: actor_id,
         command_handler: "test",
         name: name,
+        scope_id: scope_id,
         parent_scope_id: parent_scope_id
       )
       aggregate.apply(event_1)

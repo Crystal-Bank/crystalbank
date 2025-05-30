@@ -11,6 +11,7 @@ module CrystalBank::Domains::Customers
             "id" SERIAL PRIMARY KEY,
             "uuid" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
             "type" varchar NOT NULL
@@ -36,6 +37,7 @@ module CrystalBank::Domains::Customers
 
         # Extract attributes to local variables
         name = aggregate.state.name
+        scope_id = aggregate.state.scope_id
         type = aggregate.state.type.to_s.downcase
 
         # Insert the customer projection into the projection database
@@ -46,14 +48,16 @@ module CrystalBank::Domains::Customers
               "projections"."customers" (
                 uuid,
                 aggregate_version,
+                scope_id,
                 created_at,
                 type,
                 name
               )
-              VALUES ($1, $2, $3, $4, $5)
+              VALUES ($1, $2, $3, $4, $5,$6)
           ),
             aggregate_id,
             aggregate_version,
+            scope_id,
             created_at,
             type.to_s,
             name

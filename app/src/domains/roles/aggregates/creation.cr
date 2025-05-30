@@ -16,6 +16,7 @@ module CrystalBank::Domains::Roles
           body = event.body.as(Roles::Creation::Events::Requested::Body)
           @state.name = body.name
           @state.permissions = body.permissions
+          @state.scope_id = body.scope_id
           @state.scopes = body.scopes
         end
       end

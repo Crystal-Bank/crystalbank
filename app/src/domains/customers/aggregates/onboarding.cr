@@ -16,6 +16,7 @@ module CrystalBank::Domains::Customers
 
           body = event.body.as(Customers::Onboarding::Events::Requested::Body)
           @state.name = body.name
+          @state.scope_id = body.scope_id
           @state.type = body.type
         end
       end

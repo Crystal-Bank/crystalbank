@@ -21,7 +21,7 @@ module CrystalBank::Domains::ApiKeys
       ) : GenerationResponse
         authorized?("write_api_keys_generation_request")
 
-        response = ::ApiKeys::Generation::Commands::Request.new.call(r)
+        response = ::ApiKeys::Generation::Commands::Request.new.call(r, context)
 
         response
       end
@@ -61,6 +61,7 @@ module CrystalBank::Domains::ApiKeys
         api_keys = ::ApiKeys::Queries::ApiKeys.new.list(cursor: cursor, limit: limit + 1).map do |a|
           Responses::ApiKey.new(
             a.id,
+            a.scope_id,
             a.active,
             a.name,
             a.created_at,
