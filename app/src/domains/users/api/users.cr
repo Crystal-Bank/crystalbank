@@ -14,7 +14,7 @@ module CrystalBank::Domains::Users
       # Required permission:
       # - **write_users_onboarding_request**
       @[AC::Route::POST("/onboard", body: :r)]
-      def open(
+      def onboard(
         r : OnboardingRequest,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID,
@@ -24,6 +24,24 @@ module CrystalBank::Domains::Users
         aggregate_id = ::Users::Onboarding::Commands::Request.new.call(r, context)
 
         OnboardingResponse.new(aggregate_id)
+      end
+
+      # Request assignment of roles
+      # Assign roles to a user
+      #
+      # Required permission:
+      # - **write_users_assign_roles_request**
+      @[AC::Route::POST("/assign_roles", body: :r)]
+      def assign_roles(
+        r : AssignRolesRequest,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID,
+      )
+        authorized?("write_users_assign_roles_request")
+
+        aggregate_id = ::Users::AssignRoles::Commands::Request.new.call(r, context)
+
+        head :accepted
       end
 
       # List
