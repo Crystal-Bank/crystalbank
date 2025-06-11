@@ -29,6 +29,7 @@ module CrystalBank
 
     # Users
     WRITE_users_onboarding_request
+    WRITE_users_assign_roles_request
     READ_users_list
 
     def to_s

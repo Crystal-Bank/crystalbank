@@ -1,3 +1,4 @@
+require "./assign_roles"
 require "./onboarding"
 
 module CrystalBank::Domains::Users
