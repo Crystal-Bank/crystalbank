@@ -29,9 +29,8 @@ module CrystalBank::Domains::ApiKeys
           # Fetch user
           user = ApiKeys::Repositories::Users.new.fetch!(user_id)
 
-          # TODO: Extract user roles
-          uuid = UUID.new("0195f64f-0086-7ca9-817d-4af80c64bfa0")
-          user_roles = [uuid]
+          # Extract user roles
+          user_roles = user.role_ids
 
           # Create JWT and return it
           payload = CrystalBank::Api::JWT.new(roles: user_roles, user_id: user_id)
