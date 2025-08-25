@@ -22,5 +22,8 @@ require "./projections/users"
 # Queries
 require "./queries/users"
 
+# Queries
+require "./repositories/roles"
+
 # Domain
 require "./users"

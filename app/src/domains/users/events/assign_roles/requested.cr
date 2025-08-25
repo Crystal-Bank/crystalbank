@@ -24,16 +24,17 @@ module CrystalBank::Domains::Users
         def initialize(
           actor_id : UUID,
           command_handler : String,
+          aggregate_id : UUID,
+          aggregate_version : Int32,
           role_ids : Array(UUID),
           scope_id : UUID,
           comment = "",
-          aggregate_id = UUID.v7,
         )
           @header = Header.new(
             actor_id: actor_id,
             aggregate_id: aggregate_id,
             aggregate_type: @@type,
-            aggregate_version: 1,
+            aggregate_version: aggregate_version,
             command_handler: command_handler,
             event_handle: @@handle
           )

@@ -31,15 +31,17 @@ module CrystalBank::Domains::Users
       #
       # Required permission:
       # - **write_users_assign_roles_request**
-      @[AC::Route::POST("/assign_roles", body: :r)]
+      @[AC::Route::POST("/:id/assign_roles", body: :r)]
       def assign_roles(
+        id : String,
         r : AssignRolesRequest,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID,
       )
         authorized?("write_users_assign_roles_request")
 
-        aggregate_id = ::Users::AssignRoles::Commands::Request.new.call(r, context)
+        user_id = UUID.new(id)
+        aggregate_id = ::Users::AssignRoles::Commands::Request.new.call(user_id, r, context)
 
         head :accepted
       end
