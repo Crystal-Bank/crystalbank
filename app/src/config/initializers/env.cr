@@ -13,8 +13,8 @@ module CrystalBank
       @@application_name ||= ENV["APPLICATION_NAME"]? || "crystalbank"
     end
 
-    def api_domain : String
-      @@api_domain ||= ENV["API_DOMAIN"]? || "https://api.crystalbank.xyz"
+    def api_domains : Array(String)
+      @@api_domains = ENV["API_DOMAINS"]? ? ENV["API_DOMAINS"].split(",") : ["https://api.crystalbank.xyz", "http://localhost:4000"]
     end
 
     def environment : String
