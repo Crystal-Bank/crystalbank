@@ -33,3 +33,5 @@ bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Accepted, Tra
 # Users
 bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands::ProcessRequest)
 bus.subscribe(Users::Onboarding::Events::Accepted, Users::Projections::Users)
+bus.subscribe(Users::AssignRoles::Events::Requested, Users::AssignRoles::Commands::ProcessRequest)
+bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)
