@@ -8,14 +8,13 @@ module CrystalBank::Domains::ApiKeys
 
         @[DB::Field(key: "uuid")]
         getter id : UUID
+
+        @[DB::Field(key: "role_ids", converter: CrystalBank::Converters::UUIDArray)]
+        getter role_ids = Array(UUID).new
       end
 
       def initialize
         @db = ES::Config.projection_database
-      end
-
-      def exists!(user_id : UUID)
-        fetch(user_id, scopes)
       end
 
       def fetch!(user_id : UUID) : User
