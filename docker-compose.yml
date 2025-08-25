@@ -47,3 +47,12 @@ services:
       - SPEC_URL=openapi/openapi.json
     volumes:
       - ./app/openapi.json:/usr/share/nginx/html/openapi/openapi.json
+      
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    environment:
+      SWAGGER_JSON: /oas/openapi.json
+    ports:
+      - 4003:8080
+    volumes:
+      - ./app/openapi.json:/oas/openapi.json
