@@ -15,7 +15,7 @@ module CrystalBank
       DEFAULT_PORT          = CrystalBank::Env.server_port
       DEFAULT_HOST          = CrystalBank::Env.server_host
       DEFAULT_PROCESS_COUNT = CrystalBank::Env.server_process_count
-      API_DOMAIN            = CrystalBank::Env.api_domain
+      API_DOMAINS           = CrystalBank::Env.api_domains
 
       # Configure logging (backend defined in constants.cr)
       if IS_PRODUCTION
