@@ -24,7 +24,7 @@ module CrystalBank
       def initialize(roles : Array(UUID), user_id : UUID)
         @exp = Time.utc.to_unix + CrystalBank::Env.jwt_ttl
         @iat = Time.utc.to_unix
-        @iss = CrystalBank::Env.application_name
+        @iss = CrystalBank::Env.jwt_public_key_uri
         @jti = UUID.random
 
         @data = JWTData.new(roles, user_id)

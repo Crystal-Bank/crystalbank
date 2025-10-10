@@ -31,3 +31,5 @@ event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Req
 # Users
 event_handlers.register(Users::Onboarding::Events::Accepted)
 event_handlers.register(Users::Onboarding::Events::Requested)
+event_handlers.register(Users::AssignRoles::Events::Accepted)
+event_handlers.register(Users::AssignRoles::Events::Requested)

@@ -14,7 +14,6 @@ module CrystalBank::Domains::Roles
       end
 
       def available_scopes(roles : Array(UUID), permission : CrystalBank::Permissions) : Array(UUID)
-        CrystalBank.print_verbose("Roles provided", roles)
         scopes = [] of UUID
 
         query = [] of String
@@ -24,10 +23,11 @@ module CrystalBank::Domains::Roles
           FROM
             projections.roles
           WHERE
-            uuid IN ($1)
+            uuid = ANY($1::uuid[])
             AND $2 = ANY(SELECT jsonb_array_elements_text(permissions))
         )
-        rs = @db.query_all(query.join(" "), args: [roles, permission.to_s], as: RoleScopes)
+
+        rs = @db.query_all(query.join, args: [roles, permission.to_s], as: RoleScopes)
         rs.each { |r| scopes.concat(r.scope_ids) }
         scopes.uniq
       end

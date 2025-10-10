@@ -1,6 +1,13 @@
 module CrystalBank::Domains::Users
   module Api
     module Requests
+      struct AssignRolesRequest
+        include JSON::Serializable
+
+        @[JSON::Field(description: "UUID of the roles to be assigned to the user")]
+        getter role_ids : Array(UUID)
+      end
+
       struct OnboardingRequest
         include JSON::Serializable
 

@@ -1,9 +1,11 @@
+require "./assign_roles"
 require "./onboarding"
 
 module CrystalBank::Domains::Users
   class Aggregate < ES::Aggregate
     @@type = "User"
 
+    include CrystalBank::Domains::Users::Aggregates::Concerns::AssignRoles
     include CrystalBank::Domains::Users::Aggregates::Concerns::Onboarding
 
     struct State < ES::Aggregate::State
@@ -11,6 +13,8 @@ module CrystalBank::Domains::Users
       property name : String?
       property email : String?
       property scope_id : UUID?
+      property role_ids = Array(UUID).new                    # Array of Role IDs
+      property pending_role_id_assignments = Array(UUID).new # Array of Role IDs pending assignment approval
     end
 
     getter state : State

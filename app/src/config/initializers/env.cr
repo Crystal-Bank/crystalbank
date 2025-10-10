@@ -13,8 +13,8 @@ module CrystalBank
       @@application_name ||= ENV["APPLICATION_NAME"]? || "crystalbank"
     end
 
-    def api_domain : String
-      @@api_domain ||= ENV["API_DOMAIN"]? || "https://api.crystalbank.xyz"
+    def api_domains : Array(String)
+      @@api_domains = ENV["API_DOMAINS"]? ? ENV["API_DOMAINS"].split(",") : ["https://api.crystalbank.xyz", "http://localhost:4000"]
     end
 
     def environment : String
@@ -55,6 +55,10 @@ module CrystalBank
 
     def jwt_public_key : String
       @@jwt_pub_key ||= ENV["JWT_PUBLIC_KEY"]
+    end
+
+    def jwt_public_key_uri : String
+      @@jwt_pub_key_uri ||= ENV["JWT_PUBLIC_KEY_URI"]? || "https://crystalbank.xyz/.well-known/jwks.json"
     end
 
     def jwt_ttl : Int32

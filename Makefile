@@ -78,7 +78,7 @@ rebuild:
 
 # Start services
 up:
-	$(call dc, up -d database console redoc)
+	$(call dc, up -d database console redoc swagger-ui)
 
 # Open console
 console:

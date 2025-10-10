@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.7.0"
+        "version": "0.7.3"
     },
     "paths": {
         "/accounts/open": {
@@ -89,7 +89,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -101,7 +100,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -294,7 +292,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -306,7 +303,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -495,7 +491,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -507,7 +502,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -637,7 +631,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -649,7 +642,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -779,7 +771,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -791,7 +782,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -910,7 +900,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -922,7 +911,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -976,7 +964,7 @@
                 "tags": [
                     "Users"
                 ],
-                "operationId": "CrystalBank::Domains::Users::Api::Users_open",
+                "operationId": "CrystalBank::Domains::Users::Api::Users_onboard",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1039,6 +1027,77 @@
                 }
             }
         },
+        "/users/{id}/assign_roles": {
+            "post": {
+                "summary": "Request assignment of roles",
+                "description": "Request assignment of roles\nAssign roles to a user\n\nRequired permission:\n- **write_users_assign_roles_request**",
+                "tags": [
+                    "Users"
+                ],
+                "operationId": "CrystalBank::Domains::Users::Api::Users_assign_roles",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Users__Api__Requests__AssignRolesRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "summary": "List",
@@ -1052,7 +1111,6 @@
                         "name": "cursor",
                         "in": "query",
                         "description": "Optional cursor parameter for pagination",
-                        "required": false,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
@@ -1064,7 +1122,6 @@
                         "in": "query",
                         "description": "Limit parameter for pagination (default 20)",
                         "example": "20",
-                        "required": false,
                         "schema": {
                             "type": "integer",
                             "format": "Int32"
@@ -1222,6 +1279,11 @@
                                             "format": "uuid",
                                             "description": "ID of the requested account"
                                         },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
                                         "currencies": {
                                             "type": "array",
                                             "description": "Supported currencies of the account",
@@ -1255,6 +1317,7 @@
                                     },
                                     "required": [
                                         "id",
+                                        "scope_id",
                                         "currencies",
                                         "customer_ids",
                                         "type"
@@ -1377,6 +1440,11 @@
                                             "format": "uuid",
                                             "description": "ID of the api-key"
                                         },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
                                         "active": {
                                             "type": "boolean",
                                             "description": "Is the api-key active?"
@@ -1399,6 +1467,7 @@
                                     },
                                     "required": [
                                         "id",
+                                        "scope_id",
                                         "active",
                                         "created_at",
                                         "name"
@@ -1545,6 +1614,11 @@
                                             "format": "uuid",
                                             "description": "ID of the requested customer"
                                         },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
                                         "name": {
                                             "type": "string",
                                             "description": "Name of the customer"
@@ -1560,6 +1634,7 @@
                                     },
                                     "required": [
                                         "id",
+                                        "scope_id",
                                         "name",
                                         "type"
                                     ]
@@ -1598,12 +1673,13 @@
                                 "write_customers_onboarding_request",
                                 "read_customers_list",
                                 "read_roles_list",
-                                "write_roles_creation",
+                                "write_roles_creation_request",
                                 "read_scopes_list",
-                                "write_scopes_creation",
+                                "write_scopes_creation_request",
                                 "write_transactions_internal_transfers_initiation_request",
                                 "read_postings_list",
                                 "write_users_onboarding_request",
+                                "write_users_assign_roles_request",
                                 "read_users_list"
                             ]
                         }
@@ -1690,6 +1766,11 @@
                                             "format": "uuid",
                                             "description": "ID of the requested role"
                                         },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
                                         "name": {
                                             "type": "string",
                                             "description": "Name of the role"
@@ -1708,12 +1789,13 @@
                                                     "write_customers_onboarding_request",
                                                     "read_customers_list",
                                                     "read_roles_list",
-                                                    "write_roles_creation",
+                                                    "write_roles_creation_request",
                                                     "read_scopes_list",
-                                                    "write_scopes_creation",
+                                                    "write_scopes_creation_request",
                                                     "write_transactions_internal_transfers_initiation_request",
                                                     "read_postings_list",
                                                     "write_users_onboarding_request",
+                                                    "write_users_assign_roles_request",
                                                     "read_users_list"
                                                 ]
                                             }
@@ -1729,6 +1811,7 @@
                                     },
                                     "required": [
                                         "id",
+                                        "scope_id",
                                         "name",
                                         "permissions",
                                         "scopes"
@@ -1835,6 +1918,11 @@
                                             "format": "uuid",
                                             "description": "ID of the requested scope"
                                         },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
                                         "name": {
                                             "type": "string",
                                             "description": "Name of the scope"
@@ -1848,6 +1936,7 @@
                                     },
                                     "required": [
                                         "id",
+                                        "scope_id",
                                         "name"
                                     ]
                                 }
@@ -2243,6 +2332,22 @@
                 ],
                 "description": "Response to an user onboarding request"
             },
+            "CrystalBank__Domains__Users__Api__Requests__AssignRolesRequest": {
+                "type": "object",
+                "properties": {
+                    "role_ids": {
+                        "type": "array",
+                        "description": "UUID of the roles to be assigned to the user",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "required": [
+                    "role_ids"
+                ]
+            },
             "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Users__Api__Responses__User_": {
                 "type": "object",
                 "properties": {
@@ -2297,6 +2402,11 @@
                                             "format": "uuid",
                                             "description": "ID of the requested user"
                                         },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
                                         "name": {
                                             "type": "string",
                                             "description": "Name of the user"
@@ -2309,6 +2419,7 @@
                                     },
                                     "required": [
                                         "id",
+                                        "scope_id",
                                         "name",
                                         "email"
                                     ]
@@ -2363,6 +2474,9 @@
     "servers": [
         {
             "url": "https://api.crystalbank.xyz"
+        },
+        {
+            "url": "http://localhost:4000"
         }
     ]
 }

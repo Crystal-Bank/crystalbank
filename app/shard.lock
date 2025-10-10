@@ -2,11 +2,11 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 7.5.1
+    version: 7.6.0
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
-    version: 1.2.2
+    version: 1.2.4
 
   bindata:
     git: https://github.com/spider-gazelle/bindata.git
@@ -34,7 +34,7 @@ shards:
 
   json-schema:
     git: https://github.com/spider-gazelle/json-schema.git
-    version: 1.3.1
+    version: 1.3.2
 
   jwt:
     git: https://github.com/crystal-community/jwt.git

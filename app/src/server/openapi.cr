@@ -11,7 +11,7 @@ module CrystalBank
         title: "Application",
         version: VERSION,
         description: "OpenAPI docs for the CrystalBank project"
-      ).merge(NamedTuple.new(servers: [{url: CrystalBank::Env.api_domain}]))
+      ).merge(NamedTuple.new(servers: CrystalBank::Env.api_domains.map { |url| {url: url} })).to_json
 
       get "/docs" do
         render yaml: DOCS.to_yaml
