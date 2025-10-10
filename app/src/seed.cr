@@ -92,13 +92,13 @@ role_id = UUID.new(event.header.aggregate_id.to_s)
 
 # Assign Admin role to user in Root scope
 event = Users::AssignRoles::Events::Requested.new(
-            actor_id: dummy_uuid,
-            command_handler: "seed",
-            aggregate_id: user_id,
-            aggregate_version: 2,
-            role_ids: [role_id],
-            scope_id: scope_id,
-          )
+  actor_id: dummy_uuid,
+  command_handler: "seed",
+  aggregate_id: user_id,
+  aggregate_version: 2,
+  role_ids: [role_id],
+  scope_id: scope_id,
+)
 # Append event to event store
 event_store.append(event)
 
