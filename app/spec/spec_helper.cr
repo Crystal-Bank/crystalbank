@@ -1,5 +1,9 @@
 require "spec"
 require "../src/crystalbank"
+
+# Server required after application controllers
+require "action-controller/server"
+
 require "./factories/events/account_factories"
 require "./factories/events/api_key_factories"
 require "./factories/events/customer_factories"

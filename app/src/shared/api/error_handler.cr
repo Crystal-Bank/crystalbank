@@ -1,6 +1,4 @@
-require "action-controller/server"
-
-class ApiErrorHandler
+class Crystalbank::ApiErrorHandler
   include HTTP::Handler
   include CrystalBank::Api::Responses
 
@@ -17,4 +15,4 @@ class ApiErrorHandler
   end
 end
 
-ActionController::Server.before ApiErrorHandler.new
+ActionController::Server.before Crystalbank::ApiErrorHandler.new
