@@ -9,6 +9,9 @@ module CrystalBank
     WRITE_api_keys_revocation_request
     READ_api_keys_list
 
+    # Approvals
+    READ_approvals_list
+
     # Customers
     WRITE_customers_onboarding_request
     READ_customers_list
