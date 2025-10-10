@@ -1,5 +1,6 @@
 require "action-controller"
 require "./responses"
+require "./error_handler"
 
 module CrystalBank
   module Api
@@ -45,7 +46,7 @@ module CrystalBank
       @[AC::Route::Exception(JSON::ParseException, status_code: HTTP::Status::BAD_REQUEST)]
       @[AC::Route::Exception(DB::MappingException, status_code: HTTP::Status::INTERNAL_SERVER_ERROR)]
       @[AC::Route::Exception(ArgumentError, status_code: HTTP::Status::BAD_REQUEST)]
-      def error_response(error : ::Exception)
+      def error_response(error : ::Exception) : ErrorResponse
         Log.error { error }
         Log.error { error.backtrace }
 
@@ -56,6 +57,19 @@ module CrystalBank
 
         ErrorResponse.new(id, message.to_s, timestamp, type)
       end
+
+      # # Catch internal server errors
+      # rescue_from ::Exception do |error|
+      #   Log.error { error }
+      #   Log.error { error.backtrace }
+
+      #   id = UUID.v7
+      #   type = error.class.to_s
+      #   message = error.message
+      #   timestamp = Time.utc
+
+      #   render json: ErrorResponse.new(id, message.to_s, timestamp, type), status: HTTP::Status::INTERNAL_SERVER_ERROR
+      # end
     end
   end
 end
