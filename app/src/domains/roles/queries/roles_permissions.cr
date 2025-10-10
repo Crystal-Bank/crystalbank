@@ -14,8 +14,6 @@ module CrystalBank::Domains::Roles
       end
 
       def available_scopes(roles : Array(UUID), permission : CrystalBank::Permissions) : Array(UUID)
-        CrystalBank.print_verbose("Roles provided", roles)
-        CrystalBank.print_verbose("Permissions provided", permission)
         scopes = [] of UUID
 
         query = [] of String
