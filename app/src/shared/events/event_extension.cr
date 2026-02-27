@@ -35,12 +35,13 @@ module ES
         {% end %}
         comment = "",
         aggregate_id = UUID.v7,
+        aggregate_version : Int32 = 1,
       )
         @header = Header.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
           aggregate_type: @@type,
-          aggregate_version: 1,
+          aggregate_version: aggregate_version,
           command_handler: command_handler,
           event_handle: @@handle
         )
@@ -54,7 +55,7 @@ module ES
     end
   end
 
-  abstract class EventExtension < Event
+  abstract class EventExtension < ES::Event
     macro inherited
       extend ::ES::EventDSL
     end
