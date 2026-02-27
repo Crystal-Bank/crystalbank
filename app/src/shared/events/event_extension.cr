@@ -55,6 +55,10 @@ module ES
   end
 
   abstract class EventExtension < Event
+    macro inherited
+      extend ::ES::EventDSL
+    end
+
     extend EventDSL
   end
 end
