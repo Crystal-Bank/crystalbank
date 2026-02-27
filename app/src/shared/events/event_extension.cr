@@ -1,10 +1,10 @@
-module CrystalBank::Shared::Events
-  module RequestedEventDSL
+module ES
+  module EventDSL
     macro event_field(name, type)
-      # consumed by `define_requested_event`
+      # consumed by `define_event`
     end
 
-    macro define_requested_event(event_type, event_handle, &block)
+    macro define_event(event_type, event_handle, &block)
       @@type = {{ event_type }}
       @@handle = {{ event_handle }}
 
@@ -52,5 +52,9 @@ module CrystalBank::Shared::Events
         )
       end
     end
+  end
+
+  abstract class EventExtension < Event
+    extend EventDSL
   end
 end

@@ -15,7 +15,7 @@ require "./api/jwt"
 require "./services/access_control"
 
 # Load Events
-require "./events/requested_event_dsl"
+require "./events/event_extension"
 
 # Load Exceptions
 require "./exceptions/authentication"
