@@ -36,10 +36,10 @@ services:
     ports:
       - 4010:5432
     volumes:
-      - ./storage/postgres/data:/var/lib/postgresql/data
+      - ./storage/postgres:/var/lib/postgresql
 
   redoc:
-    image: redocly/redoc
+    image: redocly/redoc:v2.5.1
     restart: always
     ports:
       - 4002:80
