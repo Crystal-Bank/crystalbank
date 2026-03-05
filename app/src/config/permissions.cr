@@ -32,6 +32,21 @@ module CrystalBank
     WRITE_users_assign_roles_request
     READ_users_list
 
+    # Approvals - read
+    READ_approvals_list
+    READ_approvals_detail
+
+    # Approvals - domain-specific (one permission per domain action)
+    APPROVE_accounts_opening
+    APPROVE_customers_onboarding
+    APPROVE_users_onboarding
+    APPROVE_users_assign_roles
+    APPROVE_roles_creation
+    APPROVE_scopes_creation
+    APPROVE_transactions_internal_transfers_initiation
+    APPROVE_api_keys_generation
+    APPROVE_api_keys_revocation
+
     def to_s
       super.to_s.downcase
     end

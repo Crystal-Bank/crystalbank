@@ -16,6 +16,7 @@ module CrystalBank::Domains::ApiKeys
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(ApiKeys::Revocation::Events::Requested::Body)
+          @state.requester_id = event.header.actor_id
         end
       end
     end

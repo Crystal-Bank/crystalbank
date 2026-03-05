@@ -15,6 +15,7 @@ module CrystalBank::Domains::Users
       property scope_id : UUID?
       property role_ids = Array(UUID).new                    # Array of Role IDs
       property pending_role_id_assignments = Array(UUID).new # Array of Role IDs pending assignment approval
+      property requester_id : UUID?
     end
 
     getter state : State
