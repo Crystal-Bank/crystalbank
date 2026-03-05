@@ -18,13 +18,13 @@ module CrystalBank::Domains::Roles
 
         query = [] of String
         query << %(
-          SELECT
+        SELECT
             scopes
           FROM
             projections.roles
           WHERE
             uuid = ANY($1::uuid[])
-            AND $2 = ANY(SELECT jsonb_array_elements_text(permissions))
+            AND permissions ? $2
         )
 
         rs = @db.query_all(query.join, args: [roles, permission.to_s], as: RoleScopes)
