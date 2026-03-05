@@ -2,6 +2,17 @@ module CrystalBank::Domains::Transactions::InternalTransfers
   module Initiation
     module Events
       class Requested < ES::Event
+        include ::ES::EventDSL
+
+        define_event "Transaction", "transactions.internal_transfer.initiation.requested" do
+          attribute currency, CrystalBank::Types::Currencies::Supported
+          attribute amount, Int64
+          attribute creditor_account_id, UUID
+          attribute debtor_account_id, UUID
+          attribute remittance_information, String
+          attribute scope_id, UUID
+        end
+
         @@type = "Transaction"
         @@handle = "transactions.internal_transfer.initiation.requested"
 
@@ -27,37 +38,6 @@ module CrystalBank::Domains::Transactions::InternalTransfers
 
         def initialize(@header : ES::Event::Header, body : JSON::Any)
           @body = Body.from_json(body.to_json)
-        end
-
-        def initialize(
-          actor_id : UUID,
-          command_handler : String,
-          amount : Int64,
-          creditor_account_id : UUID,
-          currency : CrystalBank::Types::Currencies::Supported,
-          debtor_account_id : UUID,
-          scope_id : UUID,
-          remittance_information = "",
-          comment = "",
-          aggregate_id = UUID.v7,
-        )
-          @header = Header.new(
-            actor_id: actor_id,
-            aggregate_id: aggregate_id,
-            aggregate_type: @@type,
-            aggregate_version: 1,
-            command_handler: command_handler,
-            event_handle: @@handle
-          )
-          @body = Body.new(
-            amount: amount,
-            comment: comment,
-            creditor_account_id: creditor_account_id,
-            currency: currency,
-            debtor_account_id: debtor_account_id,
-            remittance_information: remittance_information,
-            scope_id: scope_id
-          )
         end
       end
     end
