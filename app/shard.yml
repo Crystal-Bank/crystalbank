@@ -1,5 +1,5 @@
 name: crystalbank
-version: 0.7.3
+version: 0.8.1
 
 authors:
   - Tristan Holl <mail@tristanholl.com>
@@ -17,7 +17,7 @@ dependencies:
 
   action-controller:
     github: spider-gazelle/action-controller
-    version: ~> 7.5
+    version: ~> 7.6
     
   jwt:
     github: crystal-community/jwt
