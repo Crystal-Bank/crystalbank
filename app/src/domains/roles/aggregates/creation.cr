@@ -18,6 +18,7 @@ module CrystalBank::Domains::Roles
           @state.permissions = body.permissions
           @state.scope_id = body.scope_id
           @state.scopes = body.scopes
+          @state.requester_id = event.header.actor_id
         end
       end
     end

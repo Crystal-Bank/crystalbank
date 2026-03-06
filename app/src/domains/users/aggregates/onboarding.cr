@@ -18,6 +18,7 @@ module CrystalBank::Domains::Users
           @state.name = body.name
           @state.email = body.email
           @state.scope_id = body.scope_id
+          @state.requester_id = event.header.actor_id
         end
       end
     end

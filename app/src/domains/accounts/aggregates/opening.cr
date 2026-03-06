@@ -19,6 +19,7 @@ module CrystalBank::Domains::Accounts
           @state.scope_id = body.scope_id
           @state.type = body.type
           @state.customer_ids = body.customer_ids
+          @state.requester_id = event.header.actor_id
         end
       end
     end

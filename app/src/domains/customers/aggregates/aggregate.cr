@@ -11,6 +11,7 @@ module CrystalBank::Domains::Customers
       property onboarded : Bool = false
       property scope_id : UUID?
       property type : CrystalBank::Types::Customers::Type?
+      property requester_id : UUID?
     end
 
     getter state : State

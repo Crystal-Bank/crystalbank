@@ -6,6 +6,7 @@ require "./initializers/projections"
 require "./initializers/queue"
 
 require "./permissions"
+require "./approval_rules"
 
 require "./types/accounts"
 require "./types/currencies"

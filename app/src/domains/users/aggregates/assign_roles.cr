@@ -16,6 +16,8 @@ module CrystalBank::Domains::Users
 
           body = event.body.as(Users::AssignRoles::Events::Requested::Body)
           @state.pending_role_id_assignments = body.role_ids
+          @state.scope_id = body.scope_id
+          @state.requester_id = event.header.actor_id
         end
       end
     end
