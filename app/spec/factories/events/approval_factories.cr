@@ -28,11 +28,11 @@ module Test::Approval::Events
 
       def json_string : String
         {
-          "comment":                "test comment",
-          "scope_id":               "00000000-0000-0000-0000-100000000001",
-          "source_aggregate_type":  "Account",
-          "source_aggregate_id":    "00000000-0000-0000-0000-200000000001",
-          "required_approvals":     ["write_accounts_opening_compliance_approval", "write_accounts_opening_board_approval"],
+          "comment":               "test comment",
+          "scope_id":              "00000000-0000-0000-0000-100000000001",
+          "source_aggregate_type": "Account",
+          "source_aggregate_id":   "00000000-0000-0000-0000-200000000001",
+          "required_approvals":    ["write_accounts_opening_compliance_approval", "write_accounts_opening_board_approval"],
         }.to_json
       end
     end
