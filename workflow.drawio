@@ -1,0 +1,434 @@
+<mxfile host="app.diagrams.net" modified="2026-03-06T00:00:00.000Z" agent="Claude Code" version="21.0.0" type="device">
+  <diagram name="CrystalBank Workflow" id="crystalbank-workflow">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="CrystalBank - System Workflow Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="854" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- LEGEND -->
+        <mxCell id="legend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="85" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-domain" value="Domain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="115" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-event" value="Event" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="60" y="155" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-projection" value="Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="60" y="195" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-api" value="API Endpoint" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="60" y="235" width="80" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ===== PHASE HEADERS ===== -->
+
+        <!-- Phase 1: Foundation -->
+        <mxCell id="phase1-header" value="Phase 1: Foundation Setup" style="text;html=1;strokeColor=#666666;fillColor=#f0f0f0;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="240" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 2: User Management -->
+        <mxCell id="phase2-header" value="Phase 2: User Management" style="text;html=1;strokeColor=#666666;fillColor=#f0f0f0;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="80" width="240" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 3: Customer & Account -->
+        <mxCell id="phase3-header" value="Phase 3: Customer &amp; Account" style="text;html=1;strokeColor=#666666;fillColor=#f0f0f0;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="80" width="240" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 4: Transactions -->
+        <mxCell id="phase4-header" value="Phase 4: Transactions" style="text;html=1;strokeColor=#666666;fillColor=#f0f0f0;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="80" width="240" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 5: API Access -->
+        <mxCell id="phase5-header" value="Phase 5: API Access" style="text;html=1;strokeColor=#666666;fillColor=#f0f0f0;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="80" width="140" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===== SCOPES DOMAIN ===== -->
+        <mxCell id="scope-domain" value="Scopes Domain" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="280" y="140" width="240" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="scope-api" value="POST /scopes/create" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="scope-domain">
+          <mxGeometry x="20" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="scope-req-event" value="scope.creation.requested&#xa;(name, parent_scope_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="scope-domain">
+          <mxGeometry x="20" y="80" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="scope-acc-event" value="scope.creation.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="scope-domain">
+          <mxGeometry x="20" y="135" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="scope-projection" value="Scopes Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="scope-domain">
+          <mxGeometry x="20" y="180" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Scope arrows -->
+        <mxCell id="scope-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="scope-domain" source="scope-api" target="scope-req-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scope-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="scope-domain" source="scope-req-event" target="scope-acc-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scope-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="scope-domain" source="scope-acc-event" target="scope-projection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ROLES DOMAIN ===== -->
+        <mxCell id="roles-domain" value="Roles Domain" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="280" y="390" width="240" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="roles-api" value="POST /roles/create" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="roles-domain">
+          <mxGeometry x="20" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="roles-req-event" value="role.creation.requested&#xa;(name, permissions, scope_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="roles-domain">
+          <mxGeometry x="20" y="80" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="roles-acc-event" value="role.creation.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="roles-domain">
+          <mxGeometry x="20" y="135" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="roles-projection" value="Roles Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="roles-domain">
+          <mxGeometry x="20" y="180" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Roles arrows -->
+        <mxCell id="roles-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="roles-domain" source="roles-api" target="roles-req-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="roles-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="roles-domain" source="roles-req-event" target="roles-acc-event">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="roles-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="roles-domain" source="roles-acc-event" target="roles-projection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== USERS DOMAIN ===== -->
+        <mxCell id="users-domain" value="Users Domain" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="580" y="140" width="240" height="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-onboard-api" value="POST /users/onboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="users-domain">
+          <mxGeometry x="20" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-onboard-req" value="user.onboarding.requested&#xa;(name, email, scope_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="users-domain">
+          <mxGeometry x="20" y="80" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-onboard-acc" value="user.onboarding.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="users-domain">
+          <mxGeometry x="20" y="135" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-assign-api" value="POST /users/:id/assign_roles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="users-domain">
+          <mxGeometry x="20" y="185" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-assign-req" value="user.assign_roles.requested&#xa;(role_ids, scope_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="users-domain">
+          <mxGeometry x="20" y="230" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="users-assign-acc" value="user.assign_roles.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="users-domain">
+          <mxGeometry x="20" y="285" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Users arrows -->
+        <mxCell id="users-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="users-domain" source="users-onboard-api" target="users-onboard-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="users-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="users-domain" source="users-onboard-req" target="users-onboard-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="users-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="users-domain" source="users-onboard-acc" target="users-assign-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="users-arr4" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="users-domain" source="users-assign-api" target="users-assign-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="users-arr5" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="users-domain" source="users-assign-req" target="users-assign-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Users projection (outside swimlane for space) -->
+        <mxCell id="users-projection" value="Users Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="600" y="510" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="users-acc-proj-arr" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="users-assign-acc" target="users-projection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CUSTOMERS DOMAIN ===== -->
+        <mxCell id="customers-domain" value="Customers Domain" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="880" y="140" width="240" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="customers-api" value="POST /customers/onboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="customers-domain">
+          <mxGeometry x="20" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="customers-req" value="customer.onboarding.requested&#xa;(name, scope_id, type)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="customers-domain">
+          <mxGeometry x="20" y="80" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="customers-acc" value="customer.onboarding.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="customers-domain">
+          <mxGeometry x="20" y="135" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="customers-projection" value="Customers Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="customers-domain">
+          <mxGeometry x="20" y="180" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Customers arrows -->
+        <mxCell id="cust-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="customers-domain" source="customers-api" target="customers-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cust-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="customers-domain" source="customers-req" target="customers-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cust-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="customers-domain" source="customers-acc" target="customers-projection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ACCOUNTS DOMAIN ===== -->
+        <mxCell id="accounts-domain" value="Accounts Domain" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="880" y="390" width="240" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="accounts-api" value="POST /accounts/open" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="accounts-domain">
+          <mxGeometry x="20" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="accounts-req" value="account.opening.requested&#xa;(currencies, customer_ids, scope_id, type)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="accounts-domain">
+          <mxGeometry x="20" y="80" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="accounts-acc" value="account.opening.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="accounts-domain">
+          <mxGeometry x="20" y="135" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="accounts-projection" value="Accounts Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="accounts-domain">
+          <mxGeometry x="20" y="180" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Accounts arrows -->
+        <mxCell id="acc-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="accounts-domain" source="accounts-api" target="accounts-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="acc-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="accounts-domain" source="accounts-req" target="accounts-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="acc-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="accounts-domain" source="accounts-acc" target="accounts-projection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== TRANSACTIONS DOMAIN ===== -->
+        <mxCell id="tx-domain" value="Transactions Domain (Internal Transfers)" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="140" width="260" height="280" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tx-api" value="POST /transactions/internal_transfers/initiate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="tx-domain">
+          <mxGeometry x="20" y="35" width="220" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tx-req" value="transactions.internal_transfer&#xa;.initiation.requested&#xa;(amount, currency, creditor_account_id,&#xa;debtor_account_id, scope_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="tx-domain">
+          <mxGeometry x="20" y="80" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tx-acc" value="transactions.internal_transfer&#xa;.initiation.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="tx-domain">
+          <mxGeometry x="20" y="155" width="220" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tx-postings" value="Postings Projection&#xa;(DEBIT + CREDIT entries)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="tx-domain">
+          <mxGeometry x="20" y="210" width="220" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Tx arrows -->
+        <mxCell id="tx-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="tx-domain" source="tx-api" target="tx-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tx-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="tx-domain" source="tx-req" target="tx-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tx-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="tx-domain" source="tx-acc" target="tx-postings">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== API KEYS DOMAIN ===== -->
+        <mxCell id="apikeys-domain" value="API Keys Domain" style="swimlane;fontStyle=1;align=center;startSize=25;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="140" width="240" height="330" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apikeys-gen-api" value="POST /api_keys/generate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="apikeys-domain">
+          <mxGeometry x="20" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apikeys-gen-req" value="api_key.generation.requested&#xa;(name, scope_id, user_id)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="apikeys-domain">
+          <mxGeometry x="20" y="80" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apikeys-gen-acc" value="api_key.generation.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="apikeys-domain">
+          <mxGeometry x="20" y="135" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apikeys-rev-api" value="PATCH /api_keys/:id/revoke" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="apikeys-domain">
+          <mxGeometry x="20" y="185" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apikeys-rev-req" value="api_key.revocation.requested&#xa;(reason)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="apikeys-domain">
+          <mxGeometry x="20" y="230" width="200" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apikeys-rev-acc" value="api_key.revocation.accepted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="apikeys-domain">
+          <mxGeometry x="20" y="285" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- API Keys arrows -->
+        <mxCell id="ak-arr1" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="apikeys-domain" source="apikeys-gen-api" target="apikeys-gen-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ak-arr2" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="apikeys-domain" source="apikeys-gen-req" target="apikeys-gen-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ak-arr3" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="apikeys-domain" source="apikeys-gen-acc" target="apikeys-rev-api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ak-arr4" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="apikeys-domain" source="apikeys-rev-api" target="apikeys-rev-req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ak-arr5" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="apikeys-domain" source="apikeys-rev-req" target="apikeys-rev-acc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API Keys Projection -->
+        <mxCell id="apikeys-projection" value="API Keys Projection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="500" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ak-proj-arr" value="" style="endArrow=block;endFill=1;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="apikeys-rev-acc" target="apikeys-projection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CROSS-DOMAIN DEPENDENCY ARROWS ===== -->
+
+        <!-- Scope required for Roles -->
+        <mxCell id="dep-scope-roles" value="scope_id required" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontColor=#6c8ebf;fontSize=9;" edge="1" parent="1" source="scope-projection" target="roles-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="370" />
+              <mxPoint x="400" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Scope required for Users -->
+        <mxCell id="dep-scope-users" value="scope_id required" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontColor=#6c8ebf;fontSize=9;" edge="1" parent="1" source="scope-projection" target="users-onboard-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="330" />
+              <mxPoint x="700" y="330" />
+              <mxPoint x="700" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Roles assigned to Users -->
+        <mxCell id="dep-roles-users" value="role_ids" style="endArrow=open;endFill=0;dashed=1;strokeColor=#82b366;fontColor=#82b366;fontSize=9;" edge="1" parent="1" source="roles-projection" target="users-assign-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="570" />
+              <mxPoint x="700" y="570" />
+              <mxPoint x="700" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Scope required for Customers -->
+        <mxCell id="dep-scope-customers" value="scope_id required" style="endArrow=open;endFill=0;dashed=1;strokeColor=#6c8ebf;fontColor=#6c8ebf;fontSize=9;" edge="1" parent="1" source="scope-projection" target="customers-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="340" />
+              <mxPoint x="1000" y="340" />
+              <mxPoint x="1000" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Customer linked to Account -->
+        <mxCell id="dep-cust-acc" value="customer_ids" style="endArrow=open;endFill=0;dashed=1;strokeColor=#82b366;fontColor=#82b366;fontSize=9;" edge="1" parent="1" source="customers-projection" target="accounts-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="365" />
+              <mxPoint x="1000" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Account required for Transactions -->
+        <mxCell id="dep-acc-tx" value="account IDs" style="endArrow=open;endFill=0;dashed=1;strokeColor=#82b366;fontColor=#82b366;fontSize=9;" edge="1" parent="1" source="accounts-projection" target="tx-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="570" />
+              <mxPoint x="1310" y="570" />
+              <mxPoint x="1310" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- User required for API Keys -->
+        <mxCell id="dep-users-apikeys" value="user_id" style="endArrow=open;endFill=0;dashed=1;strokeColor=#82b366;fontColor=#82b366;fontSize=9;" edge="1" parent="1" source="users-projection" target="apikeys-gen-api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="525" />
+              <mxPoint x="1610" y="525" />
+              <mxPoint x="1610" y="175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Event Store label -->
+        <mxCell id="eventstore" value="Event Store (PostgreSQL)&#xa;All events persisted here" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="640" width="300" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow from each domain to event store -->
+        <mxCell id="es-arr-scope" value="" style="endArrow=open;endFill=0;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="scope-acc-event" target="eventstore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="es-arr-roles" value="" style="endArrow=open;endFill=0;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="roles-acc-event" target="eventstore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="es-arr-tx" value="" style="endArrow=open;endFill=0;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="tx-acc" target="eventstore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Auth note -->
+        <mxCell id="auth-note" value="Authentication: API requests require&#xa;Authorization: Bearer &lt;api_key&gt; header" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="460" width="260" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Idempotency note -->
+        <mxCell id="idempotency-note" value="All POST endpoints support&#xa;Idempotency-Key header" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="530" width="260" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
