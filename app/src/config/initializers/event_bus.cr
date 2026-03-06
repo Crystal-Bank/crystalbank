@@ -4,6 +4,15 @@ bus = ES::Config.event_bus
 
 # Subscribing command handlers to events
 
+# Approvals
+bus.subscribe(Approvals::Creation::Events::Requested, Approvals::Creation::Commands::ProcessRequest)
+bus.subscribe(Approvals::Creation::Events::Accepted, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Submission::Events::Requested, Approvals::Submission::Commands::ProcessRequest)
+bus.subscribe(Approvals::Submission::Events::Accepted, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Submission::Events::AllApproved, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Submission::Events::AllApproved, Approvals::Finalization::Commands::Finalize)
+bus.subscribe(Approvals::Submission::Events::Rejected, Approvals::Projections::Approvals)
+
 # Accounts
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands::ProcessRequest)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)

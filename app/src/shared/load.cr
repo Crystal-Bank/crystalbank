@@ -1,8 +1,12 @@
 require "crypto/bcrypt"
 require "jwt"
 
+# Load Objects
+require "./objects/approval"
+
 # Load Converters
 require "./converters/json/generic_array"
+require "./converters/json/json_object_array"
 require "./converters/json/uuid_array"
 
 # Load Api

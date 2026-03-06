@@ -32,6 +32,13 @@ module CrystalBank
     WRITE_users_assign_roles_request
     READ_users_list
 
+    # Approvals
+    READ_approvals_list
+    WRITE_approvals_submission_request
+
+    # Approval grants — one per approvable action type
+    APPROVE_accounts_opening_request
+
     def to_s
       super.to_s.downcase
     end
