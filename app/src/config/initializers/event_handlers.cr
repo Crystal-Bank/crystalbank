@@ -33,3 +33,8 @@ event_handlers.register(Users::Onboarding::Events::Accepted)
 event_handlers.register(Users::Onboarding::Events::Requested)
 event_handlers.register(Users::AssignRoles::Events::Accepted)
 event_handlers.register(Users::AssignRoles::Events::Requested)
+
+# Approvals
+event_handlers.register(Approvals::Workflow::Events::Initiated)
+event_handlers.register(Approvals::Workflow::Events::Completed)
+event_handlers.register(Approvals::Decision::Events::Made)

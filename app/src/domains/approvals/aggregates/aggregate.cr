@@ -1,6 +1,10 @@
+require "./workflow"
+
 module CrystalBank::Domains::Approvals
   class Aggregate < ES::Aggregate
     @@type = "Approval"
+
+    include CrystalBank::Domains::Approvals::Aggregates::Concerns::Workflow
 
     enum Status
       Pending
