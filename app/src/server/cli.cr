@@ -38,11 +38,7 @@ module CrystalBank
         end
 
         parser.on("-d", "--docs", "Outputs OpenAPI documentation for this service") do
-          docs = ActionController::OpenAPI.generate_open_api_docs(
-            title: NAME,
-            version: VERSION,
-            description: "App description for OpenAPI docs"
-          ).merge(NamedTuple.new(servers: API_DOMAINS.map { |url| {url: url} })).to_json
+          docs = CrystalBank::Api::OpenAPI.docs
 
           parser.on("-f FILE", "--file=FILE", "Save the docs to a file") do |file|
             docs_file = file
