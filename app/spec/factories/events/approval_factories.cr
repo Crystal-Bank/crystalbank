@@ -45,7 +45,7 @@ module Test::Approval::Events
         aggregate_id = aggr_id
         aggregate_version = 2
         user_id = UUID.new("00000000-0000-0000-0000-300000000001")
-        permission = "write_accounts_opening_compliance_approval"
+        permissions = ["write_accounts_opening_compliance_approval"]
         command_handler = "test"
         comment = "test comment"
 
@@ -55,7 +55,7 @@ module Test::Approval::Events
           aggregate_version: aggregate_version,
           command_handler: command_handler,
           user_id: user_id,
-          permission: permission,
+          permissions: permissions,
           comment: comment
         )
       end
@@ -64,7 +64,7 @@ module Test::Approval::Events
         {
           "comment":    "test comment",
           "user_id":    "00000000-0000-0000-0000-300000000001",
-          "permission": "write_accounts_opening_compliance_approval",
+          "permissions": ["write_accounts_opening_compliance_approval"],
         }.to_json
       end
     end

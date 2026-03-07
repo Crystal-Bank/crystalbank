@@ -24,7 +24,7 @@ describe CrystalBank::Domains::Approvals::Collection::Events::Collected do
     b = e.body.as(Approvals::Collection::Events::Collected::Body)
 
     b.user_id.should eq(UUID.new("00000000-0000-0000-0000-300000000001"))
-    b.permission.should eq("write_accounts_opening_compliance_approval")
+    b.permissions.should eq(["write_accounts_opening_compliance_approval"])
   end
 
   it "can serialize to json" do
