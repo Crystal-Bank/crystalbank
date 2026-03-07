@@ -6,6 +6,11 @@ event_handlers = ES::Config.event_handlers
 event_handlers.register(Accounts::Opening::Events::Accepted)
 event_handlers.register(Accounts::Opening::Events::Requested)
 
+# Approvals
+event_handlers.register(Approvals::Creation::Events::Requested)
+event_handlers.register(Approvals::Collection::Events::Collected)
+event_handlers.register(Approvals::Collection::Events::Completed)
+
 # ApiKeys
 event_handlers.register(ApiKeys::Generation::Events::Accepted)
 event_handlers.register(ApiKeys::Generation::Events::Requested)

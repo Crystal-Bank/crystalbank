@@ -32,6 +32,14 @@ module CrystalBank
     WRITE_users_assign_roles_request
     READ_users_list
 
+    # Approvals
+    WRITE_approvals_collection_request
+    READ_approvals_list
+
+    # Account Opening Approvals
+    WRITE_accounts_opening_compliance_approval
+    WRITE_accounts_opening_board_approval
+
     def to_s
       super.to_s.downcase
     end
