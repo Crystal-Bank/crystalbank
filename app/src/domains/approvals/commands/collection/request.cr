@@ -23,9 +23,8 @@ module CrystalBank::Domains::Approvals
           user_permissions = find_matching_permissions(state.required_approvals, user_roles)
           raise CrystalBank::Exception::InvalidArgument.new("User does not have any required approval permission") if user_permissions.empty?
 
-          # Verify this user can contribute to a valid assignment
+          # Build the full set of collected permissions for the completion check
           all_collected = state.collected_approvals.map(&.permissions) + [user_permissions]
-          raise CrystalBank::Exception::InvalidArgument.new("User cannot contribute to the approval process") unless can_satisfy?(state.required_approvals, all_collected)
 
           # Calculate the next aggregate version
           next_version = state.next_version
