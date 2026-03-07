@@ -62,8 +62,8 @@ module Test::Approval::Events
 
       def json_string : String
         {
-          "comment":    "test comment",
-          "user_id":    "00000000-0000-0000-0000-300000000001",
+          "comment":     "test comment",
+          "user_id":     "00000000-0000-0000-0000-300000000001",
           "permissions": ["write_accounts_opening_compliance_approval"],
         }.to_json
       end
