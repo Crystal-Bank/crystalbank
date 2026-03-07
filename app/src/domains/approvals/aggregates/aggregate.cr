@@ -25,6 +25,7 @@ module CrystalBank::Domains::Approvals
       property required_approvals = Array(String).new
       property collected_approvals = Array(CollectedApproval).new
       property completed : Bool = false
+      property requestor_id : UUID?
     end
 
     getter state : State

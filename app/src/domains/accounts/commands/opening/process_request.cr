@@ -20,7 +20,8 @@ module CrystalBank::Domains::Accounts
               "write_accounts_opening_compliance_approval",
               "write_accounts_opening_board_approval",
             ],
-            actor_id: nil
+            actor_id: nil,
+            requestor_id: aggregate.state.requestor_id
           )
         end
       end

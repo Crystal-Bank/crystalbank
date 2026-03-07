@@ -12,6 +12,7 @@ module CrystalBank::Domains::Accounts
       property supported_currencies = Array(CrystalBank::Types::Currencies::Supported).new
       property scope_id : UUID?
       property type : CrystalBank::Types::Accounts::Type?
+      property requestor_id : UUID?
     end
 
     getter state : State

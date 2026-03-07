@@ -11,6 +11,7 @@ module CrystalBank::Domains::Approvals
           @state.source_aggregate_type = body.source_aggregate_type
           @state.source_aggregate_id = body.source_aggregate_id
           @state.required_approvals = body.required_approvals
+          @state.requestor_id = body.requestor_id
         end
       end
     end

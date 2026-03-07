@@ -22,6 +22,7 @@ module CrystalBank::Domains::Approvals
 
         getter source_aggregate_type : String
         getter source_aggregate_id : UUID
+        getter requestor_id : UUID?
 
         @[DB::Field(converter: CrystalBank::Converters::StringArray)]
         getter required_approvals : Array(String)

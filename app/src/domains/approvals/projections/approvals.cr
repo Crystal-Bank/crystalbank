@@ -15,6 +15,7 @@ module CrystalBank::Domains::Approvals
             "source_aggregate_type" varchar NOT NULL,
             "source_aggregate_id" UUID NOT NULL,
             "required_approvals" JSONB NOT NULL,
+            "requestor_id" UUID,
             "collected_approvals" JSONB NOT NULL DEFAULT '[]'::jsonb,
             "completed" boolean NOT NULL DEFAULT false,
             "created_at" timestamp NOT NULL,
@@ -46,19 +47,21 @@ module CrystalBank::Domains::Approvals
                 scope_id,
                 source_aggregate_type,
                 source_aggregate_id,
+                requestor_id,
                 required_approvals,
                 collected_approvals,
                 completed,
                 created_at,
                 updated_at
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
           ),
             aggregate_id,
             aggregate_version,
             body.scope_id,
             body.source_aggregate_type,
             body.source_aggregate_id,
+            body.requestor_id,
             body.required_approvals.to_json,
             "[]",
             false,

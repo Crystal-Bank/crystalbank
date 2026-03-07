@@ -60,6 +60,7 @@ module CrystalBank::Domains::Approvals
             a.scope_id,
             a.source_aggregate_type,
             a.source_aggregate_id,
+            a.requestor_id,
             a.required_approvals,
             collected,
             a.completed

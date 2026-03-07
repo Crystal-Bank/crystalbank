@@ -40,6 +40,9 @@ module CrystalBank::Domains::Approvals
         @[JSON::Field(format: "uuid", description: "ID of the source aggregate")]
         getter source_aggregate_id : UUID
 
+        @[JSON::Field(format: "uuid", description: "ID of the user who initiated the request")]
+        getter requestor_id : UUID?
+
         @[JSON::Field(description: "List of required approval permissions")]
         getter required_approvals : Array(String)
 
@@ -54,6 +57,7 @@ module CrystalBank::Domains::Approvals
           @scope_id : UUID,
           @source_aggregate_type : String,
           @source_aggregate_id : UUID,
+          @requestor_id : UUID?,
           @required_approvals : Array(String),
           @collected_approvals : Array(CollectedApproval),
           @completed : Bool,
