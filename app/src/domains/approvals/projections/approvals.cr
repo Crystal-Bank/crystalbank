@@ -61,7 +61,7 @@ module CrystalBank::Domains::Approvals
             body.scope_id,
             body.source_aggregate_type,
             body.source_aggregate_id,
-            body.requestor_id,
+            event.header.actor_id,
             body.required_approvals.to_json,
             "[]",
             false,

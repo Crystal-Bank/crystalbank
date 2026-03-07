@@ -8,7 +8,6 @@ module CrystalBank::Domains::Approvals
           scope_id : UUID,
           required_approvals : Array(String),
           actor_id : UUID?,
-          requestor_id : UUID? = nil,
         ) : UUID
           raise CrystalBank::Exception::InvalidArgument.new("Required approvals cannot be empty") if required_approvals.empty?
 
@@ -19,8 +18,7 @@ module CrystalBank::Domains::Approvals
             scope_id: scope_id,
             source_aggregate_type: source_aggregate_type,
             source_aggregate_id: source_aggregate_id,
-            required_approvals: required_approvals,
-            requestor_id: requestor_id
+            required_approvals: required_approvals
           )
 
           # Append event to event store
