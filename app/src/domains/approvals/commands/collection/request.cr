@@ -19,13 +19,13 @@ module CrystalBank::Domains::Approvals
           already_approved = state.collected_approvals.any? { |ca| ca.user_id == user_id }
           raise CrystalBank::Exception::InvalidArgument.new("User has already provided an approval for this process") if already_approved
 
-          # Determine which required approvals are still pending
-          collected_permissions = state.collected_approvals.map(&.permission)
-          pending_approvals = state.required_approvals.reject { |ra| collected_permissions.includes?(ra) }
+          # Find all required permissions this user can satisfy
+          user_permissions = find_matching_permissions(state.required_approvals, user_roles)
+          raise CrystalBank::Exception::InvalidArgument.new("User does not have any required approval permission") if user_permissions.empty?
 
-          # Find the first pending approval that the user can satisfy
-          matched_permission = find_matching_permission(pending_approvals, user_roles)
-          raise CrystalBank::Exception::InvalidArgument.new("User does not have any required approval permission") unless matched_permission
+          # Verify this user can contribute to a valid assignment
+          all_collected = state.collected_approvals.map(&.permissions) + [user_permissions]
+          raise CrystalBank::Exception::InvalidArgument.new("User cannot contribute to the approval process") unless can_satisfy?(state.required_approvals, all_collected)
 
           # Calculate the next aggregate version
           next_version = state.next_version
@@ -37,15 +37,12 @@ module CrystalBank::Domains::Approvals
             aggregate_version: next_version,
             command_handler: self.class.to_s,
             user_id: user_id,
-            permission: matched_permission
+            permissions: user_permissions
           )
           @event_store.append(collected_event)
 
-          # Check if all required approvals are now satisfied
-          newly_collected = collected_permissions + [matched_permission]
-          all_satisfied = state.required_approvals.all? { |ra| newly_collected.includes?(ra) }
-
-          if all_satisfied
+          # Check if all required approvals are now satisfied with enough distinct users
+          if all_collected.size >= state.required_approvals.size && can_satisfy?(state.required_approvals, all_collected)
             completed_event = Approvals::Collection::Events::Completed.new(
               actor_id: user_id,
               aggregate_id: approval_id,
@@ -56,21 +53,43 @@ module CrystalBank::Domains::Approvals
           end
         end
 
-        private def find_matching_permission(pending_approvals : Array(String), user_roles : Array(UUID)) : String?
+        private def find_matching_permissions(required_approvals : Array(String), user_roles : Array(UUID)) : Array(String)
           roles_permissions = Roles::Queries::RolesPermissions.new
+          matched = Array(String).new
 
-          pending_approvals.each do |required_permission|
+          required_approvals.each do |required_permission|
             begin
               permission = CrystalBank::Permissions.parse(required_permission)
               available_scopes = roles_permissions.available_scopes(user_roles, permission)
-              return required_permission unless available_scopes.empty?
+              matched << required_permission unless available_scopes.empty?
             rescue ArgumentError
-              # Permission string doesn't match enum — skip
               next
             end
           end
 
-          nil
+          matched
+        end
+
+        # Bipartite matching: can each required permission be assigned to a distinct user?
+        private def can_satisfy?(required : Array(String), collected_permissions : Array(Array(String))) : Bool
+          assignment = Array(Int32).new(required.size, -1)
+          match(required, collected_permissions, assignment, 0)
+        end
+
+        private def match(required : Array(String), collected : Array(Array(String)), assignment : Array(Int32), idx : Int32) : Bool
+          return true if idx == required.size
+
+          perm = required[idx]
+          collected.each_with_index do |user_perms, user_idx|
+            next if assignment.includes?(user_idx)
+            next unless user_perms.includes?(perm)
+
+            assignment[idx] = user_idx
+            return true if match(required, collected, assignment, idx + 1)
+            assignment[idx] = -1
+          end
+
+          false
         end
       end
     end

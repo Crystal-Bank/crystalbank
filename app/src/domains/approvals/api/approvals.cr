@@ -52,7 +52,7 @@ module CrystalBank::Domains::Approvals
 
         approvals = ::Approvals::Queries::Approvals.new.list(cursor: cursor, limit: limit + 1).map do |a|
           collected = a.collected_approvals.map do |ca|
-            Responses::CollectedApproval.new(ca.user_id, ca.permission)
+            Responses::CollectedApproval.new(ca.user_id, ca.permissions)
           end
 
           Responses::Approval.new(

@@ -6,7 +6,7 @@ module CrystalBank::Domains::Approvals
 
         define_event "Approval", "approval.collection.collected" do
           attribute :user_id, UUID
-          attribute :permission, String
+          attribute :permissions, Array(String)
         end
       end
     end

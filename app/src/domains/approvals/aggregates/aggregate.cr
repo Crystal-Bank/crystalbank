@@ -12,9 +12,9 @@ module CrystalBank::Domains::Approvals
       include JSON::Serializable
 
       getter user_id : UUID
-      getter permission : String
+      getter permissions : Array(String)
 
-      def initialize(@user_id : UUID, @permission : String)
+      def initialize(@user_id : UUID, @permissions : Array(String))
       end
     end
 

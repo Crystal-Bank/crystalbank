@@ -7,7 +7,7 @@ module CrystalBank::Domains::Approvals
         include JSON::Serializable
 
         getter user_id : UUID
-        getter permission : String
+        getter permissions : Array(String)
       end
 
       struct Approval

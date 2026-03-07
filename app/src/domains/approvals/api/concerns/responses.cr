@@ -7,10 +7,10 @@ module CrystalBank::Domains::Approvals
         @[JSON::Field(format: "uuid", description: "ID of the user who approved")]
         getter user_id : UUID
 
-        @[JSON::Field(description: "Permission that was satisfied")]
-        getter permission : String
+        @[JSON::Field(description: "Permissions the user is eligible to satisfy")]
+        getter permissions : Array(String)
 
-        def initialize(@user_id : UUID, @permission : String); end
+        def initialize(@user_id : UUID, @permissions : Array(String)); end
       end
 
       struct CollectResponse
