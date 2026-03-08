@@ -2,7 +2,7 @@ module CrystalBank::Domains::Approvals
   module Collection
     module Commands
       class Request < ES::Command
-        def call(approval_id : UUID, user_id : UUID, user_roles : Array(UUID)) : Nil
+        def call(approval_id : UUID, user_id : UUID, user_roles : Array(UUID), comment : String = "") : Nil
           # Hydrate the approval aggregate
           aggregate = Approvals::Aggregate.new(approval_id)
           aggregate.hydrate
@@ -36,7 +36,8 @@ module CrystalBank::Domains::Approvals
             aggregate_version: next_version,
             command_handler: self.class.to_s,
             user_id: user_id,
-            permissions: user_permissions
+            permissions: user_permissions,
+            comment: comment
           )
           @event_store.append(collected_event)
 

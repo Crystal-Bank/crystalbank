@@ -25,6 +25,7 @@ describe CrystalBank::Domains::Approvals::Collection::Events::Collected do
 
     b.user_id.should eq(UUID.new("00000000-0000-0000-0000-300000000001"))
     b.permissions.should eq(["write_accounts_opening_compliance_approval"])
+    b.comment.should eq("test comment")
   end
 
   it "can serialize to json" do

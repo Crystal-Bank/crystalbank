@@ -13,8 +13,9 @@ module CrystalBank::Domains::Approvals
       #
       # Required permission:
       # - **write_approvals_collection_request**
-      @[AC::Route::POST("/:id/collect")]
+      @[AC::Route::POST("/:id/collect", body: :r)]
       def collect(
+        r : CollectRequest,
         id : UUID,
         @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
         idempotency_key : UUID,
@@ -24,7 +25,8 @@ module CrystalBank::Domains::Approvals
         ::Approvals::Collection::Commands::Request.new.call(
           approval_id: id,
           user_id: context.user_id,
-          user_roles: context.roles
+          user_roles: context.roles,
+          comment: r.comment
         )
 
         # Hydrate the aggregate to check current status
@@ -52,7 +54,7 @@ module CrystalBank::Domains::Approvals
 
         approvals = ::Approvals::Queries::Approvals.new.list(cursor: cursor, limit: limit + 1).map do |a|
           collected = a.collected_approvals.map do |ca|
-            Responses::CollectedApproval.new(ca.user_id, ca.permissions)
+            Responses::CollectedApproval.new(ca.user_id, ca.permissions, ca.comment)
           end
 
           Responses::Approval.new(

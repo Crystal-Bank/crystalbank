@@ -13,8 +13,9 @@ module CrystalBank::Domains::Approvals
 
       getter user_id : UUID
       getter permissions : Array(String)
+      getter comment : String
 
-      def initialize(@user_id : UUID, @permissions : Array(String))
+      def initialize(@user_id : UUID, @permissions : Array(String), @comment : String = "")
       end
     end
 

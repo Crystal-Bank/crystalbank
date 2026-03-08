@@ -30,7 +30,8 @@ describe CrystalBank::Domains::Approvals::Aggregates::Concerns::Collection do
         aggregate_version: aggregate.state.aggregate_version + 1,
         command_handler: "test",
         user_id: user_id,
-        permissions: ["write_accounts_opening_compliance_approval"]
+        permissions: ["write_accounts_opening_compliance_approval"],
+        comment: "Looks good to me"
       )
       aggregate.apply(collected_event)
 
@@ -39,6 +40,7 @@ describe CrystalBank::Domains::Approvals::Aggregates::Concerns::Collection do
       state.collected_approvals.size.should eq(1)
       state.collected_approvals.first.user_id.should eq(user_id)
       state.collected_approvals.first.permissions.should eq(["write_accounts_opening_compliance_approval"])
+      state.collected_approvals.first.comment.should eq("Looks good to me")
       state.completed.should eq(false)
     end
 

@@ -76,7 +76,7 @@ module CrystalBank::Domains::Approvals
         updated_at = event.header.created_at
 
         body = event.body.as(::Approvals::Collection::Events::Collected::Body)
-        new_entry = {user_id: body.user_id, permissions: body.permissions}.to_json
+        new_entry = {user_id: body.user_id, permissions: body.permissions, comment: body.comment}.to_json
 
         @projection_database.transaction do |tx|
           cnn = tx.connection

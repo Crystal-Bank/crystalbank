@@ -8,6 +8,7 @@ module CrystalBank::Domains::Approvals
 
         getter user_id : UUID
         getter permissions : Array(String)
+        getter comment : String = ""
       end
 
       struct Approval

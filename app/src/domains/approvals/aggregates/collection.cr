@@ -9,7 +9,8 @@ module CrystalBank::Domains::Approvals
           body = event.body.as(Approvals::Collection::Events::Collected::Body)
           @state.collected_approvals << Approvals::Aggregate::CollectedApproval.new(
             user_id: body.user_id,
-            permissions: body.permissions
+            permissions: body.permissions,
+            comment: body.comment
           )
         end
 
