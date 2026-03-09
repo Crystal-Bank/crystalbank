@@ -1,13 +1,13 @@
 module CrystalBank::Domains::Ledger::Transactions
   module Projections
-    class LedgerEntries < ES::Projection
+    class Postings < ES::Projection
       def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'ledger_entries');), as: Bool
+        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'postings');), as: Bool
         return true if skip
 
         m = Array(String).new
         m << %(
-          CREATE TABLE "projections"."ledger_entries" (
+          CREATE TABLE "projections"."postings" (
             "id" SERIAL PRIMARY KEY,
             "transaction_id" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
@@ -27,7 +27,7 @@ module CrystalBank::Domains::Ledger::Transactions
           );
         )
 
-        m << %(CREATE INDEX ledger_entries_transaction_id_idx ON "projections"."ledger_entries"(transaction_id);)
+        m << %(CREATE INDEX postings_transaction_id_idx ON "projections"."postings"(transaction_id);)
 
         m.each { |s| @projection_database.exec s }
       end
@@ -59,7 +59,7 @@ module CrystalBank::Domains::Ledger::Transactions
           entries.each do |entry|
             cnn.exec %(
               INSERT INTO
-                "projections"."ledger_entries" (
+                "projections"."postings" (
                   transaction_id,
                   aggregate_version,
                   created_at,
