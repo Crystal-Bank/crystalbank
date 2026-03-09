@@ -10,9 +10,9 @@ An open source project to showcase a banking system written in Crystal. The proj
 4. Users :white_check_mark:
 5. ApiKeys :white_check_mark:
 6. Authentication :white_check_mark:
-7. Roles & Permissions (Data access rights) :hourglass_flowing_sand:
-8. Scopes (Data ownership)
-9. Approvals
+7. Approvals :white_check_mark:
+8. Roles & Permissions (Data access rights) :hourglass_flowing_sand:
+9. Scopes (Data ownership) :hourglass_flowing_sand:
 
 ## Preparation
 
