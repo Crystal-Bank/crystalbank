@@ -24,12 +24,14 @@ module CrystalBank::Domains::Ledger::Transactions
             "Ledger entries do not balance: debit total #{debit_total} does not equal credit total #{credit_total}"
           ) unless debit_total == credit_total
 
-          # Validate each account exists in the projection (presence == open, rows are only inserted on account.opening.accepted)
-          accounts_query = Accounts::Queries::Accounts.new
-          entries.each do |entry|
+          # Validate all accounts exist in the projection in one query (presence == open,
+          # rows are only inserted on account.opening.accepted)
+          account_ids = entries.map(&.account_id).uniq!
+          found_ids = Accounts::Queries::Accounts.new.find_all(account_ids).map(&.id).to_set
+          account_ids.each do |id|
             raise CrystalBank::Exception::InvalidArgument.new(
-              "Account '#{entry.account_id}' is not open"
-            ) if accounts_query.find(entry.account_id).nil?
+              "Account '#{id}' is not open"
+            ) unless found_ids.includes?(id)
           end
 
           # Serialize entries to JSON for the event
