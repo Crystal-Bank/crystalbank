@@ -8,6 +8,12 @@ bus = ES::Config.event_bus
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands::ProcessRequest)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
+# Approvals
+bus.subscribe(Approvals::Creation::Events::Requested, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Collection::Events::Collected, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
+
 # ApiKeys
 bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
 bus.subscribe(ApiKeys::Generation::Events::Accepted, ApiKeys::Projections::ApiKeys)
