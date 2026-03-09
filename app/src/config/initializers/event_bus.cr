@@ -34,11 +34,11 @@ bus.subscribe(Scopes::Creation::Events::Accepted, Scopes::Projections::Scopes)
 
 # Ledger
 bus.subscribe(Ledger::Transactions::Request::Events::Requested, Ledger::Transactions::Request::Commands::ProcessRequest)
-bus.subscribe(Ledger::Transactions::Request::Events::Accepted, Ledger::Transactions::Projections::LedgerTransactionEntries)
+bus.subscribe(Ledger::Transactions::Request::Events::Accepted, Ledger::Transactions::Projections::LedgerEntries)
 
-# Transactions
-bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Requested, Transactions::InternalTransfers::Initiation::Commands::ProcessRequest)
-bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Accepted, Transactions::InternalTransfers::Projections::Postings)
+# Transactions (internal_transfers commented out pending redesign to write to ledger_entries)
+# bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Requested, Transactions::InternalTransfers::Initiation::Commands::ProcessRequest)
+# bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Accepted, Transactions::InternalTransfers::Projections::Postings)
 
 # Users
 bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands::ProcessRequest)
