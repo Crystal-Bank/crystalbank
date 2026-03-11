@@ -13,7 +13,7 @@ require "./events/request/accepted"
 require "./events/request/requested"
 
 # Projections
-require "./projections/ledger_transaction_entries"
+require "./projections/postings"
 
 # Domain
 require "./transactions"

@@ -17,6 +17,4 @@ require "./domains/customers/load"
 require "./domains/roles/load"
 require "./domains/scopes/load"
 require "./domains/ledger/transactions/load"
-# require "./domains/transactions/internal_transfers/load"  # pending redesign to write to ledger_entries
-# require "./domains/transactions/postings/load"            # superseded by ledger_entries
 require "./domains/users/load"
