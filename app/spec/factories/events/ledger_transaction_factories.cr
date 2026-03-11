@@ -4,6 +4,8 @@ module Test::Ledger::Transactions::Events
       def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Ledger::Transactions::Request::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
+        command_handler = "test"
+        comment = "test comment"
         scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
         debit_account_id = UUID.new("00000000-0000-0000-0000-100000000000")
@@ -27,6 +29,8 @@ module Test::Ledger::Transactions::Events
         ::Ledger::Transactions::Request::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
+          command_handler: command_handler,
+          comment: comment,
           currency: "EUR",
           entries_json: entries.to_json,
           remittance_information: "test remittance information",
@@ -44,16 +48,17 @@ module Test::Ledger::Transactions::Events
         ].to_json
 
         {
-          "currency":                "EUR",
-          "entries_json":            entries_json,
-          "posting_date":            nil,
-          "value_date":              nil,
-          "remittance_information":  "test remittance information",
-          "payment_type":            nil,
-          "external_ref":            nil,
-          "channel":                 nil,
-          "internal_note":           nil,
-          "scope_id":                "00000000-0000-0000-0000-100000000001",
+          "comment":               "test comment",
+          "currency":              "EUR",
+          "entries_json":          entries_json,
+          "posting_date":          nil,
+          "value_date":            nil,
+          "remittance_information": "test remittance information",
+          "payment_type":          nil,
+          "external_ref":          nil,
+          "channel":               nil,
+          "internal_note":         nil,
+          "scope_id":              "00000000-0000-0000-0000-100000000001",
         }.to_json
       end
     end
