@@ -111,7 +111,7 @@ export const NAV_ITEMS = [
 export const VIEW_PATHS = {
   accounts:  '/accounts/',
   customers: '/customers/',
-  postings:  '/transactions/postings/',
+  postings:  '/ledger/transactions/postings/',
   users:     '/users/',
   roles:     '/roles/',
   scopes:    '/scopes/',

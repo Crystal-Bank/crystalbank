@@ -190,7 +190,7 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
   ui.loading = true
   try {
     const meta = Object.fromEntries(Object.entries(metadata ?? {}).filter(([, v]) => v !== undefined && v !== ''))
-    await apiFetch('POST', '/transactions/ledger/create', {
+    await apiFetch('POST', '/ledger/transactions', {
       currency,
       entries,
       posting_date,

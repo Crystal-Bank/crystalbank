@@ -105,27 +105,35 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>Posting ID</th>
+        <th>Transaction ID</th>
         <th>Account ID</th>
+        <th>Direction</th>
         <th>Amount</th>
         <th>Currency</th>
-        <th>Debtor Account ID</th>
-        <th>Creditor Account ID</th>
+        <th>Entry Type</th>
+        <th>Posting Date</th>
+        <th>Value Date</th>
         <th>Remittance Information</th>
       </tr>
     </thead>
     <tbody>
       {#if viewData.postings.length === 0 && !ui.loading}
-        <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
+        <tr><td colspan="9" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
       {/if}
-      {#each viewData.postings as p (p.id)}
+      {#each viewData.postings as p (p.id + p.account_id)}
         <tr>
           <td><span class="mono text-xs">{p.id}</span></td>
           <td><span class="mono text-xs">{p.account_id}</span></td>
+          <td>
+            <span class="badge" class:badge-red={p.direction === 'debit'} class:badge-green={p.direction === 'credit'}>
+              {p.direction}
+            </span>
+          </td>
           <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
           <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
-          <td><span class="mono text-xs">{p.debtor_account_id}</span></td>
-          <td><span class="mono text-xs">{p.creditor_account_id}</span></td>
+          <td><span class="badge badge-zinc">{p.entry_type?.replace('_', ' ')}</span></td>
+          <td class="text-zinc-500 text-xs tabular-nums">{p.posting_date}</td>
+          <td class="text-zinc-500 text-xs tabular-nums">{p.value_date}</td>
           <td class="text-zinc-500 max-w-xs truncate">{p.remittance_information}</td>
         </tr>
       {/each}
@@ -272,9 +280,7 @@
                   <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
                     <option value="principal">Principal</option>
                     <option value="settlement">Settlement</option>
-                    <option value="fee">Fee</option>
-                    <option value="interest">Interest</option>
-                    <option value="tax">Tax</option>
+                    <option value="transaction_fee">Transaction Fee</option>
                   </select>
                 </div>
 
