@@ -44,13 +44,12 @@ module CrystalBank::Domains::Ledger::Transactions
             p.amount,
             p.entry_type,
             p.currency,
-            p.posting_date,
-            p.value_date,
+            p.posting_date.to_rfc3339,
+            p.value_date.to_rfc3339,
             p.remittance_information,
             p.payment_type,
             p.external_ref,
-            p.channel,
-            p.internal_note,
+            p.channel
           )
         end
 

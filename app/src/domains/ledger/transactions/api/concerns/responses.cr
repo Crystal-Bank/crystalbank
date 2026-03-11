@@ -33,10 +33,10 @@ module CrystalBank::Domains::Ledger::Transactions
         getter currency : String
 
         @[JSON::Field(format: "date", description: "Posting date")]
-        getter posting_date : String?
+        getter posting_date : String
 
         @[JSON::Field(format: "date", description: "Value date")]
-        getter value_date : String?
+        getter value_date : String
 
         @[JSON::Field(description: "Remittance information")]
         getter remittance_information : String
@@ -50,8 +50,6 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(description: "Channel")]
         getter channel : String?
 
-        @[JSON::Field(description: "Internal note")]
-        getter internal_note : String?
 
         def initialize(
           @id : UUID,
@@ -66,7 +64,6 @@ module CrystalBank::Domains::Ledger::Transactions
           @payment_type : String?,
           @external_ref : String?,
           @channel : String?,
-          @internal_note : String?,
         ); end
       end
     end
