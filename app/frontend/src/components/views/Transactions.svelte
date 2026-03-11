@@ -1,10 +1,20 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, initiateTransfer } from '../../lib/actions.js'
-  import { shortId } from '../../lib/utils.js'
 
+  let activeTab = $state('transfers')
   let showModal = $state(false)
   let form = $state({ debtor_account_id: '', creditor_account_id: '', amount: '', currency: '', remittance_information: '' })
+
+  // Deduplicate postings into transfer-level rows (debtor+creditor+amount+currency+memo)
+  let transfers = $derived.by(() => {
+    const seen = new Map()
+    for (const p of viewData.postings) {
+      const key = `${p.debtor_account_id}|${p.creditor_account_id}|${p.amount}|${p.currency}|${p.remittance_information}`
+      if (!seen.has(key)) seen.set(key, p)
+    }
+    return Array.from(seen.values())
+  })
 
   function openModal() {
     form = { debtor_account_id: '', creditor_account_id: '', amount: '', currency: '', remittance_information: '' }
@@ -27,8 +37,8 @@
 
 <div class="page-header">
   <div>
-    <div class="page-title">Transaction Postings</div>
-    <div class="page-subtitle">Ledger entries for all internal transfers</div>
+    <div class="page-title">Ledger</div>
+    <div class="page-subtitle">Internal transfers and their ledger postings</div>
   </div>
   <button onclick={openModal} class="btn btn-primary btn-sm">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -36,36 +46,115 @@
   </button>
 </div>
 
-<div class="card overflow-hidden">
-  <table class="data-table">
-    <thead><tr><th>ID</th><th>Amount</th><th>Currency</th><th>Debtor</th><th>Creditor</th><th>Memo</th></tr></thead>
-    <tbody>
-      {#if viewData.postings.length === 0 && !ui.loading}
-        <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
-      {/if}
-      {#each viewData.postings as p (p.id)}
-        <tr>
-          <td><span class="mono">{shortId(p.id)}</span></td>
-          <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
-          <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
-          <td><span class="mono text-xs">{shortId(p.debtor_account_id)}</span></td>
-          <td><span class="mono text-xs">{shortId(p.creditor_account_id)}</span></td>
-          <td class="text-zinc-500 max-w-xs truncate">{p.remittance_information}</td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-  {#if ui.loading && ui.view === 'postings'}
-    <div class="flex justify-center py-6">
-      <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
-    </div>
-  {/if}
-  {#if pagination.hasMore.postings && !ui.loading}
-    <div class="p-4 border-t border-zinc-100 flex justify-center">
-      <button onclick={() => loadMore('postings')} class="btn btn-ghost btn-sm">Load more</button>
-    </div>
-  {/if}
+<!-- Tabs -->
+<div class="flex gap-1 mb-4 border-b border-zinc-200">
+  <button
+    onclick={() => activeTab = 'transfers'}
+    class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
+    class:border-zinc-900={activeTab === 'transfers'}
+    class:text-zinc-900={activeTab === 'transfers'}
+    class:border-transparent={activeTab !== 'transfers'}
+    class:text-zinc-500={activeTab !== 'transfers'}
+  >
+    Ledger Transactions
+  </button>
+  <button
+    onclick={() => activeTab = 'postings'}
+    class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
+    class:border-zinc-900={activeTab === 'postings'}
+    class:text-zinc-900={activeTab === 'postings'}
+    class:border-transparent={activeTab !== 'postings'}
+    class:text-zinc-500={activeTab !== 'postings'}
+  >
+    Postings
+  </button>
 </div>
+
+<!-- Ledger Transactions tab -->
+{#if activeTab === 'transfers'}
+  <div class="card overflow-hidden">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Currency</th>
+          <th>Debtor Account ID</th>
+          <th>Creditor Account ID</th>
+          <th>Remittance Information</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#if transfers.length === 0 && !ui.loading}
+          <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No transactions found</td></tr>
+        {/if}
+        {#each transfers as t (t.debtor_account_id + t.creditor_account_id + t.amount + t.currency)}
+          <tr>
+            <td class="font-semibold tabular-nums">{Number(t.amount).toLocaleString()}</td>
+            <td><span class="badge badge-zinc">{t.currency?.toUpperCase()}</span></td>
+            <td><span class="mono text-xs">{t.debtor_account_id}</span></td>
+            <td><span class="mono text-xs">{t.creditor_account_id}</span></td>
+            <td class="text-zinc-500 max-w-xs truncate">{t.remittance_information}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+    {#if ui.loading && ui.view === 'postings'}
+      <div class="flex justify-center py-6">
+        <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+      </div>
+    {/if}
+    {#if pagination.hasMore.postings && !ui.loading}
+      <div class="p-4 border-t border-zinc-100 flex justify-center">
+        <button onclick={() => loadMore('postings')} class="btn btn-ghost btn-sm">Load more</button>
+      </div>
+    {/if}
+  </div>
+{/if}
+
+<!-- Postings tab -->
+{#if activeTab === 'postings'}
+  <div class="card overflow-hidden">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Posting ID</th>
+          <th>Account ID</th>
+          <th>Amount</th>
+          <th>Currency</th>
+          <th>Debtor Account ID</th>
+          <th>Creditor Account ID</th>
+          <th>Remittance Information</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#if viewData.postings.length === 0 && !ui.loading}
+          <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
+        {/if}
+        {#each viewData.postings as p (p.id)}
+          <tr>
+            <td><span class="mono text-xs">{p.id}</span></td>
+            <td><span class="mono text-xs">{p.account_id}</span></td>
+            <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
+            <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
+            <td><span class="mono text-xs">{p.debtor_account_id}</span></td>
+            <td><span class="mono text-xs">{p.creditor_account_id}</span></td>
+            <td class="text-zinc-500 max-w-xs truncate">{p.remittance_information}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+    {#if ui.loading && ui.view === 'postings'}
+      <div class="flex justify-center py-6">
+        <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+      </div>
+    {/if}
+    {#if pagination.hasMore.postings && !ui.loading}
+      <div class="p-4 border-t border-zinc-100 flex justify-center">
+        <button onclick={() => loadMore('postings')} class="btn btn-ghost btn-sm">Load more</button>
+      </div>
+    {/if}
+  </div>
+{/if}
 
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>

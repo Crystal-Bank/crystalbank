@@ -1,7 +1,6 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createScope } from '../../lib/actions.js'
-  import { shortId } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', parent_scope_id: '' })
@@ -39,16 +38,16 @@
       {/if}
       {#each viewData.scopes as s (s.id)}
         <tr>
-          <td><span class="mono">{shortId(s.id)}</span></td>
+          <td><span class="mono text-xs">{s.id}</span></td>
           <td class="font-medium">{s.name}</td>
           <td>
             {#if s.parent_scope_id}
-              <span class="mono text-xs">{shortId(s.parent_scope_id)}</span>
+              <span class="mono text-xs">{s.parent_scope_id}</span>
             {:else}
               <span class="text-zinc-400 text-xs">Root</span>
             {/if}
           </td>
-          <td><span class="mono text-xs">{shortId(s.scope_id)}</span></td>
+          <td><span class="mono text-xs">{s.scope_id}</span></td>
         </tr>
       {/each}
     </tbody>

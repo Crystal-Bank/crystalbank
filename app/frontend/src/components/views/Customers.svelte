@@ -1,7 +1,6 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createCustomer } from '../../lib/actions.js'
-  import { shortId } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', type: '' })
@@ -39,10 +38,10 @@
       {/if}
       {#each viewData.customers as c (c.id)}
         <tr>
-          <td><span class="mono">{shortId(c.id)}</span></td>
+          <td><span class="mono text-xs">{c.id}</span></td>
           <td class="font-medium">{c.name}</td>
           <td><span class="badge" class:badge-blue={c.type === 'individual'} class:badge-amber={c.type !== 'individual'}>{c.type}</span></td>
-          <td><span class="mono text-xs">{shortId(c.scope_id)}</span></td>
+          <td><span class="mono text-xs">{c.scope_id}</span></td>
         </tr>
       {/each}
     </tbody>
