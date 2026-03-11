@@ -186,17 +186,19 @@ export async function revokeApiKey(id) {
   }
 }
 
-export async function initiateTransfer({ amount, creditor_account_id, currency, debtor_account_id, remittance_information }) {
+export async function createLedgerTransaction({ currency, entries, posting_date, value_date, remittance_information, metadata }) {
   ui.loading = true
   try {
-    await apiFetch('POST', '/transactions/internal_transfers/initiate', {
-      amount: parseInt(amount, 10),
-      creditor_account_id,
+    const meta = Object.fromEntries(Object.entries(metadata ?? {}).filter(([, v]) => v !== undefined && v !== ''))
+    await apiFetch('POST', '/transactions/ledger/create', {
       currency,
-      debtor_account_id,
+      entries,
+      posting_date,
+      value_date,
       remittance_information,
-    })
-    addToast('Transfer initiated')
+      ...(Object.keys(meta).length > 0 ? { metadata: meta } : {}),
+    }, { idempotency: true })
+    addToast('Transaction created')
     await loadView('postings')
   } catch (e) {
     addToast(e.message, 'error')

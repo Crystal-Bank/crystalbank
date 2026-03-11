@@ -121,6 +121,9 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   box-shadow: 0 20px 60px rgba(0,0,0,0.15);
   border: 1px solid hsl(var(--border));
 }
+.modal-box-lg {
+  max-width: 780px;
+}
 .modal-title { font-size: 1.125rem; font-weight: 600; color: hsl(var(--foreground)); margin-bottom: 0.25rem; }
 .modal-desc  { font-size: 0.875rem; color: hsl(var(--muted-fg)); margin-bottom: 1.25rem; }
 

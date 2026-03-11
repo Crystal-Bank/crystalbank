@@ -1,34 +1,88 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
-  import { loadMore, initiateTransfer } from '../../lib/actions.js'
+  import { loadMore, createLedgerTransaction } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
 
-  let activeTab = $state('transfers')
+  const today = () => new Date().toISOString().split('T')[0]
+
   let showModal = $state(false)
-  let form = $state({ debtor_account_id: '', creditor_account_id: '', amount: '', currency: '', remittance_information: '' })
+  let accountOptions = $state([])
+  let activeDropdown = $state(-1)
+  let entryCounter = $state(1)
 
-  // Deduplicate postings into transfer-level rows (debtor+creditor+amount+currency+memo)
-  let transfers = $derived.by(() => {
-    const seen = new Map()
-    for (const p of viewData.postings) {
-      const key = `${p.debtor_account_id}|${p.creditor_account_id}|${p.amount}|${p.currency}|${p.remittance_information}`
-      if (!seen.has(key)) seen.set(key, p)
-    }
-    return Array.from(seen.values())
+  let form = $state({
+    currency: '',
+    posting_date: '',
+    value_date: '',
+    remittance_information: '',
+    metadata: { payment_type: '', external_ref: '', channel: 'api' },
   })
+  let entries = $state([
+    { _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' },
+  ])
 
-  function openModal() {
-    form = { debtor_account_id: '', creditor_account_id: '', amount: '', currency: '', remittance_information: '' }
+  // Accounts filtered for whichever entry's account field is focused
+  let suggestions = $derived(
+    activeDropdown >= 0
+      ? accountOptions
+          .filter(a => {
+            const q = (entries[activeDropdown]?.account_id ?? '').toLowerCase()
+            return q === '' || a.id.toLowerCase().includes(q) || (a.type ?? '').includes(q)
+          })
+          .slice(0, 8)
+      : []
+  )
+
+  async function openModal() {
+    form = {
+      currency: '',
+      posting_date: today(),
+      value_date: today(),
+      remittance_information: '',
+      metadata: { payment_type: '', external_ref: '', channel: 'api' },
+    }
+    entries = [{ _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' }]
+    entryCounter = 1
+    activeDropdown = -1
     showModal = true
+    // Fetch accounts for autocomplete
+    try {
+      const res = await apiFetch('GET', '/accounts/?limit=200')
+      accountOptions = res.data.map(e => e.attributes)
+    } catch { accountOptions = [] }
+  }
+
+  function addEntry() {
+    entries = [...entries, { _id: entryCounter++, account_id: '', direction: 'credit', amount: '', entry_type: 'principal' }]
+  }
+
+  function removeEntry(idx) {
+    entries = entries.filter((_, i) => i !== idx)
+  }
+
+  function selectAccount(idx, accountId) {
+    entries[idx].account_id = accountId
+    activeDropdown = -1
   }
 
   async function handleSubmit() {
     try {
-      await initiateTransfer({
-        amount: form.amount,
-        creditor_account_id: form.creditor_account_id,
+      await createLedgerTransaction({
         currency: form.currency,
-        debtor_account_id: form.debtor_account_id,
+        posting_date: form.posting_date,
+        value_date: form.value_date,
         remittance_information: form.remittance_information,
+        metadata: {
+          payment_type: form.metadata.payment_type || undefined,
+          external_ref: form.metadata.external_ref || undefined,
+          channel: form.metadata.channel || undefined,
+        },
+        entries: entries.map(e => ({
+          account_id: e.account_id,
+          direction: e.direction,
+          amount: parseInt(e.amount, 10),
+          entry_type: e.entry_type,
+        })),
       })
       showModal = false
     } catch {}
@@ -42,163 +96,214 @@
   </div>
   <button onclick={openModal} class="btn btn-primary btn-sm">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Initiate Transfer
+    Create Transaction
   </button>
 </div>
 
-<!-- Tabs -->
-<div class="flex gap-1 mb-4 border-b border-zinc-200">
-  <button
-    onclick={() => activeTab = 'transfers'}
-    class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
-    class:border-zinc-900={activeTab === 'transfers'}
-    class:text-zinc-900={activeTab === 'transfers'}
-    class:border-transparent={activeTab !== 'transfers'}
-    class:text-zinc-500={activeTab !== 'transfers'}
-  >
-    Ledger Transactions
-  </button>
-  <button
-    onclick={() => activeTab = 'postings'}
-    class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
-    class:border-zinc-900={activeTab === 'postings'}
-    class:text-zinc-900={activeTab === 'postings'}
-    class:border-transparent={activeTab !== 'postings'}
-    class:text-zinc-500={activeTab !== 'postings'}
-  >
-    Postings
-  </button>
+<!-- Postings table -->
+<div class="card overflow-hidden">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Posting ID</th>
+        <th>Account ID</th>
+        <th>Amount</th>
+        <th>Currency</th>
+        <th>Debtor Account ID</th>
+        <th>Creditor Account ID</th>
+        <th>Remittance Information</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#if viewData.postings.length === 0 && !ui.loading}
+        <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
+      {/if}
+      {#each viewData.postings as p (p.id)}
+        <tr>
+          <td><span class="mono text-xs">{p.id}</span></td>
+          <td><span class="mono text-xs">{p.account_id}</span></td>
+          <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
+          <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
+          <td><span class="mono text-xs">{p.debtor_account_id}</span></td>
+          <td><span class="mono text-xs">{p.creditor_account_id}</span></td>
+          <td class="text-zinc-500 max-w-xs truncate">{p.remittance_information}</td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+  {#if ui.loading && ui.view === 'postings'}
+    <div class="flex justify-center py-6">
+      <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+    </div>
+  {/if}
+  {#if pagination.hasMore.postings && !ui.loading}
+    <div class="p-4 border-t border-zinc-100 flex justify-center">
+      <button onclick={() => loadMore('postings')} class="btn btn-ghost btn-sm">Load more</button>
+    </div>
+  {/if}
 </div>
 
-<!-- Ledger Transactions tab -->
-{#if activeTab === 'transfers'}
-  <div class="card overflow-hidden">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Debtor Account ID</th>
-          <th>Creditor Account ID</th>
-          <th>Remittance Information</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#if transfers.length === 0 && !ui.loading}
-          <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No transactions found</td></tr>
-        {/if}
-        {#each transfers as t (t.debtor_account_id + t.creditor_account_id + t.amount + t.currency)}
-          <tr>
-            <td class="font-semibold tabular-nums">{Number(t.amount).toLocaleString()}</td>
-            <td><span class="badge badge-zinc">{t.currency?.toUpperCase()}</span></td>
-            <td><span class="mono text-xs">{t.debtor_account_id}</span></td>
-            <td><span class="mono text-xs">{t.creditor_account_id}</span></td>
-            <td class="text-zinc-500 max-w-xs truncate">{t.remittance_information}</td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-    {#if ui.loading && ui.view === 'postings'}
-      <div class="flex justify-center py-6">
-        <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
-      </div>
-    {/if}
-    {#if pagination.hasMore.postings && !ui.loading}
-      <div class="p-4 border-t border-zinc-100 flex justify-center">
-        <button onclick={() => loadMore('postings')} class="btn btn-ghost btn-sm">Load more</button>
-      </div>
-    {/if}
-  </div>
-{/if}
-
-<!-- Postings tab -->
-{#if activeTab === 'postings'}
-  <div class="card overflow-hidden">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Posting ID</th>
-          <th>Account ID</th>
-          <th>Amount</th>
-          <th>Currency</th>
-          <th>Debtor Account ID</th>
-          <th>Creditor Account ID</th>
-          <th>Remittance Information</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#if viewData.postings.length === 0 && !ui.loading}
-          <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
-        {/if}
-        {#each viewData.postings as p (p.id)}
-          <tr>
-            <td><span class="mono text-xs">{p.id}</span></td>
-            <td><span class="mono text-xs">{p.account_id}</span></td>
-            <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
-            <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
-            <td><span class="mono text-xs">{p.debtor_account_id}</span></td>
-            <td><span class="mono text-xs">{p.creditor_account_id}</span></td>
-            <td class="text-zinc-500 max-w-xs truncate">{p.remittance_information}</td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-    {#if ui.loading && ui.view === 'postings'}
-      <div class="flex justify-center py-6">
-        <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
-      </div>
-    {/if}
-    {#if pagination.hasMore.postings && !ui.loading}
-      <div class="p-4 border-t border-zinc-100 flex justify-center">
-        <button onclick={() => loadMore('postings')} class="btn btn-ghost btn-sm">Load more</button>
-      </div>
-    {/if}
-  </div>
-{/if}
-
+<!-- Create Ledger Transaction modal -->
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
-    <div class="modal-box">
-      <div class="modal-title">Initiate Transfer</div>
-      <div class="modal-desc">Move funds between two accounts. Requires scope.</div>
+    <div class="modal-box modal-box-lg">
+      <div class="modal-title">Create Ledger Transaction</div>
+      <div class="modal-desc">Submit a multi-entry ledger transaction. Debits and credits must balance per currency.</div>
+
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
-        <div class="mb-4">
-          <label class="field-label">Debtor Account ID</label>
-          <input bind:value={form.debtor_account_id} type="text" class="field-input font-mono text-sm" placeholder="UUID" required>
-          <div class="field-hint">The account funds are taken from</div>
-        </div>
-        <div class="mb-4">
-          <label class="field-label">Creditor Account ID</label>
-          <input bind:value={form.creditor_account_id} type="text" class="field-input font-mono text-sm" placeholder="UUID" required>
-          <div class="field-hint">The account funds are sent to</div>
-        </div>
-        <div class="mb-4">
-          <div class="flex gap-3">
-            <div class="flex-1">
-              <label class="field-label">Amount</label>
-              <input bind:value={form.amount} type="number" min="1" class="field-input" placeholder="100" required>
-            </div>
-            <div class="w-32">
-              <label class="field-label">Currency</label>
-              <select bind:value={form.currency} class="field-input field-select" required>
-                <option value="">Pick...</option>
-                <option value="chf">CHF</option>
-                <option value="eur">EUR</option>
-                <option value="gbp">GBP</option>
-                <option value="jpy">JPY</option>
-                <option value="usd">USD</option>
-              </select>
-            </div>
+
+        <!-- Top fields: 3-column grid -->
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div>
+            <label class="field-label">Currency</label>
+            <select bind:value={form.currency} class="field-input field-select" required>
+              <option value="">Select...</option>
+              <option value="chf">CHF</option>
+              <option value="eur">EUR</option>
+              <option value="gbp">GBP</option>
+              <option value="jpy">JPY</option>
+              <option value="usd">USD</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Posting Date</label>
+            <input bind:value={form.posting_date} type="date" class="field-input" required>
+          </div>
+          <div>
+            <label class="field-label">Value Date</label>
+            <input bind:value={form.value_date} type="date" class="field-input" required>
           </div>
         </div>
-        <div class="mb-5">
+
+        <div class="mb-4">
           <label class="field-label">Remittance Information</label>
           <input bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services..." required>
         </div>
+
+        <!-- Metadata -->
+        <div class="grid grid-cols-3 gap-3 mb-5">
+          <div>
+            <label class="field-label">Payment Type</label>
+            <select bind:value={form.metadata.payment_type} class="field-input field-select">
+              <option value="">None</option>
+              <option value="SEPA_CREDIT_TRANSFER">SEPA Credit Transfer</option>
+              <option value="SWIFT_WIRE">SWIFT Wire</option>
+              <option value="ACH">ACH</option>
+              <option value="BOOK_TRANSFER">Book Transfer</option>
+              <option value="INTERNAL_TRANSFER">Internal Transfer</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
+            <input bind:value={form.metadata.external_ref} type="text" class="field-input" placeholder="ext-ref-123">
+          </div>
+          <div>
+            <label class="field-label">Channel</label>
+            <select bind:value={form.metadata.channel} class="field-input field-select">
+              <option value="api">API</option>
+              <option value="web">Web</option>
+              <option value="batch">Batch</option>
+              <option value="manual">Manual</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Entries -->
+        <div class="mb-2 flex items-center justify-between">
+          <div class="text-sm font-semibold text-zinc-700">Entries</div>
+          <button type="button" onclick={addEntry} class="btn btn-ghost btn-sm text-xs">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add entry
+          </button>
+        </div>
+
+        <div class="space-y-2 mb-5">
+          {#each entries as entry, i (entry._id)}
+            <div class="border border-zinc-200 rounded-lg p-3 bg-zinc-50">
+              <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 120px 32px">
+
+                <!-- Account ID with autocomplete -->
+                <div class="relative">
+                  <label class="field-label text-xs">Account ID</label>
+                  <input
+                    type="text"
+                    value={entry.account_id}
+                    oninput={(e) => { entry.account_id = e.target.value; activeDropdown = i }}
+                    onfocus={() => activeDropdown = i}
+                    onblur={() => setTimeout(() => { if (activeDropdown === i) activeDropdown = -1 }, 180)}
+                    class="field-input font-mono text-xs"
+                    placeholder="UUID"
+                    required
+                  >
+                  {#if activeDropdown === i && suggestions.length > 0}
+                    <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
+                      {#each suggestions as acct (acct.id)}
+                        <button
+                          type="button"
+                          class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
+                          onmousedown={(e) => { e.preventDefault(); selectAccount(i, acct.id) }}
+                        >
+                          <div class="font-mono text-xs text-zinc-800 break-all">{acct.id}</div>
+                          <div class="text-xs text-zinc-400 mt-0.5">{acct.type?.replace('_', ' ')} · {(acct.currencies ?? []).map(c => c.toUpperCase()).join(', ')}</div>
+                        </button>
+                      {/each}
+                    </div>
+                  {/if}
+                </div>
+
+                <!-- Direction -->
+                <div>
+                  <label class="field-label text-xs">Direction</label>
+                  <select bind:value={entry.direction} class="field-input field-select text-xs" required>
+                    <option value="debit">Debit</option>
+                    <option value="credit">Credit</option>
+                  </select>
+                </div>
+
+                <!-- Amount -->
+                <div>
+                  <label class="field-label text-xs">Amount</label>
+                  <input bind:value={entry.amount} type="number" min="1" class="field-input text-xs" placeholder="0" required>
+                </div>
+
+                <!-- Entry type -->
+                <div>
+                  <label class="field-label text-xs">Entry Type</label>
+                  <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
+                    <option value="principal">Principal</option>
+                    <option value="settlement">Settlement</option>
+                    <option value="fee">Fee</option>
+                    <option value="interest">Interest</option>
+                    <option value="tax">Tax</option>
+                  </select>
+                </div>
+
+                <!-- Remove -->
+                <div class="flex items-end pb-0.5">
+                  {#if entries.length > 1}
+                    <button
+                      type="button"
+                      onclick={() => removeEntry(i)}
+                      class="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                      title="Remove entry"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  {:else}
+                    <div class="w-8"></div>
+                  {/if}
+                </div>
+
+              </div>
+            </div>
+          {/each}
+        </div>
+
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>
-          <button type="submit" class="btn btn-primary" disabled={ui.loading}>Initiate Transfer</button>
+          <button type="submit" class="btn btn-primary" disabled={ui.loading}>Create Transaction</button>
         </div>
+
       </form>
     </div>
   </div>
