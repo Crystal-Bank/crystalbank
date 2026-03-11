@@ -56,3 +56,13 @@ services:
       - 4003:8080
     volumes:
       - ./app/openapi.json:/oas/openapi.json
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app/frontend
+    volumes:
+      - ./app:/app
+    entrypoint: sh
+    command: -c ""
+    deploy:
+      replicas: 0
