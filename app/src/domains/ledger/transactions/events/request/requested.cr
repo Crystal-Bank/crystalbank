@@ -5,16 +5,15 @@ module CrystalBank::Domains::Ledger::Transactions
         include ::ES::EventDSL
 
         define_event "LedgerTransaction", "ledger.transactions.request.requested" do
-          attribute currency, String
-          attribute entries_json, String
-          attribute posting_date, String?
-          attribute value_date, String?
-          attribute remittance_information, String
-          attribute payment_type, String?
-          attribute external_ref, String?
           attribute channel, String?
-          attribute internal_note, String?
+          attribute currency, CrystalBank::Types::Currencies::Supported
+          attribute entries_json, String
+          attribute external_ref, String?
+          attribute payment_type, String?
+          attribute posting_date, String
+          attribute remittance_information, String
           attribute scope_id, UUID
+          attribute value_date, String
         end
       end
     end

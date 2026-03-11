@@ -21,7 +21,6 @@ module CrystalBank::Domains::Ledger::Transactions
           @state.payment_type = body.payment_type
           @state.external_ref = body.external_ref
           @state.channel = body.channel
-          @state.internal_note = body.internal_note
           @state.scope_id = body.scope_id
         end
       end

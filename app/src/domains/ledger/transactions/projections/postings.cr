@@ -48,7 +48,6 @@ module CrystalBank::Domains::Ledger::Transactions
         payment_type = aggregate.state.payment_type
         external_ref = aggregate.state.external_ref
         channel = aggregate.state.channel
-        internal_note = aggregate.state.internal_note
 
         raise "Invalid ledger transaction state: missing entries" if entries.nil?
         raise "Invalid ledger transaction state: missing currency" if currency.nil?
@@ -73,10 +72,9 @@ module CrystalBank::Domains::Ledger::Transactions
                   remittance_information,
                   payment_type,
                   external_ref,
-                  channel,
-                  internal_note
+                  channel
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             ),
               aggregate_id,
               aggregate_version,
@@ -91,8 +89,7 @@ module CrystalBank::Domains::Ledger::Transactions
               remittance_information,
               payment_type,
               external_ref,
-              channel,
-              internal_note
+              channel
           end
         end
       end

@@ -12,7 +12,7 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Events::Requested 
     event.header.event_handle.should eq("ledger.transactions.request.requested")
 
     body = event.body.as(Ledger::Transactions::Request::Events::Requested::Body)
-    body.currency.should eq("EUR")
+    body.currency.should eq(CrystalBank::Types::Currencies::Supported::EUR)
     body.remittance_information.should eq("test remittance information")
     body.scope_id.should eq(UUID.new("00000000-0000-0000-0000-100000000001"))
   end
@@ -27,7 +27,7 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Events::Requested 
     e = Ledger::Transactions::Request::Events::Requested.new(h, json_body)
     b = e.body.as(Ledger::Transactions::Request::Events::Requested::Body)
 
-    b.currency.should eq("EUR")
+    b.currency.should eq(CrystalBank::Types::Currencies::Supported::EUR)
     b.remittance_information.should eq("test remittance information")
   end
 

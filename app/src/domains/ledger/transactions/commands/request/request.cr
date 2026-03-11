@@ -49,7 +49,8 @@ module CrystalBank::Domains::Ledger::Transactions
 
           event = Ledger::Transactions::Request::Events::Requested.new(
             actor_id: actor,
-            currency: r.currency.to_s,
+            command_handler: self.class.to_s,
+            currency: r.currency,
             entries_json: entries_json,
             posting_date: r.posting_date,
             value_date: r.value_date,
@@ -57,7 +58,6 @@ module CrystalBank::Domains::Ledger::Transactions
             payment_type: metadata.try(&.payment_type),
             external_ref: metadata.try(&.external_ref),
             channel: metadata.try(&.channel),
-            internal_note: metadata.try(&.internal_note),
             scope_id: scope,
           )
 

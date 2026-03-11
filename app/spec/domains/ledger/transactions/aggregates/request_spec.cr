@@ -14,7 +14,7 @@ describe CrystalBank::Domains::Ledger::Transactions::Aggregates::Concerns::Reque
       state = aggregate.state
       state.aggregate_id.should eq(aggregate_id)
       state.aggregate_version.should eq(1)
-      state.currency.should eq("EUR")
+      state.currency.should eq(CrystalBank::Types::Currencies::Supported::EUR)
       state.remittance_information.should eq("test remittance information")
       state.scope_id.should eq(scope_id)
       state.entries.should_not eq(nil)

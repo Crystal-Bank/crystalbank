@@ -7,6 +7,13 @@ module Test::Ledger::Transactions::Events
         command_handler = "test"
         comment = "test comment"
         scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
+        currency = CrystalBank::Types::Currencies::Supported::EUR
+        remittance_information = "test remittance information"
+        posting_date = "2026-03-11"
+        value_date = "2026-03-12"
+        payment_type = "SEPA_CREDIT_TRANSFER"
+        external_ref = "ext-ref"
+        channel = "api"
 
         debit_account_id = UUID.new("00000000-0000-0000-0000-100000000000")
         credit_account_id = UUID.new("00000000-0000-0000-0000-200000000000")
@@ -14,13 +21,13 @@ module Test::Ledger::Transactions::Events
         entries = [
           ::Ledger::Transactions::Aggregate::Entry.new(
             account_id: debit_account_id,
-            direction: "DEBIT",
+            direction: "debit",
             amount: 10000_i64,
             entry_type: "PRINCIPAL",
           ),
           ::Ledger::Transactions::Aggregate::Entry.new(
             account_id: credit_account_id,
-            direction: "CREDIT",
+            direction: "credit",
             amount: 10000_i64,
             entry_type: "PRINCIPAL",
           ),
@@ -29,12 +36,17 @@ module Test::Ledger::Transactions::Events
         ::Ledger::Transactions::Request::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
+          currency: currency,
+          entries_json: entries.to_json,
+          posting_date: posting_date,
+          value_date: value_date,
+          remittance_information: remittance_information,
+          payment_type: payment_type,
+          external_ref: external_ref,
+          channel: channel,
+          scope_id: scope_id,
           command_handler: command_handler,
           comment: comment,
-          currency: "EUR",
-          entries_json: entries.to_json,
-          remittance_information: "test remittance information",
-          scope_id: scope_id,
         )
       end
 
@@ -43,22 +55,21 @@ module Test::Ledger::Transactions::Events
         credit_account_id = "00000000-0000-0000-0000-200000000000"
 
         entries_json = [
-          {"account_id" => debit_account_id, "direction" => "DEBIT", "amount" => 10000, "entry_type" => "PRINCIPAL"},
-          {"account_id" => credit_account_id, "direction" => "CREDIT", "amount" => 10000, "entry_type" => "PRINCIPAL"},
+          {"account_id" => debit_account_id, "direction" => "debit", "amount" => 10000, "entry_type" => "PRINCIPAL"},
+          {"account_id" => credit_account_id, "direction" => "credit", "amount" => 10000, "entry_type" => "PRINCIPAL"},
         ].to_json
 
         {
-          "comment":               "test comment",
-          "currency":              "EUR",
-          "entries_json":          entries_json,
-          "posting_date":          nil,
-          "value_date":            nil,
+          "comment":                "test comment",
+          "channel":                "api",
+          "currency":               "eur",
+          "entries_json":           entries_json,
+          "external_ref":           "ext-ref",
+          "payment_type":           "SEPA_CREDIT_TRANSFER",
+          "posting_date":           "2026-03-11",
           "remittance_information": "test remittance information",
-          "payment_type":          nil,
-          "external_ref":          nil,
-          "channel":               nil,
-          "internal_note":         nil,
-          "scope_id":              "00000000-0000-0000-0000-100000000001",
+          "scope_id":               "00000000-0000-0000-0000-100000000001",
+          "value_date":             "2026-03-12",
         }.to_json
       end
     end

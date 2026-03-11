@@ -37,7 +37,7 @@ module CrystalBank::Domains::Ledger::Transactions
         include JSON::Serializable
 
         @[JSON::Field(description: "ISO 4217 currency code for all entries in this movement")]
-        getter currency : CrystalBank::Types::Currencies::Available
+        getter currency : CrystalBank::Types::Currencies::Supported
 
         @[JSON::Field(description: "List of ledger entries (minimum 2). Debits and credits must balance.")]
         getter entries : Array(EntryRequest)
@@ -46,13 +46,13 @@ module CrystalBank::Domains::Ledger::Transactions
         getter metadata : MetadataRequest?
 
         @[JSON::Field(description: "Accounting posting date (YYYY-MM-DD)")]
-        getter posting_date : String?
+        getter posting_date : String
 
         @[JSON::Field(description: "Remittance information")]
         getter remittance_information : String
 
         @[JSON::Field(description: "Value date for the movement (YYYY-MM-DD)")]
-        getter value_date : String?
+        getter value_date : String
       end
     end
   end

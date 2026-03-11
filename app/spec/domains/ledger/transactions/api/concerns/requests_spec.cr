@@ -7,21 +7,23 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Requests do
       credit_account_id = UUID.v7
 
       json = {
-        "currency"                => "EUR",
-        "remittance_information"  => "Payment ref 001",
-        "entries"                 => [
-          {"account_id" => debit_account_id.to_s, "direction" => "DEBIT", "amount" => 5000, "entry_type" => "PRINCIPAL"},
-          {"account_id" => credit_account_id.to_s, "direction" => "CREDIT", "amount" => 5000, "entry_type" => "PRINCIPAL"},
+        "currency"               => "EUR",
+        "remittance_information" => "Payment ref 001",
+        "posting_date"           => "2026-03-11",
+        "value_date"             => "2026-03-12",
+        "entries"                => [
+          {"account_id" => debit_account_id.to_s, "direction" => "debit", "amount" => 5000, "entry_type" => "principal"},
+          {"account_id" => credit_account_id.to_s, "direction" => "credit", "amount" => 5000, "entry_type" => "principal"},
         ],
       }.to_json
 
       request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
-      request.currency.to_s.should eq("EUR")
+      request.currency.should eq(CrystalBank::Types::Currencies::Supported::EUR)
       request.remittance_information.should eq("Payment ref 001")
       request.entries.size.should eq(2)
-      request.entries[0].direction.to_s.should eq("DEBIT")
-      request.entries[1].direction.to_s.should eq("CREDIT")
+      request.entries[0].direction.should eq(CrystalBank::Types::LedgerTransactions::Direction::DEBIT)
+      request.entries[1].direction.should eq(CrystalBank::Types::LedgerTransactions::Direction::CREDIT)
     end
   end
 
@@ -30,18 +32,18 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Requests do
       account_id = UUID.v7
 
       json = {
-        "account_id"  => account_id.to_s,
-        "direction"   => "DEBIT",
-        "amount"      => 100,
-        "entry_type"  => "PRINCIPAL",
+        "account_id" => account_id.to_s,
+        "direction"  => "debit",
+        "amount"     => 100,
+        "entry_type" => "principal",
       }.to_json
 
       entry = Ledger::Transactions::Api::Requests::EntryRequest.from_json(json)
 
       entry.account_id.should eq(account_id)
-      entry.direction.to_s.should eq("DEBIT")
+      entry.direction.should eq(CrystalBank::Types::LedgerTransactions::Direction::DEBIT)
       entry.amount.should eq(100_i64)
-      entry.entry_type.to_s.should eq("PRINCIPAL")
+      entry.entry_type.should eq(CrystalBank::Types::LedgerTransactions::EntryType::PRINCIPAL)
     end
   end
 end

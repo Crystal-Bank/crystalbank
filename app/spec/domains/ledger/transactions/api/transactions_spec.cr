@@ -29,16 +29,18 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
 
       # Build a context as the API controller would after a successful authorized? call
       context = CrystalBank::Api::Context.new(
-        user_id,
-        [] of UUID,
-        CrystalBank::Permissions::WRITE_ledger_transactions_request,
-        scope_id,
-        [scope_id]
+        user_id: user_id,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
+        scope: scope_id,
+        available_scopes: [scope_id]
       )
 
       json = {
-        "currency"               => "EUR",
+        "currency"               => "eur",
         "remittance_information" => "Invoice INV-2024-001",
+        "posting_date"           => "2026-03-11",
+        "value_date"             => "2026-03-12",
         "entries"                => [
           {"account_id" => debit_account_id.to_s, "direction" => "DEBIT", "amount" => 10000, "entry_type" => "PRINCIPAL"},
           {"account_id" => credit_account_id.to_s, "direction" => "CREDIT", "amount" => 10000, "entry_type" => "PRINCIPAL"},
@@ -54,7 +56,7 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
       aggregate = Ledger::Transactions::Aggregate.new(transaction_id)
       aggregate.hydrate
 
-      aggregate.state.currency.should eq("EUR")
+      aggregate.state.currency.should eq(CrystalBank::Types::Currencies::Supported::EUR)
       aggregate.state.remittance_information.should eq("Invoice INV-2024-001")
       aggregate.state.scope_id.should eq(scope_id)
       aggregate.state.entries.not_nil!.size.should eq(2)
@@ -63,20 +65,22 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
     it "rejects the request when a referenced account is not open" do
       scope_id = UUID.v7
       user_id = UUID.v7
-      debit_account_id = UUID.v7   # not in the projection
-      credit_account_id = UUID.v7  # not in the projection
+      debit_account_id = UUID.v7  # not in the projection
+      credit_account_id = UUID.v7 # not in the projection
 
       context = CrystalBank::Api::Context.new(
-        user_id,
-        [] of UUID,
-        CrystalBank::Permissions::WRITE_ledger_transactions_request,
-        scope_id,
-        [scope_id]
+        user_id: user_id,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
+        scope: scope_id,
+        available_scopes: [scope_id]
       )
 
       json = {
-        "currency"               => "EUR",
+        "currency"               => "eur",
         "remittance_information" => "Invalid transfer",
+        "posting_date"           => "2026-03-11",
+        "value_date"             => "2026-03-12",
         "entries"                => [
           {"account_id" => debit_account_id.to_s, "direction" => "DEBIT", "amount" => 500, "entry_type" => "PRINCIPAL"},
           {"account_id" => credit_account_id.to_s, "direction" => "CREDIT", "amount" => 500, "entry_type" => "PRINCIPAL"},

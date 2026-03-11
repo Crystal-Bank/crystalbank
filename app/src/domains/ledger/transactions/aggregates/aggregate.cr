@@ -24,7 +24,7 @@ module CrystalBank::Domains::Ledger::Transactions
     end
 
     struct State < ES::Aggregate::State
-      property currency : String?
+      property currency : CrystalBank::Types::Currencies::Supported?
       property entries : Array(Entry)?
       property posting_date : String?
       property value_date : String?
@@ -32,7 +32,6 @@ module CrystalBank::Domains::Ledger::Transactions
       property payment_type : String?
       property external_ref : String?
       property channel : String?
-      property internal_note : String?
       property scope_id : UUID?
     end
 

@@ -17,7 +17,6 @@ describe CrystalBank::Domains::Ledger::Transactions::Aggregate do
     aggr.state.payment_type.should eq(nil)
     aggr.state.external_ref.should eq(nil)
     aggr.state.channel.should eq(nil)
-    aggr.state.internal_note.should eq(nil)
     aggr.state.scope_id.should eq(nil)
   end
 end
