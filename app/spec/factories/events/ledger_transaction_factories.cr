@@ -64,17 +64,21 @@ module Test::Ledger::Transactions::Events
         aggregate_id = aggr_id
         aggregate_version = 2
         command_handler = "test"
+        comment = "test comment"
 
         ::Ledger::Transactions::Request::Events::Accepted.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
           aggregate_version: aggregate_version,
           command_handler: command_handler,
+          comment: comment,
         )
       end
 
       def json_string : String
-        {}.to_json
+        {
+          "comment": "test comment",
+        }.to_json
       end
     end
   end
