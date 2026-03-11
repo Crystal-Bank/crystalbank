@@ -17,6 +17,7 @@ event = Scopes::Creation::Events::Requested.new(
   name: "Root Scope",
   parent_scope_id: nil,
   scope_id: dummy_uuid,
+  aggregate_id: UUID.new("019cca42-0400-70f0-8568-19a800868bca")
 )
 # Append event to event store
 event_store.append(event)
@@ -48,6 +49,27 @@ user_id = UUID.new(event.header.aggregate_id.to_s)
 # +++++++++++++++++++++++
 
 # +++++++++++++++++++++++
+# Approver User seed {START}
+# +++++++++++++++++++++++
+# Create User
+event = Users::Onboarding::Events::Requested.new(
+  actor_id: dummy_uuid,
+  command_handler: "seed",
+  name: "Approver",
+  email: "approver@crystalbank.xyz",
+  scope_id: scope_id,
+)
+
+# Append event to event store
+event_store.append(event)
+
+# Return the aggregate ID of the newly created user aggregate
+approver_user_id = UUID.new(event.header.aggregate_id.to_s)
+# +++++++++++++++++++++++
+# Approver User seed {END}
+# +++++++++++++++++++++++
+
+# +++++++++++++++++++++++
 # API key seed {START}
 # +++++++++++++++++++++++
 # Create API key
@@ -64,6 +86,25 @@ event_store.append(event)
 client_id = UUID.new(event.header.aggregate_id.to_s)
 # +++++++++++++++++++++++
 # API key seed {END}
+# +++++++++++++++++++++++
+
+# +++++++++++++++++++++++
+# Approver API key seed {START}
+# +++++++++++++++++++++++
+# Create API key
+event = ApiKeys::Generation::Events::Requested.new(
+  actor_id: dummy_uuid,
+  api_secret: api_secret_encrypted,
+  command_handler: "seed",
+  name: "admin api key",
+  scope_id: scope_id,
+  user_id: approver_user_id
+)
+# Append event to event store
+event_store.append(event)
+approver_client_id = UUID.new(event.header.aggregate_id.to_s)
+# +++++++++++++++++++++++
+# Approver API key seed {END}
 # +++++++++++++++++++++++
 
 # +++++++++++++++++++++++
@@ -102,6 +143,18 @@ event = Users::AssignRoles::Events::Requested.new(
 # Append event to event store
 event_store.append(event)
 
+# Assign Admin role to user in Root scope
+event = Users::AssignRoles::Events::Requested.new(
+  actor_id: dummy_uuid,
+  command_handler: "seed",
+  aggregate_id: approver_user_id,
+  aggregate_version: 2,
+  role_ids: [role_id],
+  scope_id: scope_id,
+)
+# Append event to event store
+event_store.append(event)
+
 # +++++++++++++++++++++++
 # User-Role connection seed {END}
 # +++++++++++++++++++++++
@@ -111,7 +164,13 @@ output = [
   "client_id: '#{client_id}'",
   "client_secret: 'secret'",
 ]
-CrystalBank.print_verbose("Seed credentials", output.join("\n"))
+CrystalBank.print_verbose("Seed credentials Root user", output.join("\n"))
+
+output = [
+  "client_id: '#{approver_client_id}'",
+  "client_secret: 'secret'",
+]
+CrystalBank.print_verbose("Seed credentials Approver user", output.join("\n"))
 
 entities = [
   "Admin Role: '#{role_id}'",
