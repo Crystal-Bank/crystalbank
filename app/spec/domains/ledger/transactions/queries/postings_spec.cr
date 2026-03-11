@@ -1,6 +1,5 @@
 require "../../../../spec_helper"
 
-
 # Spec has an issue on a single instance, since the projector is blocked by the sleep/loop in the test
 
 # describe CrystalBank::Domains::Ledger::Transactions::Queries::Postings do

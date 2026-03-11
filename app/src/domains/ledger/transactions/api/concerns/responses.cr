@@ -50,7 +50,6 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(description: "Channel")]
         getter channel : String?
 
-
         def initialize(
           @id : UUID,
           @account_id : UUID,
