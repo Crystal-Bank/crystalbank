@@ -21,6 +21,45 @@ module CrystalBank::Domains::Ledger::Transactions
 
         Responses::TransactionResponse.new(aggregate_id)
       end
+
+      # List postings
+      # List all postings from the postings projection
+      #
+      # Required permission:
+      # - **read_postings_list**
+      @[AC::Route::GET("/postings")]
+      def list_postings(
+        @[AC::Param::Info(description: "Optional cursor parameter for pagination")]
+        cursor : UUID?,
+        @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
+        limit : Int32 = 20,
+      ) : ListResponse(Responses::Posting)
+        authorized?("read_postings_list", request_scope: false)
+
+        postings = ::Ledger::Transactions::Queries::Postings.new.list(cursor: cursor, limit: limit + 1).map do |p|
+          Responses::Posting.new(
+            p.id,
+            p.account_id,
+            p.direction,
+            p.amount,
+            p.entry_type,
+            p.currency,
+            p.posting_date,
+            p.value_date,
+            p.remittance_information,
+            p.payment_type,
+            p.external_ref,
+            p.channel,
+            p.internal_note,
+          )
+        end
+
+        ListResponse(Responses::Posting).new(
+          url: request.resource,
+          data: postings,
+          limit: limit
+        )
+      end
     end
   end
 end

@@ -15,5 +15,8 @@ require "./events/request/requested"
 # Projections
 require "./projections/postings"
 
+# Queries
+require "./queries/postings"
+
 # Domain
 require "./transactions"
