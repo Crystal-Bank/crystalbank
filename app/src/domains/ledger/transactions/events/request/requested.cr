@@ -10,10 +10,10 @@ module CrystalBank::Domains::Ledger::Transactions
           attribute entries_json, String
           attribute external_ref, String?
           attribute payment_type, String?
-          attribute posting_date, String
+          attribute posting_date, Time
           attribute remittance_information, String
           attribute scope_id, UUID
-          attribute value_date, String
+          attribute value_date, Time
         end
       end
     end

@@ -9,8 +9,8 @@ module Test::Ledger::Transactions::Events
         scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
         currency = CrystalBank::Types::Currencies::Supported::EUR
         remittance_information = "test remittance information"
-        posting_date = "2026-03-11"
-        value_date = "2026-03-12"
+        posting_date = Time::Format::ISO_8601_DATE.parse("2026-03-11")
+        value_date = Time::Format::ISO_8601_DATE.parse("2026-03-12")
         payment_type = "SEPA_CREDIT_TRANSFER"
         external_ref = "ext-ref"
         channel = "api"
@@ -66,10 +66,10 @@ module Test::Ledger::Transactions::Events
           "entries_json":           entries_json,
           "external_ref":           "ext-ref",
           "payment_type":           "SEPA_CREDIT_TRANSFER",
-          "posting_date":           "2026-03-11",
+          "posting_date":           "2026-03-11T00:00:00Z",
           "remittance_information": "test remittance information",
           "scope_id":               "00000000-0000-0000-0000-100000000001",
-          "value_date":             "2026-03-12",
+          "value_date":             "2026-03-12T00:00:00Z",
         }.to_json
       end
     end

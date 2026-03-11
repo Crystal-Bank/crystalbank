@@ -22,8 +22,7 @@ module CrystalBank::Domains::Ledger::Transactions
             "remittance_information" varchar NOT NULL,
             "payment_type" varchar,
             "external_ref" varchar,
-            "channel" varchar,
-            "internal_note" varchar
+            "channel" varchar
           );
         )
 
@@ -83,7 +82,7 @@ module CrystalBank::Domains::Ledger::Transactions
               entry.direction,
               entry.amount,
               entry.entry_type,
-              currency,
+              currency.to_s,
               posting_date,
               value_date,
               remittance_information,

@@ -26,8 +26,8 @@ module CrystalBank::Domains::Ledger::Transactions
     struct State < ES::Aggregate::State
       property currency : CrystalBank::Types::Currencies::Supported?
       property entries : Array(Entry)?
-      property posting_date : String?
-      property value_date : String?
+      property posting_date : Time?
+      property value_date : Time?
       property remittance_information : String?
       property payment_type : String?
       property external_ref : String?

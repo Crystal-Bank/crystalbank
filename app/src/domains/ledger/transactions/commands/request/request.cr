@@ -17,6 +17,21 @@ module CrystalBank::Domains::Ledger::Transactions
             raise CrystalBank::Exception::InvalidArgument.new("Entry amount must be greater than zero") if entry.amount <= 0
           end
 
+          # Check date formats
+          posting_date = Time.utc
+          begin
+            posting_date = Time::Format::ISO_8601_DATE.parse(r.posting_date) # Validate date format
+          rescue
+            raise CrystalBank::Exception::InvalidArgument.new("Invalid posting_date format, expected YYYY-MM-DD")
+          end
+
+          value_date = Time.utc
+          begin
+            value_date = Time::Format::ISO_8601_DATE.parse(r.value_date) # Validate date format
+          rescue
+            raise CrystalBank::Exception::InvalidArgument.new("Invalid value_date format, expected YYYY-MM-DD")
+          end
+
           # Check ledger balance: sum of DEBITs must equal sum of CREDITs
           debit_total = entries.select { |e| e.direction.debit? }.sum(&.amount)
           credit_total = entries.select { |e| e.direction.credit? }.sum(&.amount)
@@ -52,8 +67,8 @@ module CrystalBank::Domains::Ledger::Transactions
             command_handler: self.class.to_s,
             currency: r.currency,
             entries_json: entries_json,
-            posting_date: r.posting_date,
-            value_date: r.value_date,
+            posting_date: posting_date,
+            value_date: value_date,
             remittance_information: r.remittance_information,
             payment_type: metadata.try(&.payment_type),
             external_ref: metadata.try(&.external_ref),

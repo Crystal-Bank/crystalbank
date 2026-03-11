@@ -16,13 +16,12 @@ module CrystalBank::Domains::Ledger::Transactions
         getter amount : Int64
         getter entry_type : String
         getter currency : String
-        getter posting_date : String?
-        getter value_date : String?
+        getter posting_date : Time
+        getter value_date : Time
         getter remittance_information : String
         getter payment_type : String?
         getter external_ref : String?
         getter channel : String?
-        getter internal_note : String?
       end
 
       def initialize
