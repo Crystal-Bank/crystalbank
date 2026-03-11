@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte'
   import { auth, ui } from './lib/store.svelte.js'
   import { loadView } from './lib/actions.js'
   import Login from './components/Login.svelte'
@@ -13,7 +14,7 @@
   import Scopes from './components/views/Scopes.svelte'
   import ApiKeys from './components/views/ApiKeys.svelte'
 
-  $effect(() => {
+  onMount(() => {
     if (auth.token) loadView('accounts')
   })
 </script>
