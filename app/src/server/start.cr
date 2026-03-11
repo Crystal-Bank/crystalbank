@@ -9,6 +9,9 @@ require "../crystalbank"
 # Load OpenAPI controller
 require "./openapi"
 
+# Load Frontend controller (serves the embedded SPA at /)
+require "./frontend"
+
 # Server required after application controllers
 require "action-controller/server"
 
