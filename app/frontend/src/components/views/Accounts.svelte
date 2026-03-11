@@ -1,7 +1,6 @@
 <script>
   import { viewData, pagination, ui, SUPPORTED_CURRENCIES } from '../../lib/store.svelte.js'
   import { loadMore, createAccount } from '../../lib/actions.js'
-  import { shortId } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ type: '', customerIds: '', selectedCurrencies: [] })
@@ -45,7 +44,7 @@
       {/if}
       {#each viewData.accounts as a (a.id)}
         <tr>
-          <td><span class="mono">{shortId(a.id)}</span></td>
+          <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge" class:badge-blue={a.type === 'checking'} class:badge-purple={a.type !== 'checking'}>{a.type?.replace('_', ' ')}</span></td>
           <td>
             <div class="flex gap-1 flex-wrap">
@@ -55,7 +54,7 @@
             </div>
           </td>
           <td class="text-xs text-zinc-500">{(a.customer_ids?.length ?? 0)} owner(s)</td>
-          <td><span class="mono text-xs">{shortId(a.scope_id)}</span></td>
+          <td><span class="mono text-xs">{a.scope_id}</span></td>
         </tr>
       {/each}
     </tbody>

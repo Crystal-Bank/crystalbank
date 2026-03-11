@@ -1,7 +1,7 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, generateApiKey, revokeApiKey, loadView } from '../../lib/actions.js'
-  import { formatDate, shortId } from '../../lib/utils.js'
+  import { formatDate } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let keyResult = $state(null)  // { id, secret } — shown after generation
@@ -51,11 +51,11 @@
       {/if}
       {#each viewData.api_keys as k (k.id)}
         <tr>
-          <td><span class="mono">{shortId(k.id)}</span></td>
+          <td><span class="mono text-xs">{k.id}</span></td>
           <td class="font-medium">{k.name}</td>
           <td><span class="badge" class:badge-green={k.active} class:badge-red={!k.active}>{k.active ? 'Active' : 'Revoked'}</span></td>
           <td class="text-zinc-500 text-xs">{formatDate(k.created_at)}</td>
-          <td><span class="mono text-xs">{shortId(k.scope_id)}</span></td>
+          <td><span class="mono text-xs">{k.scope_id}</span></td>
           <td>
             {#if k.active}
               <button onclick={() => handleRevoke(k.id)} class="btn btn-danger btn-sm">Revoke</button>

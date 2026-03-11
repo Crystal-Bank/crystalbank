@@ -1,7 +1,6 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createUser } from '../../lib/actions.js'
-  import { shortId } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', email: '' })
@@ -39,10 +38,10 @@
       {/if}
       {#each viewData.users as u (u.id)}
         <tr>
-          <td><span class="mono">{shortId(u.id)}</span></td>
+          <td><span class="mono text-xs">{u.id}</span></td>
           <td class="font-medium">{u.name}</td>
           <td class="text-zinc-500">{u.email}</td>
-          <td><span class="mono text-xs">{shortId(u.scope_id)}</span></td>
+          <td><span class="mono text-xs">{u.scope_id}</span></td>
         </tr>
       {/each}
     </tbody>

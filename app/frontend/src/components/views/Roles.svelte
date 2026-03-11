@@ -1,7 +1,6 @@
 <script>
   import { viewData, pagination, ui, ALL_PERMISSIONS } from '../../lib/store.svelte.js'
   import { loadMore, createRole } from '../../lib/actions.js'
-  import { shortId } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', selectedPermissions: [], scopesList: '' })
@@ -44,7 +43,7 @@
     <div class="card p-4">
       <div class="flex items-center gap-2 mb-2">
         <span class="font-semibold text-sm">{r.name}</span>
-        <span class="mono">{shortId(r.id)}</span>
+        <span class="mono text-xs">{r.id}</span>
       </div>
       <div class="flex flex-wrap gap-1.5">
         {#each r.permissions ?? [] as p (p)}
@@ -55,7 +54,7 @@
         <div class="mt-2 flex flex-wrap items-center gap-1">
           <span class="text-xs text-zinc-400">Scopes:</span>
           {#each r.scopes as s (s)}
-            <span class="mono">{shortId(s)}</span>
+            <span class="mono text-xs">{s}</span>
           {/each}
         </div>
       {/if}
