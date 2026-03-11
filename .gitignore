@@ -2,3 +2,4 @@
 app/lib/**
 app/REVISION.txt
 storage
+app/frontend/node_modules

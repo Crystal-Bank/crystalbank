@@ -51,6 +51,7 @@ help:
 	@echo "  status  			- Check container status"
 	@echo "  stop    			- Stop docker services"
 	@echo "  test    			- Run tests"
+	@echo "  build-frontend		- Build the Svelte frontend into app/public/"
 
 # Development environment
 dev: env build up setup-db console
@@ -136,6 +137,10 @@ test:
 # Remove all persisted test data
 test-clean:
 	$(call dct, down --remove-orphans -v)
+
+# Build the Svelte frontend (requires Node.js)
+build-frontend:
+	cd app/frontend && npm install && npm run build
 
 # Run Linter
 lint:
