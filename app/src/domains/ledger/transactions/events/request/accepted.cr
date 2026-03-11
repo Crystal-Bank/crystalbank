@@ -4,7 +4,9 @@ module CrystalBank::Domains::Ledger::Transactions
       class Accepted < ES::Event
         include ::ES::EventDSL
 
-        define_event "LedgerTransaction", "ledger.transactions.request.accepted"
+        define_event "LedgerTransaction", "ledger.transactions.request.accepted" do
+          attribute :comment, String?
+        end
       end
     end
   end
