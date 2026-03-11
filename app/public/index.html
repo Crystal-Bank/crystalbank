@@ -4,113 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CrystalBank</title>
+  <link rel="stylesheet" href="/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
-        }
-      }
+      theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } }
     }
   </script>
-  <style>
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 240 10% 3.9%;
-      --card: 0 0% 100%;
-      --border: 240 5.9% 90%;
-      --primary: 240 5.9% 10%;
-      --primary-fg: 0 0% 98%;
-      --muted: 240 4.8% 95.9%;
-      --muted-fg: 240 3.8% 46.1%;
-      --radius: 0.5rem;
-      --destructive: 0 72% 51%;
-    }
-    [x-cloak] { display: none !important; }
-
-    body { font-family: 'Inter', system-ui, sans-serif; }
-
-    /* Buttons */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; border-radius: calc(var(--radius) - 2px); font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; cursor: pointer; transition: all 0.15s; border: none; outline: none; white-space: nowrap; }
-    .btn-primary { background: hsl(var(--primary)); color: hsl(var(--primary-fg)); }
-    .btn-primary:hover { background: hsl(240 5.9% 20%); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-ghost { background: transparent; color: hsl(var(--muted-fg)); border: 1px solid hsl(var(--border)); }
-    .btn-ghost:hover { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
-    .btn-danger { background: hsl(var(--destructive)); color: white; }
-    .btn-danger:hover { background: hsl(0 72% 42%); }
-    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8125rem; }
-
-    /* Cards */
-    .card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); }
-
-    /* Form inputs */
-    .field-label { display: block; font-size: 0.875rem; font-weight: 500; color: hsl(var(--foreground)); margin-bottom: 0.375rem; }
-    .field-hint { font-size: 0.75rem; color: hsl(var(--muted-fg)); margin-top: 0.25rem; }
-    .field-input { width: 100%; border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 2px); padding: 0.5rem 0.75rem; font-size: 0.875rem; font-family: inherit; outline: none; background: white; color: hsl(var(--foreground)); transition: border-color 0.15s, box-shadow 0.15s; }
-    .field-input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 2px hsla(240, 5.9%, 10%, 0.1); }
-    .field-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.6rem center; padding-right: 2.25rem; }
-
-    /* Badges */
-    .badge { display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.15rem 0.55rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.01em; }
-    .badge-green { background: #dcfce7; color: #15803d; }
-    .badge-red { background: #fee2e2; color: #b91c1c; }
-    .badge-blue { background: #dbeafe; color: #1d4ed8; }
-    .badge-zinc { background: #f4f4f5; color: #52525b; }
-    .badge-purple { background: #f3e8ff; color: #7e22ce; }
-    .badge-amber { background: #fef3c7; color: #b45309; }
-
-    /* Tables */
-    .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    .data-table th { text-align: left; padding: 0.6rem 1rem; font-size: 0.72rem; font-weight: 600; color: hsl(var(--muted-fg)); border-bottom: 1px solid hsl(var(--border)); text-transform: uppercase; letter-spacing: 0.06em; background: hsl(var(--muted)); }
-    .data-table td { padding: 0.8rem 1rem; border-bottom: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); vertical-align: middle; }
-    .data-table tbody tr:last-child td { border-bottom: none; }
-    .data-table tbody tr:hover td { background: hsl(240 4.8% 97%); }
-
-    /* Mono / UUID */
-    .mono { font-family: 'Menlo', 'Monaco', 'Consolas', monospace; font-size: 0.75rem; background: hsl(var(--muted)); padding: 0.15rem 0.4rem; border-radius: 4px; color: hsl(var(--foreground)); }
-
-    /* Modal */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; backdrop-filter: blur(2px); }
-    .modal-box { background: white; border-radius: var(--radius); padding: 1.5rem; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 1px solid hsl(var(--border)); }
-    .modal-title { font-size: 1.125rem; font-weight: 600; color: hsl(var(--foreground)); margin-bottom: 0.25rem; }
-    .modal-desc { font-size: 0.875rem; color: hsl(var(--muted-fg)); margin-bottom: 1.25rem; }
-
-    /* Sidebar nav */
-    .nav-link { display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.65); transition: all 0.15s; user-select: none; }
-    .nav-link:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
-    .nav-link.active { background: rgba(255,255,255,0.13); color: white; }
-    .nav-link svg { width: 1rem; height: 1rem; flex-shrink: 0; }
-
-    /* Toast */
-    .toast-wrap { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
-    .toast { padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.875rem; font-weight: 500; max-width: 340px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); border: 1px solid; pointer-events: auto; }
-    .toast-success { background: #f0fdf4; border-color: #86efac; color: #15803d; }
-    .toast-error { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; }
-
-    /* Page header */
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-    .page-title { font-size: 1.25rem; font-weight: 600; color: hsl(var(--foreground)); }
-    .page-subtitle { font-size: 0.875rem; color: hsl(var(--muted-fg)); margin-top: 0.1rem; }
-
-    /* Scope bar */
-    .scope-bar { background: hsl(240 4.8% 97%); border-bottom: 1px solid hsl(var(--border)); padding: 0.625rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <script src="/app.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-900" x-data="crystalBank()" x-init="init()" x-cloak>
 
-<!-- ========== TOAST ========== -->
+<!-- ── Toasts ──────────────────────────────────────────── -->
 <div class="toast-wrap" aria-live="polite">
   <template x-for="t in toasts" :key="t.id">
     <div class="toast" :class="t.type === 'error' ? 'toast-error' : 'toast-success'" x-text="t.msg" x-transition></div>
   </template>
 </div>
 
-<!-- ========== LOGIN ========== -->
+<!-- ── Login ───────────────────────────────────────────── -->
 <div x-show="!token" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100">
   <div class="w-full max-w-sm">
     <div class="text-center mb-8">
@@ -135,7 +50,10 @@
         </div>
         <div x-show="loginError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700" x-text="loginError"></div>
         <button type="submit" class="btn btn-primary w-full" :disabled="loading">
-          <svg x-show="loading" class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-opacity="0.3"/><path d="M21 12a9 9 0 00-9-9"/></svg>
+          <svg x-show="loading" class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-opacity="0.3"/>
+            <path d="M21 12a9 9 0 00-9-9"/>
+          </svg>
           <span x-text="loading ? 'Signing in...' : 'Sign in'"></span>
         </button>
       </form>
@@ -144,12 +62,11 @@
   </div>
 </div>
 
-<!-- ========== MAIN APP ========== -->
+<!-- ── App shell ────────────────────────────────────────── -->
 <div x-show="token" class="flex h-screen overflow-hidden">
 
   <!-- Sidebar -->
   <aside class="w-56 bg-zinc-900 flex flex-col flex-shrink-0 overflow-y-auto">
-    <!-- Logo -->
     <div class="px-4 py-5 border-b border-zinc-800">
       <div class="flex items-center gap-2.5">
         <div class="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
@@ -163,8 +80,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Nav -->
     <nav class="flex-1 px-3 py-3 space-y-0.5">
       <template x-for="item in navItems" :key="item.id">
         <a class="nav-link" :class="{ active: view === item.id }" @click="switchView(item.id)">
@@ -173,33 +88,38 @@
         </a>
       </template>
     </nav>
-
-    <!-- Footer -->
     <div class="px-3 py-3 border-t border-zinc-800">
       <button @click="logout()" class="nav-link w-full text-left">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
         Sign out
       </button>
     </div>
   </aside>
 
-  <!-- Content area -->
+  <!-- Main area -->
   <div class="flex-1 flex flex-col overflow-hidden">
 
     <!-- Scope bar -->
     <div class="scope-bar">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+      </svg>
       <span class="text-zinc-500 font-medium">Scope:</span>
-      <input x-model="scopeInput" @change="setScope(scopeInput)" type="text" placeholder="Enter scope UUID for write operations..." class="bg-transparent outline-none text-zinc-700 placeholder-zinc-400 flex-1 min-w-0 font-mono text-xs" style="border:none;padding:0;">
+      <input x-model="scopeInput" @change="setScope(scopeInput)" type="text"
+        placeholder="Enter scope UUID for write operations..."
+        class="bg-transparent outline-none text-zinc-700 placeholder-zinc-400 flex-1 min-w-0 font-mono text-xs"
+        style="border:none;padding:0;">
       <template x-if="scopeInput">
-        <button @click="scopeInput=''; setScope('')" class="text-zinc-400 hover:text-zinc-600 text-xs ml-1">&times; clear</button>
+        <button @click="scopeInput=''; setScope('')" class="text-zinc-400 hover:text-zinc-600 text-xs">&times; clear</button>
       </template>
     </div>
 
-    <!-- Main scrollable area -->
     <main class="flex-1 overflow-y-auto p-6">
 
-      <!-- ===== ACCOUNTS ===== -->
+      <!-- ── Accounts ──────────────────────────────────── -->
       <div x-show="view === 'accounts'">
         <div class="page-header">
           <div>
@@ -213,9 +133,7 @@
         </div>
         <div class="card overflow-hidden">
           <table class="data-table">
-            <thead><tr>
-              <th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th>
-            </tr></thead>
+            <thead><tr><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th></tr></thead>
             <tbody>
               <template x-if="data.accounts.length === 0 && !loading">
                 <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
@@ -223,9 +141,7 @@
               <template x-for="a in data.accounts" :key="a.id">
                 <tr>
                   <td><span class="mono" x-text="a.id.substring(0,8) + '...'"></span></td>
-                  <td>
-                    <span class="badge" :class="a.type === 'checking' ? 'badge-blue' : 'badge-purple'" x-text="a.type?.replace('_', ' ')"></span>
-                  </td>
+                  <td><span class="badge" :class="a.type === 'checking' ? 'badge-blue' : 'badge-purple'" x-text="a.type?.replace('_', ' ')"></span></td>
                   <td>
                     <div class="flex gap-1 flex-wrap">
                       <template x-for="c in a.currencies" :key="c">
@@ -233,7 +149,7 @@
                       </template>
                     </div>
                   </td>
-                  <td class="text-xs text-zinc-500" x-text="a.customer_ids?.length + ' owner(s)'"></td>
+                  <td class="text-xs text-zinc-500" x-text="(a.customer_ids?.length ?? 0) + ' owner(s)'"></td>
                   <td><span class="mono text-xs" x-text="a.scope_id?.substring(0,8) + '...'"></span></td>
                 </tr>
               </template>
@@ -248,7 +164,7 @@
         </div>
       </div>
 
-      <!-- ===== CUSTOMERS ===== -->
+      <!-- ── Customers ─────────────────────────────────── -->
       <div x-show="view === 'customers'">
         <div class="page-header">
           <div>
@@ -277,14 +193,16 @@
               </template>
             </tbody>
           </table>
-          <div x-show="loading && view === 'customers'" class="flex justify-center py-6"><div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div></div>
+          <div x-show="loading && view === 'customers'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
           <div x-show="hasMore.customers && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
             <button @click="loadMore('customers')" class="btn btn-ghost btn-sm">Load more</button>
           </div>
         </div>
       </div>
 
-      <!-- ===== POSTINGS (TRANSACTIONS) ===== -->
+      <!-- ── Transactions (Postings) ───────────────────── -->
       <div x-show="view === 'postings'">
         <div class="page-header">
           <div>
@@ -315,14 +233,16 @@
               </template>
             </tbody>
           </table>
-          <div x-show="loading && view === 'postings'" class="flex justify-center py-6"><div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div></div>
+          <div x-show="loading && view === 'postings'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
           <div x-show="hasMore.postings && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
             <button @click="loadMore('postings')" class="btn btn-ghost btn-sm">Load more</button>
           </div>
         </div>
       </div>
 
-      <!-- ===== USERS ===== -->
+      <!-- ── Users ─────────────────────────────────────── -->
       <div x-show="view === 'users'">
         <div class="page-header">
           <div>
@@ -351,14 +271,16 @@
               </template>
             </tbody>
           </table>
-          <div x-show="loading && view === 'users'" class="flex justify-center py-6"><div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div></div>
+          <div x-show="loading && view === 'users'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
           <div x-show="hasMore.users && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
             <button @click="loadMore('users')" class="btn btn-ghost btn-sm">Load more</button>
           </div>
         </div>
       </div>
 
-      <!-- ===== ROLES ===== -->
+      <!-- ── Roles ─────────────────────────────────────── -->
       <div x-show="view === 'roles'">
         <div class="page-header">
           <div>
@@ -376,37 +298,35 @@
           </template>
           <template x-for="r in data.roles" :key="r.id">
             <div class="card p-4">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="font-semibold text-sm" x-text="r.name"></span>
-                    <span class="mono text-xs" x-text="r.id.substring(0,8) + '...'"></span>
-                  </div>
-                  <div class="flex flex-wrap gap-1.5">
-                    <template x-for="p in r.permissions" :key="p">
-                      <span class="badge badge-blue text-xs" x-text="p"></span>
-                    </template>
-                  </div>
-                  <template x-if="r.scopes?.length > 0">
-                    <div class="mt-2 flex flex-wrap gap-1">
-                      <span class="text-xs text-zinc-400 mr-1">Scopes:</span>
-                      <template x-for="s in r.scopes" :key="s">
-                        <span class="mono text-xs" x-text="s.substring(0,8) + '...'"></span>
-                      </template>
-                    </div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-semibold text-sm" x-text="r.name"></span>
+                <span class="mono" x-text="r.id.substring(0,8) + '...'"></span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="p in r.permissions" :key="p">
+                  <span class="badge badge-blue" x-text="p"></span>
+                </template>
+              </div>
+              <template x-if="r.scopes?.length > 0">
+                <div class="mt-2 flex flex-wrap items-center gap-1">
+                  <span class="text-xs text-zinc-400">Scopes:</span>
+                  <template x-for="s in r.scopes" :key="s">
+                    <span class="mono" x-text="s.substring(0,8) + '...'"></span>
                   </template>
                 </div>
-              </div>
+              </template>
             </div>
           </template>
         </div>
-        <div x-show="loading && view === 'roles'" class="flex justify-center py-6"><div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div></div>
+        <div x-show="loading && view === 'roles'" class="flex justify-center py-6">
+          <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+        </div>
         <div x-show="hasMore.roles && !loading" class="mt-4 flex justify-center">
           <button @click="loadMore('roles')" class="btn btn-ghost btn-sm">Load more</button>
         </div>
       </div>
 
-      <!-- ===== SCOPES ===== -->
+      <!-- ── Scopes ─────────────────────────────────────── -->
       <div x-show="view === 'scopes'">
         <div class="page-header">
           <div>
@@ -438,14 +358,16 @@
               </template>
             </tbody>
           </table>
-          <div x-show="loading && view === 'scopes'" class="flex justify-center py-6"><div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div></div>
+          <div x-show="loading && view === 'scopes'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
           <div x-show="hasMore.scopes && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
             <button @click="loadMore('scopes')" class="btn btn-ghost btn-sm">Load more</button>
           </div>
         </div>
       </div>
 
-      <!-- ===== API KEYS ===== -->
+      <!-- ── API Keys ───────────────────────────────────── -->
       <div x-show="view === 'api_keys'">
         <div class="page-header">
           <div>
@@ -468,9 +390,7 @@
                 <tr>
                   <td><span class="mono" x-text="k.id.substring(0,8) + '...'"></span></td>
                   <td class="font-medium" x-text="k.name"></td>
-                  <td>
-                    <span class="badge" :class="k.active ? 'badge-green' : 'badge-red'" x-text="k.active ? 'Active' : 'Revoked'"></span>
-                  </td>
+                  <td><span class="badge" :class="k.active ? 'badge-green' : 'badge-red'" x-text="k.active ? 'Active' : 'Revoked'"></span></td>
                   <td class="text-zinc-500 text-xs" x-text="formatDate(k.created_at)"></td>
                   <td><span class="mono text-xs" x-text="k.scope_id?.substring(0,8) + '...'"></span></td>
                   <td>
@@ -480,7 +400,9 @@
               </template>
             </tbody>
           </table>
-          <div x-show="loading && view === 'api_keys'" class="flex justify-center py-6"><div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div></div>
+          <div x-show="loading && view === 'api_keys'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
           <div x-show="hasMore.api_keys && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
             <button @click="loadMore('api_keys')" class="btn btn-ghost btn-sm">Load more</button>
           </div>
@@ -491,7 +413,7 @@
   </div>
 </div>
 
-<!-- ========== MODALS ========== -->
+<!-- ── Modals ───────────────────────────────────────────── -->
 <div x-show="modal" class="modal-backdrop" @click.self="closeModal()">
 
   <!-- Open Account -->
@@ -509,13 +431,14 @@
       </div>
       <div class="mb-4">
         <label class="field-label">Currencies</label>
-        <div class="flex flex-wrap gap-2 mt-1">
-          <template x-for="c in ['chf','eur','gbp','jpy','usd']" :key="c">
-            <label class="flex items-center gap-1.5 text-sm cursor-pointer">
-              <input type="checkbox" :value="c" x-model="modalForm.selectedCurrencies" class="rounded">
-              <span x-text="c.toUpperCase()" class="font-mono text-xs"></span>
-            </label>
-          </template>
+        <div class="checkbox-grid flex gap-4 flex-wrap mt-1">
+          <label class="checkbox-item" x-for="c in supportedCurrencies" :key="c">
+            <input type="checkbox"
+              :checked="isCurrencySelected(c)"
+              @change="toggleCurrency(c)"
+              :id="'cur-' + c">
+            <span class="font-mono text-sm" x-text="c.toUpperCase()"></span>
+          </label>
         </div>
         <div class="field-hint">Select one or more supported currencies</div>
       </div>
@@ -631,13 +554,13 @@
       </div>
       <div class="mb-4">
         <label class="field-label">Permissions</label>
-        <div class="border border-zinc-200 rounded-md p-3 max-h-52 overflow-y-auto space-y-1.5 bg-zinc-50">
-          <template x-for="p in allPermissions" :key="p">
-            <label class="flex items-center gap-2 text-xs cursor-pointer hover:bg-white rounded px-1">
-              <input type="checkbox" :value="p" x-model="modalForm.selectedPermissions" class="rounded flex-shrink-0">
-              <span class="font-mono" x-text="p"></span>
-            </label>
-          </template>
+        <div class="permission-list">
+          <label class="permission-item" x-for="p in allPermissions" :key="p">
+            <input type="checkbox"
+              :checked="isPermissionSelected(p)"
+              @change="togglePermission(p)">
+            <span class="font-mono" x-text="p"></span>
+          </label>
         </div>
       </div>
       <div class="mb-5">
@@ -655,14 +578,17 @@
   <!-- Create Scope -->
   <div x-show="modal === 'create_scope'" class="modal-box">
     <div class="modal-title">Create Scope</div>
-    <div class="modal-desc">Define a new data ownership scope.</div>
+    <div class="modal-desc">Define a new data ownership scope. Requires scope.</div>
     <form @submit.prevent="createScope()">
       <div class="mb-4">
         <label class="field-label">Scope Name</label>
         <input x-model="modalForm.name" type="text" class="field-input" placeholder="europe" required>
       </div>
       <div class="mb-5">
-        <label class="field-label">Parent Scope ID <span class="text-zinc-400 font-normal">(optional)</span></label>
+        <label class="field-label">
+          Parent Scope ID
+          <span class="text-zinc-400 font-normal">(optional)</span>
+        </label>
         <input x-model="modalForm.parent_scope_id" type="text" class="field-input font-mono text-sm" placeholder="UUID of parent scope...">
         <div class="field-hint">Leave empty to create a root scope</div>
       </div>
@@ -693,7 +619,7 @@
     </form>
   </div>
 
-  <!-- API Key Result (show secret once) -->
+  <!-- API Key result (show secret once) -->
   <div x-show="modal === 'api_key_result'" class="modal-box">
     <div class="modal-title">API Key Generated</div>
     <div class="modal-desc">Save your secret now &mdash; it will not be shown again.</div>
@@ -717,353 +643,5 @@
 
 </div>
 
-<script>
-function crystalBank() {
-  return {
-    // Auth
-    token: localStorage.getItem('cb_token') || '',
-    scope: localStorage.getItem('cb_scope') || '',
-    scopeInput: localStorage.getItem('cb_scope') || '',
-
-    // Login form
-    loginForm: { clientId: '', clientSecret: '' },
-    loginError: '',
-
-    // UI state
-    view: 'accounts',
-    loading: false,
-    toasts: [],
-    modal: null,
-    modalForm: {},
-
-    // Data per view
-    data: {
-      accounts: [], customers: [], postings: [],
-      users: [], roles: [], scopes: [], api_keys: []
-    },
-    hasMore: {
-      accounts: false, customers: false, postings: false,
-      users: false, roles: false, scopes: false, api_keys: false
-    },
-    cursors: {
-      accounts: null, customers: null, postings: null,
-      users: null, roles: null, scopes: null, api_keys: null
-    },
-
-    // All available permissions for role creation
-    allPermissions: [
-      'read_accounts_list', 'write_accounts_opening_request',
-      'write_api_keys_generation_request', 'write_api_keys_revocation_request', 'read_api_keys_list',
-      'write_customers_onboarding_request', 'read_customers_list',
-      'read_roles_list', 'write_roles_creation_request',
-      'read_scopes_list', 'write_scopes_creation_request',
-      'write_transactions_internal_transfers_initiation_request', 'read_postings_list',
-      'write_users_onboarding_request', 'write_users_assign_roles_request', 'read_users_list',
-      'write_approvals_collection_request', 'read_approvals_list',
-      'write_accounts_opening_compliance_approval', 'write_accounts_opening_board_approval'
-    ],
-
-    navItems: [
-      { id: 'accounts',  label: 'Accounts',     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>' },
-      { id: 'customers', label: 'Customers',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>' },
-      { id: 'postings',  label: 'Transactions', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>' },
-      { id: 'users',     label: 'Users',        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
-      { id: 'roles',     label: 'Roles',        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
-      { id: 'scopes',    label: 'Scopes',       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>' },
-      { id: 'api_keys',  label: 'API Keys',     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>' },
-    ],
-
-    // ── Init ──────────────────────────────────────────────
-    init() {
-      if (this.token) this.loadView('accounts')
-    },
-
-    // ── Auth ──────────────────────────────────────────────
-    async login() {
-      this.loginError = ''
-      this.loading = true
-      try {
-        const res = await fetch('/oauth/token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            grant_type: 'client_credentials',
-            client_id: this.loginForm.clientId,
-            client_secret: this.loginForm.clientSecret
-          })
-        })
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}))
-          this.loginError = err.message || 'Authentication failed'
-          return
-        }
-        const body = await res.json()
-        this.token = body.token
-        localStorage.setItem('cb_token', this.token)
-        this.loadView('accounts')
-      } catch (e) {
-        this.loginError = 'Connection error: ' + (e.message || e)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    logout() {
-      this.token = ''
-      localStorage.removeItem('cb_token')
-    },
-
-    setScope(value) {
-      this.scope = value
-      if (value) localStorage.setItem('cb_scope', value)
-      else localStorage.removeItem('cb_scope')
-    },
-
-    // ── Navigation ────────────────────────────────────────
-    switchView(id) {
-      if (this.view === id && this.data[id].length > 0) return
-      this.loadView(id)
-    },
-
-    // ── Data loading ──────────────────────────────────────
-    viewPaths: {
-      accounts: '/accounts/',
-      customers: '/customers/',
-      postings: '/transactions/postings/',
-      users: '/users/',
-      roles: '/roles/',
-      scopes: '/scopes/',
-      api_keys: '/api_keys/'
-    },
-
-    async loadView(id) {
-      this.view = id
-      this.data[id] = []
-      this.cursors[id] = null
-      this.hasMore[id] = false
-      await this.loadMore(id)
-    },
-
-    async loadMore(id) {
-      if (this.loading) return
-      this.loading = true
-      try {
-        let url = this.viewPaths[id] + '?limit=20'
-        if (this.cursors[id]) url += '&cursor=' + this.cursors[id]
-        const res = await this.apiFetch('GET', url)
-        const items = res.data.map(e => e.attributes)
-        this.data[id] = [...(this.data[id] || []), ...items]
-        this.hasMore[id] = res.meta.has_more
-        this.cursors[id] = res.meta.next_cursor || null
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    // ── API helper ────────────────────────────────────────
-    async apiFetch(method, path, body = null, opts = {}) {
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.token,
-      }
-      if (opts.scope !== false && this.scope) headers['X-Scope'] = this.scope
-      if (opts.idempotency) headers['idempotency_key'] = crypto.randomUUID()
-      const res = await fetch(path, {
-        method,
-        headers,
-        body: body ? JSON.stringify(body) : null
-      })
-      if (!res.ok) {
-        let msg = 'Request failed (' + res.status + ')'
-        try { const e = await res.json(); msg = e.message || msg } catch {}
-        throw new Error(msg)
-      }
-      if (res.status === 204 || res.headers.get('Content-Length') === '0') return {}
-      return res.json()
-    },
-
-    // ── Modal ─────────────────────────────────────────────
-    openModal(type) {
-      this.modal = type
-      this.modalForm = {
-        selectedCurrencies: [],
-        selectedPermissions: []
-      }
-    },
-
-    closeModal() {
-      this.modal = null
-      this.modalForm = {}
-    },
-
-    // ── Create actions ────────────────────────────────────
-    async createAccount() {
-      this.loading = true
-      try {
-        const currencies = this.modalForm.selectedCurrencies || []
-        const customerIds = (this.modalForm.customerIds || '')
-          .split('\n').map(s => s.trim()).filter(Boolean)
-        await this.apiFetch('POST', '/accounts/open', {
-          type: this.modalForm.type,
-          currencies,
-          customer_ids: customerIds
-        }, { idempotency: true })
-        this.closeModal()
-        this.toast('Account opening requested')
-        await this.loadView('accounts')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async createCustomer() {
-      this.loading = true
-      try {
-        await this.apiFetch('POST', '/customers/onboard', {
-          name: this.modalForm.name,
-          type: this.modalForm.type
-        }, { idempotency: true })
-        this.closeModal()
-        this.toast('Customer onboarded')
-        await this.loadView('customers')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async createUser() {
-      this.loading = true
-      try {
-        await this.apiFetch('POST', '/users/onboard', {
-          name: this.modalForm.name,
-          email: this.modalForm.email
-        }, { idempotency: true })
-        this.closeModal()
-        this.toast('User onboarded')
-        await this.loadView('users')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async createRole() {
-      this.loading = true
-      try {
-        const scopes = (this.modalForm.scopesList || '')
-          .split('\n').map(s => s.trim()).filter(Boolean)
-        await this.apiFetch('POST', '/roles/create', {
-          name: this.modalForm.name,
-          permissions: this.modalForm.selectedPermissions || [],
-          scopes
-        }, { idempotency: true })
-        this.closeModal()
-        this.toast('Role created')
-        await this.loadView('roles')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async createScope() {
-      this.loading = true
-      try {
-        const body = { name: this.modalForm.name }
-        if (this.modalForm.parent_scope_id?.trim()) {
-          body.parent_scope_id = this.modalForm.parent_scope_id.trim()
-        }
-        await this.apiFetch('POST', '/scopes/create', body, { idempotency: true })
-        this.closeModal()
-        this.toast('Scope created')
-        await this.loadView('scopes')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async generateApiKey() {
-      this.loading = true
-      try {
-        const result = await this.apiFetch('POST', '/api_keys/generate', {
-          name: this.modalForm.name,
-          user_id: this.modalForm.user_id
-        }, { idempotency: true })
-        this.modal = 'api_key_result'
-        this.modalForm = { id: result.id, secret: result.secret }
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async revokeApiKey(id) {
-      if (!confirm('Revoke this API key? This cannot be undone.')) return
-      this.loading = true
-      try {
-        await this.apiFetch('PATCH', '/api_keys/' + id + '/revoke', {
-          reason: 'Revoked via dashboard'
-        }, { scope: false })
-        this.toast('API key revoked')
-        await this.loadView('api_keys')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async initiateTransfer() {
-      this.loading = true
-      try {
-        await this.apiFetch('POST', '/transactions/internal_transfers/initiate', {
-          amount: parseInt(this.modalForm.amount, 10),
-          creditor_account_id: this.modalForm.creditor_account_id,
-          currency: this.modalForm.currency,
-          debtor_account_id: this.modalForm.debtor_account_id,
-          remittance_information: this.modalForm.remittance_information
-        })
-        this.closeModal()
-        this.toast('Transfer initiated')
-        await this.loadView('postings')
-      } catch (e) {
-        this.toast(e.message, 'error')
-      } finally {
-        this.loading = false
-      }
-    },
-
-    // ── Utilities ─────────────────────────────────────────
-    toast(msg, type = 'success') {
-      const id = Date.now()
-      this.toasts.push({ id, msg, type })
-      setTimeout(() => {
-        this.toasts = this.toasts.filter(t => t.id !== id)
-      }, 4500)
-    },
-
-    formatDate(str) {
-      if (!str) return ''
-      try {
-        return new Date(str).toLocaleDateString('en-US', {
-          month: 'short', day: 'numeric', year: 'numeric',
-          hour: '2-digit', minute: '2-digit'
-        })
-      } catch { return str }
-    }
-  }
-}
-</script>
 </body>
 </html>
