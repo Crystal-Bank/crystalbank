@@ -212,3 +212,17 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
     ui.loading = false
   }
 }
+
+export async function collectApproval(id, comment) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/approvals/' + id + '/collect', { comment }, { idempotency: true })
+    addToast('Approval collected')
+    await loadView('approvals')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}

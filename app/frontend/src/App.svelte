@@ -13,6 +13,7 @@
   import Roles from './components/views/Roles.svelte'
   import Scopes from './components/views/Scopes.svelte'
   import ApiKeys from './components/views/ApiKeys.svelte'
+  import Approvals from './components/views/Approvals.svelte'
 
   onMount(() => {
     if (auth.token) loadView('accounts')
@@ -45,6 +46,8 @@
           <Scopes />
         {:else if ui.view === 'api_keys'}
           <ApiKeys />
+        {:else if ui.view === 'approvals'}
+          <Approvals />
         {/if}
       </main>
     </div>
