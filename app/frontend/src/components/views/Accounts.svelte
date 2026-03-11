@@ -39,7 +39,7 @@
   <table class="data-table">
     <thead><tr><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th></tr></thead>
     <tbody>
-      {#if viewData.accounts.length === 0 && !ui.loading}
+      {#if viewData.accounts.length === 0 && !ui.loadingView}
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
       {/if}
       {#each viewData.accounts as a (a.id)}

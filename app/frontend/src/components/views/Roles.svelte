@@ -36,7 +36,7 @@
 </div>
 
 <div class="space-y-3">
-  {#if viewData.roles.length === 0 && !ui.loading}
+  {#if viewData.roles.length === 0 && !ui.loadingView}
     <div class="card p-10 text-center text-zinc-400 text-sm">No roles found</div>
   {/if}
   {#each viewData.roles as r (r.id)}

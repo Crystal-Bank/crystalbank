@@ -117,10 +117,10 @@
       </tr>
     </thead>
     <tbody>
-      {#if viewData.postings.length === 0 && !ui.loading}
+      {#if viewData.postings.length === 0 && !ui.loadingView}
         <tr><td colspan="9" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
       {/if}
-      {#each viewData.postings as p (p.id + p.account_id)}
+      {#each viewData.postings as p, i (i)}
         <tr>
           <td><span class="mono text-xs">{p.id}</span></td>
           <td><span class="mono text-xs">{p.account_id}</span></td>

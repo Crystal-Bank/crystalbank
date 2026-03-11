@@ -33,7 +33,7 @@
   <table class="data-table">
     <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Scope</th></tr></thead>
     <tbody>
-      {#if viewData.users.length === 0 && !ui.loading}
+      {#if viewData.users.length === 0 && !ui.loadingView}
         <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No users found</td></tr>
       {/if}
       {#each viewData.users as u (u.id)}

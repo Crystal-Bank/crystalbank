@@ -33,7 +33,7 @@
   <table class="data-table">
     <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th><th>Scope ID</th></tr></thead>
     <tbody>
-      {#if viewData.scopes.length === 0 && !ui.loading}
+      {#if viewData.scopes.length === 0 && !ui.loadingView}
         <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
       {/if}
       {#each viewData.scopes as s (s.id)}

@@ -46,7 +46,7 @@
   <table class="data-table">
     <thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Created</th><th>Scope</th><th></th></tr></thead>
     <tbody>
-      {#if viewData.api_keys.length === 0 && !ui.loading}
+      {#if viewData.api_keys.length === 0 && !ui.loadingView}
         <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No API keys found</td></tr>
       {/if}
       {#each viewData.api_keys as k (k.id)}
