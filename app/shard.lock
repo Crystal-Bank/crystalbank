@@ -50,7 +50,7 @@ shards:
 
   openssl_ext:
     git: https://github.com/spider-gazelle/openssl_ext.git
-    version: 2.8.4
+    version: 2.8.5
 
   pg:
     git: https://github.com/will/crystal-pg.git

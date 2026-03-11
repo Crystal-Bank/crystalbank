@@ -24,6 +24,23 @@ module CrystalBank::Domains::Accounts
         @db = ES::Config.projection_database
       end
 
+      def find(uuid : UUID) : Account?
+        @db.query_one?(
+          %(SELECT * FROM "projections"."accounts" WHERE "uuid" = $1),
+          uuid,
+          as: Account
+        )
+      end
+
+      def find_all(uuids : Array(UUID)) : Array(Account)
+        return Array(Account).new if uuids.empty?
+        @db.query_all(
+          %(SELECT * FROM "projections"."accounts" WHERE "uuid" = ANY($1)),
+          uuids,
+          as: Account
+        )
+      end
+
       def list(
         cursor : UUID?,
         limit : Int32,

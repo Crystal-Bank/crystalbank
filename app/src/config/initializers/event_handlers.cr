@@ -29,9 +29,13 @@ event_handlers.register(Roles::Creation::Events::Requested)
 event_handlers.register(Scopes::Creation::Events::Accepted)
 event_handlers.register(Scopes::Creation::Events::Requested)
 
-# Transactions
-event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Accepted)
-event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Requested)
+# Ledger
+event_handlers.register(Ledger::Transactions::Request::Events::Accepted)
+event_handlers.register(Ledger::Transactions::Request::Events::Requested)
+
+# Transactions (internal_transfers commented out pending redesign to write to postings)
+# event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Accepted)
+# event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Requested)
 
 # Users
 event_handlers.register(Users::Onboarding::Events::Accepted)

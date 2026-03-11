@@ -21,6 +21,9 @@ module CrystalBank
     READ_scopes_list
     WRITE_scopes_creation_request
 
+    # Ledger -> Transactions
+    WRITE_ledger_transactions_request
+
     # Transactions -> Internal Transfers
     WRITE_transactions_internal_transfers_initiation_request
 

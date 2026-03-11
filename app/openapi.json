@@ -3,7 +3,7 @@
     "info": {
         "description": "App description for OpenAPI docs",
         "title": "CrystalBank",
-        "version": "0.8.1"
+        "version": "0.9.0"
     },
     "paths": {
         "/accounts/open": {
@@ -445,6 +445,183 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Response"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/approvals/{id}/collect": {
+            "post": {
+                "summary": "Collect approval",
+                "description": "Collect approval\nCollect the current user's approval for the given approval process\n\nRequired permission:\n- **write_approvals_collection_request**",
+                "tags": [
+                    "Approvals"
+                ],
+                "operationId": "CrystalBank::Domains::Approvals::Api::Approvals_collect",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Approvals__Api__Requests__CollectRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "idempotency_key",
+                        "in": "header",
+                        "description": "Idempotency key to ensure unique processing",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Approvals__Api__Responses__CollectResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/approvals": {
+            "get": {
+                "summary": "List",
+                "description": "List\nList all approval processes\n\nRequired permission:\n- **read_approvals_list**",
+                "tags": [
+                    "Approvals"
+                ],
+                "operationId": "CrystalBank::Domains::Approvals::Api::Approvals_list_approvals",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Optional cursor parameter for pagination",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit parameter for pagination (default 20)",
+                        "example": "20",
+                        "schema": {
+                            "type": "integer",
+                            "format": "Int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Approvals__Api__Responses__Approval_"
                                 }
                             }
                         }
@@ -996,19 +1173,19 @@
                 }
             }
         },
-        "/transactions/internal_transfers/initiate": {
+        "/ledger/transactions": {
             "post": {
-                "summary": "Request initiation",
-                "description": "Request initiation\nRequest initiation of an internal transfer\n\nRequired permission:\n- **write_transactions_internal_transfers_initiation_request**",
+                "summary": "Create",
+                "description": "Create\nSubmit a low-level ledger money movement with explicit entries\n\nRequired permission:\n- **write_ledger_transactions_request**",
                 "tags": [
-                    "InternalTransfers"
+                    "Transactions"
                 ],
-                "operationId": "CrystalBank::Domains::Transactions::InternalTransfers::Api::InternalTransfers_initiate",
+                "operationId": "CrystalBank::Domains::Ledger::Transactions::Api::Transactions_create",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest"
+                                "$ref": "#/components/schemas/CrystalBank__Domains__Ledger__Transactions__Api__Requests__TransactionRequest"
                             }
                         }
                     },
@@ -1021,7 +1198,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse"
+                                    "$ref": "#/components/schemas/CrystalBank__Domains__Ledger__Transactions__Api__Responses__TransactionResponse"
                                 }
                             }
                         }
@@ -1069,14 +1246,14 @@
                 }
             }
         },
-        "/transactions/postings": {
+        "/ledger/transactions/postings": {
             "get": {
-                "summary": "List",
-                "description": "List\nList all postings\n\nRequired permission:\n- **read_postings_list**",
+                "summary": "List postings",
+                "description": "List postings\nList all postings from the postings projection\n\nRequired permission:\n- **read_postings_list**",
                 "tags": [
-                    "Postings"
+                    "Transactions"
                 ],
-                "operationId": "CrystalBank::Domains::Transactions::Postings::Api::Postings_list_postings",
+                "operationId": "CrystalBank::Domains::Ledger::Transactions::Api::Transactions_list_postings",
                 "parameters": [
                     {
                         "name": "cursor",
@@ -1105,7 +1282,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Transactions__Postings__Api__Responses__Posting_"
+                                    "$ref": "#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Ledger__Transactions__Api__Responses__Posting_"
                                 }
                             }
                         }
@@ -1763,6 +1940,177 @@
                     "token_type"
                 ]
             },
+            "CrystalBank__Domains__Approvals__Api__Requests__CollectRequest": {
+                "type": "object",
+                "properties": {
+                    "comment": {
+                        "type": "string",
+                        "description": "Optional comment from the approver"
+                    }
+                },
+                "required": [
+                    "comment"
+                ]
+            },
+            "CrystalBank__Domains__Approvals__Api__Responses__CollectResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the approval process"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the approval process"
+                    }
+                },
+                "required": [
+                    "id",
+                    "status"
+                ]
+            },
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Approvals__Api__Responses__Approval_": {
+                "type": "object",
+                "properties": {
+                    "object": {
+                        "type": "string",
+                        "description": "Object type of the response"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Url of the entity"
+                    },
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "has_more": {
+                                "type": "boolean",
+                                "description": "Indicator if there are more entries"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "format": "Int32",
+                                "description": "Number of entries in the response"
+                            },
+                            "next_cursor": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Next cursor of the list",
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "has_more",
+                            "limit"
+                        ]
+                    },
+                    "data": {
+                        "type": "array",
+                        "description": "Array of entities",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "object": {
+                                    "type": "string",
+                                    "description": "Object type of the entity"
+                                },
+                                "attributes": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the approval process"
+                                        },
+                                        "scope_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "Scope of the data point"
+                                        },
+                                        "source_aggregate_type": {
+                                            "type": "string",
+                                            "description": "Type of the source aggregate"
+                                        },
+                                        "source_aggregate_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the source aggregate"
+                                        },
+                                        "requestor_id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "description": "ID of the user who initiated the request",
+                                            "nullable": true
+                                        },
+                                        "required_approvals": {
+                                            "type": "array",
+                                            "description": "List of required approval permissions",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "collected_approvals": {
+                                            "type": "array",
+                                            "description": "List of collected approvals",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "user_id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "description": "ID of the user who approved"
+                                                    },
+                                                    "permissions": {
+                                                        "type": "array",
+                                                        "description": "Permissions the user is eligible to satisfy",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "comment": {
+                                                        "type": "string",
+                                                        "description": "Comment from the approver"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "user_id",
+                                                    "permissions",
+                                                    "comment"
+                                                ]
+                                            }
+                                        },
+                                        "completed": {
+                                            "type": "boolean",
+                                            "description": "Whether the approval process is completed"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "scope_id",
+                                        "source_aggregate_type",
+                                        "source_aggregate_id",
+                                        "required_approvals",
+                                        "collected_approvals",
+                                        "completed"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "object",
+                                "attributes"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "object",
+                    "url",
+                    "meta",
+                    "data"
+                ]
+            },
             "CrystalBank__Domains__Customers__Api__Requests__OnboardingRequest": {
                 "type": "object",
                 "properties": {
@@ -1914,11 +2262,16 @@
                                 "write_roles_creation_request",
                                 "read_scopes_list",
                                 "write_scopes_creation_request",
+                                "write_ledger_transactions_request",
                                 "write_transactions_internal_transfers_initiation_request",
                                 "read_postings_list",
                                 "write_users_onboarding_request",
                                 "write_users_assign_roles_request",
-                                "read_users_list"
+                                "read_users_list",
+                                "write_approvals_collection_request",
+                                "read_approvals_list",
+                                "write_accounts_opening_compliance_approval",
+                                "write_accounts_opening_board_approval"
                             ]
                         }
                     },
@@ -2030,11 +2383,16 @@
                                                     "write_roles_creation_request",
                                                     "read_scopes_list",
                                                     "write_scopes_creation_request",
+                                                    "write_ledger_transactions_request",
                                                     "write_transactions_internal_transfers_initiation_request",
                                                     "read_postings_list",
                                                     "write_users_onboarding_request",
                                                     "write_users_assign_roles_request",
-                                                    "read_users_list"
+                                                    "read_users_list",
+                                                    "write_approvals_collection_request",
+                                                    "read_approvals_list",
+                                                    "write_accounts_opening_compliance_approval",
+                                                    "write_accounts_opening_board_approval"
                                                 ]
                                             }
                                         },
@@ -2193,19 +2551,9 @@
                     "data"
                 ]
             },
-            "CrystalBank__Domains__Transactions__InternalTransfers__Api__Requests__InitiationRequest": {
+            "CrystalBank__Domains__Ledger__Transactions__Api__Requests__TransactionRequest": {
                 "type": "object",
                 "properties": {
-                    "amount": {
-                        "type": "integer",
-                        "format": "Int64",
-                        "description": "Amount for the internal transfer"
-                    },
-                    "creditor_account_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Account ID of the creditor"
-                    },
                     "currency": {
                         "type": "string",
                         "enum": [
@@ -2215,41 +2563,108 @@
                             "jpy",
                             "usd"
                         ],
-                        "description": "Currency of the internal transfer"
+                        "description": "ISO 4217 currency code for all entries in this movement"
                     },
-                    "debtor_account_id": {
+                    "entries": {
+                        "type": "array",
+                        "description": "List of ledger entries (minimum 2). Debits and credits must balance.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "account_id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "Account ID for this entry"
+                                },
+                                "direction": {
+                                    "type": "string",
+                                    "enum": [
+                                        "debit",
+                                        "credit"
+                                    ],
+                                    "description": "Direction of the entry: DEBIT or CREDIT"
+                                },
+                                "amount": {
+                                    "type": "integer",
+                                    "format": "Int64",
+                                    "description": "Amount in the smallest currency unit (e.g. cents)"
+                                },
+                                "entry_type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "principal",
+                                        "settlement",
+                                        "transaction_fee"
+                                    ],
+                                    "description": "Entry type: PRINCIPAL, SETTLEMENT, or TRANSACTION_FEE"
+                                }
+                            },
+                            "required": [
+                                "account_id",
+                                "direction",
+                                "amount",
+                                "entry_type"
+                            ]
+                        }
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "payment_type": {
+                                "type": "string",
+                                "description": "Payment type (e.g. MANUAL_TRANSFER)",
+                                "nullable": true
+                            },
+                            "external_ref": {
+                                "type": "string",
+                                "description": "External reference (e.g. ISO-20022 message ID)",
+                                "nullable": true
+                            },
+                            "channel": {
+                                "type": "string",
+                                "description": "Channel through which the transaction was initiated",
+                                "nullable": true
+                            }
+                        },
+                        "nullable": true
+                    },
+                    "posting_date": {
                         "type": "string",
-                        "format": "uuid",
-                        "description": "Account ID of the debtor"
+                        "format": "date",
+                        "description": "Accounting posting date (YYYY-MM-DD)"
                     },
                     "remittance_information": {
                         "type": "string",
-                        "description": "Remittance information for the transfer"
+                        "description": "Remittance information"
+                    },
+                    "value_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Value date for the movement (YYYY-MM-DD)"
                     }
                 },
                 "required": [
-                    "amount",
-                    "creditor_account_id",
                     "currency",
-                    "debtor_account_id",
-                    "remittance_information"
+                    "entries",
+                    "posting_date",
+                    "remittance_information",
+                    "value_date"
                 ]
             },
-            "CrystalBank__Domains__Transactions__InternalTransfers__Api__Responses__InitiationResponse": {
+            "CrystalBank__Domains__Ledger__Transactions__Api__Responses__TransactionResponse": {
                 "type": "object",
                 "properties": {
                     "id": {
                         "type": "string",
                         "format": "uuid",
-                        "description": "ID of the requested account"
+                        "description": "ID of the created ledger transaction"
                     }
                 },
                 "required": [
                     "id"
-                ],
-                "description": "Response to an internal transfer initiation request"
+                ]
             },
-            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Transactions__Postings__Api__Responses__Posting_": {
+            "CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Ledger__Transactions__Api__Responses__Posting_": {
                 "type": "object",
                 "properties": {
                     "object": {
@@ -2301,225 +2716,69 @@
                                         "id": {
                                             "type": "string",
                                             "format": "uuid",
-                                            "description": "ID of the posting"
+                                            "description": "ID of the transaction this posting belongs to"
                                         },
                                         "account_id": {
                                             "type": "string",
                                             "format": "uuid",
-                                            "description": "ID of the account the posting belongs to"
+                                            "description": "Account ID of the posting"
+                                        },
+                                        "direction": {
+                                            "type": "string",
+                                            "description": "Direction of the posting (DEBIT or CREDIT)"
                                         },
                                         "amount": {
                                             "type": "integer",
                                             "format": "Int64",
-                                            "description": "Amount"
+                                            "description": "Amount of the posting in minor currency units"
                                         },
-                                        "creditor_account_id": {
+                                        "entry_type": {
                                             "type": "string",
-                                            "format": "uuid",
-                                            "description": "ID of the creditor account"
+                                            "description": "Entry type of the posting"
                                         },
                                         "currency": {
                                             "type": "string",
-                                            "enum": [
-                                                "aed",
-                                                "afn",
-                                                "all",
-                                                "amd",
-                                                "ang",
-                                                "aoa",
-                                                "ars",
-                                                "aud",
-                                                "awg",
-                                                "azn",
-                                                "bam",
-                                                "bbd",
-                                                "bdt",
-                                                "bgn",
-                                                "bhd",
-                                                "bif",
-                                                "bmd",
-                                                "bnd",
-                                                "bob",
-                                                "bov",
-                                                "brl",
-                                                "bsd",
-                                                "btn",
-                                                "bwp",
-                                                "byn",
-                                                "bzd",
-                                                "cad",
-                                                "cdf",
-                                                "che",
-                                                "chf",
-                                                "chw",
-                                                "clf",
-                                                "clp",
-                                                "cny",
-                                                "cop",
-                                                "cou",
-                                                "crc",
-                                                "cuc",
-                                                "cup",
-                                                "cve",
-                                                "czk",
-                                                "djf",
-                                                "dkk",
-                                                "dop",
-                                                "dzd",
-                                                "egp",
-                                                "ern",
-                                                "etb",
-                                                "eur",
-                                                "fjd",
-                                                "fkp",
-                                                "gbp",
-                                                "gel",
-                                                "ghs",
-                                                "gip",
-                                                "gmd",
-                                                "gnf",
-                                                "gtq",
-                                                "gyd",
-                                                "hkd",
-                                                "hnl",
-                                                "htg",
-                                                "huf",
-                                                "idr",
-                                                "ils",
-                                                "inr",
-                                                "iqd",
-                                                "irr",
-                                                "isk",
-                                                "jmd",
-                                                "jod",
-                                                "jpy",
-                                                "kes",
-                                                "kgs",
-                                                "khr",
-                                                "kmf",
-                                                "kpw",
-                                                "krw",
-                                                "kwd",
-                                                "kyd",
-                                                "kzt",
-                                                "lak",
-                                                "lbp",
-                                                "lkr",
-                                                "lrd",
-                                                "lsl",
-                                                "lyd",
-                                                "mad",
-                                                "mdl",
-                                                "mga",
-                                                "mkd",
-                                                "mmk",
-                                                "mnt",
-                                                "mop",
-                                                "mru",
-                                                "mur",
-                                                "mvr",
-                                                "mwk",
-                                                "mxn",
-                                                "mxv",
-                                                "myr",
-                                                "mzn",
-                                                "nad",
-                                                "ngn",
-                                                "nio",
-                                                "nok",
-                                                "npr",
-                                                "nzd",
-                                                "omr",
-                                                "pab",
-                                                "pen",
-                                                "pgk",
-                                                "php",
-                                                "pkr",
-                                                "pln",
-                                                "pyg",
-                                                "qar",
-                                                "ron",
-                                                "rsd",
-                                                "rub",
-                                                "rwf",
-                                                "sar",
-                                                "sbd",
-                                                "scr",
-                                                "sdg",
-                                                "sek",
-                                                "sgd",
-                                                "shp",
-                                                "sle",
-                                                "sos",
-                                                "srd",
-                                                "ssp",
-                                                "stn",
-                                                "svc",
-                                                "syp",
-                                                "szl",
-                                                "thb",
-                                                "tjs",
-                                                "tmt",
-                                                "tnd",
-                                                "top",
-                                                "try",
-                                                "ttd",
-                                                "twd",
-                                                "tzs",
-                                                "uah",
-                                                "ugx",
-                                                "usd",
-                                                "usn",
-                                                "uyi",
-                                                "uyu",
-                                                "uyw",
-                                                "uzs",
-                                                "ved",
-                                                "ves",
-                                                "vnd",
-                                                "vuv",
-                                                "wst",
-                                                "xaf",
-                                                "xag",
-                                                "xau",
-                                                "xba",
-                                                "xbb",
-                                                "xbc",
-                                                "xbd",
-                                                "xcd",
-                                                "xdr",
-                                                "xof",
-                                                "xpd",
-                                                "xpf",
-                                                "xpt",
-                                                "xsu",
-                                                "xts",
-                                                "xua",
-                                                "xxx",
-                                                "yer",
-                                                "zar",
-                                                "zmw",
-                                                "zwg"
-                                            ],
-                                            "description": "currency of the posting"
+                                            "description": "Currency of the posting"
                                         },
-                                        "debtor_account_id": {
+                                        "posting_date": {
                                             "type": "string",
-                                            "format": "uuid",
-                                            "description": "ID of the debtor account"
+                                            "format": "date",
+                                            "description": "Posting date"
+                                        },
+                                        "value_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "description": "Value date"
                                         },
                                         "remittance_information": {
                                             "type": "string",
                                             "description": "Remittance information"
+                                        },
+                                        "payment_type": {
+                                            "type": "string",
+                                            "description": "Payment type",
+                                            "nullable": true
+                                        },
+                                        "external_ref": {
+                                            "type": "string",
+                                            "description": "External reference",
+                                            "nullable": true
+                                        },
+                                        "channel": {
+                                            "type": "string",
+                                            "description": "Channel",
+                                            "nullable": true
                                         }
                                     },
                                     "required": [
                                         "id",
                                         "account_id",
+                                        "direction",
                                         "amount",
-                                        "creditor_account_id",
+                                        "entry_type",
                                         "currency",
-                                        "debtor_account_id",
+                                        "posting_date",
+                                        "value_date",
                                         "remittance_information"
                                     ]
                                 }

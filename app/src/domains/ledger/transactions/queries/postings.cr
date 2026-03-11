@@ -1,0 +1,54 @@
+module CrystalBank::Domains::Ledger::Transactions
+  module Queries
+    class Postings
+      struct Posting
+        include DB::Serializable
+        include DB::Serializable::NonStrict
+        include JSON::Serializable
+
+        @[DB::Field(key: "transaction_id")]
+        getter id : UUID
+
+        getter account_id : UUID
+        getter aggregate_version : Int64
+        getter created_at : Time
+        getter direction : String
+        getter amount : Int64
+        getter entry_type : String
+        getter currency : String
+        getter posting_date : Time
+        getter value_date : Time
+        getter remittance_information : String
+        getter payment_type : String?
+        getter external_ref : String?
+        getter channel : String?
+      end
+
+      def initialize
+        @db = ES::Config.projection_database
+      end
+
+      def list(
+        cursor : UUID?,
+        limit : Int32,
+      ) : Array(Posting)
+        query_param_counter = 0
+        query = [] of String
+        query_params = Array(UUID? | Int32).new
+
+        query << %(SELECT * FROM "projections"."postings" WHERE 1=1)
+
+        unless cursor.nil?
+          query << %(AND "transaction_id" >= $#{query_param_counter += 1})
+          query_params << cursor
+        end
+
+        query << %(ORDER BY "transaction_id" ASC)
+        query << %(LIMIT $#{query_param_counter += 1})
+        query_params << limit
+
+        @db.query_all(query.join(" "), args: query_params, as: Posting)
+      end
+    end
+  end
+end

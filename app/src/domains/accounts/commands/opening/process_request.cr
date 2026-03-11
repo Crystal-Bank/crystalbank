@@ -18,7 +18,7 @@ module CrystalBank::Domains::Accounts
             scope_id: scope_id,
             required_approvals: [
               "write_accounts_opening_compliance_approval",
-              "write_accounts_opening_board_approval",
+              # "write_accounts_opening_board_approval",
             ],
             actor_id: aggregate.state.requestor_id
           )
