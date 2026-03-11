@@ -59,7 +59,7 @@
       {/each}
     </tbody>
   </table>
-  {#if ui.loading && ui.view === 'accounts'}
+  {#if ui.loadingView === 'accounts'}
     <div class="flex justify-center py-6">
       <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
     </div>

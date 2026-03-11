@@ -10,6 +10,7 @@ export const auth = $state({
 export const ui = $state({
   view: 'accounts',
   loading: false,
+  loadingView: /** @type {string|null} */ (null),
   /** @type {Array<{id: number, msg: string, type: string}>} */
   toasts: [],
 })

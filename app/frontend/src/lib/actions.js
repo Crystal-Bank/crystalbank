@@ -60,6 +60,7 @@ export async function switchView(id) {
 
 export async function loadView(id) {
   ui.view = id
+  ui.loadingView = null  // clear any stale per-view lock before starting
   viewData[id] = []
   pagination.cursors[id] = null
   pagination.hasMore[id] = false
@@ -67,8 +68,9 @@ export async function loadView(id) {
 }
 
 export async function loadMore(id) {
-  if (ui.loading) return
+  if (ui.loadingView === id) return  // guard: only prevent concurrent loads for the SAME view
   ui.loading = true
+  ui.loadingView = id
   try {
     let url = VIEW_PATHS[id] + '?limit=20'
     if (pagination.cursors[id]) url += '&cursor=' + pagination.cursors[id]
@@ -80,7 +82,10 @@ export async function loadMore(id) {
   } catch (e) {
     addToast(e.message, 'error')
   } finally {
-    ui.loading = false
+    if (ui.loadingView === id) {
+      ui.loading = false
+      ui.loadingView = null
+    }
   }
 }
 
