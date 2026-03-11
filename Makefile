@@ -23,7 +23,8 @@ dc        = $(COMPOSE_CMD) $(COMPOSE_ARGS) $(1)
 dct       = $(COMPOSE_CMD) $(COMPOSE_TEST_ARGS) $(1)
 dc-run    = $(call dc, run --entrypoint "bash -c" --rm cmd $(1))
 dct-run    = $(call dct, run --entrypoint "bash -c" --rm cmd $(1))
-dc-exec   = $(call dc, exec console $(1))
+dc-exec         = $(call dc, exec console $(1))
+dc-frontend-run = $(call dc, run --entrypoint "sh -c" --rm frontend $(1))
 
 # Function to check if image exists
 check_image_exists = $(shell docker image inspect $(SERVICE_IMAGE) >/dev/null 2>&1 && echo "true" || echo "false")
@@ -138,9 +139,9 @@ test:
 test-clean:
 	$(call dct, down --remove-orphans -v)
 
-# Build the Svelte frontend (requires Node.js)
+# Build the Svelte frontend inside Docker (node:22-alpine)
 build-frontend:
-	cd app/frontend && npm install && npm run build
+	$(call dc-frontend-run, "npm install && npm run build")
 
 # Run Linter
 lint:
