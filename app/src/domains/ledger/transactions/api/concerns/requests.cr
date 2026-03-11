@@ -12,9 +12,6 @@ module CrystalBank::Domains::Ledger::Transactions
 
         @[JSON::Field(description: "Channel through which the transaction was initiated")]
         getter channel : String?
-
-        @[JSON::Field(description: "Internal note for operational use")]
-        getter internal_note : String?
       end
 
       struct EntryRequest
@@ -45,13 +42,13 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(description: "Optional metadata for the movement")]
         getter metadata : MetadataRequest?
 
-        @[JSON::Field(description: "Accounting posting date (YYYY-MM-DD)")]
+        @[JSON::Field(format: "date", example: "2026-03-11", description: "Accounting posting date (YYYY-MM-DD)")]
         getter posting_date : String
 
         @[JSON::Field(description: "Remittance information")]
         getter remittance_information : String
 
-        @[JSON::Field(description: "Value date for the movement (YYYY-MM-DD)")]
+        @[JSON::Field(format: "date", example: "2026-03-12", description: "Value date for the movement (YYYY-MM-DD)")]
         getter value_date : String
       end
     end
