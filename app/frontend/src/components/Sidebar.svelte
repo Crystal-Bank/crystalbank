@@ -1,5 +1,5 @@
 <script>
-  import { NAV_ITEMS } from '../lib/store.svelte.js'
+  import { NAV_SECTIONS } from '../lib/store.svelte.js'
   import { switchView, logout } from '../lib/actions.js'
 
   let { currentView } = $props()
@@ -20,12 +20,21 @@
     </div>
   </div>
 
-  <nav class="flex-1 px-3 py-3 space-y-0.5">
-    {#each NAV_ITEMS as item (item.id)}
-      <a class="nav-link" class:active={currentView === item.id} onclick={() => switchView(item.id)}>
-        {@html item.icon}
-        <span>{item.label}</span>
-      </a>
+  <nav class="flex-1 px-3 py-3 space-y-4">
+    {#each NAV_SECTIONS as section (section.label)}
+      <div>
+        <div class="px-2 mb-1 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          {section.label}
+        </div>
+        <div class="space-y-0.5">
+          {#each section.items as item (item.id)}
+            <a class="nav-link" class:active={currentView === item.id} onclick={() => switchView(item.id)}>
+              {@html item.icon}
+              <span>{item.label}</span>
+            </a>
+          {/each}
+        </div>
+      </div>
     {/each}
   </nav>
 
