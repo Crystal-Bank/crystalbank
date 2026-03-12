@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrystalBank</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <script src="/app.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900" x-data="crystalBank()" x-init="init()" x-cloak>
+
+<!-- ── Toasts ──────────────────────────────────────────── -->
+<div class="toast-wrap" aria-live="polite">
+  <template x-for="t in toasts" :key="t.id">
+    <div class="toast" :class="t.type === 'error' ? 'toast-error' : 'toast-success'" x-text="t.msg" x-transition></div>
+  </template>
+</div>
+
+<!-- ── Login ───────────────────────────────────────────── -->
+<div x-show="!token" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 bg-zinc-900 rounded-xl mb-4">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-zinc-900">CrystalBank</h1>
+      <p class="text-sm text-zinc-500 mt-1">Sign in with your API credentials</p>
+    </div>
+    <div class="card p-6 shadow-sm">
+      <form @submit.prevent="login()">
+        <div class="mb-4">
+          <label class="field-label">Client ID</label>
+          <input x-model="loginForm.clientId" type="text" class="field-input" placeholder="API key ID" required autocomplete="off">
+        </div>
+        <div class="mb-4">
+          <label class="field-label">Client Secret</label>
+          <input x-model="loginForm.clientSecret" type="password" class="field-input" placeholder="API key secret" required>
+        </div>
+        <div x-show="loginError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700" x-text="loginError"></div>
+        <button type="submit" class="btn btn-primary w-full" :disabled="loading">
+          <svg x-show="loading" class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-opacity="0.3"/>
+            <path d="M21 12a9 9 0 00-9-9"/>
+          </svg>
+          <span x-text="loading ? 'Signing in...' : 'Sign in'"></span>
+        </button>
+      </form>
+    </div>
+    <p class="text-center text-xs text-zinc-400 mt-4">CrystalBank &mdash; Event-sourced Banking Platform</p>
+  </div>
+</div>
+
+<!-- ── App shell ────────────────────────────────────────── -->
+<div x-show="token" class="flex h-screen overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside class="w-56 bg-zinc-900 flex flex-col flex-shrink-0 overflow-y-auto">
+    <div class="px-4 py-5 border-b border-zinc-800">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#18181b" stroke-width="2.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-white leading-tight">CrystalBank</div>
+          <div class="text-xs text-zinc-500 leading-tight">Dashboard</div>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-3 space-y-0.5">
+      <template x-for="item in navItems" :key="item.id">
+        <a class="nav-link" :class="{ active: view === item.id }" @click="switchView(item.id)">
+          <span x-html="item.icon"></span>
+          <span x-text="item.label"></span>
+        </a>
+      </template>
+    </nav>
+    <div class="px-3 py-3 border-t border-zinc-800">
+      <button @click="logout()" class="nav-link w-full text-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Scope bar -->
+    <div class="scope-bar">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+      </svg>
+      <span class="text-zinc-500 font-medium">Scope:</span>
+      <input x-model="scopeInput" @change="setScope(scopeInput)" type="text"
+        placeholder="Enter scope UUID for write operations..."
+        class="bg-transparent outline-none text-zinc-700 placeholder-zinc-400 flex-1 min-w-0 font-mono text-xs"
+        style="border:none;padding:0;">
+      <template x-if="scopeInput">
+        <button @click="scopeInput=''; setScope('')" class="text-zinc-400 hover:text-zinc-600 text-xs">&times; clear</button>
+      </template>
+    </div>
+
+    <main class="flex-1 overflow-y-auto p-6">
+
+      <!-- ── Accounts ──────────────────────────────────── -->
+      <div x-show="view === 'accounts'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Accounts</div>
+            <div class="page-subtitle">Bank accounts and their owners</div>
+          </div>
+          <button @click="openModal('open_account')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Open Account
+          </button>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th></tr></thead>
+            <tbody>
+              <template x-if="data.accounts.length === 0 && !loading">
+                <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
+              </template>
+              <template x-for="a in data.accounts" :key="a.id">
+                <tr>
+                  <td><span class="mono" x-text="a.id.substring(0,8) + '...'"></span></td>
+                  <td><span class="badge" :class="a.type === 'checking' ? 'badge-blue' : 'badge-purple'" x-text="a.type?.replace('_', ' ')"></span></td>
+                  <td>
+                    <div class="flex gap-1 flex-wrap">
+                      <template x-for="c in a.currencies" :key="c">
+                        <span class="badge badge-zinc" x-text="c.toUpperCase()"></span>
+                      </template>
+                    </div>
+                  </td>
+                  <td class="text-xs text-zinc-500" x-text="(a.customer_ids?.length ?? 0) + ' owner(s)'"></td>
+                  <td><span class="mono text-xs" x-text="a.scope_id?.substring(0,8) + '...'"></span></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div x-show="loading && view === 'accounts'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
+          <div x-show="hasMore.accounts && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
+            <button @click="loadMore('accounts')" class="btn btn-ghost btn-sm">Load more</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Customers ─────────────────────────────────── -->
+      <div x-show="view === 'customers'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Customers</div>
+            <div class="page-subtitle">Onboarded customers and their types</div>
+          </div>
+          <button @click="openModal('onboard_customer')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Onboard Customer
+          </button>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Scope</th></tr></thead>
+            <tbody>
+              <template x-if="data.customers.length === 0 && !loading">
+                <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No customers found</td></tr>
+              </template>
+              <template x-for="c in data.customers" :key="c.id">
+                <tr>
+                  <td><span class="mono" x-text="c.id.substring(0,8) + '...'"></span></td>
+                  <td class="font-medium" x-text="c.name"></td>
+                  <td><span class="badge" :class="c.type === 'individual' ? 'badge-blue' : 'badge-amber'" x-text="c.type"></span></td>
+                  <td><span class="mono text-xs" x-text="c.scope_id?.substring(0,8) + '...'"></span></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div x-show="loading && view === 'customers'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
+          <div x-show="hasMore.customers && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
+            <button @click="loadMore('customers')" class="btn btn-ghost btn-sm">Load more</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Transactions (Postings) ───────────────────── -->
+      <div x-show="view === 'postings'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Transaction Postings</div>
+            <div class="page-subtitle">Ledger entries for all internal transfers</div>
+          </div>
+          <button @click="openModal('initiate_transfer')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Initiate Transfer
+          </button>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Amount</th><th>Currency</th><th>Debtor</th><th>Creditor</th><th>Memo</th></tr></thead>
+            <tbody>
+              <template x-if="data.postings.length === 0 && !loading">
+                <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
+              </template>
+              <template x-for="p in data.postings" :key="p.id">
+                <tr>
+                  <td><span class="mono" x-text="p.id.substring(0,8) + '...'"></span></td>
+                  <td class="font-semibold tabular-nums" x-text="Number(p.amount).toLocaleString()"></td>
+                  <td><span class="badge badge-zinc" x-text="p.currency?.toUpperCase()"></span></td>
+                  <td><span class="mono text-xs" x-text="p.debtor_account_id?.substring(0,8) + '...'"></span></td>
+                  <td><span class="mono text-xs" x-text="p.creditor_account_id?.substring(0,8) + '...'"></span></td>
+                  <td class="text-zinc-500 max-w-xs truncate" x-text="p.remittance_information"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div x-show="loading && view === 'postings'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
+          <div x-show="hasMore.postings && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
+            <button @click="loadMore('postings')" class="btn btn-ghost btn-sm">Load more</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Users ─────────────────────────────────────── -->
+      <div x-show="view === 'users'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Users</div>
+            <div class="page-subtitle">System users with assigned roles</div>
+          </div>
+          <button @click="openModal('onboard_user')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Onboard User
+          </button>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Scope</th></tr></thead>
+            <tbody>
+              <template x-if="data.users.length === 0 && !loading">
+                <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No users found</td></tr>
+              </template>
+              <template x-for="u in data.users" :key="u.id">
+                <tr>
+                  <td><span class="mono" x-text="u.id.substring(0,8) + '...'"></span></td>
+                  <td class="font-medium" x-text="u.name"></td>
+                  <td class="text-zinc-500" x-text="u.email"></td>
+                  <td><span class="mono text-xs" x-text="u.scope_id?.substring(0,8) + '...'"></span></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div x-show="loading && view === 'users'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
+          <div x-show="hasMore.users && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
+            <button @click="loadMore('users')" class="btn btn-ghost btn-sm">Load more</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Roles ─────────────────────────────────────── -->
+      <div x-show="view === 'roles'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Roles</div>
+            <div class="page-subtitle">Permission roles for access control</div>
+          </div>
+          <button @click="openModal('create_role')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Role
+          </button>
+        </div>
+        <div class="space-y-3">
+          <template x-if="data.roles.length === 0 && !loading">
+            <div class="card p-10 text-center text-zinc-400 text-sm">No roles found</div>
+          </template>
+          <template x-for="r in data.roles" :key="r.id">
+            <div class="card p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-semibold text-sm" x-text="r.name"></span>
+                <span class="mono" x-text="r.id.substring(0,8) + '...'"></span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <template x-for="p in r.permissions" :key="p">
+                  <span class="badge badge-blue" x-text="p"></span>
+                </template>
+              </div>
+              <template x-if="r.scopes?.length > 0">
+                <div class="mt-2 flex flex-wrap items-center gap-1">
+                  <span class="text-xs text-zinc-400">Scopes:</span>
+                  <template x-for="s in r.scopes" :key="s">
+                    <span class="mono" x-text="s.substring(0,8) + '...'"></span>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+        <div x-show="loading && view === 'roles'" class="flex justify-center py-6">
+          <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+        </div>
+        <div x-show="hasMore.roles && !loading" class="mt-4 flex justify-center">
+          <button @click="loadMore('roles')" class="btn btn-ghost btn-sm">Load more</button>
+        </div>
+      </div>
+
+      <!-- ── Scopes ─────────────────────────────────────── -->
+      <div x-show="view === 'scopes'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Scopes</div>
+            <div class="page-subtitle">Hierarchical data ownership scopes</div>
+          </div>
+          <button @click="openModal('create_scope')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Scope
+          </button>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th><th>Scope ID</th></tr></thead>
+            <tbody>
+              <template x-if="data.scopes.length === 0 && !loading">
+                <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
+              </template>
+              <template x-for="s in data.scopes" :key="s.id">
+                <tr>
+                  <td><span class="mono" x-text="s.id.substring(0,8) + '...'"></span></td>
+                  <td class="font-medium" x-text="s.name"></td>
+                  <td>
+                    <span x-show="s.parent_scope_id" class="mono text-xs" x-text="s.parent_scope_id?.substring(0,8) + '...'"></span>
+                    <span x-show="!s.parent_scope_id" class="text-zinc-400 text-xs">Root</span>
+                  </td>
+                  <td><span class="mono text-xs" x-text="s.scope_id?.substring(0,8) + '...'"></span></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div x-show="loading && view === 'scopes'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
+          <div x-show="hasMore.scopes && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
+            <button @click="loadMore('scopes')" class="btn btn-ghost btn-sm">Load more</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── API Keys ───────────────────────────────────── -->
+      <div x-show="view === 'api_keys'">
+        <div class="page-header">
+          <div>
+            <div class="page-title">API Keys</div>
+            <div class="page-subtitle">Client credentials for API authentication</div>
+          </div>
+          <button @click="openModal('generate_api_key')" class="btn btn-primary btn-sm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Generate Key
+          </button>
+        </div>
+        <div class="card overflow-hidden">
+          <table class="data-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Created</th><th>Scope</th><th></th></tr></thead>
+            <tbody>
+              <template x-if="data.api_keys.length === 0 && !loading">
+                <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No API keys found</td></tr>
+              </template>
+              <template x-for="k in data.api_keys" :key="k.id">
+                <tr>
+                  <td><span class="mono" x-text="k.id.substring(0,8) + '...'"></span></td>
+                  <td class="font-medium" x-text="k.name"></td>
+                  <td><span class="badge" :class="k.active ? 'badge-green' : 'badge-red'" x-text="k.active ? 'Active' : 'Revoked'"></span></td>
+                  <td class="text-zinc-500 text-xs" x-text="formatDate(k.created_at)"></td>
+                  <td><span class="mono text-xs" x-text="k.scope_id?.substring(0,8) + '...'"></span></td>
+                  <td>
+                    <button x-show="k.active" @click="revokeApiKey(k.id)" class="btn btn-danger btn-sm">Revoke</button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div x-show="loading && view === 'api_keys'" class="flex justify-center py-6">
+            <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+          </div>
+          <div x-show="hasMore.api_keys && !loading" class="p-4 border-t border-zinc-100 flex justify-center">
+            <button @click="loadMore('api_keys')" class="btn btn-ghost btn-sm">Load more</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── Modals ───────────────────────────────────────────── -->
+<div x-show="modal" class="modal-backdrop" @click.self="closeModal()">
+
+  <!-- Open Account -->
+  <div x-show="modal === 'open_account'" class="modal-box">
+    <div class="modal-title">Open Account</div>
+    <div class="modal-desc">Request the opening of a new bank account. Requires scope.</div>
+    <form @submit.prevent="createAccount()">
+      <div class="mb-4">
+        <label class="field-label">Account Type</label>
+        <select x-model="modalForm.type" class="field-input field-select" required>
+          <option value="">Select type...</option>
+          <option value="checking">Checking</option>
+          <option value="overnight_money">Overnight Money</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="field-label">Currencies</label>
+        <div class="checkbox-grid flex gap-4 flex-wrap mt-1">
+          <label class="checkbox-item" x-for="c in supportedCurrencies" :key="c">
+            <input type="checkbox"
+              :checked="isCurrencySelected(c)"
+              @change="toggleCurrency(c)"
+              :id="'cur-' + c">
+            <span class="font-mono text-sm" x-text="c.toUpperCase()"></span>
+          </label>
+        </div>
+        <div class="field-hint">Select one or more supported currencies</div>
+      </div>
+      <div class="mb-5">
+        <label class="field-label">Customer IDs</label>
+        <textarea x-model="modalForm.customerIds" class="field-input" rows="2" placeholder="One UUID per line..."></textarea>
+        <div class="field-hint">One customer UUID per line</div>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Open Account</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Onboard Customer -->
+  <div x-show="modal === 'onboard_customer'" class="modal-box">
+    <div class="modal-title">Onboard Customer</div>
+    <div class="modal-desc">Register a new customer in the system. Requires scope.</div>
+    <form @submit.prevent="createCustomer()">
+      <div class="mb-4">
+        <label class="field-label">Name</label>
+        <input x-model="modalForm.name" type="text" class="field-input" placeholder="John Doe" required minlength="2">
+      </div>
+      <div class="mb-5">
+        <label class="field-label">Customer Type</label>
+        <select x-model="modalForm.type" class="field-input field-select" required>
+          <option value="">Select type...</option>
+          <option value="individual">Individual</option>
+          <option value="business">Business</option>
+        </select>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Onboard Customer</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Onboard User -->
+  <div x-show="modal === 'onboard_user'" class="modal-box">
+    <div class="modal-title">Onboard User</div>
+    <div class="modal-desc">Create a new system user. Requires scope.</div>
+    <form @submit.prevent="createUser()">
+      <div class="mb-4">
+        <label class="field-label">Name</label>
+        <input x-model="modalForm.name" type="text" class="field-input" placeholder="Jane Smith" required>
+      </div>
+      <div class="mb-5">
+        <label class="field-label">Email</label>
+        <input x-model="modalForm.email" type="email" class="field-input" placeholder="jane@example.com" required>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Onboard User</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Initiate Transfer -->
+  <div x-show="modal === 'initiate_transfer'" class="modal-box">
+    <div class="modal-title">Initiate Transfer</div>
+    <div class="modal-desc">Move funds between two accounts. Requires scope.</div>
+    <form @submit.prevent="initiateTransfer()">
+      <div class="mb-4">
+        <label class="field-label">Debtor Account ID</label>
+        <input x-model="modalForm.debtor_account_id" type="text" class="field-input font-mono text-sm" placeholder="UUID" required>
+        <div class="field-hint">The account funds are taken from</div>
+      </div>
+      <div class="mb-4">
+        <label class="field-label">Creditor Account ID</label>
+        <input x-model="modalForm.creditor_account_id" type="text" class="field-input font-mono text-sm" placeholder="UUID" required>
+        <div class="field-hint">The account funds are sent to</div>
+      </div>
+      <div class="mb-4">
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="field-label">Amount</label>
+            <input x-model="modalForm.amount" type="number" min="1" class="field-input" placeholder="100" required>
+          </div>
+          <div class="w-32">
+            <label class="field-label">Currency</label>
+            <select x-model="modalForm.currency" class="field-input field-select" required>
+              <option value="">Pick...</option>
+              <option value="chf">CHF</option>
+              <option value="eur">EUR</option>
+              <option value="gbp">GBP</option>
+              <option value="jpy">JPY</option>
+              <option value="usd">USD</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label class="field-label">Remittance Information</label>
+        <input x-model="modalForm.remittance_information" type="text" class="field-input" placeholder="Payment for services..." required>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Initiate Transfer</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Create Role -->
+  <div x-show="modal === 'create_role'" class="modal-box">
+    <div class="modal-title">Create Role</div>
+    <div class="modal-desc">Define a new permission role. Requires scope.</div>
+    <form @submit.prevent="createRole()">
+      <div class="mb-4">
+        <label class="field-label">Role Name</label>
+        <input x-model="modalForm.name" type="text" class="field-input" placeholder="admin" required>
+      </div>
+      <div class="mb-4">
+        <label class="field-label">Permissions</label>
+        <div class="permission-list">
+          <label class="permission-item" x-for="p in allPermissions" :key="p">
+            <input type="checkbox"
+              :checked="isPermissionSelected(p)"
+              @change="togglePermission(p)">
+            <span class="font-mono" x-text="p"></span>
+          </label>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label class="field-label">Scope UUIDs</label>
+        <textarea x-model="modalForm.scopesList" class="field-input" rows="2" placeholder="One UUID per line..."></textarea>
+        <div class="field-hint">One scope UUID per line</div>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Create Role</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Create Scope -->
+  <div x-show="modal === 'create_scope'" class="modal-box">
+    <div class="modal-title">Create Scope</div>
+    <div class="modal-desc">Define a new data ownership scope. Requires scope.</div>
+    <form @submit.prevent="createScope()">
+      <div class="mb-4">
+        <label class="field-label">Scope Name</label>
+        <input x-model="modalForm.name" type="text" class="field-input" placeholder="europe" required>
+      </div>
+      <div class="mb-5">
+        <label class="field-label">
+          Parent Scope ID
+          <span class="text-zinc-400 font-normal">(optional)</span>
+        </label>
+        <input x-model="modalForm.parent_scope_id" type="text" class="field-input font-mono text-sm" placeholder="UUID of parent scope...">
+        <div class="field-hint">Leave empty to create a root scope</div>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Create Scope</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Generate API Key -->
+  <div x-show="modal === 'generate_api_key'" class="modal-box">
+    <div class="modal-title">Generate API Key</div>
+    <div class="modal-desc">Create a new client credential pair. Requires scope.</div>
+    <form @submit.prevent="generateApiKey()">
+      <div class="mb-4">
+        <label class="field-label">Key Name</label>
+        <input x-model="modalForm.name" type="text" class="field-input" placeholder="my-service-key" required>
+      </div>
+      <div class="mb-5">
+        <label class="field-label">User ID</label>
+        <input x-model="modalForm.user_id" type="text" class="field-input font-mono text-sm" placeholder="UUID of the user" required>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button type="button" @click="closeModal()" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">Generate Key</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- API Key result (show secret once) -->
+  <div x-show="modal === 'api_key_result'" class="modal-box">
+    <div class="modal-title">API Key Generated</div>
+    <div class="modal-desc">Save your secret now &mdash; it will not be shown again.</div>
+    <div class="space-y-3 mb-5">
+      <div>
+        <div class="field-label mb-1">Key ID (Client ID)</div>
+        <div class="mono text-sm bg-zinc-50 border border-zinc-200 rounded p-2.5 break-all select-all" x-text="modalForm.id"></div>
+      </div>
+      <div>
+        <div class="field-label mb-1">Secret (Client Secret)</div>
+        <div class="mono text-sm bg-amber-50 border border-amber-200 rounded p-2.5 break-all select-all text-amber-900" x-text="modalForm.secret"></div>
+      </div>
+    </div>
+    <div class="bg-amber-50 border border-amber-200 rounded p-3 text-xs text-amber-800 mb-5">
+      Store this secret securely. You will not be able to retrieve it again.
+    </div>
+    <div class="flex justify-end">
+      <button @click="closeModal(); loadView('api_keys')" class="btn btn-primary">Done</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
