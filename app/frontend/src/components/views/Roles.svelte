@@ -12,9 +12,9 @@
   let scopeSuggestions = $derived(
     scopeOptions
       .filter(s => {
-        if (form.selectedScopes.includes(s.scope_id)) return false
+        if (form.selectedScopes.includes(s.id)) return false
         const q = scopeSearch.toLowerCase()
-        return q === '' || s.scope_id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+        return q === '' || s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
       })
       .slice(0, 8)
   )
@@ -48,7 +48,7 @@
   }
 
   function getScopeName(scopeId) {
-    return scopeOptions.find(s => s.scope_id === scopeId)?.name ?? scopeId
+    return scopeOptions.find(s => s.id === scopeId)?.name ?? scopeId
   }
 
   async function handleSubmit() {
@@ -153,14 +153,14 @@
             >
             {#if showScopeDropdown && scopeSuggestions.length > 0}
               <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
-                {#each scopeSuggestions as s (s.scope_id)}
+                {#each scopeSuggestions as s (s.id)}
                   <button
                     type="button"
                     class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
-                    onmousedown={(e) => { e.preventDefault(); addScope(s.scope_id) }}
+                    onmousedown={(e) => { e.preventDefault(); addScope(s.id) }}
                   >
                     <div class="font-medium text-xs text-zinc-800">{s.name}</div>
-                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{s.scope_id}</div>
+                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{s.id}</div>
                   </button>
                 {/each}
               </div>
