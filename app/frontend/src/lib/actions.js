@@ -68,6 +68,24 @@ export async function loadView(id) {
   await loadMore(id)
 }
 
+// Silent background refresh — does not touch ui.loading or clear existing data.
+// Replaces the first page only; skips entirely if a foreground load is in progress.
+export async function refreshView(id) {
+  if (!VIEW_PATHS[id] || ui.loadingView) return
+  try {
+    const res = await apiFetch('GET', VIEW_PATHS[id] + '?limit=20')
+    const items = res.data.map(e => e.attributes)
+    if (
+      JSON.stringify(items) !== JSON.stringify(viewData[id].slice(0, items.length)) ||
+      res.meta.has_more !== pagination.hasMore[id]
+    ) {
+      viewData[id] = items
+      pagination.hasMore[id] = res.meta.has_more
+      pagination.cursors[id] = res.meta.next_cursor || null
+    }
+  } catch {}
+}
+
 export async function loadMore(id) {
   if (ui.loadingView === id) return  // guard: only prevent concurrent loads for the SAME view
   ui.loading = true

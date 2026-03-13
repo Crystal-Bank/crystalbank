@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte'
-  import { auth, ui } from './lib/store.svelte.js'
+  import { auth, ui, VIEW_PATHS } from './lib/store.svelte.js'
+  import { refreshView } from './lib/actions.js'
   import Login from './components/Login.svelte'
   import Sidebar from './components/Sidebar.svelte'
   import ScopeBar from './components/ScopeBar.svelte'
@@ -17,6 +18,10 @@
 
   onMount(() => {
     if (auth.token) ui.view = 'dashboard'
+    const timer = setInterval(() => {
+      if (auth.token && VIEW_PATHS[ui.view]) refreshView(ui.view)
+    }, 5000)
+    return () => clearInterval(timer)
   })
 </script>
 
