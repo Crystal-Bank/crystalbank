@@ -33,7 +33,7 @@ export async function login(clientId, clientSecret) {
     const body = await res.json()
     auth.token = body.token
     localStorage.setItem('cb_token', auth.token)
-    await loadView('accounts')
+    ui.view = 'dashboard'
   } finally {
     ui.loading = false
   }
@@ -54,6 +54,7 @@ export function setScope(value) {
 // ── Navigation / data loading ────────────────────────────
 
 export async function switchView(id) {
+  if (id === 'dashboard') { ui.view = 'dashboard'; return }
   if (ui.view === id && viewData[id].length > 0) return
   await loadView(id)
 }
