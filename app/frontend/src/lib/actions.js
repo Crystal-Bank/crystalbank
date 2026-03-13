@@ -257,12 +257,11 @@ export async function collectApproval(id, comment) {
   try {
     await apiFetch('POST', '/approvals/' + id + '/collect', { comment }, { idempotency: true })
     addToast('Approval collected')
-    // Refresh pending list without calling loadView(), which would mutate ui.view
-    viewData.approvals = []
-    pagination.cursors.approvals = null
-    pagination.hasMore.approvals = false
-    await loadMore('approvals')
+    // Optimistically remove from pending list immediately (avoids race with backend state)
+    viewData.approvals = viewData.approvals.filter(a => a.id !== id)
     approvalsMeta.completedDirty = true
+    // Background reconciliation — does not clear the list or block the UI
+    refreshView('approvals')
   } catch (e) {
     addToast(e.message, 'error')
     throw e
