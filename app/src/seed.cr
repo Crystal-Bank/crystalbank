@@ -84,9 +84,9 @@ api_secret_encrypted = Crypto::Bcrypt::Password.create(api_secret, cost: 10).to_
 
 # Scopes
 scopes = Hash(String, UUID).new
-scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: UUID.new("019cca42-0400-70f0-8568-19a800868bca"), parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000001"))
-scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: scopes["root"], parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000002"))
-scopes["sub2"] = seed_scope(event_store, actor_id, name: "Sub Scope #2", scope_id: scopes["root"], parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000003"))
+scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: UUID.new("00000000-0000-0000-0000-800000000001"), parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000001"))
+scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: scopes["root"], parent_scope_id: scopes["root"], aggregate_id: UUID.new("00000000-0000-0000-0000-800000000002"))
+scopes["sub2"] = seed_scope(event_store, actor_id, name: "Sub Scope #2", scope_id: scopes["root"], parent_scope_id: scopes["root"], aggregate_id: UUID.new("00000000-0000-0000-0000-800000000003"))
 
 # Users
 users = Hash(String, UUID).new
