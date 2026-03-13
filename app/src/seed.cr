@@ -125,7 +125,7 @@ CrystalBank.print_verbose("Seed credentials Approver user", [
   "client_secret: '#{api_secret}'",
 ].join("\n"))
 
-CrystalBank.print_verbose("Seed credentials Approver user", [
+CrystalBank.print_verbose("Seed credentials Scoped user", [
   "client_id: '#{client_ids["scoped"]}'",
   "client_secret: '#{api_secret}'",
 ].join("\n"))
