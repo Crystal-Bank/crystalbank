@@ -50,15 +50,13 @@ module CrystalBank::Domains::Approvals
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
         @[AC::Param::Info(description: "Filter by approval status: 'pending' or 'completed'")]
-        status : String? = nil,
+        status : CrystalBank::Types::Approvals::Status? = nil,
       ) : ListResponse(Responses::Approval)
         authorized?("read_approvals_list", request_scope: false)
 
         completed = case status
-                    when "pending"   then false
-                    when "completed" then true
-                    when nil         then nil
-                    else raise AC::Error::BadRequest.new("status must be 'pending' or 'completed'")
+                    when CrystalBank::Types::Approvals::Status::Pending   then false
+                    when CrystalBank::Types::Approvals::Status::Completed then true
                     end
 
         approvals = ::Approvals::Queries::Approvals.new.list(cursor: cursor, limit: limit + 1, completed: completed).map do |a|
