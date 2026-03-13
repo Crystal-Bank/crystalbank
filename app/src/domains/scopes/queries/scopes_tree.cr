@@ -29,6 +29,7 @@ module CrystalBank::Domains::Scopes
               available_scopes parent
             WHERE
               s.parent_scope_id = parent.uuid
+              AND s.uuid <> s.parent_scope_id
           )
           SELECT
             uuid

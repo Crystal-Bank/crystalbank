@@ -48,12 +48,12 @@
     <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
     <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
   </svg>
-  <span class="text-zinc-500 font-medium relative group">
-    Scope:
-    <span class="absolute top-full left-0 mt-2 w-72 bg-zinc-800 text-zinc-100 text-xs rounded-md px-3 py-2 leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50">
-      The scope is the mechanism to assign data-ownership at entity creation. Scopes can be set up in a hierarchical way, in which higher-level scopes can access lower-level scope leafs in the tree.
-    </span>
-  </span>
+  <div class="relative group">
+    <span class="text-zinc-500 font-medium cursor-help">Scope:</span>
+    <div class="absolute top-full left-0 mt-1 z-50 bg-zinc-800 text-white text-xs rounded-md p-3 w-80 hidden group-hover:block shadow-lg leading-relaxed pointer-events-none">
+      Scopes are a mechanism to attach data ownership to entities on creation, they allow to filter out entities from API responses based on the users permissions on the respective scope. This model allows a strict control over the visibility of data points, based on the roles and permissions system
+    </div>
+  </div>
   <div class="relative flex-1 min-w-0">
     <input
       bind:value={auth.scopeInput}
@@ -64,8 +64,14 @@
       type="text"
       placeholder="Enter scope UUID for write operations..."
       class="bg-transparent outline-none text-zinc-700 placeholder-zinc-400 w-full font-mono text-xs"
-      style="border:none;padding:0;"
+      style="border:none;padding:0;{auth.scopeInput ? 'padding-right:3.5rem;' : ''}"
     >
+    {#if auth.scopeInput}
+      <button
+        onclick={clearScope}
+        class="absolute right-0 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 text-xs whitespace-nowrap"
+      >&times; clear</button>
+    {/if}
     {#if showDropdown && suggestions.length > 0}
       <div class="absolute top-full left-0 z-50 bg-white border border-zinc-200 rounded-md shadow-lg mt-1 min-w-72 max-h-48 overflow-y-auto">
         {#each suggestions as s (s.id)}
@@ -81,7 +87,4 @@
       </div>
     {/if}
   </div>
-  {#if auth.scopeInput}
-    <button onclick={clearScope} class="text-zinc-400 hover:text-zinc-600 text-xs">&times; clear</button>
-  {/if}
 </div>

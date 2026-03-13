@@ -40,7 +40,7 @@ module CrystalBank::Domains::Accounts
       ) : ListResponse(Responses::Account)
         authorized?("read_accounts_list", request_scope: false)
 
-        accounts = ::Accounts::Queries::Accounts.new.list(cursor: cursor, limit: limit + 1).map do |a|
+        accounts = ::Accounts::Queries::Accounts.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(
             a.id,
             a.scope_id,

@@ -84,9 +84,9 @@ api_secret_encrypted = Crypto::Bcrypt::Password.create(api_secret, cost: 10).to_
 
 # Scopes
 scopes = Hash(String, UUID).new
-scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: actor_id, parent_scope_id: dummy_uuid, aggregate_id: UUID.new("00000000-0000-0000-0000-900000000001"))
-scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: actor_id, parent_scope_id: scopes["root"], aggregate_id: UUID.new("00000000-0000-0000-0000-900000000002"))
-scopes["sub2"] = seed_scope(event_store, actor_id, name: "Sub Scope #2", scope_id: actor_id, parent_scope_id: scopes["root"], aggregate_id: UUID.new("00000000-0000-0000-0000-900000000003"))
+scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: UUID.new("019cca42-0400-70f0-8568-19a800868bca"), parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000001"))
+scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: scopes["root"], parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000002"))
+scopes["sub2"] = seed_scope(event_store, actor_id, name: "Sub Scope #2", scope_id: scopes["root"], parent_scope_id: nil, aggregate_id: UUID.new("00000000-0000-0000-0000-800000000003"))
 
 # Users
 users = Hash(String, UUID).new
@@ -114,6 +114,7 @@ assign_role(event_store, actor_id, users["scoped"], roles["scoped"], scopes["roo
 customers = Hash(String, UUID).new
 customers["admin"] = seed_customer(event_store, actor_id, name: "Admin customer", scope_id: scopes["root"], type: CrystalBank::Types::Customers::Type::Business)
 customers["scoped"] = seed_customer(event_store, actor_id, name: "Scoped customer", scope_id: scopes["sub"], type: CrystalBank::Types::Customers::Type::Business)
+customers["scoped2"] = seed_customer(event_store, actor_id, name: "Scoped customer #2", scope_id: scopes["sub2"], type: CrystalBank::Types::Customers::Type::Business)
 
 # Output
 CrystalBank.print_verbose("Seed credentials Admin user", [
@@ -126,7 +127,7 @@ CrystalBank.print_verbose("Seed credentials Approver user", [
   "client_secret: '#{api_secret}'",
 ].join("\n"))
 
-CrystalBank.print_verbose("Seed credentials Approver user", [
+CrystalBank.print_verbose("Seed credentials Scoped user", [
   "client_id: '#{client_ids["scoped"]}'",
   "client_secret: '#{api_secret}'",
 ].join("\n"))
@@ -140,4 +141,10 @@ CrystalBank.print_verbose("Created scopes", [
   "Root Scope: '#{scopes["root"]}'",
   "Sub Scope: '#{scopes["sub"]}'",
   "Sub Scope #2: '#{scopes["sub2"]}'",
+].join("\n"))
+
+CrystalBank.print_verbose("Created customers", [
+  "Admin Customer: '#{customers["admin"]}'",
+  "Scope Customer: '#{customers["scoped"]}'",
+  "Scope #2 Customer: '#{customers["scoped2"]}'",
 ].join("\n"))

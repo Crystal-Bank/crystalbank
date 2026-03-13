@@ -40,7 +40,7 @@ module CrystalBank::Domains::Customers
       ) : ListResponse(Responses::Customer)
         authorized?("read_customers_list", request_scope: false)
 
-        customers = ::Customers::Queries::Customers.new.list(cursor: cursor, limit: limit + 1).map do |a|
+        customers = ::Customers::Queries::Customers.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
           Responses::Customer.new(
             a.id,
             a.scope_id,
