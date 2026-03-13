@@ -58,7 +58,7 @@ module CrystalBank::Domains::ApiKeys
       ) : ListResponse(Responses::ApiKey)
         authorized?("read_api_keys_list", request_scope: false)
 
-        api_keys = ::ApiKeys::Queries::ApiKeys.new.list(cursor: cursor, limit: limit + 1).map do |a|
+        api_keys = ::ApiKeys::Queries::ApiKeys.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
           Responses::ApiKey.new(
             a.id,
             a.scope_id,

@@ -2,8 +2,9 @@ require "../../../spec_helper"
 
 describe CrystalBank::Domains::Approvals::Api::Approvals do
   # IDs chosen to avoid collisions with query spec seeds
-  pending_id = UUID.new("00000000-0000-0000-0000-bbb000000010")
-  completed_id = UUID.new("00000000-0000-0000-0000-bbb000000020")
+  pending_id = UUID.v7
+  completed_id = UUID.v7
+  available_scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
   before_all do
     projection = ::Approvals::Projections::Approvals.new
@@ -21,7 +22,9 @@ describe CrystalBank::Domains::Approvals::Api::Approvals do
   describe "GET /approvals status enum → query mapping" do
     describe "status = nil (no filter)" do
       it "returns both pending and completed approvals" do
-        results = ::Approvals::Queries::Approvals.new.list(cursor: nil, limit: 100)
+        context = CrystalBank::Api::Context.new(user_id: UUID.v7, roles: [] of UUID, required_permission: CrystalBank::Permissions::READ_approvals_list, scope: UUID.v7, available_scopes: [available_scope_id])
+
+        results = ::Approvals::Queries::Approvals.new.list(context, cursor: nil, limit: 100)
         ids = results.map(&.id)
         ids.should contain(pending_id)
         ids.should contain(completed_id)
@@ -30,10 +33,12 @@ describe CrystalBank::Domains::Approvals::Api::Approvals do
 
     describe "status = Status::Pending" do
       it "maps to completed: false and excludes completed approvals" do
+        context = CrystalBank::Api::Context.new(user_id: UUID.v7, roles: [] of UUID, required_permission: CrystalBank::Permissions::READ_approvals_list, scope: UUID.v7, available_scopes: [available_scope_id])
+
         status = CrystalBank::Types::Approvals::Status::Pending
         completed = status == CrystalBank::Types::Approvals::Status::Completed ? true : false
 
-        results = ::Approvals::Queries::Approvals.new.list(cursor: nil, limit: 100, completed: completed)
+        results = ::Approvals::Queries::Approvals.new.list(context, cursor: nil, limit: 100, completed: completed)
         ids = results.map(&.id)
         ids.should contain(pending_id)
         ids.should_not contain(completed_id)
@@ -42,13 +47,25 @@ describe CrystalBank::Domains::Approvals::Api::Approvals do
 
     describe "status = Status::Completed" do
       it "maps to completed: true and excludes pending approvals" do
+        context = CrystalBank::Api::Context.new(user_id: UUID.v7, roles: [] of UUID, required_permission: CrystalBank::Permissions::READ_approvals_list, scope: UUID.v7, available_scopes: [available_scope_id])
+
         status = CrystalBank::Types::Approvals::Status::Completed
         completed = status == CrystalBank::Types::Approvals::Status::Completed ? true : false
 
-        results = ::Approvals::Queries::Approvals.new.list(cursor: nil, limit: 100, completed: completed)
+        results = ::Approvals::Queries::Approvals.new.list(context, cursor: nil, limit: 100, completed: completed)
         ids = results.map(&.id)
         ids.should contain(completed_id)
         ids.should_not contain(pending_id)
+      end
+    end
+
+    describe "Respect scopes" do
+      it "does not return anything for invalid scope" do
+        context = CrystalBank::Api::Context.new(user_id: UUID.v7, roles: [] of UUID, required_permission: CrystalBank::Permissions::READ_approvals_list, scope: UUID.v7, available_scopes: [UUID.v7])
+
+        results = ::Approvals::Queries::Approvals.new.list(context, cursor: nil, limit: 100)
+        ids = results.map(&.id)
+        ids.should eq([] of UUID)
       end
     end
 

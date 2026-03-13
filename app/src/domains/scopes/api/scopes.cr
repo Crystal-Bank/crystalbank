@@ -40,7 +40,7 @@ module CrystalBank::Domains::Scopes
       ) : ListResponse(Responses::Scope)
         authorized?("read_scopes_list", request_scope: false)
 
-        scopes = ::Scopes::Queries::Scopes.new.list(cursor: cursor, limit: limit + 1).map do |s|
+        scopes = ::Scopes::Queries::Scopes.new.list(context, cursor: cursor, limit: limit + 1).map do |s|
           Responses::Scope.new(
             s.id,
             s.scope_id,

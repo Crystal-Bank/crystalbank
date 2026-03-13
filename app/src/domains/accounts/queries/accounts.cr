@@ -42,14 +42,19 @@ module CrystalBank::Domains::Accounts
       end
 
       def list(
+        context : CrystalBank::Api::Context,
         cursor : UUID?,
         limit : Int32,
       ) : Array(Account)
         query_param_counter = 0
         query = [] of String
-        query_params = Array(UUID? | Int32).new
+        query_params = Array(Array(UUID) | UUID? | Int32).new
 
         query << %(SELECT * FROM "projections"."accounts" WHERE 1=1)
+
+        # Add scope query
+        query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << context.available_scopes
 
         # Add pagination cursor to query
         unless cursor.nil?
@@ -60,6 +65,8 @@ module CrystalBank::Domains::Accounts
         query << %(ORDER BY "uuid" ASC)
         query << %(LIMIT $#{query_param_counter += 1})
         query_params << limit
+
+        puts query_params
 
         @db.query_all(query.join(" "), args: query_params, as: Account)
       end

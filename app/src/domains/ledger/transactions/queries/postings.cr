@@ -29,14 +29,19 @@ module CrystalBank::Domains::Ledger::Transactions
       end
 
       def list(
+        context : CrystalBank::Api::Context,
         cursor : UUID?,
         limit : Int32,
       ) : Array(Posting)
         query_param_counter = 0
         query = [] of String
-        query_params = Array(UUID? | Int32).new
+        query_params = Array(Array(UUID) | UUID? | Int32).new
 
         query << %(SELECT * FROM "projections"."postings" WHERE 1=1)
+
+        # Add scope query
+        query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << context.available_scopes
 
         unless cursor.nil?
           query << %(AND "transaction_id" >= $#{query_param_counter += 1})

@@ -36,7 +36,7 @@ module CrystalBank::Domains::Ledger::Transactions
       ) : ListResponse(Responses::Posting)
         authorized?("read_postings_list", request_scope: false)
 
-        postings = ::Ledger::Transactions::Queries::Postings.new.list(cursor: cursor, limit: limit + 1).map do |p|
+        postings = ::Ledger::Transactions::Queries::Postings.new.list(context, cursor: cursor, limit: limit + 1).map do |p|
           Responses::Posting.new(
             p.id,
             p.account_id,
