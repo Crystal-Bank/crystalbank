@@ -16,7 +16,11 @@
     if (tab === 'completed' && (!completedFetchAttempted || approvalsMeta.completedDirty)) {
       completedFetchAttempted = true
       approvalsMeta.completedDirty = false
-      loadView('approvals_completed')
+      // Reset + load without calling loadView(), which would change ui.view and blank the page
+      viewData.approvals_completed = []
+      pagination.cursors.approvals_completed = null
+      pagination.hasMore.approvals_completed = false
+      loadMore('approvals_completed')
     }
   }
 
