@@ -21,7 +21,7 @@
     roles:     '/roles/?limit=200',
     scopes:    '/scopes/?limit=200',
     api_keys:  '/api_keys/?limit=200',
-    approvals: '/approvals/?limit=200',
+    approvals: '/approvals/?limit=200&status=pending',
   }
 
   onMount(async () => {

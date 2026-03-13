@@ -1,9 +1,24 @@
 <script>
-  import { viewData, pagination, ui } from '../../lib/store.svelte.js'
-  import { loadMore, collectApproval } from '../../lib/actions.js'
+  import { viewData, pagination, ui, approvalsMeta } from '../../lib/store.svelte.js'
+  import { loadView, loadMore, collectApproval } from '../../lib/actions.js'
+
+  let activeTab = $state('pending')
+  let completedFetchAttempted = false
 
   let drawerApproval = $state(null)
   let comment = $state('')
+
+  const currentViewId = $derived(activeTab === 'pending' ? 'approvals' : 'approvals_completed')
+  const currentData = $derived(activeTab === 'pending' ? viewData.approvals : viewData.approvals_completed)
+
+  function switchTab(tab) {
+    activeTab = tab
+    if (tab === 'completed' && (!completedFetchAttempted || approvalsMeta.completedDirty)) {
+      completedFetchAttempted = true
+      approvalsMeta.completedDirty = false
+      loadView('approvals_completed')
+    }
+  }
 
   function openDrawer(approval) {
     drawerApproval = approval
@@ -33,6 +48,40 @@
   </div>
 </div>
 
+<!-- Tabs -->
+<div class="flex gap-1 mb-4 border-b border-zinc-200">
+  <button
+    onclick={() => switchTab('pending')}
+    class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px"
+    class:border-zinc-800={activeTab === 'pending'}
+    class:text-zinc-800={activeTab === 'pending'}
+    class:border-transparent={activeTab !== 'pending'}
+    class:text-zinc-400={activeTab !== 'pending'}
+    class:hover:text-zinc-600={activeTab !== 'pending'}
+  >
+    Pending
+    {#if viewData.approvals.length > 0 || pagination.hasMore.approvals}
+      <span class="ml-1.5 inline-flex items-center justify-center text-xs font-semibold rounded-full px-1.5 py-0.5 min-w-[1.25rem]"
+        class:bg-amber-100={activeTab === 'pending'}
+        class:text-amber-700={activeTab === 'pending'}
+        class:bg-zinc-100={activeTab !== 'pending'}
+        class:text-zinc-500={activeTab !== 'pending'}
+      >{viewData.approvals.length}{pagination.hasMore.approvals ? '+' : ''}</span>
+    {/if}
+  </button>
+  <button
+    onclick={() => switchTab('completed')}
+    class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px"
+    class:border-zinc-800={activeTab === 'completed'}
+    class:text-zinc-800={activeTab === 'completed'}
+    class:border-transparent={activeTab !== 'completed'}
+    class:text-zinc-400={activeTab !== 'completed'}
+    class:hover:text-zinc-600={activeTab !== 'completed'}
+  >
+    Completed
+  </button>
+</div>
+
 <div class="card overflow-hidden">
   <table class="data-table">
     <thead>
@@ -43,14 +92,20 @@
         <th>Requestor ID</th>
         <th>Required</th>
         <th>Progress</th>
-        <th>Status</th>
+        {#if activeTab === 'pending'}
+          <th></th>
+        {/if}
       </tr>
     </thead>
     <tbody>
-      {#if viewData.approvals.length === 0 && !ui.loadingView}
-        <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No approvals found</td></tr>
+      {#if currentData.length === 0 && ui.loadingView !== currentViewId}
+        <tr>
+          <td colspan="7" class="text-center py-10 text-zinc-400 text-sm">
+            {activeTab === 'pending' ? 'No pending approvals' : 'No completed approvals'}
+          </td>
+        </tr>
       {/if}
-      {#each viewData.approvals as a (a.id)}
+      {#each currentData as a (a.id)}
         <tr onclick={() => openDrawer(a)} class="cursor-pointer">
           <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge badge-zinc">{a.source_aggregate_type}</span></td>
@@ -84,23 +139,23 @@
               </span>
             </div>
           </td>
-          <td>
-            <span class="badge" class:badge-green={a.completed} class:badge-amber={!a.completed}>
-              {a.completed ? 'Completed' : 'Pending'}
-            </span>
-          </td>
+          {#if activeTab === 'pending'}
+            <td>
+              <span class="badge badge-amber">Pending</span>
+            </td>
+          {/if}
         </tr>
       {/each}
     </tbody>
   </table>
-  {#if ui.loadingView === 'approvals'}
+  {#if ui.loadingView === currentViewId}
     <div class="flex justify-center py-6">
       <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
     </div>
   {/if}
-  {#if pagination.hasMore.approvals && !ui.loading}
+  {#if pagination.hasMore[currentViewId] && !ui.loading}
     <div class="p-4 border-t border-zinc-100 flex justify-center">
-      <button onclick={() => loadMore('approvals')} class="btn btn-ghost btn-sm">Load more</button>
+      <button onclick={() => loadMore(currentViewId)} class="btn btn-ghost btn-sm">Load more</button>
     </div>
   {/if}
 </div>

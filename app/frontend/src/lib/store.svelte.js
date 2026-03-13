@@ -24,6 +24,12 @@ export const viewData = $state({
   scopes: [],
   api_keys: [],
   approvals: [],
+  approvals_completed: [],
+})
+
+// Metadata for cross-component approval state coordination
+export const approvalsMeta = $state({
+  completedDirty: false,
 })
 
 export const pagination = $state({
@@ -36,6 +42,7 @@ export const pagination = $state({
     scopes: false,
     api_keys: false,
     approvals: false,
+    approvals_completed: false,
   },
   cursors: {
     accounts: null,
@@ -46,6 +53,7 @@ export const pagination = $state({
     scopes: null,
     api_keys: null,
     approvals: null,
+    approvals_completed: null,
   },
 })
 
@@ -143,12 +151,13 @@ export const NAV_SECTIONS = [
 ]
 
 export const VIEW_PATHS = {
-  accounts:  '/accounts/',
-  customers: '/customers/',
-  postings:  '/ledger/transactions/postings/',
-  users:     '/users/',
-  roles:     '/roles/',
-  scopes:    '/scopes/',
-  api_keys:  '/api_keys/',
-  approvals: '/approvals/',
+  accounts:             '/accounts/',
+  customers:            '/customers/',
+  postings:             '/ledger/transactions/postings/',
+  users:                '/users/',
+  roles:                '/roles/',
+  scopes:               '/scopes/',
+  api_keys:             '/api_keys/',
+  approvals:            '/approvals/?status=pending',
+  approvals_completed:  '/approvals/?status=completed',
 }
