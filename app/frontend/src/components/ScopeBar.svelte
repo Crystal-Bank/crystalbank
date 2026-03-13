@@ -50,7 +50,7 @@
   </svg>
   <span class="text-zinc-500 font-medium relative group">
     Scope:
-    <span class="absolute bottom-full left-0 mb-2 w-72 bg-zinc-800 text-zinc-100 text-xs rounded-md px-3 py-2 leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50">
+    <span class="absolute top-full left-0 mt-2 w-72 bg-zinc-800 text-zinc-100 text-xs rounded-md px-3 py-2 leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50">
       The scope is the mechanism to assign data-ownership at entity creation. Scopes can be set up in a hierarchical way, in which higher-level scopes can access lower-level scope leafs in the tree.
     </span>
   </span>
