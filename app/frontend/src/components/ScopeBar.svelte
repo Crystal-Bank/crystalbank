@@ -48,7 +48,12 @@
     <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
     <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
   </svg>
-  <span class="text-zinc-500 font-medium">Scope:</span>
+  <span class="text-zinc-500 font-medium relative group">
+    Scope:
+    <span class="absolute bottom-full left-0 mb-2 w-72 bg-zinc-800 text-zinc-100 text-xs rounded-md px-3 py-2 leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50">
+      The scope is the mechanism to assign data-ownership at entity creation. Scopes can be set up in a hierarchical way, in which higher-level scopes can access lower-level scope leafs in the tree.
+    </span>
+  </span>
   <div class="relative flex-1 min-w-0">
     <input
       bind:value={auth.scopeInput}
