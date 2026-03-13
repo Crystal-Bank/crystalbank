@@ -257,7 +257,11 @@ export async function collectApproval(id, comment) {
   try {
     await apiFetch('POST', '/approvals/' + id + '/collect', { comment }, { idempotency: true })
     addToast('Approval collected')
-    await loadView('approvals')
+    // Refresh pending list without calling loadView(), which would mutate ui.view
+    viewData.approvals = []
+    pagination.cursors.approvals = null
+    pagination.hasMore.approvals = false
+    await loadMore('approvals')
     approvalsMeta.completedDirty = true
   } catch (e) {
     addToast(e.message, 'error')
