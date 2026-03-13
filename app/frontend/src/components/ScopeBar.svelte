@@ -10,7 +10,7 @@
     scopeOptions
       .filter(s => {
         const q = auth.scopeInput.toLowerCase()
-        return q === '' || s.scope_id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+        return q === '' || s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
       })
       .slice(0, 8)
   )
@@ -63,13 +63,13 @@
     >
     {#if showDropdown && suggestions.length > 0}
       <div class="absolute top-full left-0 z-50 bg-white border border-zinc-200 rounded-md shadow-lg mt-1 min-w-72 max-h-48 overflow-y-auto">
-        {#each suggestions as s (s.scope_id)}
+        {#each suggestions as s (s.id)}
           <button
             type="button"
             class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
-            onmousedown={(e) => { e.preventDefault(); selectScope(s.scope_id) }}
+            onmousedown={(e) => { e.preventDefault(); selectScope(s.id) }}
           >
-            <div class="font-mono text-xs text-zinc-800 break-all">{s.scope_id}</div>
+            <div class="font-mono text-xs text-zinc-800 break-all">{s.id}</div>
             <div class="text-xs text-zinc-400 mt-0.5">{s.name}</div>
           </button>
         {/each}
