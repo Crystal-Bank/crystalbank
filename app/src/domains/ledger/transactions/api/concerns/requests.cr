@@ -48,7 +48,7 @@ module CrystalBank::Domains::Ledger::Transactions
         getter posting_date : String
 
         @[JSON::Field(description: "Remittance information")]
-        getter remittance_information : String
+        getter remittance_information : String?
 
         @[JSON::Field(format: "date", description: "Value date for the movement (YYYY-MM-DD)")]
         getter value_date : String
