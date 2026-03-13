@@ -8,11 +8,7 @@
 <aside class="w-56 bg-zinc-900 flex flex-col flex-shrink-0 overflow-y-auto">
   <div class="px-4 py-5 border-b border-zinc-800">
     <div class="flex items-center gap-2.5">
-      <div class="w-7 h-7 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#18181b" stroke-width="2.5">
-          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-        </svg>
-      </div>
+      <img src="/crystalbank-logo.png" alt="CrystalBank" class="w-7 h-7 rounded-lg flex-shrink-0 object-cover">
       <div>
         <div class="text-sm font-semibold text-white leading-tight">CrystalBank</div>
         <div class="text-xs text-zinc-500 leading-tight">Dashboard</div>
