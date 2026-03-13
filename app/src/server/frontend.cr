@@ -10,7 +10,6 @@ module CrystalBank
       INDEX_HTML = {{ read_file("#{__DIR__}/../../public/index.html") }}
       APP_JS     = {{ read_file("#{__DIR__}/../../public/app.js") }}
       APP_CSS    = {{ read_file("#{__DIR__}/../../public/style.css") }}
-      LOGO_PNG   = {{ read_file("#{__DIR__}/../../public/crystalbank-logo.png") }}
 
       get "/" do
         response.content_type = "text/html; charset=utf-8"
@@ -27,12 +26,6 @@ module CrystalBank
       get "/style.css" do
         response.content_type = "text/css; charset=utf-8"
         response.print APP_CSS
-        response.close
-      end
-
-      get "/crystalbank-logo.png" do
-        response.content_type = "image/png"
-        response.print LOGO_PNG
         response.close
       end
     end
