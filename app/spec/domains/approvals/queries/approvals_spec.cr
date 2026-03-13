@@ -73,7 +73,7 @@ describe CrystalBank::Domains::Approvals::Queries::Approvals do
         context = CrystalBank::Api::Context.new(user_id: UUID.v7, roles: [] of UUID, required_permission: CrystalBank::Permissions::READ_approvals_list, scope: UUID.v7, available_scopes: [available_scope_id])
 
         # cursor set to an ID after completed_id means neither seeded row is returned
-        beyond_cursor = completed_id
+        beyond_cursor = UUID.v7
         results = ::Approvals::Queries::Approvals.new.list(context, cursor: beyond_cursor, limit: 100, completed: false)
         ids = results.map(&.id)
         ids.should_not contain(pending_id)
