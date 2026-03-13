@@ -181,6 +181,44 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .checkbox-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0; font-size: 0.875rem; cursor: pointer; }
 .checkbox-item input[type="checkbox"] { cursor: pointer; }
 
+/* ── Drawer ───────────────────────────────────────────── */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 40;
+  backdrop-filter: blur(1px);
+}
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 400px;
+  max-width: 100vw;
+  background: white;
+  border-left: 1px solid hsl(var(--border));
+  box-shadow: -8px 0 32px rgba(0,0,0,0.08);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  flex-shrink: 0;
+}
+.drawer-title { font-size: 1rem; font-weight: 600; color: hsl(var(--foreground)); }
+.drawer-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.drawer-field { margin-bottom: 1.25rem; }
+.drawer-field-label { font-size: 0.72rem; font-weight: 600; color: hsl(var(--muted-fg)); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.375rem; }
+.drawer-field-value { font-size: 0.875rem; color: hsl(var(--foreground)); word-break: break-all; }
+.drawer-footer { padding: 1rem 1.5rem; border-top: 1px solid hsl(var(--border)); flex-shrink: 0; }
+
 /* ── Permission list ──────────────────────────────────── */
 .permission-list { border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 2px); max-height: 13rem; overflow-y: auto; background: hsl(var(--muted)); }
 .permission-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.75rem; font-size: 0.78rem; cursor: pointer; }
