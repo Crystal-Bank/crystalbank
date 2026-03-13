@@ -1,5 +1,10 @@
 import { auth } from './store.svelte.js'
 
+function clearSession() {
+  auth.token = ''
+  localStorage.removeItem('cb_token')
+}
+
 export async function apiFetch(method, path, body = null, opts = {}) {
   const headers = {
     'Content-Type': 'application/json',
@@ -13,6 +18,11 @@ export async function apiFetch(method, path, body = null, opts = {}) {
     headers,
     body: body ? JSON.stringify(body) : null,
   })
+
+  if (res.status === 401) {
+    clearSession()
+    throw new Error('Session expired')
+  }
 
   if (!res.ok) {
     let msg = 'Request failed (' + res.status + ')'

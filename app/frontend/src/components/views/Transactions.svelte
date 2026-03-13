@@ -239,8 +239,8 @@
         </div>
 
         <div class="mb-4">
-          <label class="field-label">Remittance Information</label>
-          <input bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services..." required>
+          <label class="field-label">Remittance Information <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <input bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services...">
         </div>
 
         <div class="grid grid-cols-3 gap-3 mb-5">

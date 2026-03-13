@@ -1,4 +1,4 @@
-import { auth, ui, viewData, pagination, VIEW_PATHS } from './store.svelte.js'
+import { auth, ui, viewData, pagination, VIEW_PATHS, approvalsMeta } from './store.svelte.js'
 import { apiFetch } from './api.js'
 
 // ── Toast ────────────────────────────────────────────────
@@ -73,7 +73,9 @@ export async function loadView(id) {
 export async function refreshView(id) {
   if (!VIEW_PATHS[id] || ui.loadingView) return
   try {
-    const res = await apiFetch('GET', VIEW_PATHS[id] + '?limit=20')
+    const base = VIEW_PATHS[id]
+    const sep = base.includes('?') ? '&' : '?'
+    const res = await apiFetch('GET', base + sep + 'limit=20')
     const items = res.data.map(e => e.attributes)
     if (
       JSON.stringify(items) !== JSON.stringify(viewData[id].slice(0, items.length)) ||
@@ -91,7 +93,9 @@ export async function loadMore(id) {
   ui.loading = true
   ui.loadingView = id
   try {
-    let url = VIEW_PATHS[id] + '?limit=20'
+    const base = VIEW_PATHS[id]
+    const sep = base.includes('?') ? '&' : '?'
+    let url = base + sep + 'limit=20'
     if (pagination.cursors[id]) url += '&cursor=' + pagination.cursors[id]
     const res = await apiFetch('GET', url)
     const items = res.data.map(e => e.attributes)
@@ -235,7 +239,7 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
       entries,
       posting_date,
       value_date,
-      remittance_information,
+      ...(remittance_information ? { remittance_information } : {}),
       ...(Object.keys(meta).length > 0 ? { metadata: meta } : {}),
     }, { idempotency: true })
     addToast('Transaction created')
@@ -253,7 +257,11 @@ export async function collectApproval(id, comment) {
   try {
     await apiFetch('POST', '/approvals/' + id + '/collect', { comment }, { idempotency: true })
     addToast('Approval collected')
-    await loadView('approvals')
+    // Optimistically remove from pending list immediately (avoids race with backend state)
+    viewData.approvals = viewData.approvals.filter(a => a.id !== id)
+    approvalsMeta.completedDirty = true
+    // Background reconciliation — does not clear the list or block the UI
+    refreshView('approvals')
   } catch (e) {
     addToast(e.message, 'error')
     throw e

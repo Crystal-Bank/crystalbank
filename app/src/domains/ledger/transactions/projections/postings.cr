@@ -43,14 +43,13 @@ module CrystalBank::Domains::Ledger::Transactions
         currency = aggregate.state.currency
         posting_date = aggregate.state.posting_date
         value_date = aggregate.state.value_date
-        remittance_information = aggregate.state.remittance_information
+        remittance_information = aggregate.state.remittance_information.to_s
         payment_type = aggregate.state.payment_type
         external_ref = aggregate.state.external_ref
         channel = aggregate.state.channel
 
         raise "Invalid ledger transaction state: missing entries" if entries.nil?
         raise "Invalid ledger transaction state: missing currency" if currency.nil?
-        raise "Invalid ledger transaction state: missing remittance_information" if remittance_information.nil?
 
         @projection_database.transaction do |tx|
           cnn = tx.connection

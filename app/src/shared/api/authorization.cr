@@ -13,7 +13,8 @@ module CrystalBank
         jwt = parse_jwt(token)
 
         # Get the request scope from the header (parse if provided, required only when request_scope: true)
-        scope_id = (!scope.nil? && !scope.empty?) ? UUID.new(scope) : nil
+        scope_id : (UUID | Nil) = nil
+        scope_id = (!scope.nil? && !scope.empty?) ? UUID.new(scope) : nil if request_scope
 
         # Authorize if no permission is requested
         return true if permission.nil?

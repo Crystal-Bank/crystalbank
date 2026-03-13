@@ -11,7 +11,7 @@ module CrystalBank::Domains::Ledger::Transactions
           attribute external_ref, String?
           attribute payment_type, String?
           attribute posting_date, Time
-          attribute remittance_information, String
+          attribute remittance_information, String?
           attribute scope_id, UUID
           attribute value_date, Time
         end
