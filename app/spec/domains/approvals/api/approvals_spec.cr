@@ -2,7 +2,7 @@ require "../../../spec_helper"
 
 describe CrystalBank::Domains::Approvals::Api::Approvals do
   # IDs chosen to avoid collisions with query spec seeds
-  pending_id   = UUID.new("00000000-0000-0000-0000-bbb000000010")
+  pending_id = UUID.new("00000000-0000-0000-0000-bbb000000010")
   completed_id = UUID.new("00000000-0000-0000-0000-bbb000000020")
 
   before_all do

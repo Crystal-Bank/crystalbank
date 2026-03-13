@@ -1,7 +1,7 @@
 require "../../../spec_helper"
 
 describe CrystalBank::Domains::Approvals::Queries::Approvals do
-  pending_id   = UUID.new("00000000-0000-0000-0000-aaa000000010")
+  pending_id = UUID.new("00000000-0000-0000-0000-aaa000000010")
   completed_id = UUID.new("00000000-0000-0000-0000-aaa000000020")
 
   # Seed two approvals — one pending, one completed — before running cases
