@@ -94,7 +94,9 @@ export async function loadMore(id) {
 export async function createAccount({ type, currencies, customerIds }) {
   ui.loading = true
   try {
-    const customer_ids = customerIds.split('\n').map(s => s.trim()).filter(Boolean)
+    const customer_ids = Array.isArray(customerIds)
+      ? customerIds
+      : customerIds.split('\n').map(s => s.trim()).filter(Boolean)
     await apiFetch('POST', '/accounts/open', { type, currencies, customer_ids }, { idempotency: true })
     addToast('Account opening requested')
     await loadView('accounts')
@@ -134,10 +136,10 @@ export async function createUser({ name, email }) {
   }
 }
 
-export async function createRole({ name, permissions, scopesList }) {
+export async function createRole({ name, permissions, scopesList, selectedScopes }) {
   ui.loading = true
   try {
-    const scopes = scopesList.split('\n').map(s => s.trim()).filter(Boolean)
+    const scopes = selectedScopes ?? (scopesList ? scopesList.split('\n').map(s => s.trim()).filter(Boolean) : [])
     await apiFetch('POST', '/roles/create', { name, permissions, scopes }, { idempotency: true })
     addToast('Role created')
     await loadView('roles')

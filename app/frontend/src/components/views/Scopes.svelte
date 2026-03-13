@@ -1,13 +1,34 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createScope } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', parent_scope_id: '' })
+  let scopeOptions = $state([])
+  let showParentDropdown = $state(false)
 
-  function openModal() {
+  let parentSuggestions = $derived(
+    scopeOptions
+      .filter(s => {
+        const q = form.parent_scope_id.toLowerCase()
+        return q === '' || s.scope_id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+      })
+      .slice(0, 8)
+  )
+
+  async function openModal() {
     form = { name: '', parent_scope_id: '' }
     showModal = true
+    try {
+      const res = await apiFetch('GET', '/scopes/?limit=200')
+      scopeOptions = res.data.map(e => e.attributes)
+    } catch { scopeOptions = [] }
+  }
+
+  function selectParentScope(scopeId) {
+    form.parent_scope_id = scopeId
+    showParentDropdown = false
   }
 
   async function handleSubmit() {
@@ -79,7 +100,31 @@
             Parent Scope ID
             <span class="text-zinc-400 font-normal">(optional)</span>
           </label>
-          <input bind:value={form.parent_scope_id} type="text" class="field-input font-mono text-sm" placeholder="UUID of parent scope...">
+          <div class="relative">
+            <input
+              bind:value={form.parent_scope_id}
+              type="text"
+              class="field-input font-mono text-sm"
+              placeholder="Search scopes by name or UUID..."
+              onfocus={() => showParentDropdown = true}
+              onblur={() => setTimeout(() => { showParentDropdown = false }, 180)}
+              oninput={() => showParentDropdown = true}
+            >
+            {#if showParentDropdown && parentSuggestions.length > 0}
+              <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
+                {#each parentSuggestions as s (s.scope_id)}
+                  <button
+                    type="button"
+                    class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
+                    onmousedown={(e) => { e.preventDefault(); selectParentScope(s.scope_id) }}
+                  >
+                    <div class="font-medium text-xs text-zinc-800">{s.name}</div>
+                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{s.scope_id}</div>
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          </div>
           <div class="field-hint">Leave empty to create a root scope</div>
         </div>
         <div class="flex gap-2 justify-end">

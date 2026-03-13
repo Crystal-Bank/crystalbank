@@ -1,13 +1,32 @@
 <script>
   import { viewData, pagination, ui, ALL_PERMISSIONS } from '../../lib/store.svelte.js'
   import { loadMore, createRole } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
 
   let showModal = $state(false)
-  let form = $state({ name: '', selectedPermissions: [], scopesList: '' })
+  let form = $state({ name: '', selectedPermissions: [], selectedScopes: [] })
+  let scopeOptions = $state([])
+  let scopeSearch = $state('')
+  let showScopeDropdown = $state(false)
 
-  function openModal() {
-    form = { name: '', selectedPermissions: [], scopesList: '' }
+  let scopeSuggestions = $derived(
+    scopeOptions
+      .filter(s => {
+        if (form.selectedScopes.includes(s.scope_id)) return false
+        const q = scopeSearch.toLowerCase()
+        return q === '' || s.scope_id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+      })
+      .slice(0, 8)
+  )
+
+  async function openModal() {
+    form = { name: '', selectedPermissions: [], selectedScopes: [] }
+    scopeSearch = ''
     showModal = true
+    try {
+      const res = await apiFetch('GET', '/scopes/?limit=200')
+      scopeOptions = res.data.map(e => e.attributes)
+    } catch { scopeOptions = [] }
   }
 
   function togglePermission(p) {
@@ -16,9 +35,25 @@
     else form.selectedPermissions = form.selectedPermissions.filter(x => x !== p)
   }
 
+  function addScope(scopeId) {
+    if (!form.selectedScopes.includes(scopeId)) {
+      form.selectedScopes = [...form.selectedScopes, scopeId]
+    }
+    scopeSearch = ''
+    showScopeDropdown = false
+  }
+
+  function removeScope(scopeId) {
+    form.selectedScopes = form.selectedScopes.filter(id => id !== scopeId)
+  }
+
+  function getScopeName(scopeId) {
+    return scopeOptions.find(s => s.scope_id === scopeId)?.name ?? scopeId
+  }
+
   async function handleSubmit() {
     try {
-      await createRole({ name: form.name, permissions: form.selectedPermissions, scopesList: form.scopesList })
+      await createRole({ name: form.name, permissions: form.selectedPermissions, selectedScopes: form.selectedScopes })
       showModal = false
     } catch {}
   }
@@ -96,8 +131,42 @@
         </div>
         <div class="mb-5">
           <label class="field-label">Scope UUIDs</label>
-          <textarea bind:value={form.scopesList} class="field-input" rows="2" placeholder="One UUID per line..."></textarea>
-          <div class="field-hint">One scope UUID per line</div>
+          {#if form.selectedScopes.length > 0}
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              {#each form.selectedScopes as scopeId (scopeId)}
+                <span class="inline-flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded px-2 py-0.5 text-xs">
+                  <span class="font-mono text-zinc-700">{getScopeName(scopeId)}</span>
+                  <button type="button" onclick={() => removeScope(scopeId)} class="text-zinc-400 hover:text-red-500 leading-none">&times;</button>
+                </span>
+              {/each}
+            </div>
+          {/if}
+          <div class="relative">
+            <input
+              type="text"
+              bind:value={scopeSearch}
+              onfocus={() => showScopeDropdown = true}
+              onblur={() => setTimeout(() => { showScopeDropdown = false }, 180)}
+              oninput={() => showScopeDropdown = true}
+              class="field-input"
+              placeholder="Search scopes by name or UUID..."
+            >
+            {#if showScopeDropdown && scopeSuggestions.length > 0}
+              <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
+                {#each scopeSuggestions as s (s.scope_id)}
+                  <button
+                    type="button"
+                    class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
+                    onmousedown={(e) => { e.preventDefault(); addScope(s.scope_id) }}
+                  >
+                    <div class="font-medium text-xs text-zinc-800">{s.name}</div>
+                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{s.scope_id}</div>
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          </div>
+          <div class="field-hint">Search and select scope(s) to restrict this role to</div>
         </div>
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>

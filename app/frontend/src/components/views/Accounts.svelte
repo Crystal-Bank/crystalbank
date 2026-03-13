@@ -1,19 +1,54 @@
 <script>
   import { viewData, pagination, ui, SUPPORTED_CURRENCIES } from '../../lib/store.svelte.js'
   import { loadMore, createAccount } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
 
   let showModal = $state(false)
-  let form = $state({ type: '', customerIds: '', selectedCurrencies: [] })
+  let form = $state({ type: '', selectedCurrencies: [], customerIds: [] })
+  let customerOptions = $state([])
+  let customerSearch = $state('')
+  let showCustomerDropdown = $state(false)
 
-  function openModal() {
-    form = { type: '', customerIds: '', selectedCurrencies: [] }
+  let customerSuggestions = $derived(
+    customerOptions
+      .filter(c => {
+        if (form.customerIds.includes(c.id)) return false
+        const q = customerSearch.toLowerCase()
+        return q === '' || c.id.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
+      })
+      .slice(0, 8)
+  )
+
+  async function openModal() {
+    form = { type: '', selectedCurrencies: [], customerIds: [] }
+    customerSearch = ''
     showModal = true
+    try {
+      const res = await apiFetch('GET', '/customers/?limit=200')
+      customerOptions = res.data.map(e => e.attributes)
+    } catch { customerOptions = [] }
   }
 
   function toggleCurrency(c) {
     const idx = form.selectedCurrencies.indexOf(c)
     if (idx === -1) form.selectedCurrencies = [...form.selectedCurrencies, c]
     else form.selectedCurrencies = form.selectedCurrencies.filter(x => x !== c)
+  }
+
+  function addCustomer(customerId) {
+    if (!form.customerIds.includes(customerId)) {
+      form.customerIds = [...form.customerIds, customerId]
+    }
+    customerSearch = ''
+    showCustomerDropdown = false
+  }
+
+  function removeCustomer(customerId) {
+    form.customerIds = form.customerIds.filter(id => id !== customerId)
+  }
+
+  function getCustomerName(id) {
+    return customerOptions.find(c => c.id === id)?.name ?? id
   }
 
   async function handleSubmit() {
@@ -99,8 +134,42 @@
         </div>
         <div class="mb-5">
           <label class="field-label">Customer IDs</label>
-          <textarea bind:value={form.customerIds} class="field-input" rows="2" placeholder="One UUID per line..."></textarea>
-          <div class="field-hint">One customer UUID per line</div>
+          {#if form.customerIds.length > 0}
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              {#each form.customerIds as id (id)}
+                <span class="inline-flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded px-2 py-0.5 text-xs">
+                  <span class="font-mono text-zinc-700">{getCustomerName(id)}</span>
+                  <button type="button" onclick={() => removeCustomer(id)} class="text-zinc-400 hover:text-red-500 leading-none">&times;</button>
+                </span>
+              {/each}
+            </div>
+          {/if}
+          <div class="relative">
+            <input
+              type="text"
+              bind:value={customerSearch}
+              onfocus={() => showCustomerDropdown = true}
+              onblur={() => setTimeout(() => { showCustomerDropdown = false }, 180)}
+              oninput={() => showCustomerDropdown = true}
+              class="field-input"
+              placeholder="Search customers by name or ID..."
+            >
+            {#if showCustomerDropdown && customerSuggestions.length > 0}
+              <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
+                {#each customerSuggestions as c (c.id)}
+                  <button
+                    type="button"
+                    class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
+                    onmousedown={(e) => { e.preventDefault(); addCustomer(c.id) }}
+                  >
+                    <div class="font-medium text-xs text-zinc-800">{c.name}</div>
+                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{c.id}</div>
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          </div>
+          <div class="field-hint">Search and select customer(s) to assign as account owners</div>
         </div>
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>

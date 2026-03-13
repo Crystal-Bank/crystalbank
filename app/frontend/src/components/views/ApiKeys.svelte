@@ -1,15 +1,36 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, generateApiKey, revokeApiKey, loadView } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
   import { formatDate } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let keyResult = $state(null)  // { id, secret } — shown after generation
   let form = $state({ name: '', user_id: '' })
+  let userOptions = $state([])
+  let showUserDropdown = $state(false)
 
-  function openModal() {
+  let userSuggestions = $derived(
+    userOptions
+      .filter(u => {
+        const q = form.user_id.toLowerCase()
+        return q === '' || u.id.toLowerCase().includes(q) || u.name.toLowerCase().includes(q) || (u.email ?? '').toLowerCase().includes(q)
+      })
+      .slice(0, 8)
+  )
+
+  async function openModal() {
     form = { name: '', user_id: '' }
     showModal = true
+    try {
+      const res = await apiFetch('GET', '/users/?limit=200')
+      userOptions = res.data.map(e => e.attributes)
+    } catch { userOptions = [] }
+  }
+
+  function selectUser(userId) {
+    form.user_id = userId
+    showUserDropdown = false
   }
 
   async function handleSubmit() {
@@ -90,7 +111,32 @@
         </div>
         <div class="mb-5">
           <label class="field-label">User ID</label>
-          <input bind:value={form.user_id} type="text" class="field-input font-mono text-sm" placeholder="UUID of the user" required>
+          <div class="relative">
+            <input
+              bind:value={form.user_id}
+              type="text"
+              class="field-input font-mono text-sm"
+              placeholder="Search users by name or ID..."
+              onfocus={() => showUserDropdown = true}
+              onblur={() => setTimeout(() => { showUserDropdown = false }, 180)}
+              oninput={() => showUserDropdown = true}
+              required
+            >
+            {#if showUserDropdown && userSuggestions.length > 0}
+              <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
+                {#each userSuggestions as u (u.id)}
+                  <button
+                    type="button"
+                    class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
+                    onmousedown={(e) => { e.preventDefault(); selectUser(u.id) }}
+                  >
+                    <div class="font-medium text-xs text-zinc-800">{u.name}</div>
+                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{u.id}{u.email ? ` · ${u.email}` : ''}</div>
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          </div>
         </div>
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>
