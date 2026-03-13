@@ -40,7 +40,7 @@ module CrystalBank::Domains::Roles
       ) : ListResponse(Responses::Role)
         authorized?("read_roles_list", request_scope: false)
 
-        roles = ::Roles::Queries::Roles.new.list(cursor: cursor, limit: limit + 1).map do |s|
+        roles = ::Roles::Queries::Roles.new.list(context, cursor: cursor, limit: limit + 1).map do |s|
           Responses::Role.new(
             s.id,
             s.scope_id,
