@@ -239,7 +239,7 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
       entries,
       posting_date,
       value_date,
-      remittance_information,
+      ...(remittance_information ? { remittance_information } : {}),
       ...(Object.keys(meta).length > 0 ? { metadata: meta } : {}),
     }, { idempotency: true })
     addToast('Transaction created')
