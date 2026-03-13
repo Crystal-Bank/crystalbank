@@ -160,8 +160,8 @@
 
       <form onsubmit={(e) => { e.preventDefault(); handleCollect() }}>
         <div class="mb-5">
-          <label class="field-label">Comment</label>
-          <input bind:value={comment} type="text" class="field-input" placeholder="Approved after review..." required>
+          <label class="field-label">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <input bind:value={comment} type="text" class="field-input" placeholder="Approved after review...">
           <div class="field-hint">A note explaining your approval decision</div>
         </div>
         <div class="flex gap-2 justify-end">
