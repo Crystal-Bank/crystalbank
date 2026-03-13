@@ -84,8 +84,9 @@ api_secret_encrypted = Crypto::Bcrypt::Password.create(api_secret, cost: 10).to_
 
 # Scopes
 scopes = Hash(String, UUID).new
-scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: actor_id, parent_scope_id: dummy_uuid, aggregate_id: UUID.new("019cca42-0400-70f0-8568-19a800868bca"))
-scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: actor_id, parent_scope_id: dummy_uuid, aggregate_id: UUID.new("019ce6ef-bc51-7445-b3d9-68d8ab2102c0"))
+scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: actor_id, parent_scope_id: dummy_uuid, aggregate_id: UUID.new("00000000-0000-0000-0000-900000000001"))
+scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: actor_id, parent_scope_id: scopes["root"], aggregate_id: UUID.new("00000000-0000-0000-0000-900000000002"))
+scopes["sub2"] = seed_scope(event_store, actor_id, name: "Sub Scope #2", scope_id: actor_id, parent_scope_id: scopes["root"], aggregate_id: UUID.new("00000000-0000-0000-0000-900000000003"))
 
 # Users
 users = Hash(String, UUID).new
@@ -138,4 +139,5 @@ CrystalBank.print_verbose("Created roles", [
 CrystalBank.print_verbose("Created scopes", [
   "Root Scope: '#{scopes["root"]}'",
   "Sub Scope: '#{scopes["sub"]}'",
+  "Sub Scope #2: '#{scopes["sub2"]}'",
 ].join("\n"))
