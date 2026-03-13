@@ -15,7 +15,7 @@ module CrystalBank::Domains::Ledger::Transactions
       # - **write_ledger_transactions_request**
       @[AC::Route::POST("/", body: :r)]
       def create(r : TransactionRequest) : Responses::TransactionResponse
-        authorized?("write_ledger_transactions_request", request_scope: false)
+        authorized?("write_ledger_transactions_request")
 
         aggregate_id = ::Ledger::Transactions::Request::Commands::Request.new.call(r, context)
 
