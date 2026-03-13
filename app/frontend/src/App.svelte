@@ -1,11 +1,12 @@
 <script>
   import { onMount } from 'svelte'
-  import { auth, ui } from './lib/store.svelte.js'
-  import { loadView } from './lib/actions.js'
+  import { auth, ui, VIEW_PATHS } from './lib/store.svelte.js'
+  import { refreshView } from './lib/actions.js'
   import Login from './components/Login.svelte'
   import Sidebar from './components/Sidebar.svelte'
   import ScopeBar from './components/ScopeBar.svelte'
   import ToastContainer from './components/ToastContainer.svelte'
+  import Dashboard from './components/views/Dashboard.svelte'
   import Accounts from './components/views/Accounts.svelte'
   import Customers from './components/views/Customers.svelte'
   import Transactions from './components/views/Transactions.svelte'
@@ -16,7 +17,11 @@
   import Approvals from './components/views/Approvals.svelte'
 
   onMount(() => {
-    if (auth.token) loadView('accounts')
+    if (auth.token) ui.view = 'dashboard'
+    const timer = setInterval(() => {
+      if (auth.token && VIEW_PATHS[ui.view]) refreshView(ui.view)
+    }, 5000)
+    return () => clearInterval(timer)
   })
 </script>
 
@@ -32,7 +37,9 @@
       <ScopeBar />
 
       <main class="flex-1 overflow-y-auto p-6">
-        {#if ui.view === 'accounts'}
+        {#if ui.view === 'dashboard'}
+          <Dashboard />
+        {:else if ui.view === 'accounts'}
           <Accounts />
         {:else if ui.view === 'customers'}
           <Customers />

@@ -1,13 +1,33 @@
 <script>
   import { viewData, pagination, ui, SUPPORTED_CURRENCIES } from '../../lib/store.svelte.js'
   import { loadMore, createAccount } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
 
+  // ── Create modal ─────────────────────────────────────
   let showModal = $state(false)
-  let form = $state({ type: '', customerIds: '', selectedCurrencies: [] })
+  let form = $state({ type: '', selectedCurrencies: [], customerIds: [] })
+  let customerOptions = $state([])
+  let customerSearch = $state('')
+  let showCustomerDropdown = $state(false)
 
-  function openModal() {
-    form = { type: '', customerIds: '', selectedCurrencies: [] }
+  let customerSuggestions = $derived(
+    customerOptions
+      .filter(c => {
+        if (form.customerIds.includes(c.id)) return false
+        const q = customerSearch.toLowerCase()
+        return q === '' || c.id.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
+      })
+      .slice(0, 8)
+  )
+
+  async function openModal() {
+    form = { type: '', selectedCurrencies: [], customerIds: [] }
+    customerSearch = ''
     showModal = true
+    try {
+      const res = await apiFetch('GET', '/customers/?limit=200')
+      customerOptions = res.data.map(e => e.attributes)
+    } catch { customerOptions = [] }
   }
 
   function toggleCurrency(c) {
@@ -16,12 +36,29 @@
     else form.selectedCurrencies = form.selectedCurrencies.filter(x => x !== c)
   }
 
+  function addCustomer(customerId) {
+    if (!form.customerIds.includes(customerId)) form.customerIds = [...form.customerIds, customerId]
+    customerSearch = ''
+    showCustomerDropdown = false
+  }
+
+  function removeCustomer(customerId) {
+    form.customerIds = form.customerIds.filter(id => id !== customerId)
+  }
+
+  function getCustomerName(id) {
+    return customerOptions.find(c => c.id === id)?.name ?? id
+  }
+
   async function handleSubmit() {
     try {
       await createAccount({ type: form.type, currencies: form.selectedCurrencies, customerIds: form.customerIds })
       showModal = false
     } catch {}
   }
+
+  // ── Detail drawer ─────────────────────────────────────
+  let drawerAccount = $state(null)
 </script>
 
 <div class="page-header">
@@ -43,7 +80,7 @@
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
       {/if}
       {#each viewData.accounts as a (a.id)}
-        <tr>
+        <tr onclick={() => drawerAccount = a} class="cursor-pointer">
           <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge" class:badge-blue={a.type === 'checking'} class:badge-purple={a.type !== 'checking'}>{a.type?.replace('_', ' ')}</span></td>
           <td>
@@ -71,6 +108,58 @@
   {/if}
 </div>
 
+<!-- Account detail drawer -->
+{#if drawerAccount}
+  <div class="drawer-backdrop" onclick={() => drawerAccount = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Account Details</div>
+      <button onclick={() => drawerAccount = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerAccount.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Type</div>
+        <div>
+          <span class="badge" class:badge-blue={drawerAccount.type === 'checking'} class:badge-purple={drawerAccount.type !== 'checking'}>
+            {drawerAccount.type?.replace('_', ' ')}
+          </span>
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Currencies</div>
+        <div class="flex gap-1 flex-wrap">
+          {#each drawerAccount.currencies ?? [] as c (c)}
+            <span class="badge badge-zinc">{c.toUpperCase()}</span>
+          {/each}
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Customer IDs</div>
+        {#if drawerAccount.customer_ids?.length > 0}
+          <div class="space-y-1">
+            {#each drawerAccount.customer_ids as cid (cid)}
+              <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{cid}</div>
+            {/each}
+          </div>
+        {:else}
+          <div class="drawer-field-value text-zinc-400">No owners</div>
+        {/if}
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Scope ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerAccount.scope_id}</div>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Open Account modal -->
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
     <div class="modal-box">
@@ -99,8 +188,42 @@
         </div>
         <div class="mb-5">
           <label class="field-label">Customer IDs</label>
-          <textarea bind:value={form.customerIds} class="field-input" rows="2" placeholder="One UUID per line..."></textarea>
-          <div class="field-hint">One customer UUID per line</div>
+          {#if form.customerIds.length > 0}
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              {#each form.customerIds as id (id)}
+                <span class="inline-flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded px-2 py-0.5 text-xs">
+                  <span class="font-mono text-zinc-700">{getCustomerName(id)}</span>
+                  <button type="button" onclick={() => removeCustomer(id)} class="text-zinc-400 hover:text-red-500 leading-none">&times;</button>
+                </span>
+              {/each}
+            </div>
+          {/if}
+          <div class="relative">
+            <input
+              type="text"
+              bind:value={customerSearch}
+              onfocus={() => showCustomerDropdown = true}
+              onblur={() => setTimeout(() => { showCustomerDropdown = false }, 180)}
+              oninput={() => showCustomerDropdown = true}
+              class="field-input"
+              placeholder="Search customers by name or ID..."
+            >
+            {#if showCustomerDropdown && customerSuggestions.length > 0}
+              <div class="absolute top-full left-0 right-0 z-20 bg-white border border-zinc-200 rounded-md shadow-lg mt-0.5 max-h-48 overflow-y-auto">
+                {#each customerSuggestions as c (c.id)}
+                  <button
+                    type="button"
+                    class="w-full text-left px-3 py-2 hover:bg-zinc-50 border-b border-zinc-100 last:border-0"
+                    onmousedown={(e) => { e.preventDefault(); addCustomer(c.id) }}
+                  >
+                    <div class="font-medium text-xs text-zinc-800">{c.name}</div>
+                    <div class="font-mono text-xs text-zinc-400 mt-0.5">{c.id}</div>
+                  </button>
+                {/each}
+              </div>
+            {/if}
+          </div>
+          <div class="field-hint">Search and select customer(s) to assign as account owners</div>
         </div>
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>

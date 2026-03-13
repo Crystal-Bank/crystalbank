@@ -33,7 +33,7 @@ export async function login(clientId, clientSecret) {
     const body = await res.json()
     auth.token = body.token
     localStorage.setItem('cb_token', auth.token)
-    await loadView('accounts')
+    ui.view = 'dashboard'
   } finally {
     ui.loading = false
   }
@@ -54,6 +54,7 @@ export function setScope(value) {
 // ── Navigation / data loading ────────────────────────────
 
 export async function switchView(id) {
+  if (id === 'dashboard') { ui.view = 'dashboard'; return }
   if (ui.view === id && viewData[id].length > 0) return
   await loadView(id)
 }
@@ -65,6 +66,24 @@ export async function loadView(id) {
   pagination.cursors[id] = null
   pagination.hasMore[id] = false
   await loadMore(id)
+}
+
+// Silent background refresh — does not touch ui.loading or clear existing data.
+// Replaces the first page only; skips entirely if a foreground load is in progress.
+export async function refreshView(id) {
+  if (!VIEW_PATHS[id] || ui.loadingView) return
+  try {
+    const res = await apiFetch('GET', VIEW_PATHS[id] + '?limit=20')
+    const items = res.data.map(e => e.attributes)
+    if (
+      JSON.stringify(items) !== JSON.stringify(viewData[id].slice(0, items.length)) ||
+      res.meta.has_more !== pagination.hasMore[id]
+    ) {
+      viewData[id] = items
+      pagination.hasMore[id] = res.meta.has_more
+      pagination.cursors[id] = res.meta.next_cursor || null
+    }
+  } catch {}
 }
 
 export async function loadMore(id) {
@@ -94,7 +113,9 @@ export async function loadMore(id) {
 export async function createAccount({ type, currencies, customerIds }) {
   ui.loading = true
   try {
-    const customer_ids = customerIds.split('\n').map(s => s.trim()).filter(Boolean)
+    const customer_ids = Array.isArray(customerIds)
+      ? customerIds
+      : customerIds.split('\n').map(s => s.trim()).filter(Boolean)
     await apiFetch('POST', '/accounts/open', { type, currencies, customer_ids }, { idempotency: true })
     addToast('Account opening requested')
     await loadView('accounts')
@@ -134,10 +155,24 @@ export async function createUser({ name, email }) {
   }
 }
 
-export async function createRole({ name, permissions, scopesList }) {
+export async function assignRoles(userId, roleIds) {
   ui.loading = true
   try {
-    const scopes = scopesList.split('\n').map(s => s.trim()).filter(Boolean)
+    await apiFetch('POST', '/users/' + userId + '/assign_roles', { role_ids: roleIds }, { idempotency: true })
+    addToast('Roles assigned')
+    await loadView('users')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
+export async function createRole({ name, permissions, scopesList, selectedScopes }) {
+  ui.loading = true
+  try {
+    const scopes = selectedScopes ?? (scopesList ? scopesList.split('\n').map(s => s.trim()).filter(Boolean) : [])
     await apiFetch('POST', '/roles/create', { name, permissions, scopes }, { idempotency: true })
     addToast('Role created')
     await loadView('roles')

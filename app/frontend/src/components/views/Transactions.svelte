@@ -21,7 +21,6 @@
     { _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' },
   ])
 
-  // Accounts filtered for whichever entry's account field is focused
   let suggestions = $derived(
     activeDropdown >= 0
       ? accountOptions
@@ -45,7 +44,6 @@
     entryCounter = 1
     activeDropdown = -1
     showModal = true
-    // Fetch accounts for autocomplete
     try {
       const res = await apiFetch('GET', '/accounts/?limit=200')
       accountOptions = res.data.map(e => e.attributes)
@@ -87,6 +85,9 @@
       showModal = false
     } catch {}
   }
+
+  // ── Detail drawer ────────────────────────────────────
+  let drawerPosting = $state(null)
 </script>
 
 <div class="page-header">
@@ -121,7 +122,7 @@
         <tr><td colspan="9" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
       {/if}
       {#each viewData.postings as p, i (i)}
-        <tr>
+        <tr onclick={() => drawerPosting = p} class="cursor-pointer">
           <td><span class="mono text-xs">{p.id}</span></td>
           <td><span class="mono text-xs">{p.account_id}</span></td>
           <td>
@@ -151,6 +152,61 @@
   {/if}
 </div>
 
+<!-- Posting detail drawer -->
+{#if drawerPosting}
+  <div class="drawer-backdrop" onclick={() => drawerPosting = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Posting Details</div>
+      <button onclick={() => drawerPosting = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">Transaction ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerPosting.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Account ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerPosting.account_id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Direction</div>
+        <div>
+          <span class="badge" class:badge-red={drawerPosting.direction === 'debit'} class:badge-green={drawerPosting.direction === 'credit'}>
+            {drawerPosting.direction}
+          </span>
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Amount</div>
+        <div class="drawer-field-value font-semibold tabular-nums text-lg">{Number(drawerPosting.amount).toLocaleString()}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Currency</div>
+        <div><span class="badge badge-zinc">{drawerPosting.currency?.toUpperCase()}</span></div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Entry Type</div>
+        <div><span class="badge badge-zinc">{drawerPosting.entry_type?.replace('_', ' ')}</span></div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Posting Date</div>
+        <div class="drawer-field-value tabular-nums">{drawerPosting.posting_date}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Value Date</div>
+        <div class="drawer-field-value tabular-nums">{drawerPosting.value_date}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Remittance Information</div>
+        <div class="drawer-field-value">{drawerPosting.remittance_information}</div>
+      </div>
+    </div>
+  </div>
+{/if}
+
 <!-- Create Ledger Transaction modal -->
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
@@ -160,7 +216,6 @@
 
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
 
-        <!-- Top fields: 3-column grid -->
         <div class="grid grid-cols-3 gap-3 mb-4">
           <div>
             <label class="field-label">Currency</label>
@@ -188,7 +243,6 @@
           <input bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services..." required>
         </div>
 
-        <!-- Metadata -->
         <div class="grid grid-cols-3 gap-3 mb-5">
           <div>
             <label class="field-label">Payment Type</label>
@@ -216,7 +270,6 @@
           </div>
         </div>
 
-        <!-- Entries -->
         <div class="mb-2 flex items-center justify-between">
           <div class="text-sm font-semibold text-zinc-700">Entries</div>
           <button type="button" onclick={addEntry} class="btn btn-ghost btn-sm text-xs">
@@ -230,7 +283,6 @@
             <div class="border border-zinc-200 rounded-lg p-3 bg-zinc-50">
               <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 120px 32px">
 
-                <!-- Account ID with autocomplete -->
                 <div class="relative">
                   <label class="field-label text-xs">Account ID</label>
                   <input
@@ -259,7 +311,6 @@
                   {/if}
                 </div>
 
-                <!-- Direction -->
                 <div>
                   <label class="field-label text-xs">Direction</label>
                   <select bind:value={entry.direction} class="field-input field-select text-xs" required>
@@ -268,13 +319,11 @@
                   </select>
                 </div>
 
-                <!-- Amount -->
                 <div>
                   <label class="field-label text-xs">Amount</label>
                   <input bind:value={entry.amount} type="number" min="1" class="field-input text-xs" placeholder="0" required>
                 </div>
 
-                <!-- Entry type -->
                 <div>
                   <label class="field-label text-xs">Entry Type</label>
                   <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
@@ -284,7 +333,6 @@
                   </select>
                 </div>
 
-                <!-- Remove -->
                 <div class="flex items-end pb-0.5">
                   {#if entries.length > 1}
                     <button

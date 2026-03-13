@@ -4,6 +4,7 @@
 
   let showModal = $state(false)
   let form = $state({ name: '', type: '' })
+  let drawerCustomer = $state(null)
 
   function openModal() {
     form = { name: '', type: '' }
@@ -37,7 +38,7 @@
         <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No customers found</td></tr>
       {/if}
       {#each viewData.customers as c (c.id)}
-        <tr>
+        <tr onclick={() => drawerCustomer = c} class="cursor-pointer">
           <td><span class="mono text-xs">{c.id}</span></td>
           <td class="font-medium">{c.name}</td>
           <td><span class="badge" class:badge-blue={c.type === 'individual'} class:badge-amber={c.type !== 'individual'}>{c.type}</span></td>
@@ -58,6 +59,42 @@
   {/if}
 </div>
 
+<!-- Customer detail drawer -->
+{#if drawerCustomer}
+  <div class="drawer-backdrop" onclick={() => drawerCustomer = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Customer Details</div>
+      <button onclick={() => drawerCustomer = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerCustomer.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Name</div>
+        <div class="drawer-field-value font-medium">{drawerCustomer.name}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Type</div>
+        <div>
+          <span class="badge" class:badge-blue={drawerCustomer.type === 'individual'} class:badge-amber={drawerCustomer.type !== 'individual'}>
+            {drawerCustomer.type}
+          </span>
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Scope ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerCustomer.scope_id}</div>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Onboard Customer modal -->
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
     <div class="modal-box">
