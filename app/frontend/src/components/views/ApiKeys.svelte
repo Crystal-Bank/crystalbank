@@ -50,6 +50,15 @@
     keyResult = null
     loadView('api_keys')
   }
+
+  // ── Detail drawer ─────────────────────────────────────
+  let drawerKey = $state(null)
+
+  async function handleRevokeFromDrawer(id) {
+    if (!confirm('Revoke this API key? This cannot be undone.')) return
+    await revokeApiKey(id)
+    drawerKey = null
+  }
 </script>
 
 <div class="page-header">
@@ -71,7 +80,7 @@
         <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No API keys found</td></tr>
       {/if}
       {#each viewData.api_keys as k (k.id)}
-        <tr>
+        <tr onclick={() => drawerKey = k} class="cursor-pointer">
           <td><span class="mono text-xs">{k.id}</span></td>
           <td class="font-medium">{k.name}</td>
           <td><span class="badge" class:badge-green={k.active} class:badge-red={!k.active}>{k.active ? 'Active' : 'Revoked'}</span></td>
@@ -97,6 +106,56 @@
     </div>
   {/if}
 </div>
+
+<!-- API Key detail drawer -->
+{#if drawerKey}
+  <div class="drawer-backdrop" onclick={() => drawerKey = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">API Key Details</div>
+      <button onclick={() => drawerKey = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerKey.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Name</div>
+        <div class="drawer-field-value font-medium">{drawerKey.name}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
+        <div><span class="badge" class:badge-green={drawerKey.active} class:badge-red={!drawerKey.active}>{drawerKey.active ? 'Active' : 'Revoked'}</span></div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Created</div>
+        <div class="drawer-field-value tabular-nums">{formatDate(drawerKey.created_at)}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">User ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerKey.user_id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Scope ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerKey.scope_id}</div>
+      </div>
+    </div>
+    {#if drawerKey.active}
+      <div class="drawer-footer">
+        <button
+          onclick={() => handleRevokeFromDrawer(drawerKey.id)}
+          class="btn btn-danger w-full"
+          disabled={ui.loading}
+        >
+          Revoke API Key
+        </button>
+      </div>
+    {/if}
+  </div>
+{/if}
 
 <!-- Generate API Key modal -->
 {#if showModal}

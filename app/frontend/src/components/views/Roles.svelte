@@ -57,6 +57,9 @@
       showModal = false
     } catch {}
   }
+
+  // ── Detail drawer ─────────────────────────────────────
+  let drawerRole = $state(null)
 </script>
 
 <div class="page-header">
@@ -75,7 +78,7 @@
     <div class="card p-10 text-center text-zinc-400 text-sm">No roles found</div>
   {/if}
   {#each viewData.roles as r (r.id)}
-    <div class="card p-4">
+    <div class="card p-4 cursor-pointer" onclick={() => drawerRole = r}>
       <div class="flex items-center gap-2 mb-2">
         <span class="font-semibold text-sm">{r.name}</span>
         <span class="mono text-xs">{r.id}</span>
@@ -105,6 +108,50 @@
 {#if pagination.hasMore.roles && !ui.loading}
   <div class="mt-4 flex justify-center">
     <button onclick={() => loadMore('roles')} class="btn btn-ghost btn-sm">Load more</button>
+  </div>
+{/if}
+
+<!-- Role detail drawer -->
+{#if drawerRole}
+  <div class="drawer-backdrop" onclick={() => drawerRole = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Role Details</div>
+      <button onclick={() => drawerRole = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerRole.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Name</div>
+        <div class="drawer-field-value font-medium">{drawerRole.name}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Permissions</div>
+        <div class="flex flex-wrap gap-1">
+          {#each drawerRole.permissions ?? [] as p (p)}
+            <span class="badge badge-blue">{p}</span>
+          {/each}
+          {#if (drawerRole.permissions ?? []).length === 0}
+            <span class="text-zinc-400 text-xs">None</span>
+          {/if}
+        </div>
+      </div>
+      {#if drawerRole.scopes?.length > 0}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Scopes</div>
+          <div class="space-y-1">
+            {#each drawerRole.scopes as s (s)}
+              <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{s}</div>
+            {/each}
+          </div>
+        </div>
+      {/if}
+    </div>
   </div>
 {/if}
 

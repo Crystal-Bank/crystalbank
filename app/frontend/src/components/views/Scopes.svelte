@@ -37,6 +37,9 @@
       showModal = false
     } catch {}
   }
+
+  // ── Detail drawer ─────────────────────────────────────
+  let drawerScope = $state(null)
 </script>
 
 <div class="page-header">
@@ -58,7 +61,7 @@
         <tr><td colspan="3" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
       {/if}
       {#each viewData.scopes as s (s.id)}
-        <tr>
+        <tr onclick={() => drawerScope = s} class="cursor-pointer">
           <td><span class="mono text-xs">{s.id}</span></td>
           <td class="font-medium">{s.name}</td>
           <td>
@@ -83,6 +86,37 @@
     </div>
   {/if}
 </div>
+
+<!-- Scope detail drawer -->
+{#if drawerScope}
+  <div class="drawer-backdrop" onclick={() => drawerScope = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Scope Details</div>
+      <button onclick={() => drawerScope = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerScope.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Name</div>
+        <div class="drawer-field-value font-medium">{drawerScope.name}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Parent Scope ID</div>
+        {#if drawerScope.parent_scope_id}
+          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerScope.parent_scope_id}</div>
+        {:else}
+          <div class="drawer-field-value text-zinc-400">Root scope</div>
+        {/if}
+      </div>
+    </div>
+  </div>
+{/if}
 
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
