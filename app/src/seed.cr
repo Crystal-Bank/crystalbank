@@ -1,179 +1,141 @@
 require "./crystalbank"
 
+def seed_scope(event_store, actor_id, name, scope_id, parent_scope_id = nil, aggregate_id = nil)
+  event = Scopes::Creation::Events::Requested.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    name: name,
+    parent_scope_id: parent_scope_id,
+    scope_id: scope_id,
+    aggregate_id: aggregate_id,
+  )
+  event_store.append(event)
+  UUID.new(event.header.aggregate_id.to_s)
+end
+
+def seed_user(event_store, actor_id, name, email, scope_id)
+  event = Users::Onboarding::Events::Requested.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    name: name,
+    email: email,
+    scope_id: scope_id,
+  )
+  event_store.append(event)
+  UUID.new(event.header.aggregate_id.to_s)
+end
+
+def seed_api_key(event_store, actor_id, name, user_id, scope_id, encrypted_secret)
+  event = ApiKeys::Generation::Events::Requested.new(
+    actor_id: actor_id,
+    api_secret: encrypted_secret,
+    command_handler: "seed",
+    name: name,
+    scope_id: scope_id,
+    user_id: user_id,
+  )
+  event_store.append(event)
+  UUID.new(event.header.aggregate_id.to_s)
+end
+
+def seed_role(event_store, actor_id, name, permissions, scope_id, scopes)
+  event = Roles::Creation::Events::Requested.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    name: name,
+    permissions: permissions,
+    scope_id: scope_id,
+    scopes: scopes,
+  )
+  event_store.append(event)
+  UUID.new(event.header.aggregate_id.to_s)
+end
+
+def assign_role(event_store, actor_id, user_id, role_id, scope_id, aggregate_version = 2)
+  event = Users::AssignRoles::Events::Requested.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    aggregate_id: user_id,
+    aggregate_version: aggregate_version,
+    role_ids: [role_id],
+    scope_id: scope_id,
+  )
+  event_store.append(event)
+end
+
+def seed_customer(event_store, actor_id, name, scope_id, type)
+  event = Customers::Onboarding::Events::Requested.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    name: name,
+    scope_id: scope_id,
+    type: type
+  )
+
+  event_store.append(event)
+  UUID.new(event.header.aggregate_id.to_s)
+end
+
 event_store = ES::Config.event_store
-
 dummy_uuid = UUID.new("00000000-0000-0000-0000-000000000000")
-
+actor_id = dummy_uuid
 api_secret = "secret"
 api_secret_encrypted = Crypto::Bcrypt::Password.create(api_secret, cost: 10).to_s
 
-# +++++++++++++++++++++++
-# Scope seed {START}
-# +++++++++++++++++++++++
-# Create Root Scope
-event = Scopes::Creation::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  name: "Root Scope",
-  parent_scope_id: nil,
-  scope_id: dummy_uuid,
-  aggregate_id: UUID.new("019cca42-0400-70f0-8568-19a800868bca")
-)
-# Append event to event store
-event_store.append(event)
+# Scopes
+scopes = Hash(String, UUID).new
+scopes["root"] = seed_scope(event_store, actor_id, name: "Root Scope", scope_id: actor_id, parent_scope_id: dummy_uuid, aggregate_id: UUID.new("019cca42-0400-70f0-8568-19a800868bca"))
+scopes["sub"] = seed_scope(event_store, actor_id, name: "Sub Scope", scope_id: actor_id, parent_scope_id: dummy_uuid, aggregate_id: UUID.new("019ce6ef-bc51-7445-b3d9-68d8ab2102c0"))
 
-scope_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# Scope seed {END}
-# +++++++++++++++++++++++
+# Users
+users = Hash(String, UUID).new
+users["admin"] = seed_user(event_store, actor_id, "Admin", "admin@crystalbank.xyz", scopes["root"])
+users["approver"] = seed_user(event_store, actor_id, "Approver", "approver@crystalbank.xyz", scopes["root"])
+users["scoped"] = seed_user(event_store, actor_id, "Scoped", "approver@crystalbank.xyz", scopes["sub"])
 
-# +++++++++++++++++++++++
-# User seed {START}
-# +++++++++++++++++++++++
-# Create User
-event = Users::Onboarding::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  name: "Admin",
-  email: "admin@crystalbank.xyz",
-  scope_id: scope_id,
-)
+# API Keys
+client_ids = Hash(String, UUID).new
+client_ids["admin"] = seed_api_key(event_store, actor_id, "admin api key", users["admin"], scopes["root"], api_secret_encrypted)
+client_ids["approver"] = seed_api_key(event_store, actor_id, "approver api key", users["approver"], scopes["root"], api_secret_encrypted)
+client_ids["scoped"] = seed_api_key(event_store, actor_id, "scoped api key", users["scoped"], scopes["sub"], api_secret_encrypted)
 
-# Append event to event store
-event_store.append(event)
+# Roles
+roles = Hash(String, UUID).new
+roles["admin"] = seed_role(event_store, actor_id, name: "Admin Role", permissions: CrystalBank::Permissions.values, scope_id: scopes["root"], scopes: [scopes["root"]])
+roles["scoped"] = seed_role(event_store, actor_id, name: "Scoped Role", permissions: CrystalBank::Permissions.values, scope_id: scopes["root"], scopes: [scopes["sub"]])
 
-# Return the aggregate ID of the newly created user aggregate
-user_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# User seed {END}
-# +++++++++++++++++++++++
+# Role assignments
+assign_role(event_store, actor_id, users["admin"], roles["admin"], scopes["root"])
+assign_role(event_store, actor_id, users["approver"], roles["admin"], scopes["root"])
+assign_role(event_store, actor_id, users["scoped"], roles["scoped"], scopes["root"])
 
-# +++++++++++++++++++++++
-# Approver User seed {START}
-# +++++++++++++++++++++++
-# Create User
-event = Users::Onboarding::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  name: "Approver",
-  email: "approver@crystalbank.xyz",
-  scope_id: scope_id,
-)
+# Customers
+customers = Hash(String, UUID).new
+customers["admin"] = seed_customer(event_store, actor_id, name: "Admin customer", scope_id: scopes["root"], type: CrystalBank::Types::Customers::Type::Business)
+customers["scoped"] = seed_customer(event_store, actor_id, name: "Scoped customer", scope_id: scopes["sub"], type: CrystalBank::Types::Customers::Type::Business)
 
-# Append event to event store
-event_store.append(event)
+# Output
+CrystalBank.print_verbose("Seed credentials Admin user", [
+  "client_id: '#{client_ids["admin"]}'",
+  "client_secret: '#{api_secret}'",
+].join("\n"))
 
-# Return the aggregate ID of the newly created user aggregate
-approver_user_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# Approver User seed {END}
-# +++++++++++++++++++++++
+CrystalBank.print_verbose("Seed credentials Approver user", [
+  "client_id: '#{client_ids["approver"]}'",
+  "client_secret: '#{api_secret}'",
+].join("\n"))
 
-# +++++++++++++++++++++++
-# API key seed {START}
-# +++++++++++++++++++++++
-# Create API key
-event = ApiKeys::Generation::Events::Requested.new(
-  actor_id: dummy_uuid,
-  api_secret: api_secret_encrypted,
-  command_handler: "seed",
-  name: "admin api key",
-  scope_id: scope_id,
-  user_id: user_id
-)
-# Append event to event store
-event_store.append(event)
-client_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# API key seed {END}
-# +++++++++++++++++++++++
+CrystalBank.print_verbose("Seed credentials Approver user", [
+  "client_id: '#{client_ids["scoped"]}'",
+  "client_secret: '#{api_secret}'",
+].join("\n"))
 
-# +++++++++++++++++++++++
-# Approver API key seed {START}
-# +++++++++++++++++++++++
-# Create API key
-event = ApiKeys::Generation::Events::Requested.new(
-  actor_id: dummy_uuid,
-  api_secret: api_secret_encrypted,
-  command_handler: "seed",
-  name: "admin api key",
-  scope_id: scope_id,
-  user_id: approver_user_id
-)
-# Append event to event store
-event_store.append(event)
-approver_client_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# Approver API key seed {END}
-# +++++++++++++++++++++++
+CrystalBank.print_verbose("Created roles", [
+  "Admin Role: '#{roles["admin"]}'",
+  "Scoped Role: '#{roles["scoped"]}'",
+].join("\n"))
 
-# +++++++++++++++++++++++
-# Role seed {START}
-# +++++++++++++++++++++++
-
-# Create Role
-event = Roles::Creation::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  name: "Admin Role",
-  permissions: CrystalBank::Permissions.values,
-  scope_id: scope_id,
-  scopes: [scope_id]
-)
-# Append event to event store
-event_store.append(event)
-role_id = UUID.new(event.header.aggregate_id.to_s)
-# +++++++++++++++++++++++
-# Role seed {END}
-# +++++++++++++++++++++++
-
-# +++++++++++++++++++++++
-# User-Role connection seed {START}
-# +++++++++++++++++++++++
-
-# Assign Admin role to user in Root scope
-event = Users::AssignRoles::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  aggregate_id: user_id,
-  aggregate_version: 2,
-  role_ids: [role_id],
-  scope_id: scope_id,
-)
-# Append event to event store
-event_store.append(event)
-
-# Assign Admin role to user in Root scope
-event = Users::AssignRoles::Events::Requested.new(
-  actor_id: dummy_uuid,
-  command_handler: "seed",
-  aggregate_id: approver_user_id,
-  aggregate_version: 2,
-  role_ids: [role_id],
-  scope_id: scope_id,
-)
-# Append event to event store
-event_store.append(event)
-
-# +++++++++++++++++++++++
-# User-Role connection seed {END}
-# +++++++++++++++++++++++
-
-# Return the aggregate ID of the newly created user aggregate
-output = [
-  "client_id: '#{client_id}'",
-  "client_secret: 'secret'",
-]
-CrystalBank.print_verbose("Seed credentials Root user", output.join("\n"))
-
-output = [
-  "client_id: '#{approver_client_id}'",
-  "client_secret: 'secret'",
-]
-CrystalBank.print_verbose("Seed credentials Approver user", output.join("\n"))
-
-entities = [
-  "Admin Role: '#{role_id}'",
-  "Root Scope: '#{scope_id}'",
-]
-CrystalBank.print_verbose("Created entities", entities.join("\n"))
+CrystalBank.print_verbose("Created scopes", [
+  "Root Scope: '#{scopes["root"]}'",
+  "Sub Scope: '#{scopes["sub"]}'",
+].join("\n"))
