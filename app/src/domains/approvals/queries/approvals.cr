@@ -41,10 +41,11 @@ module CrystalBank::Domains::Approvals
       def list(
         cursor : UUID?,
         limit : Int32,
+        completed : Bool? = nil,
       ) : Array(Approval)
         query_param_counter = 0
         query = [] of String
-        query_params = Array(UUID? | Int32).new
+        query_params = Array(UUID? | Int32 | Bool).new
 
         query << %(SELECT * FROM "projections"."approvals" WHERE 1=1)
 
@@ -52,6 +53,12 @@ module CrystalBank::Domains::Approvals
         unless cursor.nil?
           query << %(AND "uuid" >= $#{query_param_counter += 1})
           query_params << cursor
+        end
+
+        # Add status filter to query
+        unless completed.nil?
+          query << %(AND "completed" = $#{query_param_counter += 1})
+          query_params << completed
         end
 
         query << %(ORDER BY "uuid" ASC)

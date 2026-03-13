@@ -49,10 +49,17 @@ module CrystalBank::Domains::Approvals
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
+        @[AC::Param::Info(description: "Filter by approval status: 'pending' or 'completed'")]
+        status : CrystalBank::Types::Approvals::Status? = nil,
       ) : ListResponse(Responses::Approval)
         authorized?("read_approvals_list", request_scope: false)
 
-        approvals = ::Approvals::Queries::Approvals.new.list(cursor: cursor, limit: limit + 1).map do |a|
+        completed = case status
+                    when CrystalBank::Types::Approvals::Status::Pending   then false
+                    when CrystalBank::Types::Approvals::Status::Completed then true
+                    end
+
+        approvals = ::Approvals::Queries::Approvals.new.list(cursor: cursor, limit: limit + 1, completed: completed).map do |a|
           collected = a.collected_approvals.map do |ca|
             Responses::CollectedApproval.new(ca.user_id, ca.permissions, ca.comment)
           end
