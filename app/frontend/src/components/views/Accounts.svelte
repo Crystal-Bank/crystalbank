@@ -3,6 +3,7 @@
   import { loadMore, createAccount } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
 
+  // ── Create modal ─────────────────────────────────────
   let showModal = $state(false)
   let form = $state({ type: '', selectedCurrencies: [], customerIds: [] })
   let customerOptions = $state([])
@@ -36,9 +37,7 @@
   }
 
   function addCustomer(customerId) {
-    if (!form.customerIds.includes(customerId)) {
-      form.customerIds = [...form.customerIds, customerId]
-    }
+    if (!form.customerIds.includes(customerId)) form.customerIds = [...form.customerIds, customerId]
     customerSearch = ''
     showCustomerDropdown = false
   }
@@ -57,6 +56,9 @@
       showModal = false
     } catch {}
   }
+
+  // ── Detail drawer ─────────────────────────────────────
+  let drawerAccount = $state(null)
 </script>
 
 <div class="page-header">
@@ -78,7 +80,7 @@
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
       {/if}
       {#each viewData.accounts as a (a.id)}
-        <tr>
+        <tr onclick={() => drawerAccount = a} class="cursor-pointer">
           <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge" class:badge-blue={a.type === 'checking'} class:badge-purple={a.type !== 'checking'}>{a.type?.replace('_', ' ')}</span></td>
           <td>
@@ -106,6 +108,58 @@
   {/if}
 </div>
 
+<!-- Account detail drawer -->
+{#if drawerAccount}
+  <div class="drawer-backdrop" onclick={() => drawerAccount = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Account Details</div>
+      <button onclick={() => drawerAccount = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerAccount.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Type</div>
+        <div>
+          <span class="badge" class:badge-blue={drawerAccount.type === 'checking'} class:badge-purple={drawerAccount.type !== 'checking'}>
+            {drawerAccount.type?.replace('_', ' ')}
+          </span>
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Currencies</div>
+        <div class="flex gap-1 flex-wrap">
+          {#each drawerAccount.currencies ?? [] as c (c)}
+            <span class="badge badge-zinc">{c.toUpperCase()}</span>
+          {/each}
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Customer IDs</div>
+        {#if drawerAccount.customer_ids?.length > 0}
+          <div class="space-y-1">
+            {#each drawerAccount.customer_ids as cid (cid)}
+              <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{cid}</div>
+            {/each}
+          </div>
+        {:else}
+          <div class="drawer-field-value text-zinc-400">No owners</div>
+        {/if}
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Scope ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerAccount.scope_id}</div>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Open Account modal -->
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
     <div class="modal-box">

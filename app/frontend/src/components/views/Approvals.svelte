@@ -2,24 +2,25 @@
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, collectApproval } from '../../lib/actions.js'
 
-  let showModal = $state(false)
-  let selected = $state(null)
+  let drawerApproval = $state(null)
   let comment = $state('')
 
-  function openCollect(approval) {
-    selected = approval
+  function openDrawer(approval) {
+    drawerApproval = approval
     comment = ''
-    showModal = true
+  }
+
+  function closeDrawer() {
+    drawerApproval = null
   }
 
   async function handleCollect() {
     try {
-      await collectApproval(selected.id, comment)
-      showModal = false
+      await collectApproval(drawerApproval.id, comment)
+      closeDrawer()
     } catch {}
   }
 
-  // Abbreviate long permission names for display: strip leading verb and join words
   function shortPerm(p) {
     return p.replace(/^(read|write)_/, '').replaceAll('_', ' ')
   }
@@ -43,19 +44,16 @@
         <th>Required</th>
         <th>Progress</th>
         <th>Status</th>
-        <th></th>
       </tr>
     </thead>
     <tbody>
       {#if viewData.approvals.length === 0 && !ui.loadingView}
-        <tr><td colspan="8" class="text-center py-10 text-zinc-400 text-sm">No approvals found</td></tr>
+        <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No approvals found</td></tr>
       {/if}
       {#each viewData.approvals as a (a.id)}
-        <tr>
+        <tr onclick={() => openDrawer(a)} class="cursor-pointer">
           <td><span class="mono text-xs">{a.id}</span></td>
-          <td>
-            <span class="badge badge-zinc">{a.source_aggregate_type}</span>
-          </td>
+          <td><span class="badge badge-zinc">{a.source_aggregate_type}</span></td>
           <td><span class="mono text-xs">{a.source_aggregate_id}</span></td>
           <td>
             {#if a.requestor_id}
@@ -91,11 +89,6 @@
               {a.completed ? 'Completed' : 'Pending'}
             </span>
           </td>
-          <td>
-            {#if !a.completed}
-              <button onclick={() => openCollect(a)} class="btn btn-primary btn-sm">Collect</button>
-            {/if}
-          </td>
         </tr>
       {/each}
     </tbody>
@@ -112,63 +105,106 @@
   {/if}
 </div>
 
-{#if showModal && selected}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
-    <div class="modal-box">
-      <div class="modal-title">Collect Approval</div>
-      <div class="modal-desc">Submit your approval for this process. Requires the matching permission in your role.</div>
-
-      <div class="mb-4 p-3 bg-zinc-50 border border-zinc-200 rounded-lg space-y-2 text-xs">
+<!-- Approval detail drawer -->
+{#if drawerApproval}
+  <div class="drawer-backdrop" onclick={closeDrawer}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Approval Details</div>
+      <button onclick={closeDrawer} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
         <div>
-          <span class="text-zinc-400 uppercase tracking-wide font-medium">Approval ID</span>
-          <div class="mono mt-0.5">{selected.id}</div>
+          <span class="badge" class:badge-green={drawerApproval.completed} class:badge-amber={!drawerApproval.completed}>
+            {drawerApproval.completed ? 'Completed' : 'Pending'}
+          </span>
         </div>
-        <div>
-          <span class="text-zinc-400 uppercase tracking-wide font-medium">Source</span>
-          <div class="mt-0.5">
-            <span class="badge badge-zinc mr-1">{selected.source_aggregate_type}</span>
-            <span class="mono">{selected.source_aggregate_id}</span>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Source</div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-zinc">{drawerApproval.source_aggregate_type}</span>
+          <span class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all flex-1">{drawerApproval.source_aggregate_id}</span>
+        </div>
+      </div>
+      {#if drawerApproval.requestor_id}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Requestor ID</div>
+          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.requestor_id}</div>
+        </div>
+      {/if}
+      <div class="drawer-field">
+        <div class="drawer-field-label">Required Approvals</div>
+        <div class="flex flex-wrap gap-1">
+          {#each drawerApproval.required_approvals as perm (perm)}
+            {@const collected = drawerApproval.collected_approvals.some(c => c.permissions.includes(perm))}
+            <span class="badge" class:badge-green={collected} class:badge-zinc={!collected} title={perm}>
+              {shortPerm(perm)}
+            </span>
+          {/each}
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Progress</div>
+        <div class="flex items-center gap-2">
+          <div class="flex-1 h-2 bg-zinc-200 rounded-full overflow-hidden">
+            <div
+              class="h-full rounded-full transition-all"
+              class:bg-green-500={drawerApproval.completed}
+              class:bg-amber-400={!drawerApproval.completed}
+              style="width: {drawerApproval.required_approvals.length > 0 ? Math.round(drawerApproval.collected_approvals.length / drawerApproval.required_approvals.length * 100) : 100}%"
+            ></div>
           </div>
+          <span class="text-xs text-zinc-500 tabular-nums whitespace-nowrap">
+            {drawerApproval.collected_approvals.length}/{drawerApproval.required_approvals.length}
+          </span>
         </div>
-        <div>
-          <span class="text-zinc-400 uppercase tracking-wide font-medium">Required</span>
-          <div class="flex flex-wrap gap-1 mt-0.5">
-            {#each selected.required_approvals as perm (perm)}
-              {@const collected = selected.collected_approvals.some(c => c.permissions.includes(perm))}
-              <span class="badge" class:badge-green={collected} class:badge-zinc={!collected} title={perm}>
-                {shortPerm(perm)}
-              </span>
+      </div>
+      {#if drawerApproval.collected_approvals.length > 0}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Collected</div>
+          <div class="space-y-2">
+            {#each drawerApproval.collected_approvals as ca (ca.user_id)}
+              <div class="bg-zinc-50 border border-zinc-200 rounded p-2 text-xs">
+                <div class="font-mono text-zinc-700 break-all">{ca.user_id}</div>
+                {#if ca.comment}
+                  <div class="text-zinc-500 italic mt-0.5">"{ca.comment}"</div>
+                {/if}
+              </div>
             {/each}
           </div>
         </div>
-        {#if selected.collected_approvals.length > 0}
-          <div>
-            <span class="text-zinc-400 uppercase tracking-wide font-medium">Collected</span>
-            <div class="space-y-1 mt-0.5">
-              {#each selected.collected_approvals as ca (ca.user_id)}
-                <div class="flex items-start gap-2">
-                  <span class="mono">{ca.user_id}</span>
-                  {#if ca.comment}
-                    <span class="text-zinc-500 italic">"{ca.comment}"</span>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-          </div>
-        {/if}
-      </div>
+      {/if}
 
-      <form onsubmit={(e) => { e.preventDefault(); handleCollect() }}>
-        <div class="mb-5">
-          <label class="field-label">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
-          <input bind:value={comment} type="text" class="field-input" placeholder="Approved after review...">
-          <div class="field-hint">A note explaining your approval decision</div>
+      {#if !drawerApproval.completed}
+        <div class="border-t border-zinc-100 pt-5 mt-1">
+          <div class="text-sm font-semibold text-zinc-700 mb-3">Collect Approval</div>
+          <div class="mb-3">
+            <label class="field-label">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
+            <input bind:value={comment} type="text" class="field-input" placeholder="Approved after review...">
+          </div>
         </div>
-        <div class="flex gap-2 justify-end">
-          <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>
-          <button type="submit" class="btn btn-primary" disabled={ui.loading}>Collect Approval</button>
-        </div>
-      </form>
+      {/if}
     </div>
+
+    {#if !drawerApproval.completed}
+      <div class="drawer-footer">
+        <button
+          onclick={handleCollect}
+          class="btn btn-primary w-full"
+          disabled={ui.loading}
+        >
+          Collect Approval
+        </button>
+      </div>
+    {/if}
   </div>
 {/if}
