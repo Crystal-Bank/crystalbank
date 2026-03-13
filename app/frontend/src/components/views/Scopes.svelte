@@ -52,10 +52,10 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th><th>Scope ID</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th></tr></thead>
     <tbody>
       {#if viewData.scopes.length === 0 && !ui.loadingView}
-        <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
+        <tr><td colspan="3" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
       {/if}
       {#each viewData.scopes as s (s.id)}
         <tr>
@@ -68,7 +68,6 @@
               <span class="text-zinc-400 text-xs">Root</span>
             {/if}
           </td>
-          <td><span class="mono text-xs">{s.scope_id}</span></td>
         </tr>
       {/each}
     </tbody>
