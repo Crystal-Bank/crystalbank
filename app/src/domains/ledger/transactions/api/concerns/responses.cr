@@ -17,6 +17,9 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(format: "uuid", description: "Unique ID of the posting")]
         getter id : UUID
 
+        @[JSON::Field(format: "uuid", description: "ID of the transaction this posting belongs to")]
+        getter transaction_id : UUID
+
         @[JSON::Field(format: "uuid", description: "Account ID of the posting")]
         getter account_id : UUID
 
@@ -52,6 +55,7 @@ module CrystalBank::Domains::Ledger::Transactions
 
         def initialize(
           @id : UUID,
+          @transaction_id : UUID,
           @account_id : UUID,
           @direction : String,
           @amount : Int64,

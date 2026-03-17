@@ -39,6 +39,7 @@ module CrystalBank::Domains::Ledger::Transactions
         postings = ::Ledger::Transactions::Queries::Postings.new.list(context, cursor: cursor, limit: limit + 1).map do |p|
           Responses::Posting.new(
             p.id,
+            p.transaction_id,
             p.account_id,
             p.direction,
             p.amount,

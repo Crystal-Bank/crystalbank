@@ -7,6 +7,7 @@ module CrystalBank::Domains::Ledger::Transactions
         include JSON::Serializable
 
         getter id : UUID
+        getter transaction_id : UUID
 
         getter account_id : UUID
         getter aggregate_version : Int64
