@@ -276,7 +276,7 @@
         <div class="space-y-2 mb-5">
           {#each entries as entry, i (entry._id)}
             <div class="border border-zinc-200 rounded-lg p-3 bg-zinc-50">
-              <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 120px 32px">
+              <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 160px 32px">
 
                 <div class="relative">
                   <label class="field-label text-xs">Account ID</label>

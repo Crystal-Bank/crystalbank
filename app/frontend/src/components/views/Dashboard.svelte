@@ -5,23 +5,25 @@
   import { apiFetch } from '../../lib/api.js'
 
   let stats = $state({
-    accounts:  { count: null, hasMore: false },
-    customers: { count: null, hasMore: false },
-    users:     { count: null, hasMore: false },
-    roles:     { count: null, hasMore: false },
-    scopes:    { count: null, hasMore: false },
-    api_keys:  { count: null, hasMore: false },
-    approvals: { count: null, hasMore: false },
+    accounts:     { count: null, hasMore: false },
+    customers:    { count: null, hasMore: false },
+    postings:     { count: null, hasMore: false },
+    users:        { count: null, hasMore: false },
+    roles:        { count: null, hasMore: false },
+    scopes:       { count: null, hasMore: false },
+    api_keys:     { count: null, hasMore: false },
+    approvals:    { count: null, hasMore: false },
   })
 
   const PATHS = {
-    accounts:  '/accounts/?limit=200',
-    customers: '/customers/?limit=200',
-    users:     '/users/?limit=200',
-    roles:     '/roles/?limit=200',
-    scopes:    '/scopes/?limit=200',
-    api_keys:  '/api_keys/?limit=200',
-    approvals: '/approvals/?limit=200&status=pending',
+    accounts:     '/accounts/?limit=200',
+    customers:    '/customers/?limit=200',
+    postings:     '/ledger/transactions/postings/?limit=200',
+    users:        '/users/?limit=200',
+    roles:        '/roles/?limit=200',
+    scopes:       '/scopes/?limit=200',
+    api_keys:     '/api_keys/?limit=200',
+    approvals:    '/approvals/?limit=200&status=pending',
   }
 
   onMount(async () => {
@@ -45,6 +47,7 @@
   const CARDS = [
     { key: 'accounts',  label: 'Accounts',         view: 'accounts',  icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>` },
     { key: 'customers', label: 'Customers',         view: 'customers', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>` },
+    { key: 'postings',  label: 'Transactions',      view: 'postings',  icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/><path d="M17 7l-5-5-5 5M7 17l5 5 5-5"/></svg>` },
     { key: 'users',     label: 'Users',             view: 'users',     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>` },
     { key: 'roles',     label: 'Roles',             view: 'roles',     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>` },
     { key: 'scopes',    label: 'Scopes',            view: 'scopes',    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>` },
