@@ -15,7 +15,7 @@
     posting_date: '',
     value_date: '',
     remittance_information: '',
-    metadata: { payment_type: '', external_ref: '', channel: 'api' },
+    metadata: { payment_type: 'INTERNAL_TRANSFER', external_ref: '', channel: 'api' },
   })
   let entries = $state([
     { _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' },
@@ -26,7 +26,9 @@
       ? accountOptions
           .filter(a => {
             const q = (entries[activeDropdown]?.account_id ?? '').toLowerCase()
-            return q === '' || a.id.toLowerCase().includes(q) || (a.type ?? '').includes(q)
+            const matchesQuery = q === '' || a.id.toLowerCase().includes(q) || (a.type ?? '').includes(q)
+            const matchesCurrency = !form.currency || (a.currencies ?? []).map(c => c.toLowerCase()).includes(form.currency.toLowerCase())
+            return matchesQuery && matchesCurrency
           })
           .slice(0, 8)
       : []
@@ -38,7 +40,7 @@
       posting_date: today(),
       value_date: today(),
       remittance_information: '',
-      metadata: { payment_type: '', external_ref: '', channel: 'api' },
+      metadata: { payment_type: 'INTERNAL_TRANSFER', external_ref: '', channel: 'api' },
     }
     entries = [{ _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' }]
     entryCounter = 1
@@ -246,14 +248,7 @@
         <div class="grid grid-cols-3 gap-3 mb-5">
           <div>
             <label class="field-label">Payment Type</label>
-            <select bind:value={form.metadata.payment_type} class="field-input field-select">
-              <option value="">None</option>
-              <option value="SEPA_CREDIT_TRANSFER">SEPA Credit Transfer</option>
-              <option value="SWIFT_WIRE">SWIFT Wire</option>
-              <option value="ACH">ACH</option>
-              <option value="BOOK_TRANSFER">Book Transfer</option>
-              <option value="INTERNAL_TRANSFER">Internal Transfer</option>
-            </select>
+            <input type="text" value="Internal Transfer" class="field-input" disabled>
           </div>
           <div>
             <label class="field-label">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
