@@ -6,8 +6,8 @@ module CrystalBank::Domains::Ledger::Transactions
         include DB::Serializable::NonStrict
         include JSON::Serializable
 
-        @[DB::Field(key: "transaction_id")]
         getter id : UUID
+        getter transaction_id : UUID
 
         getter account_id : UUID
         getter aggregate_version : Int64

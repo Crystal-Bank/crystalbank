@@ -108,7 +108,7 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>Transaction ID</th>
+        <th>ID</th>
         <th>Account ID</th>
         <th>Direction</th>
         <th>Amount</th>
@@ -116,12 +116,11 @@
         <th>Entry Type</th>
         <th>Posting Date</th>
         <th>Value Date</th>
-        <th>Remittance Information</th>
       </tr>
     </thead>
     <tbody>
       {#if viewData.postings.length === 0 && !ui.loadingView}
-        <tr><td colspan="9" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
+        <tr><td colspan="8" class="text-center py-10 text-zinc-400 text-sm">No postings found</td></tr>
       {/if}
       {#each viewData.postings as p, i (i)}
         <tr onclick={() => drawerPosting = p} class="cursor-pointer">
@@ -137,7 +136,6 @@
           <td><span class="badge badge-zinc">{p.entry_type?.replace('_', ' ')}</span></td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.posting_date}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.value_date}</td>
-          <td class="text-zinc-500 max-w-xs truncate">{p.remittance_information}</td>
         </tr>
       {/each}
     </tbody>
@@ -166,8 +164,12 @@
     </div>
     <div class="drawer-body">
       <div class="drawer-field">
-        <div class="drawer-field-label">Transaction ID</div>
+        <div class="drawer-field-label">Posting ID</div>
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerPosting.id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Transaction ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerPosting.transaction_id}</div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Account ID</div>

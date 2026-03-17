@@ -57,6 +57,7 @@ module CrystalBank::Domains::Ledger::Transactions
           # Serialize entries to JSON for the event
           entries_data = entries.map do |e|
             Ledger::Transactions::Aggregate::Entry.new(
+              id: UUID.v7,
               account_id: e.account_id,
               direction: e.direction.to_s,
               amount: e.amount,
