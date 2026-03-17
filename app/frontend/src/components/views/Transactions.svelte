@@ -15,7 +15,7 @@
     posting_date: '',
     value_date: '',
     remittance_information: '',
-    metadata: { payment_type: '', external_ref: '', channel: 'api' },
+    metadata: { payment_type: 'INTERNAL_TRANSFER', external_ref: '', channel: 'api' },
   })
   let entries = $state([
     { _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' },
@@ -26,7 +26,9 @@
       ? accountOptions
           .filter(a => {
             const q = (entries[activeDropdown]?.account_id ?? '').toLowerCase()
-            return q === '' || a.id.toLowerCase().includes(q) || (a.type ?? '').includes(q)
+            const matchesQuery = q === '' || a.id.toLowerCase().includes(q) || (a.type ?? '').includes(q)
+            const matchesCurrency = !form.currency || (a.currencies ?? []).map(c => c.toLowerCase()).includes(form.currency.toLowerCase())
+            return matchesQuery && matchesCurrency
           })
           .slice(0, 8)
       : []
@@ -38,7 +40,7 @@
       posting_date: today(),
       value_date: today(),
       remittance_information: '',
-      metadata: { payment_type: '', external_ref: '', channel: 'api' },
+      metadata: { payment_type: 'INTERNAL_TRANSFER', external_ref: '', channel: 'api' },
     }
     entries = [{ _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' }]
     entryCounter = 1
@@ -246,14 +248,7 @@
         <div class="grid grid-cols-3 gap-3 mb-5">
           <div>
             <label class="field-label">Payment Type</label>
-            <select bind:value={form.metadata.payment_type} class="field-input field-select">
-              <option value="">None</option>
-              <option value="SEPA_CREDIT_TRANSFER">SEPA Credit Transfer</option>
-              <option value="SWIFT_WIRE">SWIFT Wire</option>
-              <option value="ACH">ACH</option>
-              <option value="BOOK_TRANSFER">Book Transfer</option>
-              <option value="INTERNAL_TRANSFER">Internal Transfer</option>
-            </select>
+            <input type="text" value="Internal Transfer" class="field-input" disabled>
           </div>
           <div>
             <label class="field-label">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
@@ -264,8 +259,6 @@
             <select bind:value={form.metadata.channel} class="field-input field-select">
               <option value="api">API</option>
               <option value="web">Web</option>
-              <option value="batch">Batch</option>
-              <option value="manual">Manual</option>
             </select>
           </div>
         </div>
@@ -281,7 +274,7 @@
         <div class="space-y-2 mb-5">
           {#each entries as entry, i (entry._id)}
             <div class="border border-zinc-200 rounded-lg p-3 bg-zinc-50">
-              <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 120px 32px">
+              <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 200px 32px">
 
                 <div class="relative">
                   <label class="field-label text-xs">Account ID</label>
@@ -327,9 +320,43 @@
                 <div>
                   <label class="field-label text-xs">Entry Type</label>
                   <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
-                    <option value="principal">Principal</option>
-                    <option value="settlement">Settlement</option>
-                    <option value="transaction_fee">Transaction Fee</option>
+                    <optgroup label="Core">
+                      <option value="principal">Principal</option>
+                      <option value="settlement">Settlement</option>
+                      <option value="transaction_fee">Transaction Fee</option>
+                    </optgroup>
+                    <optgroup label="Interest">
+                      <option value="interest">Interest</option>
+                      <option value="accrued_interest">Accrued Interest</option>
+                      <option value="penalty_interest">Penalty Interest</option>
+                    </optgroup>
+                    <optgroup label="Fees">
+                      <option value="overdraft_fee">Overdraft Fee</option>
+                      <option value="maintenance_fee">Maintenance Fee</option>
+                      <option value="commission">Commission</option>
+                      <option value="foreign_exchange_fee">Foreign Exchange Fee</option>
+                    </optgroup>
+                    <optgroup label="FX &amp; Valuation">
+                      <option value="fx_gain">FX Gain</option>
+                      <option value="fx_loss">FX Loss</option>
+                      <option value="revaluation">Revaluation</option>
+                    </optgroup>
+                    <optgroup label="Credit Events">
+                      <option value="penalty">Penalty</option>
+                      <option value="charge_off">Charge Off</option>
+                      <option value="provision">Provision</option>
+                    </optgroup>
+                    <optgroup label="Corporate Actions">
+                      <option value="dividend">Dividend</option>
+                      <option value="premium">Premium</option>
+                      <option value="rebate">Rebate</option>
+                    </optgroup>
+                    <optgroup label="Operational">
+                      <option value="adjustment">Adjustment</option>
+                      <option value="reversal">Reversal</option>
+                      <option value="collateral">Collateral</option>
+                      <option value="escrow">Escrow</option>
+                    </optgroup>
                   </select>
                 </div>
 

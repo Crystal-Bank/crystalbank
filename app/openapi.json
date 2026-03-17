@@ -2594,9 +2594,29 @@
                                     "enum": [
                                         "principal",
                                         "settlement",
-                                        "transaction_fee"
+                                        "transaction_fee",
+                                        "interest",
+                                        "accrued_interest",
+                                        "penalty_interest",
+                                        "overdraft_fee",
+                                        "maintenance_fee",
+                                        "commission",
+                                        "foreign_exchange_fee",
+                                        "fx_gain",
+                                        "fx_loss",
+                                        "revaluation",
+                                        "penalty",
+                                        "charge_off",
+                                        "provision",
+                                        "dividend",
+                                        "premium",
+                                        "rebate",
+                                        "adjustment",
+                                        "reversal",
+                                        "collateral",
+                                        "escrow"
                                     ],
-                                    "description": "Entry type: PRINCIPAL, SETTLEMENT, or TRANSACTION_FEE"
+                                    "description": "Entry type of the transaction leg"
                                 }
                             },
                             "required": [
