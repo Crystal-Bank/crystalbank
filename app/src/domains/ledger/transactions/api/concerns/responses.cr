@@ -14,7 +14,7 @@ module CrystalBank::Domains::Ledger::Transactions
       struct Posting
         include JSON::Serializable
 
-        @[JSON::Field(format: "uuid", description: "ID of the transaction this posting belongs to")]
+        @[JSON::Field(format: "uuid", description: "Unique ID of the posting")]
         getter id : UUID
 
         @[JSON::Field(format: "uuid", description: "Account ID of the posting")]

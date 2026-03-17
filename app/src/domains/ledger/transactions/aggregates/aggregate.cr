@@ -9,12 +9,14 @@ module CrystalBank::Domains::Ledger::Transactions
     struct Entry
       include JSON::Serializable
 
+      getter id : UUID
       getter account_id : UUID
       getter direction : String
       getter amount : Int64
       getter entry_type : String
 
       def initialize(
+        @id : UUID,
         @account_id : UUID,
         @direction : String,
         @amount : Int64,

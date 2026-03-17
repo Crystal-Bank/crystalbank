@@ -2,13 +2,22 @@ module CrystalBank::Domains::Ledger::Transactions
   module Projections
     class Postings < ES::Projection
       def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'postings');), as: Bool
-        return true if skip
+        exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'postings');), as: Bool
+
+        if exists
+          id_is_uuid = @projection_database.query_one %(
+            SELECT data_type = 'uuid' FROM information_schema.columns
+            WHERE table_schema = 'projections' AND table_name = 'postings' AND column_name = 'id'
+          ), as: Bool
+          return true if id_is_uuid
+
+          @projection_database.exec %(DROP TABLE "projections"."postings")
+        end
 
         m = Array(String).new
         m << %(
           CREATE TABLE "projections"."postings" (
-            "id" SERIAL PRIMARY KEY,
+            "id" UUID PRIMARY KEY,
             "transaction_id" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
             "created_at" timestamp NOT NULL,
@@ -57,6 +66,7 @@ module CrystalBank::Domains::Ledger::Transactions
             cnn.exec %(
               INSERT INTO
                 "projections"."postings" (
+                  id,
                   transaction_id,
                   aggregate_version,
                   created_at,
@@ -72,8 +82,9 @@ module CrystalBank::Domains::Ledger::Transactions
                   external_ref,
                   channel
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
             ),
+              entry.id,
               aggregate_id,
               aggregate_version,
               created_at,
