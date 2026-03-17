@@ -42,11 +42,16 @@ module CrystalBank::Domains::Ledger::Transactions
           # Validate all accounts exist in the projection in one query (presence == open,
           # rows are only inserted on account.opening.accepted)
           account_ids = entries.map(&.account_id).uniq!
-          found_ids = Accounts::Queries::Accounts.new.find_all(account_ids).map(&.id).to_set
+          found_accounts = Accounts::Queries::Accounts.new.find_all(account_ids)
+          found_by_id = found_accounts.to_h { |a| {a.id, a} }
           account_ids.each do |id|
+            account = found_by_id[id]?
             raise CrystalBank::Exception::InvalidArgument.new(
               "Account '#{id}' is not open"
-            ) unless found_ids.includes?(id)
+            ) unless account
+            raise CrystalBank::Exception::InvalidArgument.new(
+              "Account '#{id}' does not support currency #{r.currency}"
+            ) unless account.currencies.includes?(r.currency)
           end
 
           # Serialize entries to JSON for the event
