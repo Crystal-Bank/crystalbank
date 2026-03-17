@@ -259,8 +259,6 @@
             <select bind:value={form.metadata.channel} class="field-input field-select">
               <option value="api">API</option>
               <option value="web">Web</option>
-              <option value="batch">Batch</option>
-              <option value="manual">Manual</option>
             </select>
           </div>
         </div>
