@@ -20,6 +20,7 @@ module CrystalBank::Domains::Ledger::Transactions
             "id" UUID PRIMARY KEY,
             "transaction_id" UUID NOT NULL,
             "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "account_id" UUID NOT NULL,
             "direction" varchar NOT NULL,
@@ -48,14 +49,15 @@ module CrystalBank::Domains::Ledger::Transactions
         aggregate = ::Ledger::Transactions::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        entries = aggregate.state.entries
-        currency = aggregate.state.currency
-        posting_date = aggregate.state.posting_date
-        value_date = aggregate.state.value_date
-        remittance_information = aggregate.state.remittance_information.to_s
-        payment_type = aggregate.state.payment_type
-        external_ref = aggregate.state.external_ref
         channel = aggregate.state.channel
+        currency = aggregate.state.currency
+        entries = aggregate.state.entries
+        external_ref = aggregate.state.external_ref
+        payment_type = aggregate.state.payment_type
+        posting_date = aggregate.state.posting_date
+        remittance_information = aggregate.state.remittance_information.to_s
+        scope_id = aggregate.state.scope_id
+        value_date = aggregate.state.value_date
 
         raise "Invalid ledger transaction state: missing entries" if entries.nil?
         raise "Invalid ledger transaction state: missing currency" if currency.nil?
@@ -69,6 +71,7 @@ module CrystalBank::Domains::Ledger::Transactions
                   id,
                   transaction_id,
                   aggregate_version,
+                  scope_id,
                   created_at,
                   account_id,
                   direction,
@@ -87,6 +90,7 @@ module CrystalBank::Domains::Ledger::Transactions
               entry.id,
               aggregate_id,
               aggregate_version,
+              scope_id,
               created_at,
               entry.account_id,
               entry.direction,
