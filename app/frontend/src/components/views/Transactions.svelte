@@ -322,9 +322,43 @@
                 <div>
                   <label class="field-label text-xs">Entry Type</label>
                   <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
-                    <option value="principal">Principal</option>
-                    <option value="settlement">Settlement</option>
-                    <option value="transaction_fee">Transaction Fee</option>
+                    <optgroup label="Core">
+                      <option value="principal">Principal</option>
+                      <option value="settlement">Settlement</option>
+                      <option value="transaction_fee">Transaction Fee</option>
+                    </optgroup>
+                    <optgroup label="Interest">
+                      <option value="interest">Interest</option>
+                      <option value="accrued_interest">Accrued Interest</option>
+                      <option value="penalty_interest">Penalty Interest</option>
+                    </optgroup>
+                    <optgroup label="Fees">
+                      <option value="overdraft_fee">Overdraft Fee</option>
+                      <option value="maintenance_fee">Maintenance Fee</option>
+                      <option value="commission">Commission</option>
+                      <option value="foreign_exchange_fee">Foreign Exchange Fee</option>
+                    </optgroup>
+                    <optgroup label="FX &amp; Valuation">
+                      <option value="fx_gain">FX Gain</option>
+                      <option value="fx_loss">FX Loss</option>
+                      <option value="revaluation">Revaluation</option>
+                    </optgroup>
+                    <optgroup label="Credit Events">
+                      <option value="penalty">Penalty</option>
+                      <option value="charge_off">Charge Off</option>
+                      <option value="provision">Provision</option>
+                    </optgroup>
+                    <optgroup label="Corporate Actions">
+                      <option value="dividend">Dividend</option>
+                      <option value="premium">Premium</option>
+                      <option value="rebate">Rebate</option>
+                    </optgroup>
+                    <optgroup label="Operational">
+                      <option value="adjustment">Adjustment</option>
+                      <option value="reversal">Reversal</option>
+                      <option value="collateral">Collateral</option>
+                      <option value="escrow">Escrow</option>
+                    </optgroup>
                   </select>
                 </div>
 
