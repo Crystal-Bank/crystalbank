@@ -93,6 +93,37 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     end
   end
 
+  it "raises when an account does not support the transfer currency" do
+    scope_id = UUID.v7
+    user_id = UUID.v7
+
+    context = CrystalBank::Api::Context.new(
+      user_id: user_id,
+      roles: [] of UUID,
+      required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
+      scope: scope_id,
+      available_scopes: [scope_id]
+    )
+
+    # Accounts in TestEnv support EUR and USD only; GBP is not in their supported currencies
+    json = {
+      "currency"               => "GBP",
+      "remittance_information" => "Payment ref 005",
+      "posting_date"           => "2026-03-11",
+      "value_date"             => "2026-03-12",
+      "entries"                => [
+        {"account_id" => TestEnv.debit_account_id.to_s, "direction" => "debit", "amount" => 2000, "entry_type" => "PRINCIPAL"},
+        {"account_id" => TestEnv.credit_account_id.to_s, "direction" => "credit", "amount" => 2000, "entry_type" => "PRINCIPAL"},
+      ],
+    }.to_json
+
+    request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
+
+    expect_raises(CrystalBank::Exception::InvalidArgument, /does not support currency/) do
+      Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+    end
+  end
+
   it "raises when entries do not balance" do
     scope_id = UUID.new("00000000-0000-0000-0000-000000000000")
     user_id = UUID.v7
