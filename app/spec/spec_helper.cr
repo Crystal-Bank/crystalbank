@@ -7,6 +7,7 @@ require "./factories/events/customer_factories"
 require "./factories/events/role_factories"
 require "./factories/events/scope_factories"
 require "./factories/events/ledger_transaction_factories"
+require "./factories/events/payment_sepa_credit_transfer_factories"
 require "./factories/events/user_factories"
 
 TEST_EVENT_STORE   = ES::Config.event_store
