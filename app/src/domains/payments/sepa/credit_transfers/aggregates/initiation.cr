@@ -19,6 +19,15 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           @state.scope_id = body.scope_id
           @state.status = "pending"
         end
+
+        def apply(event : Payments::Sepa::CreditTransfers::Initiation::Events::Accepted)
+          @state.increase_version(event.header.aggregate_version)
+
+          body = event.body.as(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted::Body)
+
+          @state.ledger_transaction_id = body.ledger_transaction_id
+          @state.status = "accepted"
+        end
       end
     end
   end

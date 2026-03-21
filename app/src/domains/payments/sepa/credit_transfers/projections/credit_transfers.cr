@@ -82,17 +82,17 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           created_at
       end
 
-      def apply(event : Payments::Sepa::CreditTransfers::Execution::Events::Executed)
+      def apply(event : Payments::Sepa::CreditTransfers::Initiation::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
 
-        body = event.body.as(Payments::Sepa::CreditTransfers::Execution::Events::Executed::Body)
+        body = event.body.as(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted::Body)
 
         @projection_database.exec %(
           UPDATE "projections"."sepa_credit_transfers"
           SET
-            status = 'executed',
+            status = 'accepted',
             ledger_transaction_id = $1,
             aggregate_version = $2,
             updated_at = $3

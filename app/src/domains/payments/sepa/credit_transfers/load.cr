@@ -6,11 +6,11 @@ require "./api/credit_transfers"
 
 # Commands
 require "./commands/initiation/request"
-require "./commands/execution/process_approval"
+require "./commands/initiation/process_approval"
 
 # Events
 require "./events/initiation/requested"
-require "./events/execution/executed"
+require "./events/initiation/accepted"
 
 # Projections
 require "./projections/credit_transfers"

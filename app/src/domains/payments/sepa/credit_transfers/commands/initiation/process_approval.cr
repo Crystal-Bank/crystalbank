@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Payments::Sepa::CreditTransfers
-  module Execution
+  module Initiation
     module Commands
       class ProcessApproval < ES::Command
         def call
@@ -18,8 +18,8 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           payment = Payments::Sepa::CreditTransfers::Aggregate.new(payment_id)
           payment.hydrate
 
-          # Guard: only execute once
-          return if payment.state.status == "executed"
+          # Guard: only accept once
+          return if payment.state.status == "accepted"
 
           amount = payment.state.amount.as(Int64)
           debtor_account_id = payment.state.debtor_account_id.as(UUID)
@@ -70,10 +70,10 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
           ledger_transaction_id = UUID.new(ledger_event.header.aggregate_id.to_s)
 
-          # Mark the SEPA CT as executed
+          # Mark the SEPA CT as accepted
           next_version = payment.state.next_version
 
-          executed_event = Payments::Sepa::CreditTransfers::Execution::Events::Executed.new(
+          accepted_event = Payments::Sepa::CreditTransfers::Initiation::Events::Accepted.new(
             actor_id: nil,
             aggregate_id: payment_id,
             aggregate_version: next_version,
@@ -81,7 +81,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             ledger_transaction_id: ledger_transaction_id,
           )
 
-          @event_store.append(executed_event)
+          @event_store.append(accepted_event)
         end
       end
     end

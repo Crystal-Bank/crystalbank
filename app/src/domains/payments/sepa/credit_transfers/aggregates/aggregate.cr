@@ -1,12 +1,10 @@
 require "./initiation"
-require "./execution"
 
 module CrystalBank::Domains::Payments::Sepa::CreditTransfers
   class Aggregate < ES::Aggregate
     @@type = "Payments.Sepa.CreditTransfer"
 
     include CrystalBank::Domains::Payments::Sepa::CreditTransfers::Aggregates::Concerns::Initiation
-    include CrystalBank::Domains::Payments::Sepa::CreditTransfers::Aggregates::Concerns::Execution
 
     struct State < ES::Aggregate::State
       property end_to_end_id : String?
