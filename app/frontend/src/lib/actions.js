@@ -252,6 +252,20 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
   }
 }
 
+export async function createSepaCreditTransfer(payload) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/payments/sepa/credit-transfers/', payload, { idempotency: true })
+    addToast('SEPA Credit Transfer submitted — awaiting approval')
+    await loadView('sepa_credit_transfers')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function collectApproval(id, comment) {
   ui.loading = true
   try {
