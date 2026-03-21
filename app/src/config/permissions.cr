@@ -43,6 +43,11 @@ module CrystalBank
     WRITE_accounts_opening_compliance_approval
     WRITE_accounts_opening_board_approval
 
+    # Payments — SEPA Credit Transfers
+    WRITE_payments_sepa_credit_transfers_request
+    READ_payments_sepa_credit_transfers_list
+    WRITE_payments_sepa_credit_transfers_approval
+
     def to_s
       super.to_s.downcase
     end
