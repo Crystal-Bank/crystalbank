@@ -63,6 +63,29 @@ def assign_role(event_store, actor_id, user_id, role_id, scope_id, aggregate_ver
   event_store.append(event)
 end
 
+def seed_account(event_store, actor_id, scope_id, customer_ids, currencies, type, aggregate_id)
+  requested = Accounts::Opening::Events::Requested.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    currencies: currencies,
+    customer_ids: customer_ids,
+    scope_id: scope_id,
+    type: type,
+    aggregate_id: aggregate_id,
+  )
+  event_store.append(requested)
+
+  accepted = Accounts::Opening::Events::Accepted.new(
+    actor_id: actor_id,
+    command_handler: "seed",
+    aggregate_id: aggregate_id,
+    aggregate_version: 2,
+  )
+  event_store.append(accepted)
+
+  aggregate_id
+end
+
 def seed_customer(event_store, actor_id, name, scope_id, type)
   event = Customers::Onboarding::Events::Requested.new(
     actor_id: actor_id,
@@ -116,6 +139,18 @@ customers["admin"] = seed_customer(event_store, actor_id, name: "Admin customer"
 customers["scoped"] = seed_customer(event_store, actor_id, name: "Scoped customer", scope_id: scopes["sub"], type: CrystalBank::Types::Customers::Type::Business)
 customers["scoped2"] = seed_customer(event_store, actor_id, name: "Scoped customer #2", scope_id: scopes["sub2"], type: CrystalBank::Types::Customers::Type::Business)
 
+# Accounts
+sepa_nostro_account_id = UUID.new("00000000-0000-0000-0000-900000000001")
+seed_account(
+  event_store,
+  actor_id,
+  scope_id: scopes["root"],
+  customer_ids: [customers["admin"]],
+  currencies: [CrystalBank::Types::Currencies::Supported::EUR],
+  type: CrystalBank::Types::Accounts::Type::Checking,
+  aggregate_id: sepa_nostro_account_id,
+)
+
 # Output
 CrystalBank.print_verbose("Seed credentials Admin user", [
   "client_id: '#{client_ids["admin"]}'",
@@ -141,6 +176,10 @@ CrystalBank.print_verbose("Created scopes", [
   "Root Scope: '#{scopes["root"]}'",
   "Sub Scope: '#{scopes["sub"]}'",
   "Sub Scope #2: '#{scopes["sub2"]}'",
+].join("\n"))
+
+CrystalBank.print_verbose("Created accounts", [
+  "SEPA Nostro Account: '#{sepa_nostro_account_id}'",
 ].join("\n"))
 
 CrystalBank.print_verbose("Created customers", [
