@@ -147,7 +147,7 @@ seed_account(
   scope_id: scopes["root"],
   customer_ids: [customers["admin"]],
   currencies: [CrystalBank::Types::Currencies::Supported::EUR],
-  type: CrystalBank::Types::Accounts::Type::Checking,
+  type: CrystalBank::Types::Accounts::Type::Settlement,
   aggregate_id: sepa_nostro_account_id,
 )
 
