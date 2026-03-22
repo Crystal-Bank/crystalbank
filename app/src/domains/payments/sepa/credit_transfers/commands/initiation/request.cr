@@ -5,7 +5,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         def call(
           r : Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest,
           c : CrystalBank::Api::Context,
-        ) : UUID
+        ) : {payment_id: UUID, approval_id: UUID}
           actor = c.user_id
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
@@ -67,7 +67,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           payment_id = UUID.new(event.header.aggregate_id.to_s)
 
           # Create the approval workflow, referencing the payment aggregate
-          Approvals::Creation::Commands::Request.new.call(
+          approval_id = Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "SepaCreditTransfer",
             source_aggregate_id: payment_id,
             scope_id: scope,
@@ -75,7 +75,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             actor_id: actor,
           )
 
-          payment_id
+          {payment_id: payment_id, approval_id: approval_id}
         end
       end
     end

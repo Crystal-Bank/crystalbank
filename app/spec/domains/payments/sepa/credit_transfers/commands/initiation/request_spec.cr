@@ -52,7 +52,8 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
 
     request = Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest.from_json(json)
 
-    payment_id = Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    result = Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    payment_id = result[:payment_id]
 
     payment_id.should be_a(UUID)
 
@@ -65,20 +66,13 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     aggregate.state.amount.should eq(25000_i64)
     aggregate.state.scope_id.should eq(scope_id)
 
-    # Verify an approval was created for this payment.
-    # Projections are applied asynchronously via the queue, so we verify
-    # directly from the event store and hydrate the approval aggregate.
-    approval_aggregate_id = TEST_PROJECTION_DB.query_one?(
-      %(SELECT (header->>'aggregate_id')::uuid FROM "eventstore"."events" WHERE header->>'event_handle' = 'approval.creation.requested' AND (body->>'source_aggregate_id')::uuid = $1 LIMIT 1),
-      payment_id,
-      as: UUID
-    )
-    approval_aggregate_id.should_not be_nil
+    # Apply the approval projection synchronously via the event bus, then query
+    apply_projection(result[:approval_id])
 
-    approval_agg = Approvals::Aggregate.new(approval_aggregate_id.not_nil!)
-    approval_agg.hydrate
-    approval_agg.state.completed.should be_false
-    approval_agg.state.required_approvals.should contain("write_payments_sepa_credit_transfers_approval")
+    approval = Approvals::Queries::Approvals.new.find_by_source("SepaCreditTransfer", payment_id)
+    approval.should_not be_nil
+    approval.not_nil!.completed.should be_false
+    approval.not_nil!.required_approvals.should contain("write_payments_sepa_credit_transfers_approval")
   end
 
   it "raises when debtor account is not open" do

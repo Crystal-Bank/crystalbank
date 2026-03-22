@@ -20,9 +20,9 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
       def create(r : CreditTransferRequest) : Responses::CreditTransferResponse
         authorized?("write_payments_sepa_credit_transfers_request")
 
-        id = ::Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(r, context)
+        result = ::Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(r, context)
 
-        Responses::CreditTransferResponse.new(id)
+        Responses::CreditTransferResponse.new(result[:payment_id])
       end
 
       # List SEPA Credit Transfers
