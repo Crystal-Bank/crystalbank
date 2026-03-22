@@ -20,12 +20,15 @@
   let debtorQuery = $state('')
   let debtorOpen  = $state(false)
 
+  const INTERNAL_ACCOUNT_TYPES = ['settlement', 'nostro', 'cpd', 'frozen_funds']
+
   let debtorSuggestions = $derived(
     accountOptions
       .filter(a => {
         const q = debtorQuery.toLowerCase()
         return (q === '' || a.id.toLowerCase().includes(q)) &&
-               (a.currencies ?? []).map(c => c.toLowerCase()).includes('eur')
+               (a.currencies ?? []).map(c => c.toLowerCase()).includes('eur') &&
+               !INTERNAL_ACCOUNT_TYPES.includes(a.type?.toLowerCase())
       })
       .slice(0, 8)
   )

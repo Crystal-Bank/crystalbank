@@ -127,13 +127,13 @@
           <td><span class="mono text-xs">{p.id}</span></td>
           <td><span class="mono text-xs">{p.account_id}</span></td>
           <td>
-            <span class="badge" class:badge-red={p.direction === 'debit'} class:badge-green={p.direction === 'credit'}>
-              {p.direction}
+            <span class="badge" class:badge-red={p.direction?.toLowerCase() === 'debit'} class:badge-green={p.direction?.toLowerCase() === 'credit'}>
+              {p.direction?.toLowerCase()}
             </span>
           </td>
           <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
           <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
-          <td><span class="badge badge-zinc">{p.entry_type?.replace('_', ' ')}</span></td>
+          <td><span class="badge badge-zinc">{p.entry_type?.toLowerCase().replace('_', ' ')}</span></td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.posting_date}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.value_date}</td>
         </tr>
@@ -178,8 +178,8 @@
       <div class="drawer-field">
         <div class="drawer-field-label">Direction</div>
         <div>
-          <span class="badge" class:badge-red={drawerPosting.direction === 'debit'} class:badge-green={drawerPosting.direction === 'credit'}>
-            {drawerPosting.direction}
+          <span class="badge" class:badge-red={drawerPosting.direction?.toLowerCase() === 'debit'} class:badge-green={drawerPosting.direction?.toLowerCase() === 'credit'}>
+            {drawerPosting.direction?.toLowerCase()}
           </span>
         </div>
       </div>
@@ -193,7 +193,7 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Entry Type</div>
-        <div><span class="badge badge-zinc">{drawerPosting.entry_type?.replace('_', ' ')}</span></div>
+        <div><span class="badge badge-zinc">{drawerPosting.entry_type?.toLowerCase().replace('_', ' ')}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Posting Date</div>
