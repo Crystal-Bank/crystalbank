@@ -25,9 +25,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           raise CrystalBank::Exception::InvalidArgument.new("SEPA Credit Transfers must use EUR") unless r.currency == "EUR"
 
           # Read settlement account from system configuration
-          raw_settlement = ENV["SEPA_SETTLEMENT_ACCOUNT_ID"]?
-          raise CrystalBank::Exception::InvalidArgument.new("SEPA_SETTLEMENT_ACCOUNT_ID is not configured") unless raw_settlement
-          settlement_account_id = UUID.new(raw_settlement)
+          settlement_account_id = CrystalBank::Env.sepa_settlement_account_id
 
           # Validate both accounts exist, are open, and support EUR
           account_ids = [r.debtor_account_id, settlement_account_id].uniq

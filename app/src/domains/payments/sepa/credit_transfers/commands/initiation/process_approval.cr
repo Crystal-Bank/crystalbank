@@ -23,7 +23,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
           amount = payment.state.amount.as(Int64)
           debtor_account_id = payment.state.debtor_account_id.as(UUID)
-          settlement_account_id = UUID.new(ENV["SEPA_SETTLEMENT_ACCOUNT_ID"])
+          settlement_account_id = CrystalBank::Env.sepa_settlement_account_id
           scope_id = payment.state.scope_id.as(UUID)
           execution_date = payment.state.execution_date.as(Time)
           remittance_information = payment.state.remittance_information.to_s
