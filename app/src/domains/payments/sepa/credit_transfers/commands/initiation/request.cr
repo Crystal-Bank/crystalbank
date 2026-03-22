@@ -29,6 +29,11 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           # Validate SEPA currency is EUR
           raise CrystalBank::Exception::InvalidArgument.new("SEPA Credit Transfers must use EUR") unless r.currency == "EUR"
 
+          # Validate IBAN structural validity and MOD-97 checksum (ISO 13616)
+          raise CrystalBank::Exception::InvalidArgument.new(
+            "Invalid IBAN '#{r.creditor_iban}': failed structural or checksum validation"
+          ) unless CrystalBank::Validators::Iban.valid?(r.creditor_iban)
+
           # Read settlement account from system configuration
           settlement_account_id = CrystalBank::Env.sepa_settlement_account_id
 
