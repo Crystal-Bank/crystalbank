@@ -78,6 +78,7 @@ export async function refreshView(id) {
     const res = await apiFetch('GET', base + sep + 'limit=20')
     const items = res.data.map(e => e.attributes)
     if (
+      (items.length === 0 && viewData[id].length > 0) ||
       JSON.stringify(items) !== JSON.stringify(viewData[id].slice(0, items.length)) ||
       res.meta.has_more !== pagination.hasMore[id]
     ) {
@@ -269,13 +270,16 @@ export async function createSepaCreditTransfer(payload) {
 export async function collectApproval(id, comment) {
   ui.loading = true
   try {
-    await apiFetch('POST', '/approvals/' + id + '/collect', { comment }, { idempotency: true })
+    const res = await apiFetch('POST', '/approvals/' + id + '/collect', { comment }, { idempotency: true })
     addToast('Approval collected')
-    // Optimistically remove from pending list immediately (avoids race with backend state)
-    viewData.approvals = viewData.approvals.filter(a => a.id !== id)
-    approvalsMeta.completedDirty = true
-    // Background reconciliation — does not clear the list or block the UI
-    refreshView('approvals')
+    if (res.status === 'completed') {
+      // All required approvals collected — remove from pending list immediately
+      viewData.approvals = viewData.approvals.filter(a => a.id !== id)
+      approvalsMeta.completedDirty = true
+    } else {
+      // More approvals still required — refresh to show updated progress
+      refreshView('approvals')
+    }
   } catch (e) {
     addToast(e.message, 'error')
     throw e
