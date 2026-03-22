@@ -11,18 +11,17 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           # Resolve execution date — default to today if not provided
-          execution_date = if r.execution_date
+          execution_date = Time.utc
+          if (ed = r.execution_date)
             begin
-              Time::Format::ISO_8601_DATE.parse(r.execution_date.not_nil!)
+              execution_date = Time::Format::ISO_8601_DATE.parse(ed)
             rescue
               raise CrystalBank::Exception::InvalidArgument.new("Invalid execution_date format, expected YYYY-MM-DD")
             end
-          else
-            Time.utc
           end
 
           # Resolve end-to-end ID — auto-generate if not provided
-          end_to_end_id = r.end_to_end_id.presence || UUID.random.to_s.delete("-")[0, 35]
+          end_to_end_id = r.end_to_end_id || UUID.random.to_s.delete("-")[0, 35]
 
           # Validate amount
           raise CrystalBank::Exception::InvalidArgument.new("Amount must be greater than zero") if r.amount <= 0
