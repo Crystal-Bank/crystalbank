@@ -9,7 +9,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
     struct State < ES::Aggregate::State
       property end_to_end_id : String?
       property debtor_account_id : UUID?
-      property settlement_account_id : UUID?
       property creditor_iban : String?
       property creditor_name : String?
       property creditor_bic : String?

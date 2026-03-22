@@ -50,7 +50,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
               scope_id: t.scope_id,
               end_to_end_id: t.end_to_end_id,
               debtor_account_id: t.debtor_account_id,
-              settlement_account_id: t.settlement_account_id,
               creditor_iban: t.creditor_iban,
               creditor_name: t.creditor_name,
               creditor_bic: t.creditor_bic,

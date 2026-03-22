@@ -11,7 +11,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         getter scope_id : UUID
         getter end_to_end_id : String
         getter debtor_account_id : UUID
-        getter settlement_account_id : UUID
         getter creditor_iban : String
         getter creditor_name : String
         getter creditor_bic : String?

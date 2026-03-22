@@ -19,7 +19,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             "scope_id"              UUID NOT NULL,
             "end_to_end_id"         varchar NOT NULL,
             "debtor_account_id"     UUID NOT NULL,
-            "settlement_account_id" UUID NOT NULL,
             "creditor_iban"         varchar NOT NULL,
             "creditor_name"         varchar NOT NULL,
             "creditor_bic"          varchar,
@@ -54,7 +53,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             scope_id,
             end_to_end_id,
             debtor_account_id,
-            settlement_account_id,
             creditor_iban,
             creditor_name,
             creditor_bic,
@@ -65,14 +63,13 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             status,
             created_at,
             updated_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'EUR', $11, $12, 'pending', $13, $13)
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'EUR', $10, $11, 'pending', $12, $12)
         ),
           aggregate_id,
           aggregate_version,
           body.scope_id,
           body.end_to_end_id,
           body.debtor_account_id,
-          body.settlement_account_id,
           body.creditor_iban,
           body.creditor_name,
           body.creditor_bic,

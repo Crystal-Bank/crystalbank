@@ -12,9 +12,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         @[JSON::Field(description: "Internal account ID to debit (the payer's account)")]
         getter debtor_account_id : UUID
 
-        @[JSON::Field(description: "Internal SEPA nostro/settlement account ID to credit")]
-        getter settlement_account_id : UUID
-
         @[JSON::Field(description: "IBAN of the beneficiary")]
         getter creditor_iban : String
 

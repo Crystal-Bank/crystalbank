@@ -26,9 +26,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         @[JSON::Field(format: "uuid", description: "Debtor (payer) account ID")]
         getter debtor_account_id : UUID
 
-        @[JSON::Field(format: "uuid", description: "Settlement nostro account ID")]
-        getter settlement_account_id : UUID
-
         @[JSON::Field(description: "Beneficiary IBAN")]
         getter creditor_iban : String
 
@@ -64,7 +61,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           @scope_id : UUID,
           @end_to_end_id : String,
           @debtor_account_id : UUID,
-          @settlement_account_id : UUID,
           @creditor_iban : String,
           @creditor_name : String,
           @creditor_bic : String?,

@@ -24,12 +24,17 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           # Validate SEPA currency is EUR
           raise CrystalBank::Exception::InvalidArgument.new("SEPA Credit Transfers must use EUR") unless r.currency == "EUR"
 
+          # Read settlement account from system configuration
+          raw_settlement = ENV["SEPA_SETTLEMENT_ACCOUNT_ID"]?
+          raise CrystalBank::Exception::InvalidArgument.new("SEPA_SETTLEMENT_ACCOUNT_ID is not configured") unless raw_settlement
+          settlement_account_id = UUID.new(raw_settlement)
+
           # Validate both accounts exist, are open, and support EUR
-          account_ids = [r.debtor_account_id, r.settlement_account_id].uniq
+          account_ids = [r.debtor_account_id, settlement_account_id].uniq
           found_accounts = Accounts::Queries::Accounts.new.find_all(account_ids)
           found_by_id = found_accounts.to_h { |a| {a.id, a} }
 
-          [r.debtor_account_id, r.settlement_account_id].each do |account_id|
+          [r.debtor_account_id, settlement_account_id].each do |account_id|
             account = found_by_id[account_id]?
             raise CrystalBank::Exception::InvalidArgument.new(
               "Account '#{account_id}' is not open"
@@ -45,7 +50,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             command_handler: self.class.to_s,
             end_to_end_id: r.end_to_end_id,
             debtor_account_id: r.debtor_account_id,
-            settlement_account_id: r.settlement_account_id,
             creditor_iban: r.creditor_iban,
             creditor_name: r.creditor_name,
             creditor_bic: r.creditor_bic,

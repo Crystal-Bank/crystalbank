@@ -7,7 +7,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         define_event "Payments.Sepa.CreditTransfer", "payments.sepa.credit_transfers.initiation.requested" do
           attribute end_to_end_id, String
           attribute debtor_account_id, UUID
-          attribute settlement_account_id, UUID
           attribute creditor_iban, String
           attribute creditor_name, String
           attribute creditor_bic, String?

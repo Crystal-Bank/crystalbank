@@ -9,7 +9,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
           @state.end_to_end_id = body.end_to_end_id
           @state.debtor_account_id = body.debtor_account_id
-          @state.settlement_account_id = body.settlement_account_id
           @state.creditor_iban = body.creditor_iban
           @state.creditor_name = body.creditor_name
           @state.creditor_bic = body.creditor_bic

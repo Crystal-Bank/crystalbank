@@ -14,7 +14,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Aggregates::Conc
       state.aggregate_version.should eq(1)
       state.end_to_end_id.should eq("E2E-TEST-001")
       state.debtor_account_id.should eq(Test::Payments::Sepa::CreditTransfers::Events::DEBTOR_ACCOUNT_ID)
-      state.settlement_account_id.should eq(Test::Payments::Sepa::CreditTransfers::Events::SETTLEMENT_ACCOUNT_ID)
       state.creditor_iban.should eq("DE89370400440532013000")
       state.creditor_name.should eq("Test Creditor GmbH")
       state.creditor_bic.should be_nil

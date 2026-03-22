@@ -12,7 +12,6 @@
   let form = $state({
     end_to_end_id: '',
     debtor_account_id: '',
-    settlement_account_id: '',
     creditor_iban: '',
     creditor_name: '',
     creditor_bic: '',
@@ -21,11 +20,8 @@
     remittance_information: '',
   })
 
-  // Separate autocomplete state for the two account pickers
-  let debtorQuery   = $state('')
-  let settlementQuery = $state('')
-  let debtorOpen    = $state(false)
-  let settlementOpen = $state(false)
+  let debtorQuery = $state('')
+  let debtorOpen  = $state(false)
 
   let debtorSuggestions = $derived(
     accountOptions
@@ -37,21 +33,10 @@
       .slice(0, 8)
   )
 
-  let settlementSuggestions = $derived(
-    accountOptions
-      .filter(a => {
-        const q = settlementQuery.toLowerCase()
-        return (q === '' || a.id.toLowerCase().includes(q)) &&
-               (a.currencies ?? []).map(c => c.toLowerCase()).includes('eur')
-      })
-      .slice(0, 8)
-  )
-
   async function openModal() {
     form = {
       end_to_end_id: '',
       debtor_account_id: '',
-      settlement_account_id: '',
       creditor_iban: '',
       creditor_name: '',
       creditor_bic: '',
@@ -60,9 +45,7 @@
       remittance_information: '',
     }
     debtorQuery = ''
-    settlementQuery = ''
     debtorOpen = false
-    settlementOpen = false
     showModal = true
     try {
       const res = await apiFetch('GET', '/accounts/?limit=200')
@@ -78,18 +61,11 @@
     debtorOpen = false
   }
 
-  function selectSettlement(accountId) {
-    form.settlement_account_id = accountId
-    settlementQuery = accountId
-    settlementOpen = false
-  }
-
   async function handleSubmit() {
     try {
       await createSepaCreditTransfer({
         end_to_end_id:          form.end_to_end_id.trim(),
         debtor_account_id:      form.debtor_account_id,
-        settlement_account_id:  form.settlement_account_id,
         creditor_iban:          form.creditor_iban.trim(),
         creditor_name:          form.creditor_name.trim(),
         creditor_bic:           form.creditor_bic.trim() || undefined,
@@ -198,59 +174,30 @@
         <input id="e2e" class="field-input" maxlength="35" required bind:value={form.end_to_end_id} placeholder="E2E-2026-001"/>
       </div>
 
-      <!-- Accounts row -->
-      <div class="grid grid-cols-2 gap-4">
-        <!-- Debtor account autocomplete -->
-        <div class="relative">
-          <label class="field-label" for="debtor">Debtor Account <span class="text-zinc-400 font-normal">(EUR)</span></label>
-          <input
-            id="debtor"
-            class="field-input"
-            required
-            autocomplete="off"
-            bind:value={debtorQuery}
-            oninput={() => { form.debtor_account_id = debtorQuery; debtorOpen = true }}
-            onfocus={() => debtorOpen = true}
-            placeholder="Paste or search account ID"
-          />
-          {#if debtorOpen && debtorSuggestions.length > 0}
-            <div class="absolute z-10 w-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
-              {#each debtorSuggestions as a (a.id)}
-                <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-                <div onclick={() => selectDebtor(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
-                  <span class="mono text-xs">{a.id}</span>
-                  <span class="ml-2 text-zinc-400 text-xs">{a.type}</span>
-                </div>
-              {/each}
-            </div>
-          {/if}
-        </div>
-
-        <!-- Settlement account autocomplete -->
-        <div class="relative">
-          <label class="field-label" for="settlement">Settlement Nostro <span class="text-zinc-400 font-normal">(EUR)</span></label>
-          <input
-            id="settlement"
-            class="field-input"
-            required
-            autocomplete="off"
-            bind:value={settlementQuery}
-            oninput={() => { form.settlement_account_id = settlementQuery; settlementOpen = true }}
-            onfocus={() => settlementOpen = true}
-            placeholder="Paste or search account ID"
-          />
-          {#if settlementOpen && settlementSuggestions.length > 0}
-            <div class="absolute z-10 w-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
-              {#each settlementSuggestions as a (a.id)}
-                <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-                <div onclick={() => selectSettlement(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
-                  <span class="mono text-xs">{a.id}</span>
-                  <span class="ml-2 text-zinc-400 text-xs">{a.type}</span>
-                </div>
-              {/each}
-            </div>
-          {/if}
-        </div>
+      <!-- Debtor account autocomplete -->
+      <div class="relative">
+        <label class="field-label" for="debtor">Debtor Account <span class="text-zinc-400 font-normal">(EUR)</span></label>
+        <input
+          id="debtor"
+          class="field-input"
+          required
+          autocomplete="off"
+          bind:value={debtorQuery}
+          oninput={() => { form.debtor_account_id = debtorQuery; debtorOpen = true }}
+          onfocus={() => debtorOpen = true}
+          placeholder="Paste or search account ID"
+        />
+        {#if debtorOpen && debtorSuggestions.length > 0}
+          <div class="absolute z-10 w-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
+            {#each debtorSuggestions as a (a.id)}
+              <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+              <div onclick={() => selectDebtor(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
+                <span class="mono text-xs">{a.id}</span>
+                <span class="ml-2 text-zinc-400 text-xs">{a.type}</span>
+              </div>
+            {/each}
+          </div>
+        {/if}
       </div>
 
       <!-- Creditor fields -->
@@ -330,12 +277,8 @@
       </div>
 
       <div class="border-t border-zinc-100 pt-3">
-        <dt class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Debtor</dt>
+        <dt class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Debtor Account</dt>
         <dd class="mono text-xs break-all">{drawerTransfer.debtor_account_id}</dd>
-      </div>
-      <div>
-        <dt class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Settlement Nostro</dt>
-        <dd class="mono text-xs break-all">{drawerTransfer.settlement_account_id}</dd>
       </div>
 
       <div class="border-t border-zinc-100 pt-3">

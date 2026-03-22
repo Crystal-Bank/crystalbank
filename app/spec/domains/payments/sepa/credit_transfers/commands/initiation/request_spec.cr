@@ -21,6 +21,9 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
 
     TestEnvSepaCT.debtor_account_id = debtor_account_id
     TestEnvSepaCT.settlement_account_id = settlement_account_id
+
+    # Configure the settlement account via ENV (as it would be in production)
+    ENV["SEPA_SETTLEMENT_ACCOUNT_ID"] = settlement_account_id.to_s
   end
 
   it "creates a SEPA Credit Transfer and an approval when accounts are valid" do
@@ -38,7 +41,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     json = {
       "end_to_end_id"          => "E2E-SPEC-001",
       "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
-      "settlement_account_id"  => TestEnvSepaCT.settlement_account_id.to_s,
       "creditor_iban"          => "DE89370400440532013000",
       "creditor_name"          => "Acme GmbH",
       "creditor_bic"           => nil,
@@ -83,7 +85,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     json = {
       "end_to_end_id"          => "E2E-SPEC-002",
       "debtor_account_id"      => UUID.v7.to_s,
-      "settlement_account_id"  => TestEnvSepaCT.settlement_account_id.to_s,
       "creditor_iban"          => "DE89370400440532013000",
       "creditor_name"          => "Acme GmbH",
       "amount"                 => 1000,
@@ -99,7 +100,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     end
   end
 
-  it "raises when settlement account is not open" do
+  it "raises when settlement account (from config) is not open" do
     scope_id = UUID.v7
     context = CrystalBank::Api::Context.new(
       user_id: UUID.v7,
@@ -109,10 +110,13 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
       available_scopes: [scope_id]
     )
 
+    # Temporarily point the config to a non-existent account
+    original = ENV["SEPA_SETTLEMENT_ACCOUNT_ID"]?
+    ENV["SEPA_SETTLEMENT_ACCOUNT_ID"] = UUID.v7.to_s
+
     json = {
       "end_to_end_id"          => "E2E-SPEC-003",
       "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
-      "settlement_account_id"  => UUID.v7.to_s,
       "creditor_iban"          => "DE89370400440532013000",
       "creditor_name"          => "Acme GmbH",
       "amount"                 => 1000,
@@ -123,8 +127,12 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
 
     request = Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest.from_json(json)
 
-    expect_raises(CrystalBank::Exception::InvalidArgument, /not open/) do
-      Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    begin
+      expect_raises(CrystalBank::Exception::InvalidArgument, /not open/) do
+        Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+      end
+    ensure
+      ENV["SEPA_SETTLEMENT_ACCOUNT_ID"] = original || TestEnvSepaCT.settlement_account_id.to_s
     end
   end
 
@@ -141,7 +149,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     json = {
       "end_to_end_id"          => "E2E-SPEC-004",
       "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
-      "settlement_account_id"  => TestEnvSepaCT.settlement_account_id.to_s,
       "creditor_iban"          => "DE89370400440532013000",
       "creditor_name"          => "Acme GmbH",
       "amount"                 => 0,
@@ -170,7 +177,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     json = {
       "end_to_end_id"          => "E2E-SPEC-005",
       "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
-      "settlement_account_id"  => TestEnvSepaCT.settlement_account_id.to_s,
       "creditor_iban"          => "GB29NWBK60161331926819",
       "creditor_name"          => "Acme Ltd",
       "amount"                 => 5000,
@@ -199,7 +205,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     json = {
       "end_to_end_id"          => "E2E-SPEC-006",
       "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
-      "settlement_account_id"  => TestEnvSepaCT.settlement_account_id.to_s,
       "creditor_iban"          => "DE89370400440532013000",
       "creditor_name"          => "Acme GmbH",
       "amount"                 => 1000,
@@ -227,7 +232,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     json = {
       "end_to_end_id"          => "E2E-SPEC-007",
       "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
-      "settlement_account_id"  => TestEnvSepaCT.settlement_account_id.to_s,
       "creditor_iban"          => "DE89370400440532013000",
       "creditor_name"          => "Acme GmbH",
       "amount"                 => 1000,
