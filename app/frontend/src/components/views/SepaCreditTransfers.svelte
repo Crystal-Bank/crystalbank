@@ -67,7 +67,7 @@
         amount:                 parseInt(form.amount, 10),
         currency:               'EUR',
         remittance_information: form.remittance_information.trim(),
-        end_to_end_id:          form.end_to_end_id.trim() || undefined,
+        end_to_end_id:          form.end_to_end_id.trim(),
       })
       showModal = false
     } catch {}
@@ -228,9 +228,9 @@
 
       <!-- ── 5. End-to-End ID (optional) ── -->
       <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
-        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">End-to-End ID <span class="normal-case font-normal">(optional)</span></p>
+        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">End-to-End ID</p>
         <label class="field-label" for="e2e">End-to-End ID <span class="text-zinc-400 font-normal">(max 35 chars)</span></label>
-        <input id="e2e" class="field-input" maxlength="35" bind:value={form.end_to_end_id} placeholder="E2E-2026-001"/>
+        <input id="e2e" class="field-input" maxlength="35" required bind:value={form.end_to_end_id} placeholder="E2E-2026-001"/>
       </div>
 
       <p class="px-1 text-xs text-zinc-400">
