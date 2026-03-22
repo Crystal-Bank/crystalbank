@@ -6,8 +6,8 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
       struct CreditTransferRequest
         include JSON::Serializable
 
-        @[JSON::Field(description: "Unique end-to-end reference for this payment (max 35 chars)")]
-        getter end_to_end_id : String
+        @[JSON::Field(description: "Unique end-to-end reference for this payment (max 35 chars). Auto-generated if omitted.")]
+        getter end_to_end_id : String?
 
         @[JSON::Field(description: "Internal account ID to debit (the payer's account)")]
         getter debtor_account_id : UUID
@@ -27,8 +27,8 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         @[JSON::Field(description: "Currency. Must be 'EUR' for SEPA Credit Transfers.")]
         getter currency : String
 
-        @[JSON::Field(format: "date", description: "Requested execution date (YYYY-MM-DD)")]
-        getter execution_date : String
+        @[JSON::Field(format: "date", description: "Requested execution date (YYYY-MM-DD). Defaults to today if omitted.")]
+        getter execution_date : String?
 
         @[JSON::Field(description: "Remittance information / payment reference (max 140 chars)")]
         getter remittance_information : String
