@@ -54,7 +54,7 @@ export function setScope(value) {
 // ── Navigation / data loading ────────────────────────────
 
 export async function switchView(id) {
-  if (id === 'dashboard') { ui.view = 'dashboard'; return }
+  if (!VIEW_PATHS[id]) { ui.view = id; return }
   if (ui.view === id && viewData[id].length > 0) return
   await loadView(id)
 }
