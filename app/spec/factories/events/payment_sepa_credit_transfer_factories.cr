@@ -56,8 +56,8 @@ module Test::Payments::Sepa::CreditTransfers::Events
 
       def json_string : String
         {
-          "comment":                "test comment",
-          "ledger_transaction_id":  "00000000-0000-0000-0000-200000000001",
+          "comment":               "test comment",
+          "ledger_transaction_id": "00000000-0000-0000-0000-200000000001",
         }.to_json
       end
     end

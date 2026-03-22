@@ -4,7 +4,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Queries::CreditT
   # Fixed scope so seeded rows are visible across tests in this block
   available_scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
-  pending_id  = UUID.v7
+  pending_id = UUID.v7
   accepted_id = UUID.v7
 
   before_all do

@@ -7,25 +7,25 @@ end
 
 describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Commands::Request do
   before_all do
-    debtor_account_id     = UUID.v7
+    debtor_account_id = UUID.v7
     settlement_account_id = UUID.v7
 
     # Open two EUR-enabled accounts that the command can validate against
     [debtor_account_id, settlement_account_id].each do |account_id|
       requested = Test::Account::Events::Opening::Requested.new.create(aggr_id: account_id)
-      accepted  = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
+      accepted = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
       TEST_EVENT_STORE.append(requested)
       TEST_EVENT_STORE.append(accepted)
       Accounts::Projections::Accounts.new.apply(accepted)
     end
 
-    TestEnvSepaCT.debtor_account_id     = debtor_account_id
+    TestEnvSepaCT.debtor_account_id = debtor_account_id
     TestEnvSepaCT.settlement_account_id = settlement_account_id
   end
 
   it "creates a SEPA Credit Transfer and an approval when accounts are valid" do
     scope_id = UUID.v7
-    user_id  = UUID.v7
+    user_id = UUID.v7
 
     context = CrystalBank::Api::Context.new(
       user_id: user_id,
