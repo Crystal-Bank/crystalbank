@@ -162,10 +162,10 @@
       </button>
     </div>
 
-    <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }} class="space-y-6">
+    <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }} class="space-y-3">
 
       <!-- ── 1. Debtor ── -->
-      <div>
+      <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Debtor</p>
         <div class="relative">
           <label class="field-label" for="debtor">Account <span class="text-zinc-400 font-normal">EUR · active</span></label>
@@ -184,7 +184,7 @@
               {#each debtorSuggestions as a (a.id)}
                 <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
                 <div onclick={() => selectDebtor(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50 flex items-center gap-2">
-                  <span class="mono text-xs flex-1 truncate">{a.id}</span>
+                  <span class="font-mono text-xs flex-1 truncate">{a.id}</span>
                   <span class="text-zinc-400 text-xs shrink-0">{a.type}</span>
                 </div>
               {/each}
@@ -194,7 +194,7 @@
       </div>
 
       <!-- ── 2. Creditor information ── -->
-      <div class="border-t border-zinc-100 pt-5">
+      <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Creditor information</p>
         <div class="space-y-4">
           <div>
@@ -203,46 +203,39 @@
           </div>
           <div>
             <label class="field-label" for="creditor-iban">Creditor IBAN</label>
-            <input id="creditor-iban" class="field-input mono" required bind:value={form.creditor_iban} placeholder="DE89370400440532013000"/>
+            <input id="creditor-iban" class="field-input font-mono" required bind:value={form.creditor_iban} placeholder="DE89370400440532013000"/>
           </div>
           <div>
             <label class="field-label" for="creditor-bic">Creditor BIC <span class="text-zinc-400 font-normal">(optional)</span></label>
-            <input id="creditor-bic" class="field-input mono" bind:value={form.creditor_bic} placeholder="COBADEFFXXX"/>
+            <input id="creditor-bic" class="field-input font-mono" bind:value={form.creditor_bic} placeholder="COBADEFFXXX"/>
           </div>
         </div>
       </div>
 
       <!-- ── 3. Amount ── -->
-      <div class="border-t border-zinc-100 pt-5">
+      <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Amount</p>
-        <div>
-          <label class="field-label" for="amount">Amount <span class="text-zinc-400 font-normal">(EUR cents)</span></label>
-          <input id="amount" class="field-input" type="number" min="1" required bind:value={form.amount} placeholder="10000"/>
-        </div>
+        <label class="field-label" for="amount">Amount <span class="text-zinc-400 font-normal">(EUR cents)</span></label>
+        <input id="amount" class="field-input" type="number" min="1" required bind:value={form.amount} placeholder="10000"/>
       </div>
 
       <!-- ── 4. Remittance information ── -->
-      <div class="border-t border-zinc-100 pt-5">
+      <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
         <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Remittance information</p>
-        <div>
-          <label class="field-label" for="remittance">Remittance Information <span class="text-zinc-400 font-normal">(max 140 chars)</span></label>
-          <input id="remittance" class="field-input" maxlength="140" required bind:value={form.remittance_information} placeholder="Invoice #42"/>
-        </div>
+        <label class="field-label" for="remittance">Remittance Information <span class="text-zinc-400 font-normal">(max 140 chars)</span></label>
+        <input id="remittance" class="field-input" maxlength="140" required bind:value={form.remittance_information} placeholder="Invoice #42"/>
       </div>
 
       <!-- ── 5. End-to-End ID (optional) ── -->
-      <div class="border-t border-zinc-100 pt-5">
-        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">End-to-End ID <span class="normal-case font-normal text-zinc-400">(optional)</span></p>
-        <div>
-          <label class="field-label" for="e2e">End-to-End ID <span class="text-zinc-400 font-normal">(max 35 chars)</span></label>
-          <input id="e2e" class="field-input" maxlength="35" bind:value={form.end_to_end_id} placeholder="E2E-2026-001"/>
-        </div>
+      <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-4">
+        <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">End-to-End ID <span class="normal-case font-normal">(optional)</span></p>
+        <label class="field-label" for="e2e">End-to-End ID <span class="text-zinc-400 font-normal">(max 35 chars)</span></label>
+        <input id="e2e" class="field-input" maxlength="35" bind:value={form.end_to_end_id} placeholder="E2E-2026-001"/>
       </div>
 
-      <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-500">
-        Currency is always <strong class="text-zinc-700">EUR</strong> for SEPA Credit Transfers.
-        After submission, an approval workflow will be created — the transfer posts to the ledger once approved.
-      </div>
+      <p class="px-1 text-xs text-zinc-400">
+        Currency is always <strong class="text-zinc-600">EUR</strong>. After submission, an approval workflow is created — the transfer posts to the ledger once approved.
+      </p>
 
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" onclick={() => showModal = false} class="btn btn-ghost btn-sm">Cancel</button>
