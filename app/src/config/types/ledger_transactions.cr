@@ -11,6 +11,7 @@ module CrystalBank::Types::LedgerTransactions
   enum EntryType
     PRINCIPAL
     SETTLEMENT
+    SEPA_CREDIT_TRANSFER
     TRANSACTION_FEE
     # Accruals & Interest
     INTEREST

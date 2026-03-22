@@ -325,6 +325,7 @@
                     <optgroup label="Core">
                       <option value="principal">Principal</option>
                       <option value="settlement">Settlement</option>
+                      <option value="sepa_credit_transfer">SEPA Credit Transfer</option>
                       <option value="transaction_fee">Transaction Fee</option>
                     </optgroup>
                     <optgroup label="Interest">
