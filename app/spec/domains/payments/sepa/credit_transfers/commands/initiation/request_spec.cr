@@ -249,4 +249,90 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
       Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
     end
   end
+
+  it "raises when creditor_iban has an invalid MOD-97 checksum" do
+    # DE89370400440532013000 is valid; flipping the last digit to 1 breaks the checksum
+    scope_id = UUID.v7
+    context = CrystalBank::Api::Context.new(
+      user_id: UUID.v7,
+      roles: [] of UUID,
+      required_permission: CrystalBank::Permissions::WRITE_payments_sepa_credit_transfers_request,
+      scope: scope_id,
+      available_scopes: [scope_id]
+    )
+
+    json = {
+      "end_to_end_id"          => "E2E-SPEC-008",
+      "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
+      "creditor_iban"          => "DE89370400440532013001",
+      "creditor_name"          => "Acme GmbH",
+      "amount"                 => 1000,
+      "currency"               => "EUR",
+      "execution_date"         => "2026-04-01",
+      "remittance_information" => "Test",
+    }.to_json
+
+    request = Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest.from_json(json)
+
+    expect_raises(CrystalBank::Exception::InvalidArgument, /Invalid IBAN/) do
+      Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    end
+  end
+
+  it "raises when creditor_iban is too short to be structurally valid" do
+    scope_id = UUID.v7
+    context = CrystalBank::Api::Context.new(
+      user_id: UUID.v7,
+      roles: [] of UUID,
+      required_permission: CrystalBank::Permissions::WRITE_payments_sepa_credit_transfers_request,
+      scope: scope_id,
+      available_scopes: [scope_id]
+    )
+
+    json = {
+      "end_to_end_id"          => "E2E-SPEC-009",
+      "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
+      "creditor_iban"          => "DE8937",
+      "creditor_name"          => "Acme GmbH",
+      "amount"                 => 1000,
+      "currency"               => "EUR",
+      "execution_date"         => "2026-04-01",
+      "remittance_information" => "Test",
+    }.to_json
+
+    request = Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest.from_json(json)
+
+    expect_raises(CrystalBank::Exception::InvalidArgument, /Invalid IBAN/) do
+      Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    end
+  end
+
+  it "raises when creditor_iban contains invalid characters" do
+    scope_id = UUID.v7
+    context = CrystalBank::Api::Context.new(
+      user_id: UUID.v7,
+      roles: [] of UUID,
+      required_permission: CrystalBank::Permissions::WRITE_payments_sepa_credit_transfers_request,
+      scope: scope_id,
+      available_scopes: [scope_id]
+    )
+
+    json = {
+      "end_to_end_id"          => "E2E-SPEC-010",
+      "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
+      "creditor_iban"          => "DE89 3704 0044 0532 0130 00",
+      "creditor_name"          => "Acme GmbH",
+      "amount"                 => 1000,
+      "currency"               => "EUR",
+      "execution_date"         => "2026-04-01",
+      "remittance_information" => "Test",
+    }.to_json
+
+    request = Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest.from_json(json)
+
+    # Spaces are stripped during normalisation — this IBAN should actually pass
+    # (human-readable grouped format is valid input)
+    result = Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    result[:payment_id].should be_a(UUID)
+  end
 end

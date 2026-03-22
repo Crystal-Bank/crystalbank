@@ -16,6 +16,9 @@ require "./api/jwt"
 # Load Services
 require "./services/access_control"
 
+# Load Validators
+require "./validators/iban"
+
 # Load Exceptions
 require "./exceptions/authentication"
 require "./exceptions/authorization"
