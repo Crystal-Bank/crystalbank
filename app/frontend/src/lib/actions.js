@@ -54,7 +54,7 @@ export function setScope(value) {
 // ── Navigation / data loading ────────────────────────────
 
 export async function switchView(id) {
-  if (id === 'dashboard') { ui.view = 'dashboard'; return }
+  if (!VIEW_PATHS[id]) { ui.view = id; return }
   if (ui.view === id && viewData[id].length > 0) return
   await loadView(id)
 }
@@ -244,6 +244,20 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
     }, { idempotency: true })
     addToast('Transaction created')
     await loadView('postings')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
+export async function createSepaCreditTransfer(payload) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/payments/sepa/credit-transfers/', payload, { idempotency: true })
+    addToast('SEPA Credit Transfer submitted — awaiting approval')
+    await loadView('sepa_credit_transfers')
   } catch (e) {
     addToast(e.message, 'error')
     throw e

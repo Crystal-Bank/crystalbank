@@ -64,5 +64,9 @@ module CrystalBank
     def jwt_ttl : Int32
       3600
     end
+
+    def sepa_settlement_account_id : UUID
+      UUID.new(ENV["SEPA_SETTLEMENT_ACCOUNT_ID"]? || "00000000-0000-0000-0000-900000000001")
+    end
   end
 end

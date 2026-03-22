@@ -5,25 +5,27 @@
   import { apiFetch } from '../../lib/api.js'
 
   let stats = $state({
-    accounts:     { count: null, hasMore: false },
-    customers:    { count: null, hasMore: false },
-    postings:     { count: null, hasMore: false },
-    users:        { count: null, hasMore: false },
-    roles:        { count: null, hasMore: false },
-    scopes:       { count: null, hasMore: false },
-    api_keys:     { count: null, hasMore: false },
-    approvals:    { count: null, hasMore: false },
+    accounts:              { count: null, hasMore: false },
+    customers:             { count: null, hasMore: false },
+    postings:              { count: null, hasMore: false },
+    users:                 { count: null, hasMore: false },
+    roles:                 { count: null, hasMore: false },
+    scopes:                { count: null, hasMore: false },
+    api_keys:              { count: null, hasMore: false },
+    approvals:             { count: null, hasMore: false },
+    sepa_credit_transfers: { count: null, hasMore: false },
   })
 
   const PATHS = {
-    accounts:     '/accounts/?limit=200',
-    customers:    '/customers/?limit=200',
-    postings:     '/ledger/transactions/postings/?limit=200',
-    users:        '/users/?limit=200',
-    roles:        '/roles/?limit=200',
-    scopes:       '/scopes/?limit=200',
-    api_keys:     '/api_keys/?limit=200',
-    approvals:    '/approvals/?limit=200&status=pending',
+    accounts:              '/accounts/?limit=200',
+    customers:             '/customers/?limit=200',
+    postings:              '/ledger/transactions/postings/?limit=200',
+    users:                 '/users/?limit=200',
+    roles:                 '/roles/?limit=200',
+    scopes:                '/scopes/?limit=200',
+    api_keys:              '/api_keys/?limit=200',
+    approvals:             '/approvals/?limit=200&status=pending',
+    sepa_credit_transfers: '/payments/sepa/credit-transfers/?limit=200&status=pending',
   }
 
   onMount(async () => {
@@ -52,7 +54,8 @@
     { key: 'roles',     label: 'Roles',             view: 'roles',     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>` },
     { key: 'scopes',    label: 'Scopes',            view: 'scopes',    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>` },
     { key: 'api_keys',  label: 'API Keys',          view: 'api_keys',  icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>` },
-    { key: 'approvals', label: 'Pending Approvals', view: 'approvals', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
+    { key: 'approvals',             label: 'Pending Approvals',  view: 'approvals', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>` },
+    { key: 'sepa_credit_transfers', label: 'Pending Payments',   view: 'payments',  icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M7 15h2M11 15h4"/></svg>` },
   ]
 </script>
 

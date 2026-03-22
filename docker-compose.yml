@@ -44,18 +44,18 @@ services:
     ports:
       - 4002:80
     environment:
-      - SPEC_URL=openapi/openapi.json
+      - SPEC_URL=openapi/openapi.yaml
     volumes:
-      - ./app/openapi.json:/usr/share/nginx/html/openapi/openapi.json
+      - ./app/openapi.yaml:/usr/share/nginx/html/openapi/openapi.yaml
       
   swagger-ui:
     image: swaggerapi/swagger-ui
     environment:
-      SWAGGER_JSON: /oas/openapi.json
+      SWAGGER_JSON: /oas/openapi.yaml
     ports:
       - 4003:8080
     volumes:
-      - ./app/openapi.json:/oas/openapi.json
+      - ./app/openapi.yaml:/oas/openapi.yaml
 
   frontend:
     image: node:22-alpine

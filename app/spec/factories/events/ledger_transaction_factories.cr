@@ -1,6 +1,9 @@
 module Test::Ledger::Transactions::Events
   module Request
     class Requested
+      @entry_1_id = UUID.v7
+      @entry_2_id = UUID.v7
+
       def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Ledger::Transactions::Request::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_id = aggr_id
@@ -20,14 +23,14 @@ module Test::Ledger::Transactions::Events
 
         entries = [
           ::Ledger::Transactions::Aggregate::Entry.new(
-            id: UUID.new("00000000-0000-0000-0000-000000000010"),
+            id: @entry_1_id,
             account_id: debit_account_id,
             direction: "debit",
             amount: 10000_i64,
             entry_type: "PRINCIPAL",
           ),
           ::Ledger::Transactions::Aggregate::Entry.new(
-            id: UUID.new("00000000-0000-0000-0000-000000000020"),
+            id: @entry_2_id,
             account_id: credit_account_id,
             direction: "credit",
             amount: 10000_i64,
@@ -57,8 +60,8 @@ module Test::Ledger::Transactions::Events
         credit_account_id = "00000000-0000-0000-0000-200000000000"
 
         entries_json = [
-          {"id" => "00000000-0000-0000-0000-000000000010", "account_id" => debit_account_id, "direction" => "debit", "amount" => 10000, "entry_type" => "PRINCIPAL"},
-          {"id" => "00000000-0000-0000-0000-000000000020", "account_id" => credit_account_id, "direction" => "credit", "amount" => 10000, "entry_type" => "PRINCIPAL"},
+          {"id" => @entry_1_id.to_s, "account_id" => debit_account_id, "direction" => "debit", "amount" => 10000, "entry_type" => "PRINCIPAL"},
+          {"id" => @entry_2_id.to_s, "account_id" => credit_account_id, "direction" => "credit", "amount" => 10000, "entry_type" => "PRINCIPAL"},
         ].to_json
 
         {

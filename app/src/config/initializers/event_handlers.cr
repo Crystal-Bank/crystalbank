@@ -33,9 +33,9 @@ event_handlers.register(Scopes::Creation::Events::Requested)
 event_handlers.register(Ledger::Transactions::Request::Events::Accepted)
 event_handlers.register(Ledger::Transactions::Request::Events::Requested)
 
-# Transactions (internal_transfers commented out pending redesign to write to postings)
-# event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Accepted)
-# event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Requested)
+# Payments - SEPA Credit Transfers
+event_handlers.register(CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Events::Accepted)
+event_handlers.register(CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Events::Requested)
 
 # Users
 event_handlers.register(Users::Onboarding::Events::Accepted)

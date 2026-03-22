@@ -13,6 +13,7 @@ bus.subscribe(Approvals::Creation::Events::Requested, Approvals::Projections::Ap
 bus.subscribe(Approvals::Collection::Events::Collected, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
 
 # ApiKeys
 bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
@@ -35,6 +36,10 @@ bus.subscribe(Scopes::Creation::Events::Accepted, Scopes::Projections::Scopes)
 # Ledger
 bus.subscribe(Ledger::Transactions::Request::Events::Requested, Ledger::Transactions::Request::Commands::ProcessRequest)
 bus.subscribe(Ledger::Transactions::Request::Events::Accepted, Ledger::Transactions::Projections::Postings)
+
+# Payments — SEPA Credit Transfers
+bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Requested, Payments::Sepa::CreditTransfers::Projections::CreditTransfers)
+bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted, Payments::Sepa::CreditTransfers::Projections::CreditTransfers)
 
 # Transactions (internal_transfers commented out pending redesign to write to postings)
 # bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Requested, Transactions::InternalTransfers::Initiation::Commands::ProcessRequest)

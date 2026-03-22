@@ -1,0 +1,2503 @@
+---
+openapi: 3.0.3
+info:
+  description: App description for OpenAPI docs
+  title: CrystalBank
+  version: 0.10.1
+paths:
+  /accounts/open:
+    post:
+      summary: Request opening
+      description: 'Request opening
+
+        Request the opening of a new account
+
+
+        Required permission:
+
+        - **write_accounts_opening_request**'
+      tags:
+      - Accounts
+      operationId: CrystalBank::Domains::Accounts::Api::Accounts_open
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Requests__OpeningRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /accounts:
+    get:
+      summary: List
+      description: 'List
+
+        List all accounts
+
+
+        Required permission:
+
+        - **read_accounts_list**'
+      tags:
+      - Accounts
+      operationId: CrystalBank::Domains::Accounts::Api::Accounts_list_accounts
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /api_keys/generate:
+    post:
+      summary: Request generation
+      description: 'Request generation
+
+        Request the generation of a new api-key
+
+
+        Required permission:
+
+        - **write_api_keys_generation_request**'
+      tags:
+      - ApiKeys
+      operationId: CrystalBank::Domains::ApiKeys::Api::ApiKeys_generate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Requests__GenerationRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Responses__GenerationResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /api_keys/{id}/revoke:
+    patch:
+      summary: Request revocation
+      description: 'Request revocation
+
+        Request the revocation of a new api-key
+
+
+        Required permission:
+
+        - **write_api_keys_revocation_request**'
+      tags:
+      - ApiKeys
+      operationId: CrystalBank::Domains::ApiKeys::Api::ApiKeys_revoke
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Requests__RevocationRequest'
+        required: true
+      parameters:
+      - name: id
+        in: path
+        description: ID of the api key
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /api_keys:
+    get:
+      summary: List
+      description: 'List
+
+        List api keys
+
+
+        Required permission:
+
+        - **read_api_keys_list**'
+      tags:
+      - ApiKeys
+      operationId: CrystalBank::Domains::ApiKeys::Api::ApiKeys_list_api_keys
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__ApiKeys__Api__Responses__ApiKey_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /oauth/token:
+    post:
+      summary: Authenticate
+      description: 'Authenticate
+
+        Authenticate an API client
+
+
+        Required permission:
+
+        - none'
+      tags:
+      - Authentication
+      operationId: CrystalBank::Domains::ApiKeys::Api::Authentication_authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Request'
+        required: true
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Response'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /approvals/{id}/collect:
+    post:
+      summary: Collect approval
+      description: 'Collect approval
+
+        Collect the current user''s approval for the given approval process
+
+
+        Required permission:
+
+        - **write_approvals_collection_request**'
+      tags:
+      - Approvals
+      operationId: CrystalBank::Domains::Approvals::Api::Approvals_collect
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Approvals__Api__Requests__CollectRequest'
+        required: true
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Approvals__Api__Responses__CollectResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /approvals:
+    get:
+      summary: List
+      description: 'List
+
+        List all approval processes
+
+
+        Required permission:
+
+        - **read_approvals_list**'
+      tags:
+      - Approvals
+      operationId: CrystalBank::Domains::Approvals::Api::Approvals_list_approvals
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      - name: status
+        in: query
+        description: 'Filter by approval status: ''pending'' or ''completed'''
+        schema:
+          type: string
+          enum:
+          - pending
+          - completed
+          nullable: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Approvals__Api__Responses__Approval_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /customers/onboard:
+    post:
+      summary: Request onboarding
+      description: 'Request onboarding
+
+        Request the onboarding of a new customer
+
+
+        Required permission:
+
+        - **write_customers_onboarding_request**'
+      tags:
+      - Customers
+      operationId: CrystalBank::Domains::Customers::Api::Customers_onboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Customers__Api__Requests__OnboardingRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Customers__Api__Responses__OnboardingResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /customers:
+    get:
+      summary: List
+      description: 'List
+
+        List all customers
+
+
+        Required permission:
+
+        - **read_customers_list**'
+      tags:
+      - Customers
+      operationId: CrystalBank::Domains::Customers::Api::Customers_list_customers
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Customers__Api__Responses__Customer_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /roles/create:
+    post:
+      summary: Request creation
+      description: 'Request creation
+
+        Request the creation of a new role
+
+
+        Required permission:
+
+        - **write_roles_creation_request**'
+      tags:
+      - Roles
+      operationId: CrystalBank::Domains::Roles::Api::Roles_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Roles__Api__Requests__CreationRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Roles__Api__Responses__CreationResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /roles:
+    get:
+      summary: List
+      description: 'List
+
+        List all roles
+
+
+        Required permission:
+
+        - **read_roles_list**'
+      tags:
+      - Roles
+      operationId: CrystalBank::Domains::Roles::Api::Roles_list_roles
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Roles__Api__Responses__Role_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /scopes/create:
+    post:
+      summary: Request creation
+      description: 'Request creation
+
+        Request the creation of a new scope
+
+
+        Required permission:
+
+        - **write_scopes_creation_request**'
+      tags:
+      - Scopes
+      operationId: CrystalBank::Domains::Scopes::Api::Scopes_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Scopes__Api__Requests__CreationRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Scopes__Api__Responses__CreationResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /scopes:
+    get:
+      summary: List
+      description: 'List
+
+        List all scopes
+
+
+        Required permission:
+
+        - **read_scopes_list**'
+      tags:
+      - Scopes
+      operationId: CrystalBank::Domains::Scopes::Api::Scopes_list_scopes
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Scopes__Api__Responses__Scope_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /ledger/transactions:
+    post:
+      summary: Create
+      description: 'Create
+
+        Submit a low-level ledger money movement with explicit entries
+
+
+        Required permission:
+
+        - **write_ledger_transactions_request**'
+      tags:
+      - Transactions
+      operationId: CrystalBank::Domains::Ledger::Transactions::Api::Transactions_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Ledger__Transactions__Api__Requests__TransactionRequest'
+        required: true
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Ledger__Transactions__Api__Responses__TransactionResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /ledger/transactions/postings:
+    get:
+      summary: List postings
+      description: 'List postings
+
+        List all postings from the postings projection
+
+
+        Required permission:
+
+        - **read_postings_list**'
+      tags:
+      - Transactions
+      operationId: CrystalBank::Domains::Ledger::Transactions::Api::Transactions_list_postings
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Ledger__Transactions__Api__Responses__Posting_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /payments/sepa/credit-transfers:
+    get:
+      summary: List SEPA Credit Transfers
+      description: 'List SEPA Credit Transfers
+
+
+        Returns a paginated list of SEPA Credit Transfers visible to the caller.
+
+
+        Required permission:
+
+        - **read_payments_sepa_credit_transfers_list**'
+      tags:
+      - CreditTransfers
+      operationId: CrystalBank::Domains::Payments::Sepa::CreditTransfers::Api::CreditTransfers_list
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Page size (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      - name: status
+        in: query
+        description: 'Filter by status: pending or executed'
+        schema:
+          type: string
+          nullable: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Responses__CreditTransfer_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+    post:
+      summary: Submit a SEPA Credit Transfer
+      description: 'Submit a SEPA Credit Transfer
+
+
+        Creates a new SEPA Credit Transfer and opens an approval workflow.
+
+        The payment will be executed (i.e. ledger postings created) once the
+
+        required approval has been collected.
+
+
+        Required permission:
+
+        - **write_payments_sepa_credit_transfers_request**'
+      tags:
+      - CreditTransfers
+      operationId: CrystalBank::Domains::Payments::Sepa::CreditTransfers::Api::CreditTransfers_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Requests__CreditTransferRequest'
+        required: true
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Responses__CreditTransferResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /users/onboard:
+    post:
+      summary: Request onboarding
+      description: 'Request onboarding
+
+        Request the onboarding of a new user
+
+
+        Required permission:
+
+        - **write_users_onboarding_request**'
+      tags:
+      - Users
+      operationId: CrystalBank::Domains::Users::Api::Users_onboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Requests__OnboardingRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Responses__OnboardingResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /users/{id}/assign_roles:
+    post:
+      summary: Request assignment of roles
+      description: 'Request assignment of roles
+
+        Assign roles to a user
+
+
+        Required permission:
+
+        - **write_users_assign_roles_request**'
+      tags:
+      - Users
+      operationId: CrystalBank::Domains::Users::Api::Users_assign_roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Requests__AssignRolesRequest'
+        required: true
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /users:
+    get:
+      summary: List
+      description: 'List
+
+        List all users
+
+
+        Required permission:
+
+        - **read_users_list**'
+      tags:
+      - Users
+      operationId: CrystalBank::Domains::Users::Api::Users_list_users
+      parameters:
+      - name: cursor
+        in: query
+        description: Optional cursor parameter for pagination
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Limit parameter for pagination (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Users__Api__Responses__User_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+components:
+  schemas:
+    CrystalBank__Domains__Accounts__Api__Requests__OpeningRequest:
+      type: object
+      properties:
+        currencies:
+          type: array
+          description: List of supported currencies
+          items:
+            type: string
+            enum:
+            - chf
+            - eur
+            - gbp
+            - jpy
+            - usd
+        customer_ids:
+          type: array
+          description: List of account owners (customers)
+          items:
+            type: string
+            format: uuid
+        type:
+          type: string
+          enum:
+          - checking
+          - overnight_money
+          description: Type of the account
+      required:
+      - currencies
+      - customer_ids
+      - type
+    CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the requested account
+      required:
+      - id
+      description: Response to an account opening request
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the requested account
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  currencies:
+                    type: array
+                    description: Supported currencies of the account
+                    items:
+                      type: string
+                      enum:
+                      - chf
+                      - eur
+                      - gbp
+                      - jpy
+                      - usd
+                  customer_ids:
+                    type: array
+                    description: List of account owners (customers)
+                    items:
+                      type: string
+                      format: uuid
+                  type:
+                    type: string
+                    enum:
+                    - checking
+                    - overnight_money
+                    description: Type of the account
+                required:
+                - id
+                - scope_id
+                - currencies
+                - customer_ids
+                - type
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__ApiKeys__Api__Requests__GenerationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Custom name of the api-key
+        user_id:
+          type: string
+          format: uuid
+          description: User id the api-key should be associated with
+      required:
+      - name
+      - user_id
+    CrystalBank__Domains__ApiKeys__Api__Responses__GenerationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the api-key
+        secret:
+          type: string
+          description: Secret of the api-key (only displayed once on creation)
+      required:
+      - id
+      - secret
+    CrystalBank__Domains__ApiKeys__Api__Requests__RevocationRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: Reson to revoke the api-key
+      required:
+      - reason
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__ApiKeys__Api__Responses__ApiKey_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the api-key
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  active:
+                    type: boolean
+                    description: Is the api-key active?
+                  created_at:
+                    type: string
+                    format: iso8601
+                    description: Timestamp of the generation of the api-key
+                  name:
+                    type: string
+                    description: Custom name of the api-key
+                  revoked_at:
+                    type: string
+                    format: iso8601
+                    description: Timestamp of the revocation of the api-key
+                    nullable: true
+                required:
+                - id
+                - scope_id
+                - active
+                - created_at
+                - name
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__ApiKeys__Api__Authentication__Request:
+      type: object
+      properties:
+        grant_type:
+          type: string
+          description: Grant type of the token request, always 'client_credentials'
+        client_id:
+          type: string
+          description: ID of the api key
+        client_secret:
+          type: string
+          description: Secret of the api key
+      required:
+      - grant_type
+      - client_id
+      - client_secret
+    CrystalBank__Domains__ApiKeys__Api__Authentication__Response:
+      type: object
+      properties:
+        token:
+          type: string
+        token_type:
+          type: string
+      required:
+      - token
+      - token_type
+    CrystalBank__Domains__Approvals__Api__Requests__CollectRequest:
+      type: object
+      properties:
+        comment:
+          type: string
+          description: Optional comment from the approver
+      required:
+      - comment
+    CrystalBank__Domains__Approvals__Api__Responses__CollectResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the approval process
+        status:
+          type: string
+          description: Current status of the approval process
+      required:
+      - id
+      - status
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Approvals__Api__Responses__Approval_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the approval process
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  source_aggregate_type:
+                    type: string
+                    description: Type of the source aggregate
+                  source_aggregate_id:
+                    type: string
+                    format: uuid
+                    description: ID of the source aggregate
+                  requestor_id:
+                    type: string
+                    format: uuid
+                    description: ID of the user who initiated the request
+                    nullable: true
+                  required_approvals:
+                    type: array
+                    description: List of required approval permissions
+                    items:
+                      type: string
+                  collected_approvals:
+                    type: array
+                    description: List of collected approvals
+                    items:
+                      type: object
+                      properties:
+                        user_id:
+                          type: string
+                          format: uuid
+                          description: ID of the user who approved
+                        permissions:
+                          type: array
+                          description: Permissions the user is eligible to satisfy
+                          items:
+                            type: string
+                        comment:
+                          type: string
+                          description: Comment from the approver
+                      required:
+                      - user_id
+                      - permissions
+                      - comment
+                  completed:
+                    type: boolean
+                    description: Whether the approval process is completed
+                required:
+                - id
+                - scope_id
+                - source_aggregate_type
+                - source_aggregate_id
+                - required_approvals
+                - collected_approvals
+                - completed
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__Customers__Api__Requests__OnboardingRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the customer. Needs to be at least 2 characters long
+        type:
+          type: string
+          enum:
+          - business
+          - individual
+          description: Type of the customer
+      required:
+      - name
+      - type
+    CrystalBank__Domains__Customers__Api__Responses__OnboardingResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the requested customer
+      required:
+      - id
+      description: Response to a customer onboarding request
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Customers__Api__Responses__Customer_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the requested customer
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  name:
+                    type: string
+                    description: Name of the customer
+                  type:
+                    type: string
+                    enum:
+                    - business
+                    - individual
+                    description: Type of the customer
+                required:
+                - id
+                - scope_id
+                - name
+                - type
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__Roles__Api__Requests__CreationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+            enum:
+            - read_accounts_list
+            - write_accounts_opening_request
+            - write_api_keys_generation_request
+            - write_api_keys_revocation_request
+            - read_api_keys_list
+            - write_customers_onboarding_request
+            - read_customers_list
+            - read_roles_list
+            - write_roles_creation_request
+            - read_scopes_list
+            - write_scopes_creation_request
+            - write_ledger_transactions_request
+            - write_transactions_internal_transfers_initiation_request
+            - read_postings_list
+            - write_users_onboarding_request
+            - write_users_assign_roles_request
+            - read_users_list
+            - write_approvals_collection_request
+            - read_approvals_list
+            - write_accounts_opening_compliance_approval
+            - write_accounts_opening_board_approval
+            - write_payments_sepa_credit_transfers_request
+            - read_payments_sepa_credit_transfers_list
+            - write_payments_sepa_credit_transfers_approval
+        scopes:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - name
+      - permissions
+      - scopes
+    CrystalBank__Domains__Roles__Api__Responses__CreationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the requested role
+      required:
+      - id
+      description: Response to an role creation request
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Roles__Api__Responses__Role_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the requested role
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  name:
+                    type: string
+                    description: Name of the role
+                  permissions:
+                    type: array
+                    description: Permissions of the role
+                    items:
+                      type: string
+                      enum:
+                      - read_accounts_list
+                      - write_accounts_opening_request
+                      - write_api_keys_generation_request
+                      - write_api_keys_revocation_request
+                      - read_api_keys_list
+                      - write_customers_onboarding_request
+                      - read_customers_list
+                      - read_roles_list
+                      - write_roles_creation_request
+                      - read_scopes_list
+                      - write_scopes_creation_request
+                      - write_ledger_transactions_request
+                      - write_transactions_internal_transfers_initiation_request
+                      - read_postings_list
+                      - write_users_onboarding_request
+                      - write_users_assign_roles_request
+                      - read_users_list
+                      - write_approvals_collection_request
+                      - read_approvals_list
+                      - write_accounts_opening_compliance_approval
+                      - write_accounts_opening_board_approval
+                      - write_payments_sepa_credit_transfers_request
+                      - read_payments_sepa_credit_transfers_list
+                      - write_payments_sepa_credit_transfers_approval
+                  scopes:
+                    type: array
+                    description: Scope the role has access to
+                    items:
+                      type: string
+                      format: uuid
+                required:
+                - id
+                - scope_id
+                - name
+                - permissions
+                - scopes
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__Scopes__Api__Requests__CreationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the scope
+        parent_scope_id:
+          type: string
+          format: uuid
+          description: ID of the parent scope
+          nullable: true
+      required:
+      - name
+    CrystalBank__Domains__Scopes__Api__Responses__CreationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the requested scope
+      required:
+      - id
+      description: Response to an scope creation request
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Scopes__Api__Responses__Scope_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the requested scope
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  name:
+                    type: string
+                    description: Name of the scope
+                  parent_scope_id:
+                    type: string
+                    format: uuid
+                    description: ID of the parent scope
+                    nullable: true
+                required:
+                - id
+                - scope_id
+                - name
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__Ledger__Transactions__Api__Requests__TransactionRequest:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum:
+          - chf
+          - eur
+          - gbp
+          - jpy
+          - usd
+          description: ISO 4217 currency code for all entries in this movement
+        entries:
+          type: array
+          description: List of ledger entries (minimum 2). Debits and credits must
+            balance.
+          items:
+            type: object
+            properties:
+              account_id:
+                type: string
+                format: uuid
+                description: Account ID for this entry
+              direction:
+                type: string
+                enum:
+                - debit
+                - credit
+                description: 'Direction of the entry: DEBIT or CREDIT'
+              amount:
+                type: integer
+                format: Int64
+                description: Amount in the smallest currency unit (e.g. cents)
+              entry_type:
+                type: string
+                enum:
+                - principal
+                - settlement
+                - transaction_fee
+                - interest
+                - accrued_interest
+                - penalty_interest
+                - overdraft_fee
+                - maintenance_fee
+                - commission
+                - foreign_exchange_fee
+                - fx_gain
+                - fx_loss
+                - revaluation
+                - penalty
+                - charge_off
+                - provision
+                - dividend
+                - premium
+                - rebate
+                - adjustment
+                - reversal
+                - collateral
+                - escrow
+                description: 'Entry type: PRINCIPAL, SETTLEMENT, or TRANSACTION_FEE'
+            required:
+            - account_id
+            - direction
+            - amount
+            - entry_type
+        metadata:
+          type: object
+          properties:
+            payment_type:
+              type: string
+              description: Payment type (e.g. MANUAL_TRANSFER)
+              nullable: true
+            external_ref:
+              type: string
+              description: External reference (e.g. ISO-20022 message ID)
+              nullable: true
+            channel:
+              type: string
+              description: Channel through which the transaction was initiated
+              nullable: true
+          nullable: true
+        posting_date:
+          type: string
+          format: date
+          description: Accounting posting date (YYYY-MM-DD)
+        remittance_information:
+          type: string
+          description: Remittance information
+          nullable: true
+        value_date:
+          type: string
+          format: date
+          description: Value date for the movement (YYYY-MM-DD)
+      required:
+      - currency
+      - entries
+      - posting_date
+      - value_date
+    CrystalBank__Domains__Ledger__Transactions__Api__Responses__TransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the created ledger transaction
+      required:
+      - id
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Ledger__Transactions__Api__Responses__Posting_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Unique ID of the posting
+                  transaction_id:
+                    type: string
+                    format: uuid
+                    description: ID of the transaction this posting belongs to
+                  account_id:
+                    type: string
+                    format: uuid
+                    description: Account ID of the posting
+                  direction:
+                    type: string
+                    description: Direction of the posting (DEBIT or CREDIT)
+                  amount:
+                    type: integer
+                    format: Int64
+                    description: Amount of the posting in minor currency units
+                  entry_type:
+                    type: string
+                    description: Entry type of the posting
+                  currency:
+                    type: string
+                    description: Currency of the posting
+                  posting_date:
+                    type: string
+                    format: date
+                    description: Posting date
+                  value_date:
+                    type: string
+                    format: date
+                    description: Value date
+                  remittance_information:
+                    type: string
+                    description: Remittance information
+                  payment_type:
+                    type: string
+                    description: Payment type
+                    nullable: true
+                  external_ref:
+                    type: string
+                    description: External reference
+                    nullable: true
+                  channel:
+                    type: string
+                    description: Channel
+                    nullable: true
+                required:
+                - id
+                - transaction_id
+                - account_id
+                - direction
+                - amount
+                - entry_type
+                - currency
+                - posting_date
+                - value_date
+                - remittance_information
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Requests__CreditTransferRequest:
+      type: object
+      properties:
+        end_to_end_id:
+          type: string
+          description: Unique end-to-end reference for this payment (max 35 chars)
+        debtor_account_id:
+          type: string
+          format: uuid
+          description: Internal account ID to debit (the payer's account)
+        settlement_account_id:
+          type: string
+          format: uuid
+          description: Internal SEPA nostro/settlement account ID to credit
+        creditor_iban:
+          type: string
+          description: IBAN of the beneficiary
+        creditor_name:
+          type: string
+          description: Name of the beneficiary
+        creditor_bic:
+          type: string
+          description: BIC of the beneficiary's bank (optional for intra-SEPA)
+          nullable: true
+        amount:
+          type: integer
+          format: Int64
+          description: Amount in EUR cents (minor units). Must be > 0.
+        currency:
+          type: string
+          description: Currency. Must be 'EUR' for SEPA Credit Transfers.
+        execution_date:
+          type: string
+          format: date
+          description: Requested execution date (YYYY-MM-DD)
+        remittance_information:
+          type: string
+          description: Remittance information / payment reference (max 140 chars)
+      required:
+      - end_to_end_id
+      - debtor_account_id
+      - settlement_account_id
+      - creditor_iban
+      - creditor_name
+      - amount
+      - currency
+      - execution_date
+      - remittance_information
+    CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Responses__CreditTransferResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the created SEPA Credit Transfer
+      required:
+      - id
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Responses__CreditTransfer_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the SEPA Credit Transfer
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Data scope
+                  end_to_end_id:
+                    type: string
+                    description: End-to-end reference
+                  debtor_account_id:
+                    type: string
+                    format: uuid
+                    description: Debtor (payer) account ID
+                  settlement_account_id:
+                    type: string
+                    format: uuid
+                    description: Settlement nostro account ID
+                  creditor_iban:
+                    type: string
+                    description: Beneficiary IBAN
+                  creditor_name:
+                    type: string
+                    description: Beneficiary name
+                  creditor_bic:
+                    type: string
+                    description: Beneficiary BIC
+                    nullable: true
+                  amount:
+                    type: integer
+                    format: Int64
+                    description: Amount in EUR cents
+                  currency:
+                    type: string
+                    description: Currency (always EUR)
+                  execution_date:
+                    type: string
+                    format: date
+                    description: Execution date
+                  remittance_information:
+                    type: string
+                    description: Remittance information
+                  status:
+                    type: string
+                    description: 'Status: pending | executed'
+                  ledger_transaction_id:
+                    type: string
+                    format: uuid
+                    description: Ledger transaction ID (set once executed)
+                    nullable: true
+                  created_at:
+                    type: string
+                    description: Created at
+                required:
+                - id
+                - scope_id
+                - end_to_end_id
+                - debtor_account_id
+                - settlement_account_id
+                - creditor_iban
+                - creditor_name
+                - amount
+                - currency
+                - execution_date
+                - remittance_information
+                - status
+                - created_at
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Domains__Users__Api__Requests__OnboardingRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+      required:
+      - name
+      - email
+    CrystalBank__Domains__Users__Api__Responses__OnboardingResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the requested user
+      required:
+      - id
+      description: Response to an user onboarding request
+    CrystalBank__Domains__Users__Api__Requests__AssignRolesRequest:
+      type: object
+      properties:
+        role_ids:
+          type: array
+          description: UUID of the roles to be assigned to the user
+          items:
+            type: string
+            format: uuid
+      required:
+      - role_ids
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Users__Api__Responses__User_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the requested user
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the data point
+                  name:
+                    type: string
+                    description: Name of the user
+                  email:
+                    type: string
+                    format: email
+                    description: Email address of the user
+                required:
+                - id
+                - scope_id
+                - name
+                - email
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
+    CrystalBank__Api__Responses__ErrorResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the error
+        message:
+          type: string
+          description: Error message
+        timestamp:
+          type: string
+          format: iso8601
+          description: Timestamp of the error
+        type:
+          type: string
+          description: Type of the error
+      required:
+      - id
+      - message
+      - timestamp
+      - type
+      description: Default Error Response
+servers:
+- url: https://api.crystalbank.xyz
+- url: http://localhost:4000

@@ -15,6 +15,8 @@
   import Scopes from './components/views/Scopes.svelte'
   import ApiKeys from './components/views/ApiKeys.svelte'
   import Approvals from './components/views/Approvals.svelte'
+  import Payments from './components/views/Payments.svelte'
+  import SepaCreditTransfers from './components/views/SepaCreditTransfers.svelte'
 
   onMount(() => {
     if (auth.token) ui.view = 'dashboard'
@@ -55,6 +57,10 @@
           <ApiKeys />
         {:else if ui.view === 'approvals'}
           <Approvals />
+        {:else if ui.view === 'payments'}
+          <Payments />
+        {:else if ui.view === 'sepa_credit_transfers'}
+          <SepaCreditTransfers />
         {/if}
       </main>
     </div>

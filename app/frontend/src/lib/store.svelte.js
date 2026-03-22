@@ -25,6 +25,7 @@ export const viewData = $state({
   api_keys: [],
   approvals: [],
   approvals_completed: [],
+  sepa_credit_transfers: [],
 })
 
 // Metadata for cross-component approval state coordination
@@ -43,6 +44,7 @@ export const pagination = $state({
     api_keys: false,
     approvals: false,
     approvals_completed: false,
+    sepa_credit_transfers: false,
   },
   cursors: {
     accounts: null,
@@ -54,6 +56,7 @@ export const pagination = $state({
     api_keys: null,
     approvals: null,
     approvals_completed: null,
+    sepa_credit_transfers: null,
   },
 })
 
@@ -80,6 +83,9 @@ export const ALL_PERMISSIONS = [
   'write_users_assign_roles_request',
   'read_approvals_list',
   'write_approvals_collection_request',
+  'read_payments_sepa_credit_transfers_list',
+  'write_payments_sepa_credit_transfers_request',
+  'write_payments_sepa_credit_transfers_approval',
 ]
 
 export const NAV_SECTIONS = [
@@ -124,6 +130,16 @@ export const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Payments',
+    items: [
+      {
+        id: 'payments',
+        label: 'Payments',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M7 15h2M11 15h4"/></svg>`,
+      },
+    ],
+  },
+  {
     label: 'Management',
     items: [
       {
@@ -151,13 +167,14 @@ export const NAV_SECTIONS = [
 ]
 
 export const VIEW_PATHS = {
-  accounts:             '/accounts/',
-  customers:            '/customers/',
-  postings:             '/ledger/transactions/postings/',
-  users:                '/users/',
-  roles:                '/roles/',
-  scopes:               '/scopes/',
-  api_keys:             '/api_keys/',
-  approvals:            '/approvals/?status=pending',
-  approvals_completed:  '/approvals/?status=completed',
+  accounts:                '/accounts/',
+  customers:               '/customers/',
+  postings:                '/ledger/transactions/postings/',
+  users:                   '/users/',
+  roles:                   '/roles/',
+  scopes:                  '/scopes/',
+  api_keys:                '/api_keys/',
+  approvals:               '/approvals/?status=pending',
+  approvals_completed:     '/approvals/?status=completed',
+  sepa_credit_transfers:   '/payments/sepa/credit-transfers/',
 }
