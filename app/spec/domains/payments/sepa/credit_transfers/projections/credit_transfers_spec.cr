@@ -47,7 +47,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Projections::Cre
       %(SELECT ledger_transaction_id FROM "projections"."sepa_credit_transfers" WHERE uuid = $1),
       uuid
     )
-    ledger_tx_id.should eq(Test::Payments::Sepa::CreditTransfers::Events::LEDGER_TX_ID.to_s)
+    ledger_tx_id.should eq(Test::Payments::Sepa::CreditTransfers::Events::LEDGER_TX_ID)
   end
 
   it "stores the correct payment fields from the Requested event" do
