@@ -137,11 +137,6 @@ export const NAV_SECTIONS = [
         label: 'Payments',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M7 15h2M11 15h4"/></svg>`,
       },
-      {
-        id: 'sepa_credit_transfers',
-        label: 'SEPA Transfers',
-        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M7 15h2M11 15h4"/></svg>`,
-      },
     ],
   },
   {
