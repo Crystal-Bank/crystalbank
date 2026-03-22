@@ -37,6 +37,10 @@ event_handlers.register(Ledger::Transactions::Request::Events::Requested)
 # event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Accepted)
 # event_handlers.register(Transactions::InternalTransfers::Initiation::Events::Requested)
 
+# Payments - SEPA Credit Transfers
+event_handlers.register(CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Events::Accepted)
+event_handlers.register(CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Events::Requested)
+
 # Users
 event_handlers.register(Users::Onboarding::Events::Accepted)
 event_handlers.register(Users::Onboarding::Events::Requested)

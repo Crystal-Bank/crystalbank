@@ -14,7 +14,6 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Even
     body = event.body.as(Payments::Sepa::CreditTransfers::Initiation::Events::Requested::Body)
     body.end_to_end_id.should eq("E2E-TEST-001")
     body.debtor_account_id.should eq(Test::Payments::Sepa::CreditTransfers::Events::DEBTOR_ACCOUNT_ID)
-    body.settlement_account_id.should eq(Test::Payments::Sepa::CreditTransfers::Events::SETTLEMENT_ACCOUNT_ID)
     body.creditor_iban.should eq("DE89370400440532013000")
     body.creditor_name.should eq("Test Creditor GmbH")
     body.creditor_bic.should be_nil

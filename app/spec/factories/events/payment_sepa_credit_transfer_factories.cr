@@ -5,8 +5,8 @@ module Test::Payments::Sepa::CreditTransfers::Events
 
   module Initiation
     class Requested
-      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Payments::Sepa::CreditTransfers::Initiation::Events::Requested
-        Payments::Sepa::CreditTransfers::Initiation::Events::Requested.new(
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Payments::Sepa::CreditTransfers::Initiation::Events::Requested
+        ::Payments::Sepa::CreditTransfers::Initiation::Events::Requested.new(
           actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
           aggregate_id: aggr_id,
           command_handler: "test",
@@ -40,8 +40,8 @@ module Test::Payments::Sepa::CreditTransfers::Events
     end
 
     class Accepted
-      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Payments::Sepa::CreditTransfers::Initiation::Events::Accepted
-        Payments::Sepa::CreditTransfers::Initiation::Events::Accepted.new(
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : ::Payments::Sepa::CreditTransfers::Initiation::Events::Accepted
+        ::Payments::Sepa::CreditTransfers::Initiation::Events::Accepted.new(
           actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
           aggregate_id: aggr_id,
           aggregate_version: 2,
