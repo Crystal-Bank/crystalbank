@@ -24,7 +24,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           end_to_end_id = r.end_to_end_id || UUID.random.to_s.delete("-")[0, 35]
 
           # Validate creditor IBAN
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid creditor IBAN") unless CrystalIBAN.valid?(r.creditor_iban)
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid creditor IBAN") unless CrystalIBAN::Validator.valid?(r.creditor_iban)
 
           # Validate amount
           raise CrystalBank::Exception::InvalidArgument.new("Amount must be greater than zero") if r.amount <= 0
