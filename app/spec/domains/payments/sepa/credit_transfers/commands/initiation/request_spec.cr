@@ -223,6 +223,34 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     end
   end
 
+  it "raises when creditor_iban is invalid" do
+    scope_id = UUID.v7
+    context = CrystalBank::Api::Context.new(
+      user_id: UUID.v7,
+      roles: [] of UUID,
+      required_permission: CrystalBank::Permissions::WRITE_payments_sepa_credit_transfers_request,
+      scope: scope_id,
+      available_scopes: [scope_id]
+    )
+
+    json = {
+      "end_to_end_id"          => "E2E-SPEC-008",
+      "debtor_account_id"      => TestEnvSepaCT.debtor_account_id.to_s,
+      "creditor_iban"          => "INVALID_IBAN",
+      "creditor_name"          => "Acme GmbH",
+      "amount"                 => 1000,
+      "currency"               => "EUR",
+      "execution_date"         => "2026-04-01",
+      "remittance_information" => "Test",
+    }.to_json
+
+    request = Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest.from_json(json)
+
+    expect_raises(CrystalBank::Exception::InvalidArgument, /Invalid creditor IBAN/) do
+      Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(request, context)
+    end
+  end
+
   it "raises when scope is missing from context" do
     context = CrystalBank::Api::Context.new(
       user_id: UUID.v7,

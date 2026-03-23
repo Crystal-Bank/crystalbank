@@ -2,6 +2,7 @@
 require "pg"
 require "yaml"
 require "crystal-es"
+require "crystal_iban"
 
 # Load config
 require "./config/load"
