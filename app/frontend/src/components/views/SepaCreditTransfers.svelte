@@ -17,6 +17,25 @@
     end_to_end_id: '',
   })
 
+  let ibanError = $state('')
+
+  function validateIban(value) {
+    const iban = value.replace(/\s+/g, '').toUpperCase()
+    if (!iban) return ''
+    if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/.test(iban)) return 'Invalid IBAN format'
+    const rearranged = iban.slice(4) + iban.slice(0, 4)
+    const numeric = rearranged.split('').map(c => c >= 'A' ? String(c.charCodeAt(0) - 55) : c).join('')
+    let remainder = 0
+    for (let i = 0; i < numeric.length; i++) {
+      remainder = (remainder * 10 + parseInt(numeric[i], 10)) % 97
+    }
+    return remainder === 1 ? '' : 'IBAN checksum is invalid'
+  }
+
+  function onIbanInput() {
+    ibanError = validateIban(form.creditor_iban)
+  }
+
   let debtorQuery = $state('')
   let debtorOpen  = $state(false)
 
@@ -43,6 +62,7 @@
       remittance_information: '',
       end_to_end_id: '',
     }
+    ibanError = ''
     debtorQuery = ''
     debtorOpen = false
     showModal = true
@@ -61,6 +81,8 @@
   }
 
   async function handleSubmit() {
+    ibanError = validateIban(form.creditor_iban)
+    if (ibanError) return
     try {
       await createSepaCreditTransfer({
         debtor_account_id:      form.debtor_account_id,
@@ -206,7 +228,17 @@
           </div>
           <div>
             <label class="field-label" for="creditor-iban">Creditor IBAN</label>
-            <input id="creditor-iban" class="field-input font-mono" required bind:value={form.creditor_iban} placeholder="DE89370400440532013000"/>
+            <input
+              id="creditor-iban"
+              class="field-input font-mono {ibanError ? 'border-red-400 focus:ring-red-300' : ''}"
+              required
+              bind:value={form.creditor_iban}
+              oninput={onIbanInput}
+              placeholder="DE89370400440532013000"
+            />
+            {#if ibanError}
+              <p class="mt-1 text-xs text-red-500">{ibanError}</p>
+            {/if}
           </div>
           <div>
             <label class="field-label" for="creditor-bic">Creditor BIC <span class="text-zinc-400 font-normal">(optional)</span></label>
