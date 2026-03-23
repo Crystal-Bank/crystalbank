@@ -26,7 +26,7 @@
     accountOptions
       .filter(a => {
         const q = debtorQuery.toLowerCase()
-        return (q === '' || a.id.toLowerCase().includes(q)) &&
+        return (q === '' || a.id.toLowerCase().includes(q) || (a.name ?? '').toLowerCase().includes(q)) &&
                (a.currencies ?? []).map(c => c.toLowerCase()).includes('eur') &&
                !INTERNAL_ACCOUNT_TYPES.includes(a.type?.toLowerCase())
       })
@@ -186,9 +186,12 @@
             <div class="absolute z-10 w-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
               {#each debtorSuggestions as a (a.id)}
                 <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-                <div onclick={() => selectDebtor(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50 flex items-center gap-2">
-                  <span class="font-mono text-xs flex-1 truncate">{a.id}</span>
-                  <span class="text-zinc-400 text-xs shrink-0">{a.type}</span>
+                <div onclick={() => selectDebtor(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
+                  <div class="font-medium text-xs text-zinc-800">{a.name}</div>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class="font-mono text-xs text-zinc-400 flex-1 truncate">{a.id}</span>
+                    <span class="text-zinc-400 text-xs shrink-0">{a.type}</span>
+                  </div>
                 </div>
               {/each}
             </div>

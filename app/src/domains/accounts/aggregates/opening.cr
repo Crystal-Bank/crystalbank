@@ -15,6 +15,7 @@ module CrystalBank::Domains::Accounts
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(Accounts::Opening::Events::Requested::Body)
+          @state.name = body.name
           @state.supported_currencies = body.currencies
           @state.scope_id = body.scope_id
           @state.type = body.type
