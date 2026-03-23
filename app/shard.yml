@@ -22,6 +22,9 @@ dependencies:
   jwt:
     github: crystal-community/jwt
 
+  crystal_iban:
+    github: tristanholl/crystal-iban
+
 crystal: '>= 1.14.0'
 
 license: MIT

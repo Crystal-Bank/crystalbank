@@ -16,6 +16,10 @@ shards:
     git: https://github.com/tristanholl/crystal-es.git
     version: 0.2.2+git.commit.7e20b72c64c9196d56151463f2b5c22077824462
 
+  crystal_iban:
+    git: https://github.com/tristanholl/crystal-iban.git
+    version: 0.1.0+git.commit.e649f1db4294d234af3c506078b4aefd8852f090
+
   db:
     git: https://github.com/crystal-lang/crystal-db.git
     version: 0.13.1
