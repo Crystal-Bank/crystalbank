@@ -5,6 +5,7 @@ module CrystalBank::Domains::Accounts
         include ::ES::EventDSL
 
         define_event "Account", "account.opening.requested" do
+          attribute :name, String
           attribute :currencies, Array(CrystalBank::Types::Currencies::Supported)
           attribute :customer_ids, Array(UUID)
           attribute :scope_id, UUID

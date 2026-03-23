@@ -8,6 +8,7 @@ module CrystalBank::Domains::Accounts
 
     struct State < ES::Aggregate::State
       property open : Bool = false
+      property name : String?
       property customer_ids = Array(UUID).new
       property supported_currencies = Array(CrystalBank::Types::Currencies::Supported).new
       property scope_id : UUID?

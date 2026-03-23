@@ -16,6 +16,7 @@ module CrystalBank::Domains::Accounts
           event = Accounts::Opening::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
+            name: r.name,
             currencies: r.currencies,
             customer_ids: r.customer_ids,
             scope_id: scope,

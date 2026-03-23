@@ -9,6 +9,7 @@ module CrystalBank::Domains::Accounts
         @[DB::Field(key: "uuid")]
         getter id : UUID
         getter scope_id : UUID
+        getter name : String
         getter object : String = "account"
 
         @[DB::Field(converter: CrystalBank::Converters::GenericArray(CrystalBank::Types::Currencies::Supported))]

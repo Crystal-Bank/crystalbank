@@ -22,6 +22,9 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(format: "uuid", description: "Scope of the data point")]
         getter scope_id : UUID
 
+        @[JSON::Field(description: "Name of the account")]
+        getter name : String
+
         @[JSON::Field(description: "Supported currencies of the account")]
         getter currencies : Array(CrystalBank::Types::Currencies::Supported)
 
@@ -34,6 +37,7 @@ module CrystalBank::Domains::Accounts
         def initialize(
           @id : UUID,
           @scope_id : UUID,
+          @name : String,
           @currencies : Array(CrystalBank::Types::Currencies::Supported),
           @customer_ids : Array(UUID),
           @type : CrystalBank::Types::Accounts::Type,

@@ -4,6 +4,9 @@ module CrystalBank::Domains::Accounts
       struct OpeningRequest
         include JSON::Serializable
 
+        @[JSON::Field(description: "Name of the account")]
+        getter name : String
+
         @[JSON::Field(description: "List of supported currencies")]
         getter currencies : Array(CrystalBank::Types::Currencies::Supported)
 

@@ -13,6 +13,7 @@ module CrystalBank::Domains::Accounts
             "aggregate_version" int8 NOT NULL,
             "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
+            "name" varchar NOT NULL,
             "currencies" jsonb NOT NULL,
             "customer_ids" jsonb NOT NULL,
             "type" varchar NOT NULL
@@ -37,6 +38,7 @@ module CrystalBank::Domains::Accounts
         aggregate.hydrate(version: aggregate_version)
 
         # Extract attributes to local variables
+        name = aggregate.state.name
         currencies = aggregate.state.supported_currencies.to_json
         customer_ids = aggregate.state.customer_ids.to_json
         scope_id = aggregate.state.scope_id
@@ -52,16 +54,18 @@ module CrystalBank::Domains::Accounts
                 aggregate_version,
                 scope_id,
                 created_at,
+                name,
                 type,
                 currencies,
                 customer_ids
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
           ),
             aggregate_id,
             aggregate_version,
             scope_id,
             created_at,
+            name.to_s,
             type.to_s,
             currencies,
             customer_ids

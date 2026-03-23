@@ -5,7 +5,7 @@
 
   // ── Create modal ─────────────────────────────────────
   let showModal = $state(false)
-  let form = $state({ type: '', selectedCurrencies: [], customerIds: [] })
+  let form = $state({ name: '', type: '', selectedCurrencies: [], customerIds: [] })
   let customerOptions = $state([])
   let customerSearch = $state('')
   let showCustomerDropdown = $state(false)
@@ -21,7 +21,7 @@
   )
 
   async function openModal() {
-    form = { type: '', selectedCurrencies: [], customerIds: [] }
+    form = { name: '', type: '', selectedCurrencies: [], customerIds: [] }
     customerSearch = ''
     showModal = true
     try {
@@ -52,7 +52,7 @@
 
   async function handleSubmit() {
     try {
-      await createAccount({ type: form.type, currencies: form.selectedCurrencies, customerIds: form.customerIds })
+      await createAccount({ name: form.name, type: form.type, currencies: form.selectedCurrencies, customerIds: form.customerIds })
       showModal = false
     } catch {}
   }
@@ -74,13 +74,14 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th></tr></thead>
+    <thead><tr><th>Name</th><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th></tr></thead>
     <tbody>
       {#if viewData.accounts.length === 0 && !ui.loadingView}
-        <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
+        <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
       {/if}
       {#each viewData.accounts as a (a.id)}
         <tr onclick={() => drawerAccount = a} class="cursor-pointer">
+          <td class="font-medium">{a.name}</td>
           <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge" class:badge-blue={a.type === 'checking'} class:badge-purple={a.type !== 'checking'}>{a.type?.replace('_', ' ')}</span></td>
           <td>
@@ -119,6 +120,10 @@
       </button>
     </div>
     <div class="drawer-body">
+      <div class="drawer-field">
+        <div class="drawer-field-label">Name</div>
+        <div class="font-medium text-sm">{drawerAccount.name}</div>
+      </div>
       <div class="drawer-field">
         <div class="drawer-field-label">ID</div>
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerAccount.id}</div>
@@ -166,6 +171,10 @@
       <div class="modal-title">Open Account</div>
       <div class="modal-desc">Request the opening of a new bank account. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
+        <div class="mb-4">
+          <label class="field-label">Account Name</label>
+          <input type="text" bind:value={form.name} class="field-input" placeholder="e.g. Main Operating Account" required>
+        </div>
         <div class="mb-4">
           <label class="field-label">Account Type</label>
           <select bind:value={form.type} class="field-input field-select" required>

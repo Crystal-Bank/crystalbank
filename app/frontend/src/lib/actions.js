@@ -115,13 +115,13 @@ export async function loadMore(id) {
 
 // ── Create / write actions ───────────────────────────────
 
-export async function createAccount({ type, currencies, customerIds }) {
+export async function createAccount({ name, type, currencies, customerIds }) {
   ui.loading = true
   try {
     const customer_ids = Array.isArray(customerIds)
       ? customerIds
       : customerIds.split('\n').map(s => s.trim()).filter(Boolean)
-    await apiFetch('POST', '/accounts/open', { type, currencies, customer_ids }, { idempotency: true })
+    await apiFetch('POST', '/accounts/open', { name, type, currencies, customer_ids }, { idempotency: true })
     addToast('Account opening requested')
     await loadView('accounts')
   } catch (e) {
