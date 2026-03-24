@@ -25,12 +25,14 @@ export const viewData = $state({
   api_keys: [],
   approvals: [],
   approvals_completed: [],
+  approvals_rejected: [],
   sepa_credit_transfers: [],
 })
 
 // Metadata for cross-component approval state coordination
 export const approvalsMeta = $state({
   completedDirty: false,
+  rejectedDirty: false,
 })
 
 export const pagination = $state({
@@ -44,6 +46,7 @@ export const pagination = $state({
     api_keys: false,
     approvals: false,
     approvals_completed: false,
+    approvals_rejected: false,
     sepa_credit_transfers: false,
   },
   cursors: {
@@ -56,6 +59,7 @@ export const pagination = $state({
     api_keys: null,
     approvals: null,
     approvals_completed: null,
+    approvals_rejected: null,
     sepa_credit_transfers: null,
   },
 })
@@ -176,5 +180,6 @@ export const VIEW_PATHS = {
   api_keys:                '/api_keys/',
   approvals:               '/approvals/?status=pending',
   approvals_completed:     '/approvals/?status=completed',
+  approvals_rejected:      '/approvals/?status=rejected',
   sepa_credit_transfers:   '/payments/sepa/credit-transfers/',
 }

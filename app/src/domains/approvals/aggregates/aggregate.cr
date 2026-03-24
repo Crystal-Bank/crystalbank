@@ -1,5 +1,6 @@
 require "./creation"
 require "./collection"
+require "./rejection"
 
 module CrystalBank::Domains::Approvals
   class Aggregate < ES::Aggregate
@@ -7,6 +8,7 @@ module CrystalBank::Domains::Approvals
 
     include CrystalBank::Domains::Approvals::Aggregates::Concerns::Creation
     include CrystalBank::Domains::Approvals::Aggregates::Concerns::Collection
+    include CrystalBank::Domains::Approvals::Aggregates::Concerns::Rejection
 
     struct CollectedApproval
       include JSON::Serializable
@@ -26,6 +28,7 @@ module CrystalBank::Domains::Approvals
       property required_approvals = Array(String).new
       property collected_approvals = Array(CollectedApproval).new
       property completed : Bool = false
+      property rejected : Bool = false
       property requestor_id : UUID?
     end
 

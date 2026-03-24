@@ -2,31 +2,36 @@ module CrystalBank::Domains::Approvals
   module Projections
     class Approvals < ES::Projection
       def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'approvals');), as: Bool
-        return true if skip
+        table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'approvals');), as: Bool
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."approvals" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "source_aggregate_type" varchar NOT NULL,
-            "source_aggregate_id" UUID NOT NULL,
-            "required_approvals" JSONB NOT NULL,
-            "requestor_id" UUID,
-            "collected_approvals" JSONB NOT NULL DEFAULT '[]'::jsonb,
-            "completed" boolean NOT NULL DEFAULT false,
-            "created_at" timestamp NOT NULL,
-            "updated_at" timestamp NOT NULL
-          );
-        )
+        if table_exists
+          # Migrate existing table: add rejected column if not present
+          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejected" boolean NOT NULL DEFAULT false)
+        else
+          m = Array(String).new
+          m << %(
+            CREATE TABLE "projections"."approvals" (
+              "id" SERIAL PRIMARY KEY,
+              "uuid" UUID NOT NULL,
+              "aggregate_version" int8 NOT NULL,
+              "scope_id" UUID NOT NULL,
+              "source_aggregate_type" varchar NOT NULL,
+              "source_aggregate_id" UUID NOT NULL,
+              "required_approvals" JSONB NOT NULL,
+              "requestor_id" UUID,
+              "collected_approvals" JSONB NOT NULL DEFAULT '[]'::jsonb,
+              "completed" boolean NOT NULL DEFAULT false,
+              "rejected" boolean NOT NULL DEFAULT false,
+              "created_at" timestamp NOT NULL,
+              "updated_at" timestamp NOT NULL
+            );
+          )
 
-        m << %(CREATE UNIQUE INDEX approvals_uuid_idx ON "projections"."approvals"(uuid);)
-        m << %(CREATE INDEX approvals_source_idx ON "projections"."approvals"(source_aggregate_type, source_aggregate_id);)
+          m << %(CREATE UNIQUE INDEX approvals_uuid_idx ON "projections"."approvals"(uuid);)
+          m << %(CREATE INDEX approvals_source_idx ON "projections"."approvals"(source_aggregate_type, source_aggregate_id);)
 
-        m.each { |s| @projection_database.exec s }
+          m.each { |s| @projection_database.exec s }
+        end
       end
 
       # Created
@@ -108,6 +113,28 @@ module CrystalBank::Domains::Approvals
             SET
               "aggregate_version" = $1,
               "completed" = true,
+              "updated_at" = $2
+            WHERE "uuid" = $3
+          ),
+            aggregate_version,
+            updated_at,
+            aggregate_id
+        end
+      end
+
+      # Rejected
+      def apply(event : ::Approvals::Rejection::Events::Rejected)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+        updated_at = event.header.created_at
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(
+            UPDATE "projections"."approvals"
+            SET
+              "aggregate_version" = $1,
+              "rejected" = true,
               "updated_at" = $2
             WHERE "uuid" = $3
           ),

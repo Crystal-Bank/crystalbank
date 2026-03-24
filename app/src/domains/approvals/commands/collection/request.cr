@@ -12,6 +12,9 @@ module CrystalBank::Domains::Approvals
           # Check if the approval process is already completed
           raise CrystalBank::Exception::InvalidArgument.new("Approval process is already completed") if state.completed
 
+          # Check if the approval process is already rejected
+          raise CrystalBank::Exception::InvalidArgument.new("Approval process is already rejected") if state.rejected
+
           # Check if the user is the requestor
           raise CrystalBank::Exception::InvalidArgument.new("Requestor cannot approve their own request") if state.requestor_id == user_id
 

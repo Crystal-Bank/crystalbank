@@ -38,6 +38,27 @@ module CrystalBank::Domains::Approvals
         CollectResponse.new(id, status)
       end
 
+      # Reject approval
+      # Reject the given approval process.
+      # The requestor can reject their own request; users with collection permissions can also reject.
+      #
+      @[AC::Route::POST("/:id/reject", body: :r)]
+      def reject(
+        r : RejectRequest,
+        id : UUID,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID,
+      ) : RejectResponse
+        ::Approvals::Rejection::Commands::Request.new.call(
+          approval_id: id,
+          user_id: context.user_id,
+          user_roles: context.roles,
+          comment: r.comment
+        )
+
+        RejectResponse.new(id, "rejected")
+      end
+
       # List
       # List all approval processes
       #
@@ -49,17 +70,12 @@ module CrystalBank::Domains::Approvals
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
-        @[AC::Param::Info(description: "Filter by approval status: 'pending' or 'completed'")]
+        @[AC::Param::Info(description: "Filter by approval status: 'pending', 'completed', or 'rejected'")]
         status : CrystalBank::Types::Approvals::Status? = nil,
       ) : ListResponse(Responses::Approval)
         authorized?("read_approvals_list", request_scope: false)
 
-        completed = case status
-                    when CrystalBank::Types::Approvals::Status::Pending   then false
-                    when CrystalBank::Types::Approvals::Status::Completed then true
-                    end
-
-        approvals = ::Approvals::Queries::Approvals.new.list(context, cursor: cursor, limit: limit + 1, completed: completed).map do |a|
+        approvals = ::Approvals::Queries::Approvals.new.list(context, cursor: cursor, limit: limit + 1, status: status).map do |a|
           collected = a.collected_approvals.map do |ca|
             Responses::CollectedApproval.new(ca.user_id, ca.permissions, ca.comment)
           end
@@ -72,7 +88,8 @@ module CrystalBank::Domains::Approvals
             a.requestor_id,
             a.required_approvals,
             collected,
-            a.completed
+            a.completed,
+            a.rejected
           )
         end
 

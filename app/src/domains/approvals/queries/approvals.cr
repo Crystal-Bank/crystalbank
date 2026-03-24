@@ -32,6 +32,7 @@ module CrystalBank::Domains::Approvals
         getter collected_approvals : Array(CollectedApproval)
 
         getter completed : Bool
+        getter rejected : Bool
       end
 
       def initialize
@@ -42,7 +43,7 @@ module CrystalBank::Domains::Approvals
         context : CrystalBank::Api::Context,
         cursor : UUID?,
         limit : Int32,
-        completed : Bool? = nil,
+        status : CrystalBank::Types::Approvals::Status? = nil,
       ) : Array(Approval)
         query_param_counter = 0
         query = [] of String
@@ -61,9 +62,17 @@ module CrystalBank::Domains::Approvals
         end
 
         # Add status filter to query
-        unless completed.nil?
+        case status
+        when CrystalBank::Types::Approvals::Status::Pending
+          query << %(AND "completed" = $#{query_param_counter += 1} AND "rejected" = $#{query_param_counter += 1})
+          query_params << false
+          query_params << false
+        when CrystalBank::Types::Approvals::Status::Completed
           query << %(AND "completed" = $#{query_param_counter += 1})
-          query_params << completed
+          query_params << true
+        when CrystalBank::Types::Approvals::Status::Rejected
+          query << %(AND "rejected" = $#{query_param_counter += 1})
+          query_params << true
         end
 
         query << %(ORDER BY "uuid" ASC)
