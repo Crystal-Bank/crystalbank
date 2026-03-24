@@ -34,10 +34,12 @@ module Test::Account::Events
         command_handler = "test"
         comment = "test comment"
         scope_id = UUID.new("00000000-0000-0000-0000-300000000001")
+        name = "Test Account"
 
         Accounts::Opening::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
+          name: name,
           currencies: currencies,
           customer_ids: customer_ids,
           scope_id: scope_id,
@@ -50,6 +52,7 @@ module Test::Account::Events
       def json_string : String
         {
           "comment":      "test comment",
+          "name":         "Test Account",
           "currencies":   ["eur", "usd"],
           "customer_ids": ["00000000-0000-0000-0000-200000000001", "00000000-0000-0000-0000-200000000002"],
           "scope_id":     "00000000-0000-0000-0000-300000000001",
