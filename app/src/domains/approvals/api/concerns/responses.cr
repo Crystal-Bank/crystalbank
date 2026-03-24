@@ -28,6 +28,18 @@ module CrystalBank::Domains::Approvals
         def initialize(@id : UUID, @status : String); end
       end
 
+      struct RejectResponse
+        include JSON::Serializable
+
+        @[JSON::Field(format: "uuid", description: "ID of the approval process")]
+        getter id : UUID
+
+        @[JSON::Field(description: "Current status of the approval process")]
+        getter status : String
+
+        def initialize(@id : UUID, @status : String); end
+      end
+
       struct Approval
         include JSON::Serializable
 
@@ -55,6 +67,9 @@ module CrystalBank::Domains::Approvals
         @[JSON::Field(description: "Whether the approval process is completed")]
         getter completed : Bool
 
+        @[JSON::Field(description: "Whether the approval process is rejected")]
+        getter rejected : Bool
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
@@ -64,6 +79,7 @@ module CrystalBank::Domains::Approvals
           @required_approvals : Array(String),
           @collected_approvals : Array(CollectedApproval),
           @completed : Bool,
+          @rejected : Bool,
         ); end
       end
     end

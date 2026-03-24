@@ -287,3 +287,19 @@ export async function collectApproval(id, comment) {
     ui.loading = false
   }
 }
+
+export async function rejectApproval(id, comment) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/approvals/' + id + '/reject', { comment }, { idempotency: true })
+    addToast('Approval rejected')
+    // Remove from pending list immediately and mark rejected list as dirty
+    viewData.approvals = viewData.approvals.filter(a => a.id !== id)
+    approvalsMeta.rejectedDirty = true
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}

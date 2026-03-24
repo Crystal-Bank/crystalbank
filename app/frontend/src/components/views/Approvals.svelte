@@ -1,26 +1,42 @@
 <script>
   import { viewData, pagination, ui, approvalsMeta } from '../../lib/store.svelte.js'
-  import { loadView, loadMore, collectApproval } from '../../lib/actions.js'
+  import { loadView, loadMore, collectApproval, rejectApproval } from '../../lib/actions.js'
 
   let activeTab = $state('pending')
   let completedFetchAttempted = false
+  let rejectedFetchAttempted = false
 
   let drawerApproval = $state(null)
   let comment = $state('')
 
-  const currentViewId = $derived(activeTab === 'pending' ? 'approvals' : 'approvals_completed')
-  const currentData = $derived(activeTab === 'pending' ? viewData.approvals : viewData.approvals_completed)
+  const currentViewId = $derived(
+    activeTab === 'pending' ? 'approvals' :
+    activeTab === 'completed' ? 'approvals_completed' :
+    'approvals_rejected'
+  )
+  const currentData = $derived(
+    activeTab === 'pending' ? viewData.approvals :
+    activeTab === 'completed' ? viewData.approvals_completed :
+    viewData.approvals_rejected
+  )
 
   function switchTab(tab) {
     activeTab = tab
     if (tab === 'completed' && (!completedFetchAttempted || approvalsMeta.completedDirty)) {
       completedFetchAttempted = true
       approvalsMeta.completedDirty = false
-      // Reset + load without calling loadView(), which would change ui.view and blank the page
       viewData.approvals_completed = []
       pagination.cursors.approvals_completed = null
       pagination.hasMore.approvals_completed = false
       loadMore('approvals_completed')
+    }
+    if (tab === 'rejected' && (!rejectedFetchAttempted || approvalsMeta.rejectedDirty)) {
+      rejectedFetchAttempted = true
+      approvalsMeta.rejectedDirty = false
+      viewData.approvals_rejected = []
+      pagination.cursors.approvals_rejected = null
+      pagination.hasMore.approvals_rejected = false
+      loadMore('approvals_rejected')
     }
   }
 
@@ -36,6 +52,13 @@
   async function handleCollect() {
     try {
       await collectApproval(drawerApproval.id, comment)
+      closeDrawer()
+    } catch {}
+  }
+
+  async function handleReject() {
+    try {
+      await rejectApproval(drawerApproval.id, comment)
       closeDrawer()
     } catch {}
   }
@@ -84,6 +107,17 @@
   >
     Completed
   </button>
+  <button
+    onclick={() => switchTab('rejected')}
+    class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px"
+    class:border-zinc-800={activeTab === 'rejected'}
+    class:text-zinc-800={activeTab === 'rejected'}
+    class:border-transparent={activeTab !== 'rejected'}
+    class:text-zinc-400={activeTab !== 'rejected'}
+    class:hover:text-zinc-600={activeTab !== 'rejected'}
+  >
+    Rejected
+  </button>
 </div>
 
 <div class="card overflow-hidden">
@@ -105,7 +139,7 @@
       {#if currentData.length === 0 && ui.loadingView !== currentViewId}
         <tr>
           <td colspan="7" class="text-center py-10 text-zinc-400 text-sm">
-            {activeTab === 'pending' ? 'No pending approvals' : 'No completed approvals'}
+            {activeTab === 'pending' ? 'No pending approvals' : activeTab === 'completed' ? 'No completed approvals' : 'No rejected approvals'}
           </td>
         </tr>
       {/if}
@@ -134,8 +168,9 @@
                 <div
                   class="h-full rounded-full transition-all"
                   class:bg-green-500={a.completed}
-                  class:bg-amber-400={!a.completed}
-                  style="width: {a.required_approvals.length > 0 ? Math.round(a.collected_approvals.length / a.required_approvals.length * 100) : 100}%"
+                  class:bg-red-400={a.rejected}
+                  class:bg-amber-400={!a.completed && !a.rejected}
+                  style="width: {a.rejected ? 100 : a.required_approvals.length > 0 ? Math.round(a.collected_approvals.length / a.required_approvals.length * 100) : 100}%"
                 ></div>
               </div>
               <span class="text-xs text-zinc-500 tabular-nums">
@@ -182,9 +217,13 @@
       <div class="drawer-field">
         <div class="drawer-field-label">Status</div>
         <div>
-          <span class="badge" class:badge-green={drawerApproval.completed} class:badge-amber={!drawerApproval.completed}>
-            {drawerApproval.completed ? 'Completed' : 'Pending'}
-          </span>
+          {#if drawerApproval.completed}
+            <span class="badge badge-green">Completed</span>
+          {:else if drawerApproval.rejected}
+            <span class="badge badge-red">Rejected</span>
+          {:else}
+            <span class="badge badge-amber">Pending</span>
+          {/if}
         </div>
       </div>
       <div class="drawer-field">
@@ -218,8 +257,9 @@
             <div
               class="h-full rounded-full transition-all"
               class:bg-green-500={drawerApproval.completed}
-              class:bg-amber-400={!drawerApproval.completed}
-              style="width: {drawerApproval.required_approvals.length > 0 ? Math.round(drawerApproval.collected_approvals.length / drawerApproval.required_approvals.length * 100) : 100}%"
+              class:bg-red-400={drawerApproval.rejected}
+              class:bg-amber-400={!drawerApproval.completed && !drawerApproval.rejected}
+              style="width: {drawerApproval.rejected ? 100 : drawerApproval.required_approvals.length > 0 ? Math.round(drawerApproval.collected_approvals.length / drawerApproval.required_approvals.length * 100) : 100}%"
             ></div>
           </div>
           <span class="text-xs text-zinc-500 tabular-nums whitespace-nowrap">
@@ -243,9 +283,9 @@
         </div>
       {/if}
 
-      {#if !drawerApproval.completed}
+      {#if !drawerApproval.completed && !drawerApproval.rejected}
         <div class="border-t border-zinc-100 pt-5 mt-1">
-          <div class="text-sm font-semibold text-zinc-700 mb-3">Collect Approval</div>
+          <div class="text-sm font-semibold text-zinc-700 mb-3">Action</div>
           <div class="mb-3">
             <label class="field-label">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
             <input bind:value={comment} type="text" class="field-input" placeholder="Approved after review...">
@@ -254,8 +294,15 @@
       {/if}
     </div>
 
-    {#if !drawerApproval.completed}
+    {#if !drawerApproval.completed && !drawerApproval.rejected}
       <div class="drawer-footer">
+        <button
+          onclick={handleReject}
+          class="btn btn-ghost w-full"
+          disabled={ui.loading}
+        >
+          Reject
+        </button>
         <button
           onclick={handleCollect}
           class="btn btn-primary w-full"
