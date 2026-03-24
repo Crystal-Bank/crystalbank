@@ -70,7 +70,7 @@ module CrystalBank::Domains::Approvals
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
-        @[AC::Param::Info(description: "Filter by approval status: 'pending', 'completed', or 'rejected'")]
+        @[AC::Param::Info(description: "Filter by approval status")]
         status : CrystalBank::Types::Approvals::Status? = nil,
       ) : ListResponse(Responses::Approval)
         authorized?("read_approvals_list", request_scope: false)
