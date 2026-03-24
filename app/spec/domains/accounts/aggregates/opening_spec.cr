@@ -16,6 +16,7 @@ describe CrystalBank::Domains::Accounts::Aggregates::Concerns::Opening do
       event_1 = Accounts::Opening::Events::Requested.new(
         actor_id: actor_id,
         command_handler: "test",
+        name: "Test Account",
         currencies: currencies,
         customer_ids: customer_ids,
         scope_id: scope_id,
