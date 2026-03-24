@@ -93,4 +93,33 @@ module Test::Approval::Events
       end
     end
   end
+
+  module Rejection
+    class Rejected
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Approvals::Rejection::Events::Rejected
+        actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
+        aggregate_id = aggr_id
+        aggregate_version = 2
+        user_id = UUID.new("00000000-0000-0000-0000-300000000001")
+        command_handler = "test"
+        comment = "test rejection comment"
+
+        Approvals::Rejection::Events::Rejected.new(
+          actor_id: actor_id,
+          aggregate_id: aggregate_id,
+          aggregate_version: aggregate_version,
+          command_handler: command_handler,
+          user_id: user_id,
+          comment: comment
+        )
+      end
+
+      def json_string : String
+        {
+          "comment": "test rejection comment",
+          "user_id": "00000000-0000-0000-0000-300000000001",
+        }.to_json
+      end
+    end
+  end
 end
