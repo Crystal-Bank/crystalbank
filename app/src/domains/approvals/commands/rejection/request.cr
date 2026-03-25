@@ -2,7 +2,12 @@ module CrystalBank::Domains::Approvals
   module Rejection
     module Commands
       class Request < ES::Command
-        def call(approval_id : UUID, user_id : UUID, user_roles : Array(UUID), comment : String = "") : Nil
+        def call(approval_id : UUID, r : CrystalBank::Domains::Approvals::Api::Requests::RejectRequest, c : CrystalBank::Api::Context) : Nil
+          actor_id = c.user_id
+          scope = c.scope
+          roles = c.roles
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+
           # Hydrate the approval aggregate
           aggregate = Approvals::Aggregate.new(approval_id)
           aggregate.hydrate
@@ -17,21 +22,21 @@ module CrystalBank::Domains::Approvals
 
           # The actor can reject if they are the requestor OR if they have a required approval permission.
           # This is the key distinction from collection: the requestor IS allowed to reject their own request.
-          is_requestor = state.requestor_id == user_id
+          is_requestor = state.requestor_id == actor_id
           unless is_requestor
-            user_permissions = find_matching_permissions(state.required_approvals, user_roles)
+            user_permissions = find_matching_permissions(state.required_approvals, roles)
             raise CrystalBank::Exception::InvalidArgument.new("User does not have permission to reject this approval") if user_permissions.empty?
           end
 
           next_version = state.next_version
 
           rejected_event = Approvals::Rejection::Events::Rejected.new(
-            actor_id: user_id,
+            actor_id: actor_id,
             aggregate_id: approval_id,
             aggregate_version: next_version,
             command_handler: self.class.to_s,
-            user_id: user_id,
-            comment: comment
+            user_id: actor_id,
+            comment: r.comment
           )
           @event_store.append(rejected_event)
         end
