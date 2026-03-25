@@ -133,7 +133,7 @@
           </td>
           <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
           <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
-          <td><span class="badge badge-zinc">{p.entry_type?.toLowerCase().replace('_', ' ')}</span></td>
+          <td><span class="badge badge-zinc">{p.entry_type?.toLowerCase().replaceAll('_', ' ')}</span></td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.posting_date}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.value_date}</td>
         </tr>
@@ -193,7 +193,7 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Entry Type</div>
-        <div><span class="badge badge-zinc">{drawerPosting.entry_type?.toLowerCase().replace('_', ' ')}</span></div>
+        <div><span class="badge badge-zinc">{drawerPosting.entry_type?.toLowerCase().replaceAll('_', ' ')}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Posting Date</div>
