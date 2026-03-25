@@ -33,6 +33,7 @@ export async function login(clientId, clientSecret) {
     const body = await res.json()
     auth.token = body.token
     localStorage.setItem('cb_token', auth.token)
+    window.location.hash = 'dashboard'
     ui.view = 'dashboard'
   } finally {
     ui.loading = false
@@ -54,12 +55,13 @@ export function setScope(value) {
 // ── Navigation / data loading ────────────────────────────
 
 export async function switchView(id) {
-  if (!VIEW_PATHS[id]) { ui.view = id; return }
+  if (!VIEW_PATHS[id]) { ui.view = id; window.location.hash = id; return }
   if (ui.view === id && viewData[id].length > 0) return
   await loadView(id)
 }
 
 export async function loadView(id) {
+  window.location.hash = id
   ui.view = id
   ui.loadingView = null  // clear any stale per-view lock before starting
   viewData[id] = []

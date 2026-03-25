@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte'
   import { auth, ui, VIEW_PATHS } from './lib/store.svelte.js'
-  import { refreshView } from './lib/actions.js'
+  import { switchView, refreshView } from './lib/actions.js'
   import Login from './components/Login.svelte'
   import Sidebar from './components/Sidebar.svelte'
   import ScopeBar from './components/ScopeBar.svelte'
@@ -18,12 +18,29 @@
   import Payments from './components/views/Payments.svelte'
   import SepaCreditTransfers from './components/views/SepaCreditTransfers.svelte'
 
+  const KNOWN_VIEWS = ['dashboard', 'accounts', 'customers', 'postings', 'users', 'roles', 'scopes', 'api_keys', 'approvals', 'payments', 'sepa_credit_transfers']
+
   onMount(() => {
-    if (auth.token) ui.view = 'dashboard'
+    if (auth.token) {
+      const hash = window.location.hash.slice(1)
+      switchView(KNOWN_VIEWS.includes(hash) ? hash : 'dashboard')
+    }
+
+    function onHashChange() {
+      if (!auth.token) return
+      const hash = window.location.hash.slice(1)
+      if (hash && hash !== ui.view) switchView(hash)
+    }
+    window.addEventListener('hashchange', onHashChange)
+
     const timer = setInterval(() => {
       if (auth.token && VIEW_PATHS[ui.view]) refreshView(ui.view)
     }, 5000)
-    return () => clearInterval(timer)
+
+    return () => {
+      clearInterval(timer)
+      window.removeEventListener('hashchange', onHashChange)
+    }
   })
 </script>
 
