@@ -295,20 +295,20 @@
     </div>
 
     {#if !drawerApproval.completed && !drawerApproval.rejected}
-      <div class="drawer-footer">
-        <button
-          onclick={handleReject}
-          class="btn btn-ghost w-full"
-          disabled={ui.loading}
-        >
-          Reject
-        </button>
+      <div class="drawer-footer flex flex-col gap-2">
         <button
           onclick={handleCollect}
           class="btn btn-primary w-full"
           disabled={ui.loading}
         >
           Collect Approval
+        </button>
+        <button
+          onclick={handleReject}
+          class="btn btn-danger w-full"
+          disabled={ui.loading}
+        >
+          Reject
         </button>
       </div>
     {/if}
