@@ -20,9 +20,9 @@ end
 describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
   requestor_id = UUID.new("00000000-0000-0000-0000-000000000010")
   collector_id = UUID.new("00000000-0000-0000-0000-000000000020")
-  scope_id     = UUID.new("00000000-0000-0000-0000-100000000001")
+  scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
-  r   = CrystalBank::Domains::Approvals::Api::Requests::CollectRequest.from_json("{}")
+  r = CrystalBank::Domains::Approvals::Api::Requests::CollectRequest.from_json("{}")
   ctx = CrystalBank::Api::Context.new(
     user_id: collector_id,
     roles: [] of UUID,
@@ -93,7 +93,7 @@ describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
       aggregate_id = seed_collection_pending_approval(requestor_id)
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "User does not have any required approval permission") do
-        Approvals::Collection::Commands::Request.new.call(aggregate_id, r, ctx)  # ctx has no roles
+        Approvals::Collection::Commands::Request.new.call(aggregate_id, r, ctx) # ctx has no roles
       end
     end
   end

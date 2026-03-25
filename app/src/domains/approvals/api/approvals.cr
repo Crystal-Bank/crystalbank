@@ -40,10 +40,10 @@ module CrystalBank::Domains::Approvals
       @[AC::Route::POST("/:id/reject", body: :r)]
       def reject(
         r : RejectRequest,
-        id : UUID
+        id : UUID,
       ) : RejectResponse
         authorized?("write_approvals_rejection_request")
-        
+
         ::Approvals::Rejection::Commands::Request.new.call(id, r, context)
         RejectResponse.new(id, "rejected")
       end

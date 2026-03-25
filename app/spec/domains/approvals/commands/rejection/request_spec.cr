@@ -18,9 +18,9 @@ private def seed_rejection_pending_approval(requestor_id : UUID) : UUID
 end
 
 describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
-  requestor_id  = UUID.new("00000000-0000-0000-0000-000000000010")
+  requestor_id = UUID.new("00000000-0000-0000-0000-000000000010")
   other_user_id = UUID.new("00000000-0000-0000-0000-000000000020")
-  scope_id      = UUID.new("00000000-0000-0000-0000-100000000001")
+  scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
   r = CrystalBank::Domains::Approvals::Api::Requests::RejectRequest.from_json("{}")
 
@@ -84,7 +84,7 @@ describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
       aggregate_id = seed_rejection_pending_approval(requestor_id)
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "User does not have permission to reject this approval") do
-        Approvals::Rejection::Commands::Request.new.call(aggregate_id, r, other_ctx)  # other_ctx has no roles
+        Approvals::Rejection::Commands::Request.new.call(aggregate_id, r, other_ctx) # other_ctx has no roles
       end
     end
   end
