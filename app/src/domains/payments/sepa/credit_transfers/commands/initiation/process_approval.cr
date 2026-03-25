@@ -38,14 +38,14 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
               account_id: debtor_account_id,
               direction: "DEBIT",
               amount: amount,
-              entry_type: "PRINCIPAL",
+              entry_type: "SEPA_CREDIT_TRANSFER",
             ),
             Ledger::Transactions::Aggregate::Entry.new(
               id: UUID.v7,
               account_id: settlement_account_id,
               direction: "CREDIT",
               amount: amount,
-              entry_type: "SETTLEMENT",
+              entry_type: "SEPA_CREDIT_TRANSFER",
             ),
           ]
           entries_json = entries_data.to_json
