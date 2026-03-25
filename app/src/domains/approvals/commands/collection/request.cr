@@ -2,7 +2,12 @@ module CrystalBank::Domains::Approvals
   module Collection
     module Commands
       class Request < ES::Command
-        def call(approval_id : UUID, user_id : UUID, user_roles : Array(UUID), comment : String = "") : Nil
+        def call(approval_id : UUID, r : CrystalBank::Domains::Approvals::Api::Requests::CollectRequest, c : CrystalBank::Api::Context) : Nil
+          actor_id = c.user_id
+          scope = c.scope
+          roles = c.roles
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+
           # Hydrate the approval aggregate
           aggregate = Approvals::Aggregate.new(approval_id)
           aggregate.hydrate
@@ -16,14 +21,14 @@ module CrystalBank::Domains::Approvals
           raise CrystalBank::Exception::InvalidArgument.new("Approval process is already rejected") if state.rejected
 
           # Check if the user is the requestor
-          raise CrystalBank::Exception::InvalidArgument.new("Requestor cannot approve their own request") if state.requestor_id == user_id
+          raise CrystalBank::Exception::InvalidArgument.new("Requestor cannot approve their own request") if state.requestor_id == actor_id
 
           # Check if the user has already provided an approval
-          already_approved = state.collected_approvals.any? { |ca| ca.user_id == user_id }
+          already_approved = state.collected_approvals.any? { |ca| ca.user_id == actor_id }
           raise CrystalBank::Exception::InvalidArgument.new("User has already provided an approval for this process") if already_approved
 
           # Find all required permissions this user can satisfy
-          user_permissions = find_matching_permissions(state.required_approvals, user_roles)
+          user_permissions = find_matching_permissions(state.required_approvals, roles)
           raise CrystalBank::Exception::InvalidArgument.new("User does not have any required approval permission") if user_permissions.empty?
 
           # Build the full set of collected permissions for the completion check
@@ -34,20 +39,20 @@ module CrystalBank::Domains::Approvals
 
           # Append the collected event
           collected_event = Approvals::Collection::Events::Collected.new(
-            actor_id: user_id,
+            actor_id: actor_id,
             aggregate_id: approval_id,
             aggregate_version: next_version,
             command_handler: self.class.to_s,
-            user_id: user_id,
+            user_id: actor_id,
             permissions: user_permissions,
-            comment: comment
+            comment: r.comment
           )
           @event_store.append(collected_event)
 
           # Check if all required approvals are now satisfied with enough distinct users
           if all_collected.size >= state.required_approvals.size && can_satisfy?(state.required_approvals, all_collected)
             completed_event = Approvals::Collection::Events::Completed.new(
-              actor_id: user_id,
+              actor_id: actor_id,
               aggregate_id: approval_id,
               aggregate_version: next_version + 1,
               command_handler: self.class.to_s

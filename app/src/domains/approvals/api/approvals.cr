@@ -22,12 +22,7 @@ module CrystalBank::Domains::Approvals
       ) : CollectResponse
         authorized?("write_approvals_collection_request")
 
-        ::Approvals::Collection::Commands::Request.new.call(
-          approval_id: id,
-          user_id: context.user_id,
-          user_roles: context.roles,
-          comment: r.comment
-        )
+        ::Approvals::Collection::Commands::Request.new.call(id, r, context)
 
         # Hydrate the aggregate to check current status
         aggregate = ::Approvals::Aggregate.new(id)
@@ -45,17 +40,11 @@ module CrystalBank::Domains::Approvals
       @[AC::Route::POST("/:id/reject", body: :r)]
       def reject(
         r : RejectRequest,
-        id : UUID,
-        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
-        idempotency_key : UUID,
+        id : UUID
       ) : RejectResponse
-        ::Approvals::Rejection::Commands::Request.new.call(
-          approval_id: id,
-          user_id: context.user_id,
-          user_roles: context.roles,
-          comment: r.comment
-        )
-
+        authorized?("write_approvals_rejection_request")
+        
+        ::Approvals::Rejection::Commands::Request.new.call(id, r, context)
         RejectResponse.new(id, "rejected")
       end
 
