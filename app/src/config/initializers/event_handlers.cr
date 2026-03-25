@@ -10,6 +10,7 @@ event_handlers.register(Accounts::Opening::Events::Requested)
 event_handlers.register(Approvals::Creation::Events::Requested)
 event_handlers.register(Approvals::Collection::Events::Collected)
 event_handlers.register(Approvals::Collection::Events::Completed)
+event_handlers.register(Approvals::Rejection::Events::Rejected)
 
 # ApiKeys
 event_handlers.register(ApiKeys::Generation::Events::Accepted)

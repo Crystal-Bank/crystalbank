@@ -11,6 +11,7 @@ bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accoun
 # Approvals
 bus.subscribe(Approvals::Creation::Events::Requested, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Collected, Approvals::Projections::Approvals)
+bus.subscribe(Approvals::Rejection::Events::Rejected, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
@@ -40,10 +41,6 @@ bus.subscribe(Ledger::Transactions::Request::Events::Accepted, Ledger::Transacti
 # Payments — SEPA Credit Transfers
 bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Requested, Payments::Sepa::CreditTransfers::Projections::CreditTransfers)
 bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted, Payments::Sepa::CreditTransfers::Projections::CreditTransfers)
-
-# Transactions (internal_transfers commented out pending redesign to write to postings)
-# bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Requested, Transactions::InternalTransfers::Initiation::Commands::ProcessRequest)
-# bus.subscribe(Transactions::InternalTransfers::Initiation::Events::Accepted, Transactions::InternalTransfers::Projections::Postings)
 
 # Users
 bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands::ProcessRequest)
