@@ -181,6 +181,8 @@
             <option value="">Select type...</option>
             <option value="checking">Checking</option>
             <option value="overnight_money">Overnight Money</option>
+            <option value="savings">Savings</option>
+            <option value="card">Card</option>
           </select>
         </div>
         <div class="mb-4">
