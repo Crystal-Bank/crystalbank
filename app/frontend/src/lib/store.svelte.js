@@ -87,6 +87,7 @@ export const ALL_PERMISSIONS = [
   'write_users_assign_roles_request',
   'read_approvals_list',
   'write_approvals_collection_request',
+  'write_approvals_rejection_request',
   'read_payments_sepa_credit_transfers_list',
   'write_payments_sepa_credit_transfers_request',
   'write_payments_sepa_credit_transfers_approval',
