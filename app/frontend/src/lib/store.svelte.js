@@ -105,7 +105,7 @@ export const NAV_SECTIONS = [
     ],
   },
   {
-    label: 'Compliance',
+    label: 'Controls',
     items: [
       {
         id: 'approvals',
