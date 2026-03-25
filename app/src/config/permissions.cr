@@ -37,6 +37,7 @@ module CrystalBank
 
     # Approvals
     WRITE_approvals_collection_request
+    WRITE_approvals_rejection_request
     READ_approvals_list
 
     # Account Opening Approvals
