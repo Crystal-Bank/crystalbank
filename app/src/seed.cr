@@ -63,12 +63,13 @@ def assign_role(event_store, actor_id, user_id, role_id, scope_id, aggregate_ver
   event_store.append(event)
 end
 
-def seed_account(event_store, actor_id, scope_id, customer_ids, currencies, type, aggregate_id)
+def seed_account(event_store, actor_id, scope_id, customer_ids, name, currencies, type, aggregate_id)
   requested = Accounts::Opening::Events::Requested.new(
     actor_id: actor_id,
     command_handler: "seed",
     currencies: currencies,
     customer_ids: customer_ids,
+    name: name,
     scope_id: scope_id,
     type: type,
     aggregate_id: aggregate_id,
@@ -146,6 +147,7 @@ seed_account(
   actor_id,
   scope_id: scopes["root"],
   customer_ids: [customers["admin"]],
+  name: "SEPA Settlement Account",
   currencies: [CrystalBank::Types::Currencies::Supported::EUR],
   type: CrystalBank::Types::Accounts::Type::Settlement,
   aggregate_id: sepa_nostro_account_id,
