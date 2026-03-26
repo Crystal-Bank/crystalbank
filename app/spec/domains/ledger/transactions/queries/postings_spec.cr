@@ -40,11 +40,11 @@ describe CrystalBank::Domains::Ledger::Transactions::Queries::Postings do
   describe "account_id filter" do
     it "returns only postings for the given account_id" do
       scope_id = UUID.v7
-      alpha_id = UUID.v7  # shared across both transactions
-      beta_id  = UUID.v7  # only in transaction 1
-      gamma_id = UUID.v7  # only in transaction 2
-      tx1_id   = UUID.v7
-      tx2_id   = UUID.v7
+      alpha_id = UUID.v7 # shared across both transactions
+      beta_id = UUID.v7  # only in transaction 1
+      gamma_id = UUID.v7 # only in transaction 2
+      tx1_id = UUID.v7
+      tx2_id = UUID.v7
 
       context = CrystalBank::Api::Context.new(
         user_id: UUID.v7,
@@ -84,8 +84,8 @@ describe CrystalBank::Domains::Ledger::Transactions::Queries::Postings do
     end
 
     it "returns an empty list when the account_id has no postings in scope" do
-      scope_id    = UUID.v7
-      unknown_id  = UUID.v7
+      scope_id = UUID.v7
+      unknown_id = UUID.v7
 
       context = CrystalBank::Api::Context.new(
         user_id: UUID.v7,

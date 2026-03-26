@@ -97,11 +97,11 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
 
   describe "GET /ledger/transactions/postings - account_id filter" do
     it "passes account_id to the query and returns only matching postings" do
-      scope_id         = UUID.v7
-      account_id       = UUID.v7
+      scope_id = UUID.v7
+      account_id = UUID.v7
       other_account_id = UUID.v7
-      tx1_id           = UUID.v7
-      tx2_id           = UUID.v7
+      tx1_id = UUID.v7
+      tx2_id = UUID.v7
 
       read_context = CrystalBank::Api::Context.new(
         user_id: UUID.v7,
@@ -146,4 +146,3 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
     end
   end
 end
-
