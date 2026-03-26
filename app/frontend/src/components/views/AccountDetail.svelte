@@ -34,7 +34,7 @@
 <div class="page-header">
   <div class="flex items-center gap-3">
     <button
-      onclick={() => { window.location.hash = 'accounts' }}
+      onclick={() => { ui.view = 'accounts'; ui.selectedAccount = null }}
       class="text-zinc-400 hover:text-zinc-700 transition-colors"
       title="Back to accounts"
     >
