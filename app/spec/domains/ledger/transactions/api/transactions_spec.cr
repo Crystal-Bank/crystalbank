@@ -94,4 +94,56 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
       end
     end
   end
+
+  describe "GET /ledger/transactions/postings - account_id filter" do
+    it "passes account_id to the query and returns only matching postings" do
+      scope_id         = UUID.v7
+      account_id       = UUID.v7
+      other_account_id = UUID.v7
+      tx1_id           = UUID.v7
+      tx2_id           = UUID.v7
+
+      read_context = CrystalBank::Api::Context.new(
+        user_id: UUID.v7,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::READ_postings_list,
+        scope: scope_id,
+        available_scopes: [scope_id]
+      )
+
+      # Seed two transactions: one touches account_id, the other does not
+      [
+        {tx1_id, account_id, UUID.v7},
+        {tx2_id, other_account_id, UUID.v7},
+      ].each do |tx_id, debit_id, credit_id|
+        entries = [
+          ::Ledger::Transactions::Aggregate::Entry.new(id: UUID.v7, account_id: debit_id, direction: "debit", amount: 500_i64, entry_type: "PRINCIPAL"),
+          ::Ledger::Transactions::Aggregate::Entry.new(id: UUID.v7, account_id: credit_id, direction: "credit", amount: 500_i64, entry_type: "PRINCIPAL"),
+        ]
+        requested = ::Ledger::Transactions::Request::Events::Requested.new(
+          actor_id: UUID.v7, aggregate_id: tx_id,
+          currency: CrystalBank::Types::Currencies::Supported::EUR,
+          entries_json: entries.to_json,
+          posting_date: Time::Format::ISO_8601_DATE.parse("2026-03-11"),
+          value_date: Time::Format::ISO_8601_DATE.parse("2026-03-12"),
+          remittance_information: "test", payment_type: nil, external_ref: nil,
+          channel: "api", scope_id: scope_id, command_handler: "test", comment: "test",
+        )
+        accepted = Test::Ledger::Transactions::Events::Request::Accepted.new.create(aggr_id: tx_id)
+        TEST_EVENT_STORE.append(requested)
+        TEST_EVENT_STORE.append(accepted)
+        Ledger::Transactions::Projections::Postings.new.apply(accepted)
+      end
+
+      # Filtered: only the postings for account_id
+      filtered = Ledger::Transactions::Queries::Postings.new.list(read_context, cursor: nil, limit: 10, account_id: account_id)
+      filtered.all? { |p| p.account_id == account_id }.should be_true
+      filtered.size.should eq(1)
+
+      # Unfiltered: both transactions are visible
+      all_postings = Ledger::Transactions::Queries::Postings.new.list(read_context, cursor: nil, limit: 10, account_id: nil)
+      all_postings.size.should eq(4)
+    end
+  end
 end
+
