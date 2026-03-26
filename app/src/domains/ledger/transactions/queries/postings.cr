@@ -32,6 +32,7 @@ module CrystalBank::Domains::Ledger::Transactions
         context : CrystalBank::Api::Context,
         cursor : UUID?,
         limit : Int32,
+        account_id : UUID? = nil,
       ) : Array(Posting)
         query_param_counter = 0
         query = [] of String
@@ -42,6 +43,11 @@ module CrystalBank::Domains::Ledger::Transactions
         # Add scope query
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
         query_params << context.available_scopes
+
+        unless account_id.nil?
+          query << %(AND "account_id" = $#{query_param_counter += 1})
+          query_params << account_id
+        end
 
         unless cursor.nil?
           query << %(AND "transaction_id" >= $#{query_param_counter += 1})
