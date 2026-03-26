@@ -8,6 +8,7 @@
   import ToastContainer from './components/ToastContainer.svelte'
   import Dashboard from './components/views/Dashboard.svelte'
   import Accounts from './components/views/Accounts.svelte'
+  import AccountDetail from './components/views/AccountDetail.svelte'
   import Customers from './components/views/Customers.svelte'
   import Transactions from './components/views/Transactions.svelte'
   import Users from './components/views/Users.svelte'
@@ -29,6 +30,11 @@
     function onHashChange() {
       if (!auth.token) return
       const hash = window.location.hash.slice(1)
+      if (hash === 'accounts' && ui.view === 'account_detail') {
+        ui.view = 'accounts'
+        ui.selectedAccount = null
+        return
+      }
       if (hash && hash !== ui.view) switchView(hash)
     }
     window.addEventListener('hashchange', onHashChange)
@@ -60,6 +66,8 @@
           <Dashboard />
         {:else if ui.view === 'accounts'}
           <Accounts />
+        {:else if ui.view === 'account_detail' && ui.selectedAccount}
+          <AccountDetail account={ui.selectedAccount} />
         {:else if ui.view === 'customers'}
           <Customers />
         {:else if ui.view === 'postings'}

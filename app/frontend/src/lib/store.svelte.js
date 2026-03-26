@@ -13,6 +13,8 @@ export const ui = $state({
   loadingView: /** @type {string|null} */ (null),
   /** @type {Array<{id: number, msg: string, type: string}>} */
   toasts: [],
+  /** @type {object|null} */
+  selectedAccount: null,
 })
 
 export const viewData = $state({
