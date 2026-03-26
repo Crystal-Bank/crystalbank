@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte'
   import { ui } from '../../lib/store.svelte.js'
   import { apiFetch } from '../../lib/api.js'
 
@@ -27,12 +28,7 @@
     loadingPostings = false
   }
 
-  $effect(() => {
-    postings = []
-    hasMore = false
-    cursor = null
-    loadPostings(true)
-  })
+  onMount(() => loadPostings(true))
 </script>
 
 <div class="page-header">
