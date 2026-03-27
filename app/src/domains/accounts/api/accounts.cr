@@ -56,7 +56,7 @@ module CrystalBank::Domains::Accounts
       ) : BlockRequestResponse
         authorized?("write_accounts_blocking_request")
 
-        result = ::Accounts::Blocking::Commands::Request.new.call(
+        result = ::Accounts::Blocking::Commands::Block.new.call(
           ::Accounts::Api::Requests::BlockingCommandRequest.new(account_id, r.block_type, r.reason),
           context
         )
@@ -92,7 +92,7 @@ module CrystalBank::Domains::Accounts
       ) : BlockRequestResponse
         authorized?("write_accounts_unblocking_request")
 
-        result = ::Accounts::Blocking::Commands::Request.new.call(
+        result = ::Accounts::Blocking::Commands::Unblock.new.call(
           ::Accounts::Api::Requests::UnblockingCommandRequest.new(account_id, block_type, reason),
           context
         )

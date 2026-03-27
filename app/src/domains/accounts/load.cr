@@ -9,7 +9,8 @@ require "./api/accounts"
 require "./commands/opening/request"
 require "./commands/opening/process_request"
 require "./commands/opening/process_approval"
-require "./commands/blocking/request"
+require "./commands/blocking/block"
+require "./commands/blocking/unblock"
 require "./commands/blocking/process_approval"
 
 # Events
