@@ -8,6 +8,10 @@ bus = ES::Config.event_bus
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands::ProcessRequest)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
+# Account Blocks
+bus.subscribe(Accounts::Blocking::Events::Applied, Accounts::Projections::AccountBlocks)
+bus.subscribe(Accounts::Blocking::Events::Removed, Accounts::Projections::AccountBlocks)
+
 # Approvals
 bus.subscribe(Approvals::Creation::Events::Requested, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Collected, Approvals::Projections::Approvals)

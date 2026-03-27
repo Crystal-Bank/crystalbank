@@ -3,6 +3,9 @@ module CrystalBank
     # Accounts
     READ_accounts_list
     WRITE_accounts_opening_request
+    WRITE_accounts_blocking_request
+    WRITE_accounts_unblocking_request
+    READ_accounts_blocks
 
     # Api Keys
     WRITE_api_keys_generation_request

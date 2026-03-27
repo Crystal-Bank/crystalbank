@@ -8,6 +8,7 @@ require "./initializers/queue"
 require "./permissions"
 
 require "./types/accounts"
+require "./types/account_blocks"
 require "./types/approvals"
 require "./types/currencies"
 require "./types/customers"
