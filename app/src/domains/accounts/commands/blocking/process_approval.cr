@@ -19,7 +19,7 @@ module CrystalBank::Domains::Accounts
           block_request_id = approval.state.source_aggregate_id.as(UUID)
 
           # Hydrate the block request aggregate to recover the intent
-          block_request = Accounts::Blocking::Aggregate.new(block_request_id)
+          block_request = ::Accounts::Blocking::Aggregate.new(block_request_id)
           block_request.hydrate
 
           # Guard: only process once
@@ -31,14 +31,14 @@ module CrystalBank::Domains::Accounts
           reason = block_request.state.reason
 
           # Hydrate the account aggregate to get current version
-          account = Accounts::Aggregate.new(account_id)
+          account = ::Accounts::Aggregate.new(account_id)
           account.hydrate
 
           next_account_version = account.state.next_version
 
           case action
           when "apply"
-            event = Accounts::Blocking::Events::Applied.new(
+            event = ::Accounts::Blocking::Events::Applied.new(
               aggregate_id: account_id,
               aggregate_version: next_account_version,
               actor_id: nil,
@@ -48,7 +48,7 @@ module CrystalBank::Domains::Accounts
             )
             @event_store.append(event)
           when "remove"
-            event = Accounts::Blocking::Events::Removed.new(
+            event = ::Accounts::Blocking::Events::Removed.new(
               aggregate_id: account_id,
               aggregate_version: next_account_version,
               actor_id: nil,
@@ -62,7 +62,7 @@ module CrystalBank::Domains::Accounts
           # Mark the block request as completed
           next_br_version = block_request.state.next_version
 
-          completed_event = Accounts::Blocking::BlockRequest::Events::Completed.new(
+          completed_event = ::Accounts::Blocking::BlockRequest::Events::Completed.new(
             actor_id: nil,
             aggregate_id: block_request_id,
             aggregate_version: next_br_version,

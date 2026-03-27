@@ -26,7 +26,7 @@ module CrystalBank::Domains::Accounts
       end
 
       # Block applied to account
-      def apply(event : Accounts::Blocking::Events::Applied)
+      def apply(event : ::Accounts::Blocking::Events::Applied)
         account_uuid = event.header.aggregate_id
         applied_at = event.header.created_at
         applied_by = event.header.actor_id
@@ -37,7 +37,7 @@ module CrystalBank::Domains::Accounts
         aggregate = ::Accounts::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        body = event.body.as(Accounts::Blocking::Events::Applied::Body)
+        body = event.body.as(::Accounts::Blocking::Events::Applied::Body)
         block_type = body.block_type.to_s
         reason = body.reason
 
@@ -60,12 +60,12 @@ module CrystalBank::Domains::Accounts
       end
 
       # Block removed from account
-      def apply(event : Accounts::Blocking::Events::Removed)
+      def apply(event : ::Accounts::Blocking::Events::Removed)
         account_uuid = event.header.aggregate_id
         removed_at = event.header.created_at
         removed_by = event.header.actor_id
 
-        body = event.body.as(Accounts::Blocking::Events::Removed::Body)
+        body = event.body.as(::Accounts::Blocking::Events::Removed::Body)
         block_type = body.block_type.to_s
 
         @projection_database.exec %(
