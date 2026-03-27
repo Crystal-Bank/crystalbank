@@ -93,6 +93,11 @@ export const ALL_PERMISSIONS = [
   'read_payments_sepa_credit_transfers_list',
   'write_payments_sepa_credit_transfers_request',
   'write_payments_sepa_credit_transfers_approval',
+  'read_accounts_blocks',
+  'write_accounts_blocking_request',
+  'write_accounts_unblocking_request',
+  'write_accounts_blocking_approval',
+  'write_accounts_unblocking_approval',
 ]
 
 export const NAV_SECTIONS = [
