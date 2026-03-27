@@ -1,11 +1,11 @@
 module CrystalBank::Domains::Accounts
   module Blocking
-    module BlockRequest
+    module Unblocking
       module Events
         class Completed < ES::Event
           include ::ES::EventDSL
 
-          define_event "AccountBlockRequest", "account.block_request.completed"
+          define_event "AccountUnblock", "account.unblocking.completed"
         end
       end
     end
