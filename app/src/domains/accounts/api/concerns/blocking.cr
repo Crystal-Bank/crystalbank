@@ -16,10 +16,17 @@ module CrystalBank::Domains::Accounts
       struct BlockingCommandRequest
         getter account_id : UUID
         getter block_type : CrystalBank::Types::Accounts::BlockType
-        getter action : String
         getter reason : String?
 
-        def initialize(@account_id, @block_type, @action, @reason); end
+        def initialize(@account_id, @block_type, @reason); end
+      end
+
+      struct UnblockingCommandRequest
+        getter account_id : UUID
+        getter block_type : CrystalBank::Types::Accounts::BlockType
+        getter reason : String?
+
+        def initialize(@account_id, @block_type, @reason); end
       end
     end
 
