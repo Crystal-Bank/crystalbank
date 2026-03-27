@@ -15,12 +15,11 @@ module CrystalBank::Domains::Accounts
           raise CrystalBank::Exception::InvalidArgument.new("Account '#{r.account_id}' does not exist or is not open") unless account.state.open
           raise CrystalBank::Exception::InvalidArgument.new("Block '#{r.block_type}' is already active on account '#{r.account_id}'") if account.state.active_blocks.includes?(r.block_type)
 
-          block_request_event = ::Accounts::Blocking::BlockRequest::Events::Requested.new(
+          block_request_event = ::Accounts::Blocking::Blocking::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
             account_id: r.account_id,
             block_type: r.block_type,
-            action: "apply",
             reason: r.reason
           )
           @event_store.append(block_request_event)
@@ -28,7 +27,7 @@ module CrystalBank::Domains::Accounts
           block_request_id = UUID.new(block_request_event.header.aggregate_id.to_s)
 
           approval_id = Approvals::Creation::Commands::Request.new.call(
-            source_aggregate_type: "AccountBlockRequest",
+            source_aggregate_type: "AccountBlock",
             source_aggregate_id: block_request_id,
             scope_id: scope,
             required_approvals: ["write_accounts_blocking_approval"],
