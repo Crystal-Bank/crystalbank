@@ -10,8 +10,10 @@ event_handlers.register(Accounts::Opening::Events::Requested)
 event_handlers.register(Accounts::Blocking::Events::Applied)
 event_handlers.register(Accounts::Blocking::Events::Removed)
 
-event_handlers.register(Accounts::Blocking::BlockRequest::Events::Completed)
-event_handlers.register(Accounts::Blocking::BlockRequest::Events::Requested)
+event_handlers.register(Accounts::Blocking::Blocking::Events::Requested)
+event_handlers.register(Accounts::Blocking::Blocking::Events::Completed)
+event_handlers.register(Accounts::Blocking::Unblocking::Events::Requested)
+event_handlers.register(Accounts::Blocking::Unblocking::Events::Completed)
 
 # Approvals
 event_handlers.register(Approvals::Creation::Events::Requested)
