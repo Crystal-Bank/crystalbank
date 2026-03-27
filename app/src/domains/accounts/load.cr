@@ -1,5 +1,5 @@
 # Aggregate
-require "./aggregates/aggregate"
+require "./aggregates/account"
 require "./aggregates/block_request"
 
 # API
