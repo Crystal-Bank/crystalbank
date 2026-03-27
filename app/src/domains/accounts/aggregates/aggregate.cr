@@ -1,10 +1,12 @@
 require "./opening"
+require "./blocking"
 
 module CrystalBank::Domains::Accounts
   class Aggregate < ES::Aggregate
     @@type = "Account"
 
     include CrystalBank::Domains::Accounts::Aggregates::Concerns::Opening
+    include CrystalBank::Domains::Accounts::Aggregates::Concerns::Blocking
 
     struct State < ES::Aggregate::State
       property open : Bool = false
@@ -14,6 +16,7 @@ module CrystalBank::Domains::Accounts
       property scope_id : UUID?
       property type : CrystalBank::Types::Accounts::Type?
       property requestor_id : UUID?
+      property active_blocks = Array(CrystalBank::Types::Accounts::BlockType).new
     end
 
     getter state : State
