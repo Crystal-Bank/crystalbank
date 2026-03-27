@@ -10,16 +10,46 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "Optional reason for applying the block")]
         getter reason : String?
       end
-
-      struct UnblockingRequest
-        include JSON::Serializable
-
-        @[JSON::Field(description: "Optional reason for removing the block")]
-        getter reason : String?
-      end
     end
 
     module Responses
+      # Returned immediately after a block or unblock is requested.
+      # The block does not take effect until the approval workflow completes.
+      struct BlockRequestResponse
+        include JSON::Serializable
+
+        @[JSON::Field(format: "uuid", description: "ID of the block request aggregate")]
+        getter block_request_id : UUID
+
+        @[JSON::Field(format: "uuid", description: "ID of the approval workflow that must be completed")]
+        getter approval_id : UUID
+
+        @[JSON::Field(format: "uuid", description: "Account the block request targets")]
+        getter account_id : UUID
+
+        @[JSON::Field(description: "Block type that will be applied or removed once approved")]
+        getter block_type : String
+
+        @[JSON::Field(description: "Whether the block is being applied or removed")]
+        getter action : String
+
+        @[JSON::Field(description: "Reason provided by the requestor")]
+        getter reason : String?
+
+        @[JSON::Field(description: "Current status of the request")]
+        getter status : String
+
+        def initialize(
+          @block_request_id : UUID,
+          @approval_id : UUID,
+          @account_id : UUID,
+          @block_type : String,
+          @action : String,
+          @reason : String?,
+          @status : String = "pending_approval",
+        ); end
+      end
+
       struct BlockEntry
         include JSON::Serializable
 
