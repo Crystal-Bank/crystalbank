@@ -27,9 +27,10 @@ module CrystalBank::Domains::Accounts
         OpeningResponse.new(aggregate_id)
       end
 
-      # Apply block
-      # Apply a block cause to an account. Multiple block causes can coexist (stackable).
-      # The effective block state is derived by evaluating all active causes:
+      # Request block
+      # Request that a block cause be applied to an account. Blocks are stackable —
+      # multiple causes can coexist simultaneously and the effective block state is
+      # derived by evaluating all active causes:
       # - Any FullBlock cause → FULL_BLOCK
       # - Both Debit and Credit causes present → FULL_BLOCK (implied)
       # - Only Debit causes → DEBIT_BLOCK
@@ -42,42 +43,62 @@ module CrystalBank::Domains::Accounts
       # - **generic_debit_block** → debit_block
       # - **generic_credit_block** → credit_block
       #
+      # The request does not take effect immediately. An approval workflow is created
+      # that must be signed off by a user with **write_accounts_blocking_approval**.
+      #
       # Required permission:
       # - **write_accounts_blocking_request**
       @[AC::Route::POST("/:account_id/blocks", body: :r)]
-      def apply_block(
+      def request_block(
         @[AC::Param::Info(description: "Account ID to apply block to", format: "uuid")]
         account_id : UUID,
         r : BlockingRequest,
-      ) : BlocksResponse
+      ) : BlockRequestResponse
         authorized?("write_accounts_blocking_request")
 
-        Accounts::Blocking::Commands::Apply.new.call(account_id, r.block_type, r.reason, context)
+        result = Accounts::Blocking::Commands::Request.new.call(account_id, r.block_type, "apply", r.reason, context)
 
-        blocks_response(account_id)
+        Responses::BlockRequestResponse.new(
+          block_request_id: result[:block_request_id],
+          approval_id: result[:approval_id],
+          account_id: account_id,
+          block_type: r.block_type.to_s,
+          action: "apply",
+          reason: r.reason
+        )
       end
 
-      # Remove block
-      # Remove an active block cause from an account by its block type.
+      # Request unblock
+      # Request that an active block cause be removed from an account by its block type.
       # Refers to the cause type (e.g. compliance_block), not a specific block ID.
-      # The effective block state is re-evaluated after removal.
+      # The effective block state is re-evaluated once the removal is approved.
+      #
+      # The request does not take effect immediately. An approval workflow is created
+      # that must be signed off by a user with **write_accounts_unblocking_approval**.
       #
       # Required permission:
       # - **write_accounts_unblocking_request**
       @[AC::Route::DELETE("/:account_id/blocks/:block_type")]
-      def remove_block(
+      def request_unblock(
         @[AC::Param::Info(description: "Account ID to remove block from", format: "uuid")]
         account_id : UUID,
         @[AC::Param::Info(description: "Block type to remove (e.g. compliance_block, operations_block)")]
         block_type : CrystalBank::Types::Accounts::BlockType,
         @[AC::Param::Info(description: "Optional reason for removing the block")]
         reason : String? = nil,
-      ) : BlocksResponse
+      ) : BlockRequestResponse
         authorized?("write_accounts_unblocking_request")
 
-        Accounts::Blocking::Commands::Remove.new.call(account_id, block_type, reason, context)
+        result = Accounts::Blocking::Commands::Request.new.call(account_id, block_type, "remove", reason, context)
 
-        blocks_response(account_id)
+        Responses::BlockRequestResponse.new(
+          block_request_id: result[:block_request_id],
+          approval_id: result[:approval_id],
+          account_id: account_id,
+          block_type: block_type.to_s,
+          action: "remove",
+          reason: reason
+        )
       end
 
       # Get blocks
