@@ -11,7 +11,8 @@ bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accoun
 # Account Blocks
 bus.subscribe(Accounts::Blocking::Events::Applied, Accounts::Projections::AccountBlocks)
 bus.subscribe(Accounts::Blocking::Events::Removed, Accounts::Projections::AccountBlocks)
-bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Blocking::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Blocking::Commands::ProcessBlockApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Blocking::Commands::ProcessUnblockApproval)
 
 # Approvals
 bus.subscribe(Approvals::Creation::Events::Requested, Approvals::Projections::Approvals)
