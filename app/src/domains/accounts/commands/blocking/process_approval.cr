@@ -36,12 +36,15 @@ module CrystalBank::Domains::Accounts
 
           next_account_version = account.state.next_version
 
+          # Use the last approver as the actor who triggered the block/unblock
+          approver_id = approval.state.collected_approvals.last?.try(&.user_id)
+
           case action
           when "apply"
             event = ::Accounts::Blocking::Events::Applied.new(
               aggregate_id: account_id,
               aggregate_version: next_account_version,
-              actor_id: nil,
+              actor_id: approver_id,
               command_handler: self.class.to_s,
               block_type: block_type,
               reason: reason
@@ -51,7 +54,7 @@ module CrystalBank::Domains::Accounts
             event = ::Accounts::Blocking::Events::Removed.new(
               aggregate_id: account_id,
               aggregate_version: next_account_version,
-              actor_id: nil,
+              actor_id: approver_id,
               command_handler: self.class.to_s,
               block_type: block_type,
               reason: reason

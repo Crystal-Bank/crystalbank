@@ -12,7 +12,7 @@ module CrystalBank::Domains::Accounts
             "account_uuid" UUID NOT NULL,
             "block_type" varchar NOT NULL,
             "applied_at" timestamp NOT NULL,
-            "applied_by" UUID NOT NULL,
+            "applied_by" UUID,
             "reason" varchar,
             "removed_at" timestamp,
             "removed_by" UUID,

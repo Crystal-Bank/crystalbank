@@ -283,11 +283,11 @@
         <div class="mb-4">
           <label class="field-label" for="block-type">Block Type</label>
           <select id="block-type" bind:value={blockForm.block_type} class="field-select">
-            <option value="compliance_block">Compliance Block — Full Block</option>
-            <option value="generic_full_block">Generic Full Block — Full Block</option>
-            <option value="operations_block">Operations Block — Debit Block</option>
-            <option value="generic_debit_block">Generic Debit Block — Debit Block</option>
-            <option value="generic_credit_block">Generic Credit Block — Credit Block</option>
+            <option value="compliance_block">Compliance Block</option>
+            <option value="generic_full_block">Generic Full Block</option>
+            <option value="operations_block">Operations Block</option>
+            <option value="generic_debit_block">Generic Debit Block</option>
+            <option value="generic_credit_block">Generic Credit Block</option>
           </select>
         </div>
         <div class="mb-5">
