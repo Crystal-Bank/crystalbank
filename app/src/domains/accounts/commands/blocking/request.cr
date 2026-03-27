@@ -18,7 +18,7 @@ module CrystalBank::Domains::Accounts
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           # Hydrate the account aggregate to validate preconditions
-          account = Accounts::Aggregate.new(account_id)
+          account = ::Accounts::Aggregate.new(account_id)
           account.hydrate
 
           raise CrystalBank::Exception::InvalidArgument.new("Account '#{account_id}' does not exist or is not open") unless account.state.open
@@ -33,7 +33,7 @@ module CrystalBank::Domains::Accounts
           end
 
           # Create the block request aggregate capturing the intent
-          block_request_event = Accounts::Blocking::BlockRequest::Events::Requested.new(
+          block_request_event = ::Accounts::Blocking::BlockRequest::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
             account_id: account_id,
