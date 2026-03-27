@@ -67,8 +67,6 @@ module CrystalBank::Domains::Accounts
         query << %(LIMIT $#{query_param_counter += 1})
         query_params << limit
 
-        puts query_params
-
         @db.query_all(query.join(" "), args: query_params, as: Account)
       end
     end

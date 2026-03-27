@@ -56,7 +56,7 @@ module CrystalBank::Domains::Accounts
       ) : BlockRequestResponse
         authorized?("write_accounts_blocking_request")
 
-        result = Accounts::Blocking::Commands::Request.new.call(account_id, r.block_type, "apply", r.reason, context)
+        result = ::Accounts::Blocking::Commands::Request.new.call(account_id, r.block_type, "apply", r.reason, context)
 
         Responses::BlockRequestResponse.new(
           block_request_id: result[:block_request_id],
@@ -89,7 +89,7 @@ module CrystalBank::Domains::Accounts
       ) : BlockRequestResponse
         authorized?("write_accounts_unblocking_request")
 
-        result = Accounts::Blocking::Commands::Request.new.call(account_id, block_type, "remove", reason, context)
+        result = ::Accounts::Blocking::Commands::Request.new.call(account_id, block_type, "remove", reason, context)
 
         Responses::BlockRequestResponse.new(
           block_request_id: result[:block_request_id],
@@ -150,7 +150,7 @@ module CrystalBank::Domains::Accounts
       end
 
       private def blocks_response(account_id : UUID) : BlocksResponse
-        active_blocks = Accounts::Queries::AccountBlocks.new.list_active(account_id)
+        active_blocks = ::Accounts::Queries::AccountBlocks.new.list_active(account_id)
 
         block_types = active_blocks.map(&.block_type_enum)
         effective = CrystalBank::Types::Accounts::EffectiveBlock.evaluate(block_types)
