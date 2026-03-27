@@ -1,6 +1,7 @@
 module CrystalBank::Domains::Accounts
   module Api
     module Requests
+      # HTTP body for the apply-block endpoint
       struct BlockingRequest
         include JSON::Serializable
 
@@ -9,6 +10,16 @@ module CrystalBank::Domains::Accounts
 
         @[JSON::Field(description: "Optional reason for applying the block")]
         getter reason : String?
+      end
+
+      # Unified command request built by the API layer from URL params + body
+      struct BlockingCommandRequest
+        getter account_id : UUID
+        getter block_type : CrystalBank::Types::Accounts::BlockType
+        getter action : String
+        getter reason : String?
+
+        def initialize(@account_id, @block_type, @action, @reason); end
       end
     end
 
