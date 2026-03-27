@@ -1,5 +1,6 @@
 require "./concerns/requests"
 require "./concerns/responses"
+require "./concerns/blocking"
 
 module CrystalBank::Domains::Accounts
   module Api
@@ -24,6 +25,75 @@ module CrystalBank::Domains::Accounts
         aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r, context)
 
         OpeningResponse.new(aggregate_id)
+      end
+
+      # Apply block
+      # Apply a block cause to an account. Multiple block causes can coexist (stackable).
+      # The effective block state is derived by evaluating all active causes:
+      # - Any FullBlock cause → FULL_BLOCK
+      # - Both Debit and Credit causes present → FULL_BLOCK (implied)
+      # - Only Debit causes → DEBIT_BLOCK
+      # - Only Credit causes → CREDIT_BLOCK
+      #
+      # Block type to effect mapping:
+      # - **compliance_block** → full_block
+      # - **generic_full_block** → full_block
+      # - **operations_block** → debit_block
+      # - **generic_debit_block** → debit_block
+      # - **generic_credit_block** → credit_block
+      #
+      # Required permission:
+      # - **write_accounts_blocking_request**
+      @[AC::Route::POST("/:account_id/blocks", body: :r)]
+      def apply_block(
+        @[AC::Param::Info(description: "Account ID to apply block to", format: "uuid")]
+        account_id : UUID,
+        r : BlockingRequest,
+      ) : BlocksResponse
+        authorized?("write_accounts_blocking_request")
+
+        Accounts::Blocking::Commands::Apply.new.call(account_id, r.block_type, r.reason, context)
+
+        blocks_response(account_id)
+      end
+
+      # Remove block
+      # Remove an active block cause from an account by its block type.
+      # Refers to the cause type (e.g. compliance_block), not a specific block ID.
+      # The effective block state is re-evaluated after removal.
+      #
+      # Required permission:
+      # - **write_accounts_unblocking_request**
+      @[AC::Route::DELETE("/:account_id/blocks/:block_type")]
+      def remove_block(
+        @[AC::Param::Info(description: "Account ID to remove block from", format: "uuid")]
+        account_id : UUID,
+        @[AC::Param::Info(description: "Block type to remove (e.g. compliance_block, operations_block)")]
+        block_type : CrystalBank::Types::Accounts::BlockType,
+        @[AC::Param::Info(description: "Optional reason for removing the block")]
+        reason : String? = nil,
+      ) : BlocksResponse
+        authorized?("write_accounts_unblocking_request")
+
+        Accounts::Blocking::Commands::Remove.new.call(account_id, block_type, reason, context)
+
+        blocks_response(account_id)
+      end
+
+      # Get blocks
+      # Get all active block causes on an account and the evaluated effective block state.
+      # The effective_block field is not stored — it is computed from the set of active causes.
+      #
+      # Required permission:
+      # - **read_accounts_blocks**
+      @[AC::Route::GET("/:account_id/blocks")]
+      def get_blocks(
+        @[AC::Param::Info(description: "Account ID to retrieve blocks for", format: "uuid")]
+        account_id : UUID,
+      ) : BlocksResponse
+        authorized?("read_accounts_blocks")
+
+        blocks_response(account_id)
       end
 
       # List
@@ -55,6 +125,27 @@ module CrystalBank::Domains::Accounts
           url: request.resource,
           data: accounts,
           limit: limit
+        )
+      end
+
+      private def blocks_response(account_id : UUID) : BlocksResponse
+        active_blocks = Accounts::Queries::AccountBlocks.new.list_active(account_id)
+
+        block_types = active_blocks.map(&.block_type_enum)
+        effective = CrystalBank::Types::Accounts::EffectiveBlock.evaluate(block_types)
+
+        entries = active_blocks.map do |b|
+          Responses::BlockEntry.new(
+            block_type: b.block_type,
+            applied_at: b.applied_at,
+            applied_by: b.applied_by,
+            reason: b.reason
+          )
+        end
+
+        Responses::BlocksResponse.new(
+          effective_block: effective.to_s,
+          blocks: entries
         )
       end
     end
