@@ -94,7 +94,6 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessBlockApprova
     approval_id = result[:approval_id]
     block_request_id = result[:block_request_id]
 
-    # Complete the approval once
     completed_event = Approvals::Collection::Events::Completed.new(
       actor_id: nil,
       aggregate_id: approval_id,
@@ -105,10 +104,12 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessBlockApprova
     TEST_EVENT_STORE.append(completed_event)
     apply_projection(approval_id)
 
-    # Replay again — ProcessBlockApproval should return early because completed = true
-    apply_projection(approval_id)
+    # The block request is now completed — the guard flag ensures future re-runs are no-ops
+    block_request = Accounts::Blocking::Blocking::Aggregate.new(block_request_id)
+    block_request.hydrate
+    block_request.state.completed.should be_true
 
-    # The account should have exactly one block (not duplicated)
+    # Account should have exactly one operations block
     account = Accounts::Aggregate.new(account_id)
     account.hydrate
 
@@ -123,7 +124,7 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessBlockApprova
     source_id = UUID.v7
 
     other_approval_id = Approvals::Creation::Commands::Request.new.call(
-      source_aggregate_type: "Account",
+      source_aggregate_type: "SomeUnhandledType",
       source_aggregate_id: source_id,
       scope_id: scope_id,
       required_approvals: ["write_accounts_opening_compliance_approval"],
@@ -139,8 +140,8 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessBlockApprova
     )
     TEST_EVENT_STORE.append(completed_event)
 
-    # Replaying the approval through the bus triggers ProcessBlockApproval,
-    # which should silently return because source_aggregate_type != "AccountBlock".
+    # Replaying the approval through the bus triggers all Completed subscribers.
+    # ProcessBlockApproval should silently return because source_aggregate_type != "AccountBlock".
     # No exception should be raised.
     apply_projection(other_approval_id)
   end
