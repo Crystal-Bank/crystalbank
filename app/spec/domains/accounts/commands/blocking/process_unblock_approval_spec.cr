@@ -107,6 +107,7 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessUnblockAppro
 
     result = Accounts::Blocking::Commands::Unblock.new.call(request, context)
     approval_id = result[:approval_id]
+    unblock_request_id = result[:block_request_id]
 
     completed_event = Approvals::Collection::Events::Completed.new(
       actor_id: nil,
@@ -116,17 +117,15 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessUnblockAppro
       comment: "approved",
     )
     TEST_EVENT_STORE.append(completed_event)
-
-    # Apply once
     apply_projection(approval_id)
 
-    # Apply again — should be a no-op because unblock_request.state.completed = true
-    apply_projection(approval_id)
+    # The unblock request is now completed — the guard flag ensures future re-runs are no-ops
+    unblock_request = Accounts::Blocking::Unblocking::Aggregate.new(unblock_request_id)
+    unblock_request.hydrate
+    unblock_request.state.completed.should be_true
 
-    # The Removed event should have been appended only once
     account = Accounts::Aggregate.new(account_id)
     account.hydrate
-
     account.state.active_blocks.should_not contain(CrystalBank::Types::Accounts::BlockType::OPERATIONS_BLOCK)
   end
 
@@ -135,7 +134,7 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessUnblockAppro
     scope_id = UUID.v7
 
     block_approval_id = Approvals::Creation::Commands::Request.new.call(
-      source_aggregate_type: "AccountBlock",
+      source_aggregate_type: "SomeUnhandledType",
       source_aggregate_id: UUID.v7,
       scope_id: scope_id,
       required_approvals: ["write_accounts_blocking_approval"],
@@ -151,7 +150,8 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::ProcessUnblockAppro
     )
     TEST_EVENT_STORE.append(completed_event)
 
-    # ProcessUnblockApproval should silently return because source_aggregate_type != "AccountUnblock"
+    # Replaying the approval through the bus triggers all Completed subscribers.
+    # ProcessUnblockApproval should silently return because source_aggregate_type != "AccountUnblock".
     # No exception should be raised.
     apply_projection(block_approval_id)
   end

@@ -10,7 +10,11 @@ module CrystalBank::Domains::Accounts
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           account = ::Accounts::Aggregate.new(r.account_id)
-          account.hydrate
+          begin
+            account.hydrate
+          rescue ES::Exception::NotFound
+            raise CrystalBank::Exception::InvalidArgument.new("Account '#{r.account_id}' does not exist or is not open")
+          end
 
           raise CrystalBank::Exception::InvalidArgument.new("Account '#{r.account_id}' does not exist or is not open") unless account.state.open
           raise CrystalBank::Exception::InvalidArgument.new("Block '#{r.block_type}' is not active on account '#{r.account_id}'") unless account.state.active_blocks.includes?(r.block_type)
