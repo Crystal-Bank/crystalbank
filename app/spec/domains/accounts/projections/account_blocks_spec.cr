@@ -6,12 +6,18 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
     account_id = UUID.v7
     actor_id = UUID.v7
 
+    requested = Test::Account::Events::Opening::Requested.new.create(aggr_id: account_id)
+    accepted = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
+    TEST_EVENT_STORE.append(requested)
+    TEST_EVENT_STORE.append(accepted)
+
     applied = Test::Account::Events::Blocking::Applied.new.create(
       aggr_id: account_id,
       block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
       actor_id: actor_id,
       reason: "AML screening"
     )
+    TEST_EVENT_STORE.append(applied)
 
     projection.apply(applied)
 
@@ -27,16 +33,20 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
     account_id = UUID.v7
     actor_id = UUID.v7
 
-    # First apply the block
+    requested = Test::Account::Events::Opening::Requested.new.create(aggr_id: account_id)
+    accepted = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
+    TEST_EVENT_STORE.append(requested)
+    TEST_EVENT_STORE.append(accepted)
+
     applied = Test::Account::Events::Blocking::Applied.new.create(
       aggr_id: account_id,
       block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
       actor_id: actor_id,
       aggregate_version: 3
     )
+    TEST_EVENT_STORE.append(applied)
     projection.apply(applied)
 
-    # Then remove it
     removed = Test::Account::Events::Blocking::Removed.new.create(
       aggr_id: account_id,
       block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
@@ -56,6 +66,11 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
     projection = Accounts::Projections::AccountBlocks.new
     account_id = UUID.v7
 
+    requested = Test::Account::Events::Opening::Requested.new.create(aggr_id: account_id)
+    accepted = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
+    TEST_EVENT_STORE.append(requested)
+    TEST_EVENT_STORE.append(accepted)
+
     compliance = Test::Account::Events::Blocking::Applied.new.create(
       aggr_id: account_id,
       block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
@@ -66,6 +81,9 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
       block_type: CrystalBank::Types::Accounts::BlockType::OPERATIONS_BLOCK,
       aggregate_version: 4
     )
+
+    TEST_EVENT_STORE.append(compliance)
+    TEST_EVENT_STORE.append(operations)
 
     projection.apply(compliance)
     projection.apply(operations)
@@ -80,6 +98,11 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
   it "re-applying an existing block type upserts the row and clears removed_at" do
     projection = Accounts::Projections::AccountBlocks.new
     account_id = UUID.v7
+
+    requested = Test::Account::Events::Opening::Requested.new.create(aggr_id: account_id)
+    accepted = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
+    TEST_EVENT_STORE.append(requested)
+    TEST_EVENT_STORE.append(accepted)
 
     applied_first = Test::Account::Events::Blocking::Applied.new.create(
       aggr_id: account_id,
@@ -96,6 +119,9 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
       block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
       aggregate_version: 5
     )
+
+    TEST_EVENT_STORE.append(applied_first)
+    TEST_EVENT_STORE.append(applied_again)
 
     projection.apply(applied_first)
     projection.apply(removed)
