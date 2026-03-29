@@ -121,6 +121,7 @@ describe CrystalBank::Domains::Accounts::Projections::AccountBlocks do
     )
 
     TEST_EVENT_STORE.append(applied_first)
+    TEST_EVENT_STORE.append(removed)
     TEST_EVENT_STORE.append(applied_again)
 
     projection.apply(applied_first)
