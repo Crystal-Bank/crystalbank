@@ -269,6 +269,41 @@ export async function createSepaCreditTransfer(payload) {
   }
 }
 
+export async function requestBlock(accountId, blockType, reason) {
+  ui.loading = true
+  try {
+    const res = await apiFetch(
+      'POST',
+      `/accounts/${accountId}/blocks`,
+      { block_type: blockType, ...(reason ? { reason } : {}) },
+      { idempotency: true },
+    )
+    addToast('Block requested — awaiting approval')
+    return res
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
+export async function requestUnblock(accountId, blockType, reason) {
+  ui.loading = true
+  try {
+    const url = `/accounts/${accountId}/blocks/${blockType}` +
+      (reason ? `?reason=${encodeURIComponent(reason)}` : '')
+    const res = await apiFetch('DELETE', url)
+    addToast('Unblock requested — awaiting approval')
+    return res
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function collectApproval(id, comment) {
   ui.loading = true
   try {

@@ -8,6 +8,7 @@
 
   let drawerApproval = $state(null)
   let comment = $state('')
+  let showRejectConfirm = $state(false)
 
   const currentViewId = $derived(
     activeTab === 'pending' ? 'approvals' :
@@ -304,7 +305,7 @@
           Collect Approval
         </button>
         <button
-          onclick={handleReject}
+          onclick={() => showRejectConfirm = true}
           class="btn btn-danger w-full"
           disabled={ui.loading}
         >
@@ -312,5 +313,19 @@
         </button>
       </div>
     {/if}
+  </div>
+{/if}
+
+<!-- ── Reject confirmation modal ─────────────────────── -->
+{#if showRejectConfirm}
+  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showRejectConfirm = false }}>
+    <div class="modal-box">
+      <div class="modal-title">Reject Approval</div>
+      <div class="modal-desc">Do you really want to reject this approval? This action cannot be undone.</div>
+      <div class="flex justify-end gap-2 mt-5">
+        <button onclick={() => showRejectConfirm = false} class="btn btn-ghost">Cancel</button>
+        <button onclick={() => { showRejectConfirm = false; handleReject() }} class="btn btn-danger" disabled={ui.loading}>Reject</button>
+      </div>
+    </div>
   </div>
 {/if}

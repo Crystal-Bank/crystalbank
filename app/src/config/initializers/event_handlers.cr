@@ -6,6 +6,15 @@ event_handlers = ES::Config.event_handlers
 event_handlers.register(Accounts::Opening::Events::Accepted)
 event_handlers.register(Accounts::Opening::Events::Requested)
 
+# Account Blocks
+event_handlers.register(Accounts::Blocking::Events::Applied)
+event_handlers.register(Accounts::Blocking::Events::Removed)
+
+event_handlers.register(Accounts::Blocking::Blocking::Events::Requested)
+event_handlers.register(Accounts::Blocking::Blocking::Events::Completed)
+event_handlers.register(Accounts::Blocking::Unblocking::Events::Requested)
+event_handlers.register(Accounts::Blocking::Unblocking::Events::Completed)
+
 # Approvals
 event_handlers.register(Approvals::Creation::Events::Requested)
 event_handlers.register(Approvals::Collection::Events::Collected)
