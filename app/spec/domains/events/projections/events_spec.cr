@@ -67,7 +67,7 @@ describe CrystalBank::Domains::Events::Projections::Events do
         body["scope_id"].as_s.should eq("00000000-0000-0000-0000-100000000001")
       end
 
-      it "stores a null body for events with no body attributes" do
+      it "stores an empty JSON object body for events with no body attributes" do
         aggr_id = UUID.v7
         projection = ::Events::Projections::Events.new
 
@@ -79,11 +79,11 @@ describe CrystalBank::Domains::Events::Projections::Events do
         TEST_EVENT_STORE.append(acc)
         projection.apply(acc)
 
-        body_null = TEST_PROJECTION_DB.query_one %(
-          SELECT body IS NULL FROM projections.events
+        body_text = TEST_PROJECTION_DB.query_one %(
+          SELECT body::text FROM projections.events
           WHERE aggregate_id = $1 AND aggregate_version = 2
-        ), aggr_id, as: Bool
-        body_null.should be_true
+        ), aggr_id, as: String
+        JSON.parse(body_text).as_h.should be_empty
       end
     end
   end
