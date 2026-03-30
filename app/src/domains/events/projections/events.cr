@@ -48,7 +48,7 @@ module CrystalBank::Domains::Events
       end
 
       def apply(event : ::ApiKeys::Revocation::Events::Requested)
-        insert_event(event, event.body.as(::ApiKeys::Revocation::Events::Requested::Body).scope_id)
+        insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
       def apply(event : ::Approvals::Creation::Events::Requested)
