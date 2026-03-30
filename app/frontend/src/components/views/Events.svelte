@@ -144,21 +144,23 @@
   <table class="data-table">
     <thead>
       <tr>
+        <th>Event ID</th>
         <th>Event Handle</th>
         <th>Aggregate ID</th>
-        <th>Scope ID</th>
+        <th>Version</th>
         <th>Created At</th>
       </tr>
     </thead>
     <tbody>
       {#if events.length === 0 && !loading}
-        <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No events found</td></tr>
+        <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No events found</td></tr>
       {/if}
       {#each events as ev (ev.id)}
         <tr onclick={() => drawerEvent = ev} class="cursor-pointer">
+          <td><span class="mono text-xs">{ev.id}</span></td>
           <td><span class="font-mono text-xs">{ev.header?.event_handle ?? '—'}</span></td>
           <td><span class="mono text-xs">{ev.header?.aggregate_id ?? '—'}</span></td>
-          <td><span class="mono text-xs">{ev.scope_id}</span></td>
+          <td class="text-zinc-500 text-xs tabular-nums">{ev.header?.aggregate_version ?? '—'}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{ev.header?.created_at ? formatDate(ev.header.created_at) : '—'}</td>
         </tr>
       {/each}
