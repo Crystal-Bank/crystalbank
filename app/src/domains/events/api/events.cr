@@ -17,8 +17,10 @@ module CrystalBank::Domains::Events
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
-        @[AC::Param::Info(description: "Filter by aggregate type (e.g. User, Account, Approval)")]
-        aggregate_type : String? = nil,
+        @[AC::Param::Info(description: "Filter by aggregate ID")]
+        aggregate_id : UUID? = nil,
+        @[AC::Param::Info(description: "Filter by event ID")]
+        event_id : UUID? = nil,
         @[AC::Param::Info(description: "Filter by event handle (e.g. user.onboarding.requested)")]
         event_handle : String? = nil,
       ) : ListResponse(Responses::Event)
@@ -28,7 +30,8 @@ module CrystalBank::Domains::Events
           context,
           cursor: cursor,
           limit: limit + 1,
-          aggregate_type: aggregate_type,
+          aggregate_id: aggregate_id,
+          event_id: event_id,
           event_handle: event_handle,
         ).map do |e|
           Responses::Event.new(

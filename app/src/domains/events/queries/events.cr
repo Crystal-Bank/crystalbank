@@ -21,7 +21,8 @@ module CrystalBank::Domains::Events
         context : CrystalBank::Api::Context,
         cursor : UUID?,
         limit : Int32,
-        aggregate_type : String? = nil,
+        aggregate_id : UUID? = nil,
+        event_id : UUID? = nil,
         event_handle : String? = nil,
       ) : Array(Event)
         query_param_counter = 0
@@ -33,9 +34,14 @@ module CrystalBank::Domains::Events
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
         query_params << context.available_scopes
 
-        unless aggregate_type.nil?
-          query << %(AND header->>'aggregate_type' = $#{query_param_counter += 1})
-          query_params << aggregate_type
+        unless aggregate_id.nil?
+          query << %(AND "aggregate_id" = $#{query_param_counter += 1})
+          query_params << aggregate_id
+        end
+
+        unless event_id.nil?
+          query << %(AND "event_id" = $#{query_param_counter += 1})
+          query_params << event_id
         end
 
         unless event_handle.nil?
