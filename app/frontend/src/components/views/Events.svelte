@@ -21,6 +21,13 @@
 
   // Detail drawer
   let drawerEvent = $state(null)
+  let copied = $state(null) // 'header' | 'body' | null
+
+  function copyJson(key, value) {
+    navigator.clipboard.writeText(JSON.stringify(value, null, 2))
+    copied = key
+    setTimeout(() => { copied = null }, 1500)
+  }
 
   function buildUrl({ cursorVal = null } = {}) {
     const params = new URLSearchParams()
@@ -191,13 +198,23 @@
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerEvent.scope_id}</div>
       </div>
       <div class="drawer-field">
-        <div class="drawer-field-label">Header</div>
-        <pre class="text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 overflow-x-auto whitespace-pre-wrap break-all select-all">{JSON.stringify(drawerEvent.header, null, 2)}</pre>
+        <div class="flex items-center justify-between mb-1">
+          <div class="drawer-field-label">Header</div>
+          <button onclick={() => copyJson('header', drawerEvent.header)} class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors tabular-nums w-12 text-right">
+            {copied === 'header' ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
+        <pre class="text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 overflow-x-auto whitespace-pre-wrap break-words">{JSON.stringify(drawerEvent.header, null, 2)}</pre>
       </div>
       {#if drawerEvent.body !== null}
         <div class="drawer-field">
-          <div class="drawer-field-label">Body</div>
-          <pre class="text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 overflow-x-auto whitespace-pre-wrap break-all select-all">{JSON.stringify(drawerEvent.body, null, 2)}</pre>
+          <div class="flex items-center justify-between mb-1">
+            <div class="drawer-field-label">Body</div>
+            <button onclick={() => copyJson('body', drawerEvent.body)} class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors tabular-nums w-12 text-right">
+              {copied === 'body' ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+          <pre class="text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 overflow-x-auto whitespace-pre-wrap break-words">{JSON.stringify(drawerEvent.body, null, 2)}</pre>
         </div>
       {/if}
     </div>
