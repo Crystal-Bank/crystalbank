@@ -23,6 +23,9 @@ module CrystalBank::Domains::Events
         @[JSON::Field(format: "iso8601")]
         getter created_at : Time
 
+        getter header : JSON::Any
+        getter body : JSON::Any?
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
@@ -32,7 +35,11 @@ module CrystalBank::Domains::Events
           @event_handle : String,
           @actor_id : UUID?,
           @created_at : Time,
+          header : String,
+          body : String?,
         )
+          @header = JSON.parse(header)
+          @body = body.try { |b| JSON.parse(b) }
         end
       end
     end

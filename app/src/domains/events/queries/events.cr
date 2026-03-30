@@ -15,6 +15,8 @@ module CrystalBank::Domains::Events
         getter event_handle : String
         getter actor_id : UUID?
         getter created_at : Time
+        getter header : String
+        getter body : String?
       end
 
       def initialize

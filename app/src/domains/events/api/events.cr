@@ -40,6 +40,8 @@ module CrystalBank::Domains::Events
             e.event_handle,
             e.actor_id,
             e.created_at,
+            e.header,
+            e.body,
           )
         end
 

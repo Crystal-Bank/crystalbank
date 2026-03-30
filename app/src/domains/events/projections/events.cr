@@ -15,7 +15,9 @@ module CrystalBank::Domains::Events
             "event_handle"      VARCHAR NOT NULL,
             "scope_id"          UUID NOT NULL,
             "actor_id"          UUID,
-            "created_at"        TIMESTAMP NOT NULL
+            "created_at"        TIMESTAMP NOT NULL,
+            "header"            JSONB NOT NULL,
+            "body"              JSONB
           );
         )
 
@@ -166,8 +168,10 @@ module CrystalBank::Domains::Events
               event_handle,
               scope_id,
               actor_id,
-              created_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+              created_at,
+              header,
+              body
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
           ),
             event.header.event_id,
             event.header.aggregate_id,
@@ -176,7 +180,9 @@ module CrystalBank::Domains::Events
             event_handle,
             scope_id,
             event.header.actor_id,
-            event.header.created_at
+            event.header.created_at,
+            event.header.to_json,
+            event.body.try(&.to_json)
         end
       end
     end
