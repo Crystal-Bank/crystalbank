@@ -1,6 +1,5 @@
 <script>
   import { onMount } from 'svelte'
-  import { ui } from '../../lib/store.svelte.js'
   import { apiFetch } from '../../lib/api.js'
   import { formatDate } from '../../lib/utils.js'
 
@@ -25,7 +24,7 @@
 
   function buildUrl({ cursorVal = null } = {}) {
     const params = new URLSearchParams()
-    params.set('limit', '21')
+    params.set('limit', '20')
     if (activeAggregateId) params.set('aggregate_id', activeAggregateId)
     if (activeEventId) params.set('event_id', activeEventId)
     if (activeEventHandle) params.set('event_handle', activeEventHandle)
@@ -39,22 +38,21 @@
     try {
       const url = buildUrl(opts)
       const res = await apiFetch('GET', url)
-      const items = res.data ?? []
-      const page = items.map(e => ({
-        id: e.id,
+      const items = (res.data ?? []).map(e => ({
+        id: e.attributes.id,
         scope_id: e.attributes.scope_id,
         header: e.attributes.header,
         body: e.attributes.body ?? null,
       }))
 
       if (opts.append) {
-        events = [...events, ...page.slice(0, 20)]
+        events = [...events, ...items]
       } else {
-        events = page.slice(0, 20)
+        events = items
       }
 
-      hasMore = items.length > 20
-      cursor = page.length > 0 ? page[Math.min(page.length, 20) - 1].id : null
+      hasMore = res.meta?.has_more ?? false
+      cursor = res.meta?.next_cursor ?? null
     } catch (err) {
       console.error(err)
     } finally {
