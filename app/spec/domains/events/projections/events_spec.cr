@@ -83,7 +83,7 @@ describe CrystalBank::Domains::Events::Projections::Events do
           SELECT body::text FROM projections.events
           WHERE aggregate_id = $1 AND aggregate_version = 2
         ), aggr_id, as: String
-        JSON.parse(body_text).as_h.should be_empty
+        JSON.parse(body_text).as_h.should eq({"comment" => "test comment"})
       end
     end
   end
