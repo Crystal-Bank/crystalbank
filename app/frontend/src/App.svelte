@@ -18,8 +18,9 @@
   import Approvals from './components/views/Approvals.svelte'
   import Payments from './components/views/Payments.svelte'
   import SepaCreditTransfers from './components/views/SepaCreditTransfers.svelte'
+  import Events from './components/views/Events.svelte'
 
-  const KNOWN_VIEWS = ['dashboard', 'accounts', 'customers', 'postings', 'users', 'roles', 'scopes', 'api_keys', 'approvals', 'payments', 'sepa_credit_transfers']
+  const KNOWN_VIEWS = ['dashboard', 'accounts', 'customers', 'postings', 'users', 'roles', 'scopes', 'api_keys', 'approvals', 'payments', 'sepa_credit_transfers', 'events']
 
   onMount(() => {
     if (auth.token) {
@@ -86,6 +87,8 @@
           <Payments />
         {:else if ui.view === 'sepa_credit_transfers'}
           <SepaCreditTransfers />
+        {:else if ui.view === 'events'}
+          <Events />
         {/if}
       </main>
     </div>
