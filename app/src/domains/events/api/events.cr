@@ -34,12 +34,6 @@ module CrystalBank::Domains::Events
           Responses::Event.new(
             e.id,
             e.scope_id,
-            e.aggregate_id,
-            e.aggregate_type,
-            e.aggregate_version,
-            e.event_handle,
-            e.actor_id,
-            e.created_at,
             e.header,
             e.body,
           )

@@ -9,12 +9,6 @@ module CrystalBank::Domains::Events
         @[DB::Field(key: "event_id")]
         getter id : UUID
         getter scope_id : UUID
-        getter aggregate_id : UUID
-        getter aggregate_type : String
-        getter aggregate_version : Int64
-        getter event_handle : String
-        getter actor_id : UUID?
-        getter created_at : Time
         getter header : String
         getter body : String?
       end
@@ -34,18 +28,18 @@ module CrystalBank::Domains::Events
         query = [] of String
         query_params = Array(Array(UUID) | UUID? | Int32 | String).new
 
-        query << %(SELECT event_id, aggregate_id, aggregate_type, aggregate_version, event_handle, scope_id, actor_id, created_at, header::text AS header, body::text AS body FROM "projections"."events" WHERE 1=1)
+        query << %(SELECT event_id, scope_id, header::text AS header, body::text AS body FROM "projections"."events" WHERE 1=1)
 
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
         query_params << context.available_scopes
 
         unless aggregate_type.nil?
-          query << %(AND "aggregate_type" = $#{query_param_counter += 1})
+          query << %(AND header->>'aggregate_type' = $#{query_param_counter += 1})
           query_params << aggregate_type
         end
 
         unless event_handle.nil?
-          query << %(AND "event_handle" = $#{query_param_counter += 1})
+          query << %(AND header->>'event_handle' = $#{query_param_counter += 1})
           query_params << event_handle
         end
 
