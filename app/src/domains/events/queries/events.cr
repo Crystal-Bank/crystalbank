@@ -34,7 +34,7 @@ module CrystalBank::Domains::Events
         query = [] of String
         query_params = Array(Array(UUID) | UUID? | Int32 | String).new
 
-        query << %(SELECT * FROM "projections"."events" WHERE 1=1)
+        query << %(SELECT event_id, aggregate_id, aggregate_type, aggregate_version, event_handle, scope_id, actor_id, created_at, header::text AS header, body::text AS body FROM "projections"."events" WHERE 1=1)
 
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
         query_params << context.available_scopes
