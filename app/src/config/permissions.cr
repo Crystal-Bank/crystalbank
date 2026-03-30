@@ -49,6 +49,9 @@ module CrystalBank
     READ_payments_sepa_credit_transfers_list
     WRITE_payments_sepa_credit_transfers_approval
 
+    # Events
+    READ_events_list
+
     def to_s
       super.to_s.downcase
     end
