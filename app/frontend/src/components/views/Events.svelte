@@ -194,6 +194,10 @@
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerEvent.id}</div>
       </div>
       <div class="drawer-field">
+        <div class="drawer-field-label">Aggregate ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerEvent.header?.aggregate_id ?? '—'}</div>
+      </div>
+      <div class="drawer-field">
         <div class="drawer-field-label">Scope ID</div>
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerEvent.scope_id}</div>
       </div>
