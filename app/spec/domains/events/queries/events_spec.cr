@@ -2,14 +2,14 @@ require "../../../spec_helper"
 
 describe CrystalBank::Domains::Events::Queries::Events do
   available_scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
-  other_scope_id     = UUID.new("00000000-0000-0000-0000-200000000001")
+  other_scope_id = UUID.new("00000000-0000-0000-0000-200000000001")
 
-  user_aggr_id  = UUID.v7
+  user_aggr_id = UUID.v7
   scope_aggr_id = UUID.v7
   other_aggr_id = UUID.v7
 
   # Placeholders updated in before_all (Crystal closures capture by reference)
-  user_event_id  = UUID.new("00000000-0000-0000-0000-000000000000")
+  user_event_id = UUID.new("00000000-0000-0000-0000-000000000000")
   scope_event_id = UUID.new("00000000-0000-0000-0000-000000000000")
   other_event_id = UUID.new("00000000-0000-0000-0000-000000000000")
 
