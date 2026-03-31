@@ -2,6 +2,7 @@
   import { NAV_SECTIONS, auth } from '../lib/store.svelte.js'
   import { switchView, logout, setScope } from '../lib/actions.js'
   import { apiFetch } from '../lib/api.js'
+  import { onMount } from 'svelte'
 
   let { currentView } = $props()
 
@@ -52,6 +53,10 @@
       scopeOptions = res.data.map(e => e.attributes)
     } catch { scopeOptions = [] }
   }
+
+  // If a scope is already active on load, fetch the list immediately so the
+  // name resolves instead of showing a truncated UUID.
+  onMount(() => { if (auth.scope) fetchScopes() })
 
   function toggleDropdown() {
     if (!showDropdown) {
