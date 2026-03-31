@@ -11,6 +11,8 @@
   let showDropdown = $state(false)
   let switcherEl = $state(null)
 
+  let canSwitch = $derived(scopesFetched && scopeOptions.length > 0)
+
   // Position for the fixed dropdown
   let dropdownTop = $state(0)
   let dropdownLeft = $state(0)
@@ -100,7 +102,6 @@
     </div>
 
     <!-- Scope / Company Switcher Button -->
-    {@const canSwitch = scopesFetched && scopeOptions.length > 0}
     <button
       onclick={toggleDropdown}
       disabled={!canSwitch}
