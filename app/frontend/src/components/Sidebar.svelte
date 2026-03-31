@@ -7,6 +7,7 @@
   let { currentView } = $props()
 
   let scopeOptions = $state([])
+  let scopesFetched = $state(false)
   let showDropdown = $state(false)
   let switcherEl = $state(null)
 
@@ -52,15 +53,16 @@
       const res = await apiFetch('GET', '/scopes/?limit=200')
       scopeOptions = res.data.map(e => e.attributes)
     } catch { scopeOptions = [] }
+    scopesFetched = true
   }
 
-  // If a scope is already active on load, fetch the list immediately so the
-  // name resolves instead of showing a truncated UUID.
-  onMount(() => { if (auth.scope) fetchScopes() })
+  // Always fetch on mount: resolves the active scope name and determines
+  // whether the switcher should be interactive.
+  onMount(fetchScopes)
 
   function toggleDropdown() {
+    if (!scopesFetched || scopeOptions.length === 0) return
     if (!showDropdown) {
-      if (scopeOptions.length === 0) fetchScopes()
       if (switcherEl) {
         const rect = switcherEl.getBoundingClientRect()
         dropdownTop = rect.bottom + 6
@@ -98,11 +100,13 @@
     </div>
 
     <!-- Scope / Company Switcher Button -->
+    {@const canSwitch = scopesFetched && scopeOptions.length > 0}
     <button
       onclick={toggleDropdown}
+      disabled={!canSwitch}
       class="w-full flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left mb-1"
-      style="background: {showDropdown ? 'rgba(255,255,255,0.1)' : 'transparent'}"
-      onmouseenter={(e) => { if (!showDropdown) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+      style="background: {showDropdown ? 'rgba(255,255,255,0.1)' : 'transparent'}; {!canSwitch ? 'cursor: default;' : ''}"
+      onmouseenter={(e) => { if (canSwitch && !showDropdown) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
       onmouseleave={(e) => { if (!showDropdown) e.currentTarget.style.background = 'transparent' }}
     >
       <!-- Scope Icon -->
@@ -114,10 +118,12 @@
       </div>
       <!-- Scope Name -->
       <span class="flex-1 text-sm font-medium text-white truncate leading-tight">{currentScopeName}</span>
-      <!-- Chevrons icon -->
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
-        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
-      </svg>
+      <!-- Chevrons icon — hidden when no scopes exist -->
+      {#if canSwitch}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
+          <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
+        </svg>
+      {/if}
     </button>
   </div>
 
