@@ -90,8 +90,7 @@
     <div class="fixed inset-0 z-40" onclick={() => showDropdown = false}></div>
   {/if}
 
-  <!-- Company / Scope Switcher Header — hidden when no scopes exist -->
-  {#if canSwitch}
+  <!-- Sidebar Header -->
   <div class="px-3 pt-3 pb-2 border-b border-zinc-800" bind:this={switcherEl}>
     <!-- App branding -->
     <div class="flex items-center gap-2 px-1 mb-3">
@@ -102,6 +101,7 @@
     </div>
 
     <!-- Scope / Company Switcher Button -->
+    {#if canSwitch}
     <button
       onclick={toggleDropdown}
       class="w-full flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left mb-1"
@@ -123,8 +123,8 @@
         <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
       </svg>
     </button>
+    {/if}
   </div>
-  {/if}
 
   <!-- Dropdown Menu — fixed position so it floats over the layout -->
   {#if showDropdown}
