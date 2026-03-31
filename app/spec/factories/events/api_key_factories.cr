@@ -109,6 +109,7 @@ module Test::ApiKey::Events
         {
           "comment": "test comment",
           "reason":  "revocation reason",
+          "scope_id": "00000000-0000-0000-0000-000000000001"
         }.to_json
       end
     end
