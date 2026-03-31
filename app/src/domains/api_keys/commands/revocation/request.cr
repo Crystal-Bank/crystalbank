@@ -2,9 +2,8 @@ module CrystalBank::Domains::ApiKeys
   module Revocation
     module Commands
       class Request < ES::Command
-        def call(api_key_id : UUID, r : ApiKeys::Api::Requests::RevocationRequest) : Bool
-          # TODO: Replace with actor from context
-          dummy_actor = UUID.new("00000000-0000-0000-0000-000000000000")
+        def call(api_key_id : UUID, r : ApiKeys::Api::Requests::RevocationRequest, c : CrystalBank::Api::Context) : Bool
+          actor = c.user_id
 
           # Build the aggregate
           aggregate = ApiKeys::Aggregate.new(api_key_id)
@@ -14,17 +13,20 @@ module CrystalBank::Domains::ApiKeys
           next_version = aggregate.state.next_version
           aggregate_id = aggregate.state.aggregate_id
           aggregate_type = aggregate.state.aggregate_type
+          scope_id = aggregate.state.scope_id
+
+          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope_id
 
           # Raise exception if api key is not active
           raise CrystalBank::Exception::InvalidArgument.new("ApiKey '#{aggregate_id}' is in a non-active state and cannot be revoked") unless aggregate.state.active
 
           # Create the revocation request
           event = ApiKeys::Revocation::Events::Requested.new(
-            actor_id: dummy_actor,
+            actor_id: actor,
             aggregate_id: aggregate_id,
             aggregate_version: next_version,
             command_handler: self.class.to_s,
-            scope_id: scope,
+            scope_id: scope_id,
             reason: r.reason
           )
 
