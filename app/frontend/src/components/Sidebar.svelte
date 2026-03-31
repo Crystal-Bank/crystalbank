@@ -63,7 +63,6 @@
   onMount(fetchScopes)
 
   function toggleDropdown() {
-    if (!scopesFetched || scopeOptions.length === 0) return
     if (!showDropdown) {
       if (switcherEl) {
         const rect = switcherEl.getBoundingClientRect()
@@ -91,7 +90,8 @@
     <div class="fixed inset-0 z-40" onclick={() => showDropdown = false}></div>
   {/if}
 
-  <!-- Company / Scope Switcher Header -->
+  <!-- Company / Scope Switcher Header — hidden when no scopes exist -->
+  {#if canSwitch}
   <div class="px-3 pt-3 pb-2 border-b border-zinc-800" bind:this={switcherEl}>
     <!-- App branding -->
     <div class="flex items-center gap-2 px-1 mb-3">
@@ -104,10 +104,9 @@
     <!-- Scope / Company Switcher Button -->
     <button
       onclick={toggleDropdown}
-      disabled={!canSwitch}
       class="w-full flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left mb-1"
-      style="background: {showDropdown ? 'rgba(255,255,255,0.1)' : 'transparent'}; {!canSwitch ? 'cursor: default;' : ''}"
-      onmouseenter={(e) => { if (canSwitch && !showDropdown) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+      style="background: {showDropdown ? 'rgba(255,255,255,0.1)' : 'transparent'}"
+      onmouseenter={(e) => { if (!showDropdown) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
       onmouseleave={(e) => { if (!showDropdown) e.currentTarget.style.background = 'transparent' }}
     >
       <!-- Scope Icon -->
@@ -119,14 +118,13 @@
       </div>
       <!-- Scope Name -->
       <span class="flex-1 text-sm font-medium text-white truncate leading-tight">{currentScopeName}</span>
-      <!-- Chevrons icon — hidden when no scopes exist -->
-      {#if canSwitch}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
-          <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
-        </svg>
-      {/if}
+      <!-- Chevrons icon -->
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
+        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
+      </svg>
     </button>
   </div>
+  {/if}
 
   <!-- Dropdown Menu — fixed position so it floats over the layout -->
   {#if showDropdown}
