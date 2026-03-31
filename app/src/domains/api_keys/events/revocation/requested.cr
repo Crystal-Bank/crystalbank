@@ -6,6 +6,7 @@ module CrystalBank::Domains::ApiKeys
 
         define_event "ApiKey", "api_key.revocation.requested" do
           attribute :reason, String
+          attribute :scope_id, UUID
         end
       end
     end

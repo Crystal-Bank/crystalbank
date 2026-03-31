@@ -24,6 +24,7 @@ module CrystalBank::Domains::ApiKeys
             aggregate_id: aggregate_id,
             aggregate_version: next_version,
             command_handler: self.class.to_s,
+            scope_id: scope,
             reason: r.reason
           )
 

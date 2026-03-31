@@ -6,6 +6,7 @@ describe CrystalBank::Domains::ApiKeys::Aggregates::Concerns::Revocation do
       actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
       aggregate_id = UUID.new("00000000-0000-0000-0000-000000000001")
       name = "Test key name"
+      scope_id = UUID.new("00000000-0000-0000-0000-000000000001")
       user_id = UUID.new("00000000-0000-0000-0000-200000000000")
 
       aggregate = ApiKeys::Aggregate.new(aggregate_id)
@@ -16,7 +17,8 @@ describe CrystalBank::Domains::ApiKeys::Aggregates::Concerns::Revocation do
         aggregate_id: aggregate_id,
         aggregate_version: aggregate.state.aggregate_version + 1,
         command_handler: "test",
-        reason: "revocation reason"
+        reason: "revocation reason",
+        scope_id: scope_id
       )
       aggregate.apply(event_1)
 

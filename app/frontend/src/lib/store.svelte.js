@@ -98,6 +98,7 @@ export const ALL_PERMISSIONS = [
   'write_accounts_unblocking_request',
   'write_accounts_blocking_approval',
   'write_accounts_unblocking_approval',
+  'read_events_list',
 ]
 
 export const NAV_SECTIONS = [
@@ -173,6 +174,16 @@ export const NAV_SECTIONS = [
         id: 'api_keys',
         label: 'API Keys',
         icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>`,
+      },
+    ],
+  },
+  {
+    label: 'Debugging',
+    items: [
+      {
+        id: 'events',
+        label: 'Events',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
       },
     ],
   },
