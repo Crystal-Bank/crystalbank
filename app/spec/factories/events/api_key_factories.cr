@@ -92,6 +92,7 @@ module Test::ApiKey::Events
         reason = "revocation reason"
         command_handler = "test"
         comment = "test comment"
+        scope_id = UUID.new("00000000-0000-0000-0000-000000000001")
 
         ApiKeys::Revocation::Events::Requested.new(
           actor_id: actor_id,
@@ -99,7 +100,8 @@ module Test::ApiKey::Events
           aggregate_version: aggregate_version,
           command_handler: command_handler,
           comment: comment,
-          reason: reason
+          reason: reason,
+          scope_id: scope_id
         )
       end
 
