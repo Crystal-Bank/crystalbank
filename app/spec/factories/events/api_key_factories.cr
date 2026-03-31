@@ -107,9 +107,9 @@ module Test::ApiKey::Events
 
       def json_string : String
         {
-          "comment": "test comment",
-          "reason":  "revocation reason",
-          "scope_id": "00000000-0000-0000-0000-000000000001"
+          "comment":  "test comment",
+          "reason":   "revocation reason",
+          "scope_id": "00000000-0000-0000-0000-000000000001",
         }.to_json
       end
     end
