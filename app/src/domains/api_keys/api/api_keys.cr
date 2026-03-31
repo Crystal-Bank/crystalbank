@@ -39,7 +39,7 @@ module CrystalBank::Domains::ApiKeys
       )
         authorized?("write_api_keys_revocation_request", request_scope: false)
 
-        response = ::ApiKeys::Revocation::Commands::Request.new.call(id, r)
+        response = ::ApiKeys::Revocation::Commands::Request.new.call(id, r, context)
 
         response ? head(:accepted) : head(:internal_server_error)
       end
