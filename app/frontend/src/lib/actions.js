@@ -50,6 +50,7 @@ export function setScope(value) {
   auth.scopeInput = value
   if (value) localStorage.setItem('cb_scope', value)
   else localStorage.removeItem('cb_scope')
+  if (VIEW_PATHS[ui.view]) loadView(ui.view)
 }
 
 // ── Navigation / data loading ────────────────────────────
@@ -70,6 +71,10 @@ export async function loadView(id) {
   await loadMore(id)
 }
 
+function scopeParam() {
+  return auth.scope ? '&scope_id=' + auth.scope : ''
+}
+
 // Silent background refresh — does not touch ui.loading or clear existing data.
 // Replaces the first page only; skips entirely if a foreground load is in progress.
 export async function refreshView(id) {
@@ -77,7 +82,7 @@ export async function refreshView(id) {
   try {
     const base = VIEW_PATHS[id]
     const sep = base.includes('?') ? '&' : '?'
-    const res = await apiFetch('GET', base + sep + 'limit=20')
+    const res = await apiFetch('GET', base + sep + 'limit=20' + scopeParam())
     const items = res.data.map(e => e.attributes)
     if (
       (items.length === 0 && viewData[id].length > 0) ||
@@ -98,7 +103,7 @@ export async function loadMore(id) {
   try {
     const base = VIEW_PATHS[id]
     const sep = base.includes('?') ? '&' : '?'
-    let url = base + sep + 'limit=20'
+    let url = base + sep + 'limit=20' + scopeParam()
     if (pagination.cursors[id]) url += '&cursor=' + pagination.cursors[id]
     const res = await apiFetch('GET', url)
     const items = res.data.map(e => e.attributes)

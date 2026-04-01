@@ -44,6 +44,7 @@ module CrystalBank::Domains::Approvals
         cursor : UUID?,
         limit : Int32,
         status : CrystalBank::Types::Approvals::Status? = nil,
+        scope_id : UUID? = nil,
       ) : Array(Approval)
         query_param_counter = 0
         query = [] of String
@@ -54,6 +55,11 @@ module CrystalBank::Domains::Approvals
         # Add scope query
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
         query_params << context.available_scopes
+
+        unless scope_id.nil?
+          query << %(AND "scope_id" = $#{query_param_counter += 1})
+          query_params << scope_id
+        end
 
         # Add pagination cursor to query
         unless cursor.nil?

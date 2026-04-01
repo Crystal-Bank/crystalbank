@@ -57,10 +57,12 @@ module CrystalBank::Domains::Users
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
+        @[AC::Param::Info(description: "Filter by scope ID")]
+        scope_id : UUID? = nil,
       ) : ListResponse(Responses::User)
         authorized?("read_users_list", request_scope: false)
 
-        users = ::Users::Queries::Users.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
+        users = ::Users::Queries::Users.new.list(context, cursor: cursor, limit: limit + 1, scope_id: scope_id).map do |a|
           Responses::User.new(
             a.id,
             a.scope_id,

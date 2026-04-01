@@ -39,11 +39,13 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         limit : Int32 = 20,
         @[AC::Param::Info(description: "Filter by status: pending or executed")]
         status : String? = nil,
+        @[AC::Param::Info(description: "Filter by scope ID")]
+        scope_id : UUID? = nil,
       ) : ListResponse(Responses::CreditTransfer)
         authorized?("read_payments_sepa_credit_transfers_list", request_scope: false)
 
         transfers = ::Payments::Sepa::CreditTransfers::Queries::CreditTransfers.new
-          .list(context, cursor: cursor, limit: limit + 1, status: status)
+          .list(context, cursor: cursor, limit: limit + 1, status: status, scope_id: scope_id)
           .map do |t|
             Responses::CreditTransfer.new(
               id: t.uuid,

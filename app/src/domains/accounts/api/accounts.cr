@@ -134,10 +134,12 @@ module CrystalBank::Domains::Accounts
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
+        @[AC::Param::Info(description: "Filter by scope ID")]
+        scope_id : UUID? = nil,
       ) : ListResponse(Responses::Account)
         authorized?("read_accounts_list", request_scope: false)
 
-        accounts = ::Accounts::Queries::Accounts.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
+        accounts = ::Accounts::Queries::Accounts.new.list(context, cursor: cursor, limit: limit + 1, scope_id: scope_id).map do |a|
           Responses::Account.new(
             a.id,
             a.scope_id,

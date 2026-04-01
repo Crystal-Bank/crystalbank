@@ -35,10 +35,12 @@ module CrystalBank::Domains::Ledger::Transactions
         limit : Int32 = 20,
         @[AC::Param::Info(description: "Optional account_id filter")]
         account_id : UUID? = nil,
+        @[AC::Param::Info(description: "Filter by scope ID")]
+        scope_id : UUID? = nil,
       ) : ListResponse(Responses::Posting)
         authorized?("read_postings_list", request_scope: false)
 
-        postings = ::Ledger::Transactions::Queries::Postings.new.list(context, cursor: cursor, limit: limit + 1, account_id: account_id).map do |p|
+        postings = ::Ledger::Transactions::Queries::Postings.new.list(context, cursor: cursor, limit: limit + 1, account_id: account_id, scope_id: scope_id).map do |p|
           Responses::Posting.new(
             p.id,
             p.transaction_id,
