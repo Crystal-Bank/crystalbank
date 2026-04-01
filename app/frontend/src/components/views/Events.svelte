@@ -33,7 +33,6 @@
   function buildUrl({ cursorVal = null } = {}) {
     const params = new URLSearchParams()
     params.set('limit', '20')
-    if (auth.scope) params.set('scope_id', auth.scope)
     if (activeAggregateId) params.set('aggregate_id', activeAggregateId)
     if (activeEventId) params.set('event_id', activeEventId)
     if (activeEventHandle) params.set('event_handle', activeEventHandle)

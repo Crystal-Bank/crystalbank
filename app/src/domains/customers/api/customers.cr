@@ -37,12 +37,10 @@ module CrystalBank::Domains::Customers
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
-        @[AC::Param::Info(description: "Filter by scope ID")]
-        scope_id : UUID? = nil,
       ) : ListResponse(Responses::Customer)
-        authorized?("read_customers_list", request_scope: false)
+        authorized?("read_customers_list")
 
-        customers = ::Customers::Queries::Customers.new.list(context, cursor: cursor, limit: limit + 1, scope_id: scope_id).map do |a|
+        customers = ::Customers::Queries::Customers.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
           Responses::Customer.new(
             a.id,
             a.scope_id,

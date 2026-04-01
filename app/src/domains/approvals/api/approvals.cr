@@ -61,12 +61,10 @@ module CrystalBank::Domains::Approvals
         limit : Int32 = 20,
         @[AC::Param::Info(description: "Filter by approval status")]
         status : CrystalBank::Types::Approvals::Status? = nil,
-        @[AC::Param::Info(description: "Filter by scope ID")]
-        scope_id : UUID? = nil,
       ) : ListResponse(Responses::Approval)
-        authorized?("read_approvals_list", request_scope: false)
+        authorized?("read_approvals_list")
 
-        approvals = ::Approvals::Queries::Approvals.new.list(context, cursor: cursor, limit: limit + 1, status: status, scope_id: scope_id).map do |a|
+        approvals = ::Approvals::Queries::Approvals.new.list(context, cursor: cursor, limit: limit + 1, status: status).map do |a|
           collected = a.collected_approvals.map do |ca|
             Responses::CollectedApproval.new(ca.user_id, ca.permissions, ca.comment)
           end
