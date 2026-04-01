@@ -20,7 +20,7 @@
   let currentScopeName = $derived(
     auth.scope
       ? (scopeOptions.find(s => s.id === auth.scope)?.name || auth.scope.slice(0, 8) + '…')
-      : 'All Scopes'
+      : '…'
   )
 
   // Build a flat list ordered by tree depth (root → children), with depth info
@@ -54,6 +54,10 @@
     try {
       const res = await apiFetch('GET', '/scopes/?limit=200')
       scopeOptions = res.data.map(e => e.attributes)
+      if (!auth.scope) {
+        const root = scopeOptions.find(s => !s.parent_scope_id)
+        if (root) setScope(root.id)
+      }
     } catch { scopeOptions = [] }
     scopesFetched = true
   }
@@ -75,11 +79,6 @@
 
   function selectScope(scopeId) {
     setScope(scopeId)
-    showDropdown = false
-  }
-
-  function clearScope() {
-    setScope('')
     showDropdown = false
   }
 </script>
@@ -139,30 +138,7 @@
       class="fixed z-50 bg-zinc-800 border border-zinc-700/80 rounded-lg shadow-2xl overflow-hidden"
       style="top: {dropdownTop}px; left: {dropdownLeft}px; min-width: 260px; max-width: 340px;"
     >
-      <!-- All Scopes option -->
-      <button
-        type="button"
-        onclick={clearScope}
-        class="w-full flex items-center gap-2.5 px-3 py-2.5 text-left"
-        style="background: {!auth.scope ? 'rgba(255,255,255,0.08)' : 'transparent'}"
-        onmouseenter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-        onmouseleave={(e) => { e.currentTarget.style.background = !auth.scope ? 'rgba(255,255,255,0.08)' : 'transparent' }}
-      >
-        <div class="w-5 h-5 rounded bg-zinc-600 flex items-center justify-center flex-shrink-0">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <span class="flex-1 text-sm text-zinc-200">All Scopes</span>
-        {#if !auth.scope}
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.5">
-            <path d="M20 6L9 17l-5-5"/>
-          </svg>
-        {/if}
-      </button>
-
       {#if flatTree.length > 0}
-        <div class="border-t border-zinc-700/60"></div>
         <div class="max-h-72 overflow-y-auto py-1">
           {#each flatTree as s (s.id)}
             <button
