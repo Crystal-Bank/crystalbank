@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from 'svelte'
   import { apiFetch } from '../../lib/api.js'
   import { formatDate } from '../../lib/utils.js'
   import { auth } from '../../lib/store.svelte.js'
@@ -92,10 +93,13 @@
   }
 
   $effect(() => {
-    // Load on mount and reload whenever the selected scope changes
+    // Track only the selected scope; use untrack to prevent load()'s
+    // internal reads (e.g. `loading`) from re-triggering this effect.
     const _scope = auth.scope
-    cursor = null
-    load()
+    untrack(() => {
+      cursor = null
+      load()
+    })
   })
 </script>
 
