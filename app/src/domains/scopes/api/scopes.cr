@@ -38,9 +38,9 @@ module CrystalBank::Domains::Scopes
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::Scope)
-        authorized?("read_scopes_list")
+        authorized?("read_scopes_list", request_scope: false)
 
-        scopes = ::Scopes::Queries::Scopes.new.list(context, cursor: cursor, limit: limit + 1, scope_id: context.scope).map do |s|
+        scopes = ::Scopes::Queries::Scopes.new.list(context, cursor: cursor, limit: limit + 1).map do |s|
           Responses::Scope.new(
             s.id,
             s.scope_id,

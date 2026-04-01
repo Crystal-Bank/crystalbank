@@ -13,13 +13,23 @@ module CrystalBank
       )
       end
 
-      def available_scopes(permission : CrystalBank::Permissions) : Array(UUID)
+      def available_scopes(permission : CrystalBank::Permissions, request_scope : UUID?) : Array(UUID)
         # Check all roles against the requested permission
         roles_scopes = Roles::Queries::RolesPermissions.new.available_scopes(@roles, permission)
         return Array(UUID).new if roles_scopes.empty?
 
-        # Fetch all child scopes
-        Scopes::Queries::ScopesTree.new.child_scopes(roles_scopes)
+        roles_scopes_tree = Scopes::Queries::ScopesTree.new.child_scopes(roles_scopes)
+
+        available_scope_ids = if request_scope.nil?
+          roles_scopes_tree
+        else  
+          request_scopes_tree = Scopes::Queries::ScopesTree.new.child_scopes(request_scope)
+
+          # Return the intersection of available scopes tree based on the role and the requested scope tree
+          roles_scopes_tree && request_scopes_tree
+        end
+
+        available_scope_ids
       end
     end
   end
