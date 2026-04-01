@@ -40,7 +40,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         @[AC::Param::Info(description: "Filter by status: pending or executed")]
         status : String? = nil,
       ) : ListResponse(Responses::CreditTransfer)
-        authorized?("read_payments_sepa_credit_transfers_list")
+        authorized?("read_payments_sepa_credit_transfers_list", request_scope: false)
 
         transfers = ::Payments::Sepa::CreditTransfers::Queries::CreditTransfers.new
           .list(context, cursor: cursor, limit: limit + 1, status: status)

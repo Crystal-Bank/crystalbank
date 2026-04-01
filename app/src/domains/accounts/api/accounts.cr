@@ -135,7 +135,7 @@ module CrystalBank::Domains::Accounts
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::Account)
-        authorized?("read_accounts_list")
+        authorized?("read_accounts_list", request_scope: false)
 
         accounts = ::Accounts::Queries::Accounts.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
           Responses::Account.new(

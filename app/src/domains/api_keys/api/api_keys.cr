@@ -56,7 +56,7 @@ module CrystalBank::Domains::ApiKeys
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
       ) : ListResponse(Responses::ApiKey)
-        authorized?("read_api_keys_list")
+        authorized?("read_api_keys_list", request_scope: false)
 
         api_keys = ::ApiKeys::Queries::ApiKeys.new.list(context, cursor: cursor, limit: limit + 1).map do |a|
           Responses::ApiKey.new(

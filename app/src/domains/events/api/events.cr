@@ -24,7 +24,7 @@ module CrystalBank::Domains::Events
         @[AC::Param::Info(description: "Filter by event handle (e.g. user.onboarding.requested)")]
         event_handle : String? = nil,
       ) : ListResponse(Responses::Event)
-        authorized?("read_events_list")
+        authorized?("read_events_list", request_scope: false)
 
         events = ::Events::Queries::Events.new.list(
           context,

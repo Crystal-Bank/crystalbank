@@ -62,7 +62,7 @@ module CrystalBank::Domains::Approvals
         @[AC::Param::Info(description: "Filter by approval status")]
         status : CrystalBank::Types::Approvals::Status? = nil,
       ) : ListResponse(Responses::Approval)
-        authorized?("read_approvals_list")
+        authorized?("read_approvals_list", request_scope: false)
 
         approvals = ::Approvals::Queries::Approvals.new.list(context, cursor: cursor, limit: limit + 1, status: status).map do |a|
           collected = a.collected_approvals.map do |ca|
