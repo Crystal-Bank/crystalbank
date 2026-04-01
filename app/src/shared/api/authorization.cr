@@ -14,14 +14,14 @@ module CrystalBank
 
         # Get the request scope from the header (parse if provided, required only when request_scope: true)
         scope_id : (UUID | Nil) = nil
-        scope_id = (!scope.nil? && !scope.empty?) ? UUID.new(scope) : nil if request_scope
+        scope_id = (!scope.nil? && !scope.empty?) ? UUID.new(scope) : nil # if request_scope
 
         # Authorize if no permission is requested
         return true if permission.nil?
         parsed_permissions = CrystalBank::Permissions.parse(permission)
 
         # Fetch available scopes
-        available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(parsed_permissions)
+        available_scopes = CrystalBank::Services::AccessControl.new(roles: jwt.data.roles).available_scopes(parsed_permissions, scope_id)
         raise CrystalBank::Exception::Authorization.new("No permission to perform action '#{permission}' on scope '#{scope_id}'") if scope_id && !available_scopes.includes?(scope_id)
 
         # Create a session object

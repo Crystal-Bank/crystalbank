@@ -20,7 +20,7 @@
   let currentScopeName = $derived(
     auth.scope
       ? (scopeOptions.find(s => s.id === auth.scope)?.name || auth.scope.slice(0, 8) + '…')
-      : 'All Scopes'
+      : '…'
   )
 
   // Build a flat list ordered by tree depth (root → children), with depth info
@@ -54,6 +54,10 @@
     try {
       const res = await apiFetch('GET', '/scopes/?limit=200')
       scopeOptions = res.data.map(e => e.attributes)
+      if (!auth.scope) {
+        const root = scopeOptions.find(s => !s.parent_scope_id)
+        if (root) setScope(root.id)
+      }
     } catch { scopeOptions = [] }
     scopesFetched = true
   }
@@ -77,11 +81,6 @@
     setScope(scopeId)
     showDropdown = false
   }
-
-  function clearScope() {
-    setScope('')
-    showDropdown = false
-  }
 </script>
 
 <aside class="w-56 bg-zinc-900 flex flex-col flex-shrink-0">
@@ -102,27 +101,34 @@
 
     <!-- Scope / Company Switcher Button -->
     {#if canSwitch}
-    <button
-      onclick={toggleDropdown}
-      class="w-full flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left mb-1"
-      style="background: {showDropdown ? 'rgba(255,255,255,0.1)' : 'transparent'}"
-      onmouseenter={(e) => { if (!showDropdown) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-      onmouseleave={(e) => { if (!showDropdown) e.currentTarget.style.background = 'transparent' }}
-    >
-      <!-- Scope Icon -->
-      <div class="w-6 h-6 rounded bg-zinc-700 flex items-center justify-center flex-shrink-0">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
-          <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+    <div class="relative group mb-1">
+      <button
+        onclick={toggleDropdown}
+        class="w-full flex items-center gap-2 px-2 py-2 rounded-md transition-colors text-left"
+        style="background: {showDropdown ? 'rgba(255,255,255,0.1)' : 'transparent'}"
+        onmouseenter={(e) => { if (!showDropdown) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+        onmouseleave={(e) => { if (!showDropdown) e.currentTarget.style.background = 'transparent' }}
+      >
+        <!-- Scope Icon -->
+        <div class="w-6 h-6 rounded bg-zinc-700 flex items-center justify-center flex-shrink-0">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+          </svg>
+        </div>
+        <!-- Scope Name -->
+        <span class="flex-1 text-sm font-medium text-white truncate leading-tight">{currentScopeName}</span>
+        <!-- Chevrons icon -->
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
+          <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
         </svg>
-      </div>
-      <!-- Scope Name -->
-      <span class="flex-1 text-sm font-medium text-white truncate leading-tight">{currentScopeName}</span>
-      <!-- Chevrons icon -->
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
-        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/>
-      </svg>
-    </button>
+      </button>
+      {#if auth.scope}
+        <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 z-50 bg-zinc-900 border border-zinc-700 text-zinc-300 text-xs font-mono rounded px-2.5 py-1.5 whitespace-nowrap shadow-lg pointer-events-none hidden group-hover:block">
+          {auth.scope}
+        </div>
+      {/if}
+    </div>
     {/if}
   </div>
 
@@ -132,30 +138,7 @@
       class="fixed z-50 bg-zinc-800 border border-zinc-700/80 rounded-lg shadow-2xl overflow-hidden"
       style="top: {dropdownTop}px; left: {dropdownLeft}px; min-width: 260px; max-width: 340px;"
     >
-      <!-- All Scopes option -->
-      <button
-        type="button"
-        onclick={clearScope}
-        class="w-full flex items-center gap-2.5 px-3 py-2.5 text-left"
-        style="background: {!auth.scope ? 'rgba(255,255,255,0.08)' : 'transparent'}"
-        onmouseenter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-        onmouseleave={(e) => { e.currentTarget.style.background = !auth.scope ? 'rgba(255,255,255,0.08)' : 'transparent' }}
-      >
-        <div class="w-5 h-5 rounded bg-zinc-600 flex items-center justify-center flex-shrink-0">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <span class="flex-1 text-sm text-zinc-200">All Scopes</span>
-        {#if !auth.scope}
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.5">
-            <path d="M20 6L9 17l-5-5"/>
-          </svg>
-        {/if}
-      </button>
-
       {#if flatTree.length > 0}
-        <div class="border-t border-zinc-700/60"></div>
         <div class="max-h-72 overflow-y-auto py-1">
           {#each flatTree as s (s.id)}
             <button

@@ -50,6 +50,7 @@ export function setScope(value) {
   auth.scopeInput = value
   if (value) localStorage.setItem('cb_scope', value)
   else localStorage.removeItem('cb_scope')
+  if (VIEW_PATHS[ui.view]) loadView(ui.view)
 }
 
 // ── Navigation / data loading ────────────────────────────

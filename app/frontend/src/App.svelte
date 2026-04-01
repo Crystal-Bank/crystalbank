@@ -4,7 +4,6 @@
   import { switchView, refreshView } from './lib/actions.js'
   import Login from './components/Login.svelte'
   import Sidebar from './components/Sidebar.svelte'
-  import ScopeBar from './components/ScopeBar.svelte'
   import ToastContainer from './components/ToastContainer.svelte'
   import Dashboard from './components/views/Dashboard.svelte'
   import Accounts from './components/views/Accounts.svelte'
@@ -60,8 +59,6 @@
     <Sidebar currentView={ui.view} />
 
     <div class="flex-1 flex flex-col overflow-hidden">
-      <ScopeBar />
-
       <main class="flex-1 overflow-y-auto p-6">
         {#if ui.view === 'dashboard'}
           <Dashboard />

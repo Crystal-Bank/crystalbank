@@ -1,7 +1,8 @@
 <script>
-  import { onMount } from 'svelte'
+  import { untrack } from 'svelte'
   import { apiFetch } from '../../lib/api.js'
   import { formatDate } from '../../lib/utils.js'
+  import { auth } from '../../lib/store.svelte.js'
 
   // Local state — not in global store because results depend on filters
   let events = $state([])
@@ -90,7 +91,15 @@
     await load({ cursorVal: cursor, append: true })
   }
 
-  onMount(() => load())
+  $effect(() => {
+    // Track only the selected scope; use untrack to prevent load()'s
+    // internal reads (e.g. `loading`) from re-triggering this effect.
+    const _scope = auth.scope
+    untrack(() => {
+      cursor = null
+      load()
+    })
+  })
 </script>
 
 <div class="page-header">
