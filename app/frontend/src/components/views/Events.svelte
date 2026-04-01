@@ -1,7 +1,7 @@
 <script>
-  import { onMount } from 'svelte'
   import { apiFetch } from '../../lib/api.js'
   import { formatDate } from '../../lib/utils.js'
+  import { auth } from '../../lib/store.svelte.js'
 
   // Local state — not in global store because results depend on filters
   let events = $state([])
@@ -32,6 +32,7 @@
   function buildUrl({ cursorVal = null } = {}) {
     const params = new URLSearchParams()
     params.set('limit', '20')
+    if (auth.scope) params.set('scope_id', auth.scope)
     if (activeAggregateId) params.set('aggregate_id', activeAggregateId)
     if (activeEventId) params.set('event_id', activeEventId)
     if (activeEventHandle) params.set('event_handle', activeEventHandle)
@@ -90,7 +91,12 @@
     await load({ cursorVal: cursor, append: true })
   }
 
-  onMount(() => load())
+  $effect(() => {
+    // Load on mount and reload whenever the selected scope changes
+    const _scope = auth.scope
+    cursor = null
+    load()
+  })
 </script>
 
 <div class="page-header">

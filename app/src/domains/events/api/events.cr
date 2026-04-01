@@ -23,6 +23,8 @@ module CrystalBank::Domains::Events
         event_id : UUID? = nil,
         @[AC::Param::Info(description: "Filter by event handle (e.g. user.onboarding.requested)")]
         event_handle : String? = nil,
+        @[AC::Param::Info(description: "Filter by scope ID")]
+        scope_id : UUID? = nil,
       ) : ListResponse(Responses::Event)
         authorized?("read_events_list", request_scope: false)
 
@@ -33,6 +35,7 @@ module CrystalBank::Domains::Events
           aggregate_id: aggregate_id,
           event_id: event_id,
           event_handle: event_handle,
+          scope_id: scope_id,
         ).map do |e|
           Responses::Event.new(
             e.id,
