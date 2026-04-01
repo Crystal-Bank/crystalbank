@@ -118,7 +118,7 @@ module CrystalBank::Domains::Accounts
         @[AC::Param::Info(description: "Account ID to retrieve blocks for", format: "uuid")]
         account_id : UUID,
       ) : BlocksResponse
-        authorized?("read_accounts_blocks")
+        authorized?("read_accounts_blocks", request_scope: false)
 
         blocks_response(account_id)
       end
