@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     libevent-2.1-7t64 \
     libpcre2-8-0 \
+    libyaml-0-2 \
     ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
