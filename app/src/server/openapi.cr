@@ -3,18 +3,10 @@ module CrystalBank
     class OpenAPI < ::AC::Base
       base "/openapi"
 
-      {% begin %}
-        VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
-      {% end %}
-
-      DOCS = AC::OpenAPI.generate_open_api_docs(
-        title: "Application",
-        version: VERSION,
-        description: "OpenAPI docs for the CrystalBank project"
-      ).merge(NamedTuple.new(servers: CrystalBank::Env.api_domains.map { |url| {url: url} })).to_json
+      DOCS = {{ read_file("#{__DIR__}/../../openapi.yaml") }}
 
       get "/docs" do
-        render yaml: DOCS.to_yaml
+        render yaml: DOCS
       end
     end
   end
