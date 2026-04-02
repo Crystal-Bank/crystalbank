@@ -19,7 +19,10 @@ FROM 84codes/crystal:1.19.1-ubuntu-24.04 AS crystal-builder
 
 WORKDIR /app
 
-# Copy application source including pre-installed lib/ (no registry access in this build environment)
+COPY app/shard.yml app/shard.lock ./
+RUN shards install --production
+
+# Copy remaining application source
 COPY app/ ./
 
 # Overlay built Svelte assets so Crystal can embed them at compile time
