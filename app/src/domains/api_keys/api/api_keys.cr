@@ -62,6 +62,7 @@ module CrystalBank::Domains::ApiKeys
           Responses::ApiKey.new(
             a.id,
             a.scope_id,
+            a.user_id,
             a.active,
             a.name,
             a.created_at,
