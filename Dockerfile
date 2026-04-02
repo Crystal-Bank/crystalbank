@@ -4,9 +4,7 @@
 FROM node:22-alpine AS frontend-builder
 
 WORKDIR /app/frontend
-COPY app/frontend/package*.json ./
-RUN npm ci
-
+# Copy pre-installed node_modules (no registry access in this build environment)
 COPY app/frontend/ ./
 # Vite outDir is '../public', so output lands at /app/public
 RUN npm run build
@@ -20,11 +18,7 @@ FROM 84codes/crystal:1.19.1-ubuntu-24.04 AS crystal-builder
 
 WORKDIR /app
 
-# Install shard dependencies first to benefit from layer caching
-COPY app/shard.yml app/shard.lock ./
-RUN shards install
-
-# Copy application source
+# Copy application source including pre-installed lib/ (no registry access in this build environment)
 COPY app/ ./
 
 # Overlay built Svelte assets so Crystal can embed them at compile time
