@@ -4,7 +4,8 @@
 FROM node:22-alpine AS frontend-builder
 
 WORKDIR /app/frontend
-# Copy pre-installed node_modules (no registry access in this build environment)
+COPY app/frontend/package.json ./
+RUN npm install
 COPY app/frontend/ ./
 # Vite outDir is '../public', so output lands at /app/public
 RUN npm run build
