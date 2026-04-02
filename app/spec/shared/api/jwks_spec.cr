@@ -10,7 +10,6 @@ JWKS_JWKS_EXPECTED_X = "tsyH1cptl8ROIGaiK1yDudiuCj3vo3XRL5DtmAjHjl8"
 JWKS_JWKS_EXPECTED_Y = "yRMjxtz2Nf4YwWQbQDTQJOGGwYe11J0DtnS1od_ARWE"
 
 describe CrystalBank::Api::JWKS do
-
   # Mirrors the PEM-to-JWK conversion logic in JWKS#jwks.
   def parse_jwk(pem : String) : CrystalBank::Api::JWKS::JWK
     body = pem
