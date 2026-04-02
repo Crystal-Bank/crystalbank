@@ -52,7 +52,7 @@
 
   async function fetchScopes() {
     try {
-      const res = await apiFetch('GET', '/scopes/?limit=200')
+      const res = await apiFetch('GET', '/scopes/?limit=200', null, { scope: false })
       scopeOptions = res.data.map(e => e.attributes)
       if (!auth.scope) {
         const root = scopeOptions.find(s => !s.parent_scope_id)
