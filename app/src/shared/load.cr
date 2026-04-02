@@ -12,6 +12,7 @@ require "./api/authorization"
 require "./api/base"
 require "./api/context"
 require "./api/jwt"
+require "./api/jwks"
 
 # Load Services
 require "./services/access_control"
