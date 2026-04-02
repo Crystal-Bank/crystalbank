@@ -1,14 +1,15 @@
 require "../../spec_helper"
 require "base64"
 
-describe CrystalBank::Api::JWKS do
-  # P-256 public key from the test environment (JWT_PUBLIC_KEY in .env-test)
-  TEST_PEM = "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtsyH1cptl8ROIGaiK1yDudiuCj3v\no3XRL5DtmAjHjl/JEyPG3PY1/hjBZBtANNAk4YbBh7XUnQO2dLWh38BFYQ==\n-----END PUBLIC KEY-----"
+# P-256 public key from the test environment (JWT_PUBLIC_KEY in .env-test)
+JWKS_TEST_PEM = "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtsyH1cptl8ROIGaiK1yDudiuCj3v\no3XRL5DtmAjHjl/JEyPG3PY1/hjBZBtANNAk4YbBh7XUnQO2dLWh38BFYQ==\n-----END PUBLIC KEY-----"
 
-  # Expected base64url-encoded (no padding) x/y coordinates extracted from the
-  # SubjectPublicKeyInfo DER encoding of TEST_PEM.
-  EXPECTED_X = "tsyH1cptl8ROIGaiK1yDudiuCj3vo3XRL5DtmAjHjl8"
-  EXPECTED_Y = "yRMjxtz2Nf4YwWQbQDTQJOGGwYe11J0DtnS1od_ARWE"
+# Expected base64url-encoded (no padding) x/y coordinates extracted from the
+# SubjectPublicKeyInfo DER encoding of JWKS_TEST_PEM.
+JWKS_JWKS_EXPECTED_X = "tsyH1cptl8ROIGaiK1yDudiuCj3vo3XRL5DtmAjHjl8"
+JWKS_JWKS_EXPECTED_Y = "yRMjxtz2Nf4YwWQbQDTQJOGGwYe11J0DtnS1od_ARWE"
+
+describe CrystalBank::Api::JWKS do
 
   # Mirrors the PEM-to-JWK conversion logic in JWKS#jwks.
   def parse_jwk(pem : String) : CrystalBank::Api::JWKS::JWK
@@ -28,7 +29,7 @@ describe CrystalBank::Api::JWKS do
 
   describe "JWK struct" do
     it "has correct static fields for a P-256 signing key" do
-      jwk = parse_jwk(TEST_PEM)
+      jwk = parse_jwk(JWKS_TEST_PEM)
 
       jwk.kty.should eq("EC")
       jwk.use.should eq("sig")
@@ -37,17 +38,17 @@ describe CrystalBank::Api::JWKS do
     end
 
     it "extracts the correct x coordinate from the DER-encoded public key" do
-      jwk = parse_jwk(TEST_PEM)
-      jwk.x.should eq(EXPECTED_X)
+      jwk = parse_jwk(JWKS_TEST_PEM)
+      jwk.x.should eq(JWKS_EXPECTED_X)
     end
 
     it "extracts the correct y coordinate from the DER-encoded public key" do
-      jwk = parse_jwk(TEST_PEM)
-      jwk.y.should eq(EXPECTED_Y)
+      jwk = parse_jwk(JWKS_TEST_PEM)
+      jwk.y.should eq(JWKS_EXPECTED_Y)
     end
 
     it "produces url-safe base64 without padding" do
-      jwk = parse_jwk(TEST_PEM)
+      jwk = parse_jwk(JWKS_TEST_PEM)
       jwk.x.should_not contain("=")
       jwk.y.should_not contain("=")
       jwk.x.should_not contain("+")
@@ -57,7 +58,7 @@ describe CrystalBank::Api::JWKS do
     end
 
     it "serialises to JSON with all required JWK fields" do
-      jwk = parse_jwk(TEST_PEM)
+      jwk = parse_jwk(JWKS_TEST_PEM)
       json = jwk.to_json
       parsed = JSON.parse(json)
 
@@ -65,14 +66,14 @@ describe CrystalBank::Api::JWKS do
       parsed["use"].as_s.should eq("sig")
       parsed["alg"].as_s.should eq("ES256")
       parsed["crv"].as_s.should eq("P-256")
-      parsed["x"].as_s.should eq(EXPECTED_X)
-      parsed["y"].as_s.should eq(EXPECTED_Y)
+      parsed["x"].as_s.should eq(JWKS_EXPECTED_X)
+      parsed["y"].as_s.should eq(JWKS_EXPECTED_Y)
     end
   end
 
   describe "JWKSResponse struct" do
     it "wraps keys in a 'keys' array" do
-      jwk = parse_jwk(TEST_PEM)
+      jwk = parse_jwk(JWKS_TEST_PEM)
       response = CrystalBank::Api::JWKS::JWKSResponse.new([jwk])
 
       response.keys.size.should eq(1)
@@ -80,7 +81,7 @@ describe CrystalBank::Api::JWKS do
     end
 
     it "serialises to JSON with a top-level 'keys' array" do
-      jwk = parse_jwk(TEST_PEM)
+      jwk = parse_jwk(JWKS_TEST_PEM)
       response = CrystalBank::Api::JWKS::JWKSResponse.new([jwk])
       json = response.to_json
       parsed = JSON.parse(json)
