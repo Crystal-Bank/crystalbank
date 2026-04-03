@@ -60,9 +60,6 @@ module CrystalBank
     # Me
     READ_me
 
-    # Platform
-    WRITE_platform_reset_request
-
     def to_s
       super.to_s.downcase
     end

@@ -1765,54 +1765,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
-  /platform/reset:
-    post:
-      summary: Reset
-      description: 'Reset
-
-        Reset the platform and re-seed with initial data.
-
-        Returns credentials for the two seeded admin users.
-
-
-        Required permission:
-
-        - **write_platform_reset_request**'
-      tags:
-      - Platform
-      operationId: CrystalBank::Domains::Platform::Api::Platform_reset
-      parameters: []
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__Responses__ResetResponse'
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
-        500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
 components:
   schemas:
     CrystalBank__Api__JWKS__OpenIDConfiguration:
@@ -2590,7 +2542,6 @@ components:
             - write_payments_sepa_credit_transfers_approval
             - read_events_list
             - read_me
-            - write_platform_reset_request
         scopes:
           type: array
           items:
@@ -2699,7 +2650,6 @@ components:
                       - write_payments_sepa_credit_transfers_approval
                       - read_events_list
                       - read_me
-                      - write_platform_reset_request
                   scopes:
                     type: array
                     description: Scope the role has access to
@@ -3319,38 +3269,6 @@ components:
       required:
       - user_id
       - role_ids
-    CrystalBank__Domains__Platform__Api__Responses__ResetResponse:
-      type: object
-      properties:
-        super_admin:
-          type: object
-          properties:
-            client_id:
-              type: string
-              format: uuid
-              description: API key client ID
-            client_secret:
-              type: string
-              description: API key client secret (only returned once)
-          required:
-          - client_id
-          - client_secret
-        approver:
-          type: object
-          properties:
-            client_id:
-              type: string
-              format: uuid
-              description: API key client ID
-            client_secret:
-              type: string
-              description: API key client secret (only returned once)
-          required:
-          - client_id
-          - client_secret
-      required:
-      - super_admin
-      - approver
     CrystalBank__Api__Responses__ErrorResponse:
       type: object
       properties:
