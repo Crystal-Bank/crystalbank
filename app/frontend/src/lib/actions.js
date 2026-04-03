@@ -33,6 +33,9 @@ export async function login(clientId, clientSecret) {
     const body = await res.json()
     auth.token = body.token
     localStorage.setItem('cb_token', auth.token)
+    auth.scope = ''
+    auth.scopeInput = ''
+    localStorage.removeItem('cb_scope')
     window.location.hash = 'dashboard'
     ui.view = 'dashboard'
   } finally {
