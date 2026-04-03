@@ -12,6 +12,7 @@ describe CrystalBank::Domains::ApiKeys::Projections::ApiKeys do
     TEST_EVENT_STORE.append(event_1)
     TEST_EVENT_STORE.append(event_2)
 
+    projection.apply(event_1)
     projection.apply(event_2)
 
     count = TEST_PROJECTION_DB.scalar(%(SELECT count(*) FROM "projections"."api_keys" WHERE uuid = $1), uuid)
@@ -31,6 +32,7 @@ describe CrystalBank::Domains::ApiKeys::Projections::ApiKeys do
     TEST_EVENT_STORE.append(event_3)
     TEST_EVENT_STORE.append(event_4)
 
+    projection.apply(event_1)
     projection.apply(event_2)
     projection.apply(event_4)
 

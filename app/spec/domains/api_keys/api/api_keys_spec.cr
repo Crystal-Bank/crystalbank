@@ -11,6 +11,7 @@ describe CrystalBank::Domains::ApiKeys::Api::ApiKeys do
     acc_active = Test::ApiKey::Events::Generation::Accepted.new.create(aggr_id: active_key_id)
     TEST_EVENT_STORE.append(req_active)
     TEST_EVENT_STORE.append(acc_active)
+    ApiKeys::Projections::ApiKeys.new.apply(req_active)
     ApiKeys::Projections::ApiKeys.new.apply(acc_active)
 
     # Seed a revoked key
@@ -18,6 +19,7 @@ describe CrystalBank::Domains::ApiKeys::Api::ApiKeys do
     acc_revoked = Test::ApiKey::Events::Generation::Accepted.new.create(aggr_id: revoked_key_id)
     TEST_EVENT_STORE.append(req_revoked)
     TEST_EVENT_STORE.append(acc_revoked)
+    ApiKeys::Projections::ApiKeys.new.apply(req_revoked)
     ApiKeys::Projections::ApiKeys.new.apply(acc_revoked)
 
     rev_req = Test::ApiKey::Events::Revocation::Requested.new.create(aggr_id: revoked_key_id, version: 3)

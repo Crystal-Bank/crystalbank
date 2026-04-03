@@ -11,6 +11,7 @@ module CrystalBank
 
     # Api Keys
     WRITE_api_keys_generation_request
+    WRITE_api_keys_generation_approval
     WRITE_api_keys_revocation_request
     READ_api_keys_list
 

@@ -25,7 +25,9 @@ bus.subscribe(Approvals::Collection::Events::Completed, Users::Onboarding::Comma
 
 # ApiKeys
 bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
+bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Projections::ApiKeys)
 bus.subscribe(ApiKeys::Generation::Events::Accepted, ApiKeys::Projections::ApiKeys)
+bus.subscribe(Approvals::Collection::Events::Completed, ApiKeys::Generation::Commands::ProcessApproval)
 bus.subscribe(ApiKeys::Revocation::Events::Requested, ApiKeys::Revocation::Commands::ProcessRequest)
 bus.subscribe(ApiKeys::Revocation::Events::Accepted, ApiKeys::Projections::ApiKeys)
 

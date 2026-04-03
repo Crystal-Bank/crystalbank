@@ -11,6 +11,7 @@ require "./api/authentication"
 require "./commands/authentication/request"
 require "./commands/generation/request"
 require "./commands/generation/process_request"
+require "./commands/generation/process_approval"
 require "./commands/revocation/request"
 require "./commands/revocation/process_request"
 
