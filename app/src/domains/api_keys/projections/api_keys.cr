@@ -25,6 +25,7 @@ module CrystalBank::Domains::ApiKeys
           m << %(CREATE UNIQUE INDEX api_keys_uuid_idx ON "projections"."api_keys"(uuid);)
 
           m.each { |s| @projection_database.exec s }
+        end
       end
 
       # ApiKeys::Generation::Events::Requested
