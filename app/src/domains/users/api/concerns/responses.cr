@@ -28,11 +28,15 @@ module CrystalBank::Domains::Users
         @[JSON::Field(format: "email", description: "Email address of the user")]
         getter email : String
 
+        @[JSON::Field(description: "Onboarding status of the user: pending or active")]
+        getter status : String
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
           @name : String,
           @email : String,
+          @status : String,
         ); end
       end
     end

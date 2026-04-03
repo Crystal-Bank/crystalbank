@@ -10,6 +10,7 @@ require "./commands/assign_roles/request"
 require "./commands/assign_roles/process_request"
 require "./commands/onboarding/request"
 require "./commands/onboarding/process_request"
+require "./commands/onboarding/process_approval"
 
 # Events
 require "./events/assign_roles/accepted"

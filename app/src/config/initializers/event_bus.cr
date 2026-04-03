@@ -21,6 +21,7 @@ bus.subscribe(Approvals::Rejection::Events::Rejected, Approvals::Projections::Ap
 bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Users::Onboarding::Commands::ProcessApproval)
 
 # ApiKeys
 bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
@@ -50,6 +51,7 @@ bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted, Pay
 
 # Users
 bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands::ProcessRequest)
+bus.subscribe(Users::Onboarding::Events::Requested, Users::Projections::Users)
 bus.subscribe(Users::Onboarding::Events::Accepted, Users::Projections::Users)
 bus.subscribe(Users::AssignRoles::Events::Requested, Users::AssignRoles::Commands::ProcessRequest)
 bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)

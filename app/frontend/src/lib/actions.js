@@ -156,7 +156,7 @@ export async function createUser({ name, email }) {
   ui.loading = true
   try {
     await apiFetch('POST', '/users/onboard', { name, email }, { idempotency: true })
-    addToast('User onboarded')
+    addToast('User creation submitted for approval')
     await loadView('users')
   } catch (e) {
     addToast(e.message, 'error')

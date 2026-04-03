@@ -3,6 +3,7 @@ module CrystalBank::Domains::Users
     class Users < ES::Projection
       def prepare
         skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'users');), as: Bool
+
         return true if skip
 
         m = Array(String).new
@@ -15,7 +16,8 @@ module CrystalBank::Domains::Users
             "role_ids" JSONB NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
-            "email" varchar NOT NULL
+            "email" varchar NOT NULL,
+            "status" varchar NOT NULL
           );
         )
 
@@ -24,25 +26,20 @@ module CrystalBank::Domains::Users
         m.each { |s| @projection_database.exec s }
       end
 
-      # Created
-      def apply(event : ::Users::Onboarding::Events::Accepted)
-        # Extract attributes to local variables
-        uuid = event.header.event_id
-        created_at = event.header.created_at
+      # Pending — insert user as pending when onboarding is requested
+      def apply(event : ::Users::Onboarding::Events::Requested)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
+        created_at = event.header.created_at
 
-        # Build the account aggregate up to the version of the event
         aggregate = ::Users::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        # Extract attributes to local variables
         name = aggregate.state.name
         email = aggregate.state.email
         scope_id = aggregate.state.scope_id
         role_ids = aggregate.state.role_ids
 
-        # Insert the account projection into the projection database
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -54,9 +51,10 @@ module CrystalBank::Domains::Users
                 role_ids,
                 created_at,
                 name,
-                email
+                email,
+                status
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
           ),
             aggregate_id,
             aggregate_version,
@@ -65,6 +63,23 @@ module CrystalBank::Domains::Users
             created_at,
             name,
             email
+        end
+      end
+
+      # Accepted — mark user as active once approval is complete
+      def apply(event : ::Users::Onboarding::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(
+            UPDATE "projections"."users"
+            SET status = 'active', aggregate_version = $1
+            WHERE uuid = $2
+          ),
+            aggregate_version,
+            aggregate_id
         end
       end
 

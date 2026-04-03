@@ -65,7 +65,8 @@ module CrystalBank::Domains::Users
             a.id,
             a.scope_id,
             a.name,
-            a.email
+            a.email,
+            a.status
           )
         end
 
