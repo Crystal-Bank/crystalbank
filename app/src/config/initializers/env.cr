@@ -58,7 +58,7 @@ module CrystalBank
     end
 
     def jwt_public_key_uri : String
-      @@jwt_pub_key_uri ||= ENV["JWT_PUBLIC_KEY_URI"]? || "https://api.crystalbank.xyz/.well-known/jwks.json"
+      @@jwt_pub_key_uri ||= ENV["JWT_PUBLIC_KEY_URI"]? || "https://api.crystalbank.xyz"
     end
 
     def jwt_ttl : Int32
