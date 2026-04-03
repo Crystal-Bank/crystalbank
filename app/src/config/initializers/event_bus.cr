@@ -51,6 +51,7 @@ bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted, Pay
 
 # Users
 bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands::ProcessRequest)
+bus.subscribe(Users::Onboarding::Events::Requested, Users::Projections::Users)
 bus.subscribe(Users::Onboarding::Events::Accepted, Users::Projections::Users)
 bus.subscribe(Users::AssignRoles::Events::Requested, Users::AssignRoles::Commands::ProcessRequest)
 bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)

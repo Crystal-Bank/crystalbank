@@ -18,7 +18,7 @@ module CrystalBank::Domains::ApiKeys
       end
 
       def fetch!(user_id : UUID) : User
-        @db.query_one("SELECT * FROM projections.users WHERE uuid = $1", user_id, as: User)
+        @db.query_one("SELECT * FROM projections.users WHERE uuid = $1 AND status = 'active'", user_id, as: User)
       rescue DB::NoResultsError
         raise ES::Exception::NotFound.new("User '#{user_id}' not found")
       end
