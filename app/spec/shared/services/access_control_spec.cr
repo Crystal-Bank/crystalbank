@@ -16,14 +16,14 @@ describe CrystalBank::Services::AccessControl do
 
   before_all do
     TEST_PROJECTION_DB.exec %(
-      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name)
-      VALUES ($1, 1, $1, NOW(), 'AC Test - Role Scope')
+      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name, accepted)
+      VALUES ($1, 1, $1, NOW(), 'AC Test - Role Scope', true)
       ON CONFLICT (uuid) DO NOTHING
     ), role_scope_id
 
     TEST_PROJECTION_DB.exec %(
-      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name)
-      VALUES ($1, 1, $1, NOW(), 'AC Test - Request Scope')
+      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name, accepted)
+      VALUES ($1, 1, $1, NOW(), 'AC Test - Request Scope', true)
       ON CONFLICT (uuid) DO NOTHING
     ), request_scope_id
 

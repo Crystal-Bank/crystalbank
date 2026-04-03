@@ -12,6 +12,7 @@ describe CrystalBank::Domains::Scopes::Projections::Scopes do
     TEST_EVENT_STORE.append(event_1)
     TEST_EVENT_STORE.append(event_2)
 
+    projection.apply(event_1)
     projection.apply(event_2)
 
     count = TEST_PROJECTION_DB.scalar(%(SELECT count(*) FROM "projections"."scopes" WHERE uuid = $1), uuid)

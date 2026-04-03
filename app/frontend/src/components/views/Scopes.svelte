@@ -55,10 +55,10 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th><th>Status</th></tr></thead>
     <tbody>
       {#if viewData.scopes.length === 0 && !ui.loadingView}
-        <tr><td colspan="3" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
+        <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
       {/if}
       {#each viewData.scopes as s (s.id)}
         <tr onclick={() => drawerScope = s} class="cursor-pointer">
@@ -69,6 +69,13 @@
               <span class="mono text-xs">{s.parent_scope_id}</span>
             {:else}
               <span class="text-zinc-400 text-xs">Root</span>
+            {/if}
+          </td>
+          <td>
+            {#if s.accepted}
+              <span class="badge badge-green">Active</span>
+            {:else}
+              <span class="badge badge-amber">Pending</span>
             {/if}
           </td>
         </tr>
@@ -113,6 +120,16 @@
         {:else}
           <div class="drawer-field-value text-zinc-400">Root scope</div>
         {/if}
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
+        <div>
+          {#if drawerScope.accepted}
+            <span class="badge badge-green">Active</span>
+          {:else}
+            <span class="badge badge-amber">Pending approval</span>
+          {/if}
+        </div>
       </div>
     </div>
   </div>

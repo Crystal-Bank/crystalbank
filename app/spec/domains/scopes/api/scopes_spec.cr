@@ -9,6 +9,7 @@ describe CrystalBank::Domains::Scopes::Api::Scopes do
     acc = Test::Scope::Events::Creation::Accepted.new.create(aggr_id: scope_item_id)
     TEST_EVENT_STORE.append(req)
     TEST_EVENT_STORE.append(acc)
+    Scopes::Projections::Scopes.new.apply(req)
     Scopes::Projections::Scopes.new.apply(acc)
   end
 

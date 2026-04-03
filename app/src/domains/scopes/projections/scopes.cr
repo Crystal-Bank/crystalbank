@@ -14,7 +14,8 @@ module CrystalBank::Domains::Scopes
             "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
-            "parent_scope_id" UUID
+            "parent_scope_id" UUID,
+            "accepted" boolean NOT NULL DEFAULT false
           );
         )
 
@@ -23,15 +24,13 @@ module CrystalBank::Domains::Scopes
         m.each { |s| @projection_database.exec s }
       end
 
-      # Created
-      def apply(event : ::Scopes::Creation::Events::Accepted)
-        # Extract attributes to local variables
-        uuid = event.header.event_id
+      # Requested — insert as pending (accepted = false)
+      def apply(event : ::Scopes::Creation::Events::Requested)
         created_at = event.header.created_at
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
-        # Build the account aggregate up to the version of the event
+        # Build the scope aggregate up to the version of the event
         aggregate = ::Scopes::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
@@ -40,7 +39,7 @@ module CrystalBank::Domains::Scopes
         parent_scope_id = aggregate.state.parent_scope_id
         scope_id = aggregate.state.scope_id
 
-        # Insert the account projection into the projection database
+        # Insert the scope projection as pending approval
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -51,16 +50,30 @@ module CrystalBank::Domains::Scopes
                 scope_id,
                 created_at,
                 name,
-                parent_scope_id
+                parent_scope_id,
+                accepted
               )
-              VALUES ($1, $2, $3, $4, $5, $6)
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
           ),
             aggregate_id,
             aggregate_version,
             scope_id,
             created_at,
             name,
-            parent_scope_id
+            parent_scope_id,
+            false
+        end
+      end
+
+      # Accepted — activate the scope
+      def apply(event : ::Scopes::Creation::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."scopes" SET accepted=$1, aggregate_version=$2 WHERE uuid=$3),
+            true, aggregate_version, aggregate_id
         end
       end
     end

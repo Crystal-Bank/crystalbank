@@ -25,6 +25,7 @@ module CrystalBank
     # Scopes
     READ_scopes_list
     WRITE_scopes_creation_request
+    WRITE_scopes_creation_approval
 
     # Ledger -> Transactions
     WRITE_ledger_transactions_request

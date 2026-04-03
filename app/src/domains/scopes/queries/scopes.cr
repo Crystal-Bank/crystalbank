@@ -13,6 +13,7 @@ module CrystalBank::Domains::Scopes
 
         getter name : String
         getter parent_scope_id : UUID?
+        getter accepted : Bool
       end
 
       def initialize
