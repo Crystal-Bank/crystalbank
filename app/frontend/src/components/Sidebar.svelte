@@ -59,6 +59,17 @@
         if (root) setScope(root.id)
       }
     } catch { scopeOptions = [] }
+
+    if (scopeOptions.length === 0) {
+      try {
+        const me = await apiFetch('GET', '/me/', null, { scope: false })
+        if (me.scope) {
+          scopeOptions = [{ id: me.scope.id, name: me.scope.name }]
+          if (!auth.scope) setScope(me.scope.id)
+        }
+      } catch {}
+    }
+
     scopesFetched = true
   }
 
