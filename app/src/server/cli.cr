@@ -3,6 +3,7 @@ module CrystalBank
     module CLI
       docs = nil
       docs_file = nil
+      seed = false
 
       # Command line options
       OptionParser.parse(ARGV.dup) do |parser|
@@ -49,6 +50,10 @@ module CrystalBank
           end
         end
 
+        parser.on("-s", "--seed", "Seed the platform with initial data and exit") do
+          seed = true
+        end
+
         parser.on("-h", "--help", "Show this help") do
           puts parser
           exit 0
@@ -58,6 +63,22 @@ module CrystalBank
       if docs
         File.write(docs_file.as(String), docs) if docs_file
         puts docs_file ? "OpenAPI written to: #{docs_file}" : docs
+        exit 0
+      end
+
+      if seed
+        response = CrystalBank::Domains::Platform::SeedService.new.call
+
+        CrystalBank.print_verbose("Seed credentials Super Admin", [
+          "client_id:     '#{response.super_admin.client_id}'",
+          "client_secret: '#{response.super_admin.client_secret}'",
+        ].join("\n"))
+
+        CrystalBank.print_verbose("Seed credentials Approver", [
+          "client_id:     '#{response.approver.client_id}'",
+          "client_secret: '#{response.approver.client_secret}'",
+        ].join("\n"))
+
         exit 0
       end
     end
