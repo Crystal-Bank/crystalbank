@@ -17,6 +17,7 @@ module CrystalBank::Domains::Scopes
           @state.name = body.name
           @state.parent_scope_id = body.parent_scope_id
           @state.scope_id = body.scope_id
+          @state.requestor_id = event.header.actor_id
         end
       end
     end
