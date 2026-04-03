@@ -29,7 +29,7 @@ module CrystalBank::Domains::Users
       def me : MeResponse
         authorized?("read_me", request_scope: false)
 
-        user = Users::Queries::Users.new.get(context.user_id)
+        user = ::Users::Queries::Users.new.get(context.user_id)
         scope_info = if user && (s = Scopes::Queries::Scopes.new.get(user.scope_id))
                        ScopeInfo.new(s.id, s.name)
                      end

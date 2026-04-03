@@ -20,7 +20,7 @@ module CrystalBank::Domains::Scopes
       end
 
       def get(uuid : UUID) : Scope?
-        @db.query_one("SELECT * FROM projections.scopes WHERE uuid = $1", args: uuid, as: Scope)
+        @db.query_one("SELECT * FROM projections.scopes WHERE uuid = $1", args: [uuid], as: Scope)
       end
 
       def list(
