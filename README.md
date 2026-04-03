@@ -55,15 +55,20 @@ $ make help
 In order to access the API, the initial API credentials need to be seeded. Run this inside the console:
 
 ```bash
-$ crystal src/seed.cr
+$ crystal app/src/server/start.cr --seed
 ```
 
-This will output the initial credentials:
+This will output credentials for two admin users — a Super Admin (initiator) and an Approver:
 
 ```
 -----------------------------------------------------
---- Seed credentials
-client_id: '0193cc51-cc9b-7955-82ca-7a6482587201'
+--- Seed credentials Super Admin
+client_id:     '0193cc51-cc9b-7955-82ca-7a6482587201'
+client_secret: 'secret'
+-----------------------------------------------------
+-----------------------------------------------------
+--- Seed credentials Approver
+client_id:     '0193cc51-dd2e-8866-93db-8b7593698312'
 client_secret: 'secret'
 -----------------------------------------------------
 ```
