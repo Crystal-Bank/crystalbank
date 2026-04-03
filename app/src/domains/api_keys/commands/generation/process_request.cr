@@ -4,25 +4,23 @@ module CrystalBank::Domains::ApiKeys
       class ProcessRequest < ES::Command
         def call
           aggregate_id = @aggregate_id.as(UUID)
-          # TODO: Run checks to check the legitimacy of the api key generation
 
-          # Build the account aggregate
+          # Build the api key aggregate
           aggregate = ApiKeys::Aggregate.new(aggregate_id)
           aggregate.hydrate
 
-          # Calculate the next aggregate version
-          next_version = aggregate.state.next_version
+          scope_id = aggregate.state.scope_id.as(UUID)
 
-          # Create the account creation acceptance event
-          event = ApiKeys::Generation::Events::Accepted.new(
-            actor_id: nil,
-            aggregate_id: aggregate_id,
-            aggregate_version: next_version,
-            command_handler: self.class.to_s
+          # Create an approval workflow for this api key generation
+          Approvals::Creation::Commands::Request.new.call(
+            source_aggregate_type: "ApiKey",
+            source_aggregate_id: aggregate_id,
+            scope_id: scope_id,
+            required_approvals: [
+              "write_api_keys_generation_approval",
+            ],
+            actor_id: aggregate.state.requestor_id
           )
-
-          # Append event to event store
-          @event_store.append(event)
         end
       end
     end

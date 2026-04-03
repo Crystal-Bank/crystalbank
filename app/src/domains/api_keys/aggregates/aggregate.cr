@@ -15,6 +15,7 @@ module CrystalBank::Domains::ApiKeys
       property encrypted_secret : String?
       property revoked_at : Time?
       property scope_id : UUID?
+      property requestor_id : UUID?
     end
 
     getter state : State
