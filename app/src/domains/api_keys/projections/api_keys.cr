@@ -25,21 +25,6 @@ module CrystalBank::Domains::ApiKeys
           m << %(CREATE UNIQUE INDEX api_keys_uuid_idx ON "projections"."api_keys"(uuid);)
 
           m.each { |s| @projection_database.exec s }
-        end
-
-        # Migration: add pending_approval column if not present (existing tables)
-        has_column = @projection_database.query_one %(
-          SELECT EXISTS (
-            SELECT FROM information_schema.columns
-            WHERE table_schema = 'projections'
-              AND table_name = 'api_keys'
-              AND column_name = 'pending_approval'
-          );
-        ), as: Bool
-
-        unless has_column
-          @projection_database.exec %(ALTER TABLE "projections"."api_keys" ADD COLUMN "pending_approval" boolean NOT NULL DEFAULT false;)
-        end
       end
 
       # ApiKeys::Generation::Events::Requested
