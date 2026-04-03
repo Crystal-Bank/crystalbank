@@ -20,7 +20,7 @@ module CrystalBank::Domains::Users
       end
 
       def get(uuid : UUID) : User?
-        @db.query_one?("SELECT * FROM projections.users WHERE uuid = $1", args: uuid, as: User)
+        @db.query_one?("SELECT * FROM projections.users WHERE uuid = $1", args: [uuid], as: User)
       end
 
       def list(
