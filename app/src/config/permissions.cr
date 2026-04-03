@@ -49,6 +49,9 @@ module CrystalBank
     WRITE_accounts_opening_compliance_approval
     WRITE_accounts_opening_board_approval
 
+    # User Onboarding Approvals
+    WRITE_users_onboarding_compliance_approval
+
     # Payments — SEPA Credit Transfers
     WRITE_payments_sepa_credit_transfers_request
     READ_payments_sepa_credit_transfers_list

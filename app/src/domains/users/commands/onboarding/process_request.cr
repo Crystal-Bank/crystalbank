@@ -4,25 +4,23 @@ module CrystalBank::Domains::Users
       class ProcessRequest < ES::Command
         def call
           aggregate_id = @aggregate_id.as(UUID)
-          # TODO: Run checks to check the legitimacy of the account onboarding
 
           # Build the user aggregate
           aggregate = Users::Aggregate.new(aggregate_id)
           aggregate.hydrate
 
-          # Calculate the next aggregate version
-          next_version = aggregate.state.next_version
+          scope_id = aggregate.state.scope_id.as(UUID)
 
-          # Create the account creation acceptance event
-          event = Users::Onboarding::Events::Accepted.new(
-            actor_id: nil,
-            aggregate_id: aggregate_id,
-            aggregate_version: next_version,
-            command_handler: self.class.to_s
+          # Create an approval workflow for this user onboarding
+          Approvals::Creation::Commands::Request.new.call(
+            source_aggregate_type: "User",
+            source_aggregate_id: aggregate_id,
+            scope_id: scope_id,
+            required_approvals: [
+              "write_users_onboarding_compliance_approval",
+            ],
+            actor_id: aggregate.state.requestor_id
           )
-
-          # Append event to event store
-          @event_store.append(event)
         end
       end
     end
