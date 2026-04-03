@@ -3269,38 +3269,6 @@ components:
       required:
       - user_id
       - role_ids
-    CrystalBank__Domains__Platform__Api__Responses__ResetResponse:
-      type: object
-      properties:
-        super_admin:
-          type: object
-          properties:
-            client_id:
-              type: string
-              format: uuid
-              description: API key client ID
-            client_secret:
-              type: string
-              description: API key client secret (only returned once)
-          required:
-          - client_id
-          - client_secret
-        approver:
-          type: object
-          properties:
-            client_id:
-              type: string
-              format: uuid
-              description: API key client ID
-            client_secret:
-              type: string
-              description: API key client secret (only returned once)
-          required:
-          - client_id
-          - client_secret
-      required:
-      - super_admin
-      - approver
     CrystalBank__Api__Responses__ErrorResponse:
       type: object
       properties:
