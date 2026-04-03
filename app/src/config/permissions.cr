@@ -57,6 +57,9 @@ module CrystalBank
     # Events
     READ_events_list
 
+    # Me
+    READ_me
+
     # Platform
     WRITE_platform_reset_request
 
