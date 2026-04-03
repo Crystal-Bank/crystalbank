@@ -223,7 +223,8 @@
         </div>
       </div>
       <div class="bg-amber-50 border border-amber-200 rounded p-3 text-xs text-amber-800 mb-5">
-        Store this secret securely. You will not be able to retrieve it again.
+        <p class="font-semibold mb-1">Store this secret securely. You will not be able to retrieve it again.</p>
+        <p>This key will not work until an administrator approves it. You will be notified once your key has been approved and is ready to use.</p>
       </div>
       <div class="flex justify-end">
         <button onclick={handleResultDone} class="btn btn-primary">Done</button>
