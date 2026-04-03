@@ -64,6 +64,7 @@ module CrystalBank::Domains::ApiKeys
             a.scope_id,
             a.user_id,
             a.active,
+            a.pending_approval,
             a.name,
             a.created_at,
             a.revoked_at
