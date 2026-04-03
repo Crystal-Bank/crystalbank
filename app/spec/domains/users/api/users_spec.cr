@@ -9,6 +9,7 @@ describe CrystalBank::Domains::Users::Api::Users do
     acc = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: user_id)
     TEST_EVENT_STORE.append(req)
     TEST_EVENT_STORE.append(acc)
+    Users::Projections::Users.new.apply(req)
     Users::Projections::Users.new.apply(acc)
   end
 
