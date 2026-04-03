@@ -4,28 +4,28 @@ module CrystalBank::Domains::ApiKeys
       def prepare
         skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'api_keys');), as: Bool
 
-        unless skip
-          m = Array(String).new
-          m << %(
-            CREATE TABLE "projections"."api_keys" (
-              "id" SERIAL PRIMARY KEY,
-              "uuid" UUID NOT NULL,
-              "aggregate_version" int8 NOT NULL,
-              "scope_id" UUID NOT NULL,
-              "created_at" timestamp NOT NULL,
-              "name" varchar NOT NULL,
-              "user_id" UUID NOT NULL,
-              "encrypted_secret" varchar NOT NULL,
-              "active" boolean NOT NULL default false,
-              "pending_approval" boolean NOT NULL default false,
-              "revoked_at" timestamp NULL
-            );
-          )
+        return true if skip
 
-          m << %(CREATE UNIQUE INDEX api_keys_uuid_idx ON "projections"."api_keys"(uuid);)
+        m = Array(String).new
+        m << %(
+          CREATE TABLE "projections"."api_keys" (
+            "id" SERIAL PRIMARY KEY,
+            "uuid" UUID NOT NULL,
+            "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
+            "created_at" timestamp NOT NULL,
+            "name" varchar NOT NULL,
+            "user_id" UUID NOT NULL,
+            "encrypted_secret" varchar NOT NULL,
+            "active" boolean NOT NULL default false,
+            "pending_approval" boolean NOT NULL default false,
+            "revoked_at" timestamp NULL
+          );
+        )
 
-          m.each { |s| @projection_database.exec s }
-        end
+        m << %(CREATE UNIQUE INDEX api_keys_uuid_idx ON "projections"."api_keys"(uuid);)
+
+        m.each { |s| @projection_database.exec s }
       end
 
       # ApiKeys::Generation::Events::Requested
