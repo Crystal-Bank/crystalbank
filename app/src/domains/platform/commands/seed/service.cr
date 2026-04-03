@@ -10,13 +10,13 @@ module CrystalBank::Domains::Platform
       seed_scope(ROOT_SCOPE_ID, "CrystalBank", ROOT_SCOPE_ID)
 
       super_admin_id = seed_user("Super Admin", "superadmin@crystalbank.xyz", ROOT_SCOPE_ID)
-      approver_id    = seed_user("Approver", "approver@crystalbank.xyz", ROOT_SCOPE_ID)
-      role_id        = seed_role("Origin Role", CrystalBank::Permissions.values, ROOT_SCOPE_ID, [ROOT_SCOPE_ID])
+      approver_id = seed_user("Approver", "approver@crystalbank.xyz", ROOT_SCOPE_ID)
+      role_id = seed_role("Origin Role", CrystalBank::Permissions.values, ROOT_SCOPE_ID, [ROOT_SCOPE_ID])
 
       assign_role(super_admin_id, role_id, ROOT_SCOPE_ID)
       assign_role(approver_id, role_id, ROOT_SCOPE_ID)
 
-      admin_key_id, admin_secret       = seed_api_key("origin api key", super_admin_id, ROOT_SCOPE_ID)
+      admin_key_id, admin_secret = seed_api_key("origin api key", super_admin_id, ROOT_SCOPE_ID)
       approver_key_id, approver_secret = seed_api_key("origin api key", approver_id, ROOT_SCOPE_ID)
 
       CrystalBank::Domains::Platform::Api::Responses::ResetResponse.new(
