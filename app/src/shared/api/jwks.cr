@@ -28,6 +28,33 @@ module CrystalBank
         end
       end
 
+      struct OpenIDConfiguration
+        include JSON::Serializable
+
+        getter issuer : String
+        getter jwks_uri : String
+        getter id_token_signing_alg_values_supported : Array(String)
+
+        def initialize(@issuer, @jwks_uri, @id_token_signing_alg_values_supported)
+        end
+      end
+
+      # OpenID Configuration
+      # Returns the OpenID Connect discovery document
+      #
+      # Required permission:
+      # - none
+      @[AC::Route::GET("/openid-configuration")]
+      def openid_configuration : OpenIDConfiguration
+        issuer = CrystalBank::Env.api_domains.first
+        jwks_uri = CrystalBank::Env.jwt_public_key_uri
+        OpenIDConfiguration.new(
+          issuer: issuer,
+          jwks_uri: jwks_uri,
+          id_token_signing_alg_values_supported: ["ES256"]
+        )
+      end
+
       # JWKS
       # Returns the public JSON Web Key Set for JWT validation
       #
