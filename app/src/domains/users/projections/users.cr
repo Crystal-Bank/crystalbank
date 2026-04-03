@@ -4,29 +4,26 @@ module CrystalBank::Domains::Users
       def prepare
         skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'users');), as: Bool
 
-        unless skip
-          m = Array(String).new
-          m << %(
-            CREATE TABLE "projections"."users" (
-              "id" SERIAL PRIMARY KEY,
-              "uuid" UUID NOT NULL,
-              "aggregate_version" int8 NOT NULL,
-              "scope_id" UUID NOT NULL,
-              "role_ids" JSONB NOT NULL,
-              "created_at" timestamp NOT NULL,
-              "name" varchar NOT NULL,
-              "email" varchar NOT NULL,
-              "status" varchar NOT NULL DEFAULT 'active'
-            );
-          )
+        return true if skip
 
-          m << %(CREATE UNIQUE INDEX users_uuid_idx ON "projections"."users"(uuid);)
+        m = Array(String).new
+        m << %(
+          CREATE TABLE "projections"."users" (
+            "id" SERIAL PRIMARY KEY,
+            "uuid" UUID NOT NULL,
+            "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
+            "role_ids" JSONB NOT NULL,
+            "created_at" timestamp NOT NULL,
+            "name" varchar NOT NULL,
+            "email" varchar NOT NULL,
+            "status" varchar NOT NULL
+          );
+        )
 
-          m.each { |s| @projection_database.exec s }
-        end
+        m << %(CREATE UNIQUE INDEX users_uuid_idx ON "projections"."users"(uuid);)
 
-        # Migration: add status column if not present
-        @projection_database.exec %(ALTER TABLE "projections"."users" ADD COLUMN IF NOT EXISTS "status" varchar NOT NULL DEFAULT 'active')
+        m.each { |s| @projection_database.exec s }
       end
 
       # Pending — insert user as pending when onboarding is requested
