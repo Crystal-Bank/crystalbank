@@ -31,8 +31,8 @@ module CrystalBank::Domains::Users
 
         user = Users::Queries::Users.new.get(context.user_id)
         scope_info = if user && (s = Scopes::Queries::Scopes.new.get(user.scope_id))
-          ScopeInfo.new(s.id, s.name)
-        end
+                       ScopeInfo.new(s.id, s.name)
+                     end
 
         MeResponse.new(context.user_id, context.roles, scope_info)
       end
