@@ -68,38 +68,26 @@ export const pagination = $state({
 
 export const SUPPORTED_CURRENCIES = ['chf', 'eur', 'gbp', 'jpy', 'usd']
 
-export const ALL_PERMISSIONS = [
-  'read_accounts_list',
-  'write_accounts_opening_request',
-  'write_accounts_opening_compliance_approval',
-  'write_accounts_opening_board_approval',
-  'read_api_keys_list',
-  'write_api_keys_generation_request',
-  'write_api_keys_revocation_request',
-  'read_customers_list',
-  'write_customers_onboarding_request',
-  'read_roles_list',
-  'write_roles_creation_request',
-  'read_scopes_list',
-  'write_scopes_creation_request',
-  'read_postings_list',
-  'write_transactions_internal_transfers_initiation_request',
-  'read_users_list',
-  'write_users_onboarding_request',
-  'write_users_assign_roles_request',
-  'read_approvals_list',
-  'write_approvals_collection_request',
-  'write_approvals_rejection_request',
-  'read_payments_sepa_credit_transfers_list',
-  'write_payments_sepa_credit_transfers_request',
-  'write_payments_sepa_credit_transfers_approval',
-  'read_accounts_blocks',
-  'write_accounts_blocking_request',
-  'write_accounts_unblocking_request',
-  'write_accounts_blocking_approval',
-  'write_accounts_unblocking_approval',
-  'read_events_list',
-]
+export const PERMISSION_GROUPS = {
+  'Accounts':     ['read_accounts_list', 'write_accounts_opening_request',
+                   'write_accounts_opening_compliance_approval', 'write_accounts_opening_board_approval',
+                   'read_accounts_blocks', 'write_accounts_blocking_request',
+                   'write_accounts_unblocking_request', 'write_accounts_blocking_approval',
+                   'write_accounts_unblocking_approval'],
+  'API Keys':     ['read_api_keys_list', 'write_api_keys_generation_request', 'write_api_keys_revocation_request'],
+  'Customers':    ['read_customers_list', 'write_customers_onboarding_request'],
+  'Users':        ['read_users_list', 'write_users_onboarding_request', 'write_users_assign_roles_request'],
+  'Roles':        ['read_roles_list', 'write_roles_creation_request'],
+  'Scopes':       ['read_scopes_list', 'write_scopes_creation_request'],
+  'Approvals':    ['read_approvals_list', 'write_approvals_collection_request', 'write_approvals_rejection_request'],
+  'Transactions': ['write_ledger_transactions_request',
+                   'write_transactions_internal_transfers_initiation_request', 'read_postings_list'],
+  'Payments':     ['read_payments_sepa_credit_transfers_list', 'write_payments_sepa_credit_transfers_request',
+                   'write_payments_sepa_credit_transfers_approval'],
+  'Events':       ['read_events_list'],
+}
+
+export const ALL_PERMISSIONS = Object.values(PERMISSION_GROUPS).flat()
 
 export const NAV_SECTIONS = [
   {
