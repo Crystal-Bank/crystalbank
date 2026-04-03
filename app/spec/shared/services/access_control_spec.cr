@@ -9,10 +9,10 @@ describe CrystalBank::Services::AccessControl do
   # `roles_scopes_tree` is non-empty — granting access to a scope that the role
   # never covered.  With `&` (the fix) the intersection is empty, correctly
   # denying access.
-  role_scope_id    = UUID.new("00000000-0000-0000-ac00-000000000001")
+  role_scope_id = UUID.new("00000000-0000-0000-ac00-000000000001")
   request_scope_id = UUID.new("00000000-0000-0000-ac00-000000000002")
-  role_id          = UUID.new("00000000-0000-0000-ac00-000000000003")
-  permission       = CrystalBank::Permissions::READ_roles_list
+  role_id = UUID.new("00000000-0000-0000-ac00-000000000003")
+  permission = CrystalBank::Permissions::READ_roles_list
 
   before_all do
     TEST_PROJECTION_DB.exec %(
