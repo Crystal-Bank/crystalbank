@@ -57,6 +57,9 @@ module CrystalBank
     # Events
     READ_events_list
 
+    # Platform
+    WRITE_platform_reset_request
+
     def to_s
       super.to_s.downcase
     end
