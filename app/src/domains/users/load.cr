@@ -3,6 +3,7 @@ require "./aggregates/aggregate"
 
 # API
 require "./api/users"
+require "./api/me"
 
 # Commands
 require "./commands/assign_roles/request"
