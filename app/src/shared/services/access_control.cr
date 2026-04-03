@@ -26,7 +26,7 @@ module CrystalBank
                                 request_scopes_tree = Scopes::Queries::ScopesTree.new.child_scopes(request_scope)
 
                                 # Return the intersection of available scopes tree based on the role and the requested scope tree
-                                roles_scopes_tree && request_scopes_tree
+                                roles_scopes_tree & request_scopes_tree
                               end
 
         available_scope_ids
