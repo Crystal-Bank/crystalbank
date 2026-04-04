@@ -9,8 +9,17 @@ module CrystalBank::Domains::Accounts
 
           customer_ids = r.customer_ids
 
-          # Check if customer ids are eligable to open an account, raise exception if not
-          customer_ids.each { |c| customer_eligable!(UUID.new(c)) }
+          raise CrystalBank::Exception::InvalidArgument.new("At least one customer ID is required") if customer_ids.empty?
+
+          # Validate all customer IDs exist in the projection and belong to the same scope
+          found_customers = Customers::Queries::Customers.new.find_all(customer_ids)
+          found_by_id = found_customers.to_h { |c| {c.id, c} }
+
+          customer_ids.each do |customer_id|
+            customer = found_by_id[customer_id]?
+            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not exist") unless customer
+            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not belong to scope '#{scope}'") unless customer.scope_id == scope
+          end
 
           # Create the account creation request event
           event = Accounts::Opening::Events::Requested.new(
@@ -28,14 +37,6 @@ module CrystalBank::Domains::Accounts
 
           # Return the aggregate ID of the newly created account aggregate
           UUID.new(event.header.aggregate_id.to_s)
-        end
-
-        private def customer_eligable!(customer_id : UUID)
-          # TODO: Don't use aggregate here, use a service instead
-          customer_aggregate = CrystalBank::Domains::Customers::Aggregate.new(customer_id)
-          customer_aggregate.hydrate
-
-          raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' is not properly onboarded") unless customer_aggregate.state.onboarded
         end
       end
     end

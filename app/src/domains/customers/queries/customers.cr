@@ -19,6 +19,15 @@ module CrystalBank::Domains::Customers
         @db = ES::Config.projection_database
       end
 
+      def find_all(uuids : Array(UUID)) : Array(Customer)
+        return Array(Customer).new if uuids.empty?
+        @db.query_all(
+          %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1)),
+          uuids,
+          as: Customer
+        )
+      end
+
       def list(
         context : CrystalBank::Api::Context,
         cursor : UUID?,
