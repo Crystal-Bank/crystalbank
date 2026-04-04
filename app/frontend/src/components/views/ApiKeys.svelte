@@ -83,7 +83,7 @@
         <tr onclick={() => drawerKey = k} class="cursor-pointer">
           <td><span class="mono text-xs">{k.id}</span></td>
           <td class="font-medium">{k.name}</td>
-          <td><span class="badge" class:badge-green={k.active} class:badge-red={!k.active}>{k.active ? 'Active' : 'Revoked'}</span></td>
+          <td><span class="badge" class:badge-green={k.active} class:badge-amber={k.pending_approval} class:badge-red={!k.active && !k.pending_approval}>{k.active ? 'Active' : k.pending_approval ? 'Pending' : 'Revoked'}</span></td>
           <td class="text-zinc-500 text-xs">{formatDate(k.created_at)}</td>
           <td><span class="mono text-xs">{k.scope_id}</span></td>
           <td>
@@ -128,7 +128,7 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Status</div>
-        <div><span class="badge" class:badge-green={drawerKey.active} class:badge-red={!drawerKey.active}>{drawerKey.active ? 'Active' : 'Revoked'}</span></div>
+        <div><span class="badge" class:badge-green={drawerKey.active} class:badge-amber={drawerKey.pending_approval} class:badge-red={!drawerKey.active && !drawerKey.pending_approval}>{drawerKey.active ? 'Active' : drawerKey.pending_approval ? 'Pending' : 'Revoked'}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Created</div>
