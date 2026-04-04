@@ -61,20 +61,36 @@ module CrystalBank::Domains::Customers
         end
       end
 
-      # Accepted — mark customer as active once approval is complete
+      # Accepted — upsert customer as active once approval is complete
       def apply(event : ::Customers::Onboarding::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
+        created_at = event.header.created_at
+
+        aggregate = ::Customers::Aggregate.new(aggregate_id)
+        aggregate.hydrate(version: aggregate_version)
+
+        name = aggregate.state.name
+        scope_id = aggregate.state.scope_id
+        type = aggregate.state.type.to_s.downcase
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
-            UPDATE "projections"."customers"
-            SET status = 'active', aggregate_version = $1
-            WHERE uuid = $2
+            INSERT INTO "projections"."customers" (
+              uuid, aggregate_version, scope_id, created_at, type, name, status
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, 'active')
+            ON CONFLICT (uuid) DO UPDATE SET
+              status = 'active',
+              aggregate_version = $2
           ),
+            aggregate_id,
             aggregate_version,
-            aggregate_id
+            scope_id,
+            created_at,
+            type.to_s,
+            name
         end
       end
     end
