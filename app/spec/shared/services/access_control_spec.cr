@@ -16,20 +16,20 @@ describe CrystalBank::Services::AccessControl do
 
   before_all do
     TEST_PROJECTION_DB.exec %(
-      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name, accepted)
-      VALUES ($1, 1, $1, NOW(), 'AC Test - Role Scope', true)
+      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name, status)
+      VALUES ($1, 1, $1, NOW(), 'AC Test - Role Scope', 'active')
       ON CONFLICT (uuid) DO NOTHING
     ), role_scope_id
 
     TEST_PROJECTION_DB.exec %(
-      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name, accepted)
-      VALUES ($1, 1, $1, NOW(), 'AC Test - Request Scope', true)
+      INSERT INTO projections.scopes (uuid, aggregate_version, scope_id, created_at, name, status)
+      VALUES ($1, 1, $1, NOW(), 'AC Test - Request Scope', 'active')
       ON CONFLICT (uuid) DO NOTHING
     ), request_scope_id
 
     TEST_PROJECTION_DB.exec %(
-      INSERT INTO projections.roles (uuid, aggregate_version, scope_id, created_at, name, permissions, scopes)
-      VALUES ($1, 1, $2, NOW(), 'AC Test Role', $3::jsonb, $4::jsonb)
+      INSERT INTO projections.roles (uuid, aggregate_version, scope_id, created_at, name, permissions, scopes, status)
+      VALUES ($1, 1, $2, NOW(), 'AC Test Role', $3::jsonb, $4::jsonb, 'active')
       ON CONFLICT (uuid) DO NOTHING
     ), role_id, role_scope_id, [permission.to_s].to_json, [role_scope_id.to_s].to_json
   end

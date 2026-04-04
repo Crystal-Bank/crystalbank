@@ -21,7 +21,7 @@ module CrystalBank::Domains::Scopes
               projections.scopes
             WHERE
               uuid IN ($1)
-              AND accepted = true
+              AND status = 'active'
             UNION ALL
             SELECT
               s.uuid
@@ -31,7 +31,7 @@ module CrystalBank::Domains::Scopes
             WHERE
               s.parent_scope_id = parent.uuid
               AND s.uuid <> s.parent_scope_id
-              AND s.accepted = true
+              AND s.status = 'active'
           )
           SELECT
             uuid
