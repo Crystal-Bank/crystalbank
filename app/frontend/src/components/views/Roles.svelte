@@ -82,6 +82,11 @@
       <div class="flex items-center gap-2 mb-2">
         <span class="font-semibold text-sm">{r.name}</span>
         <span class="mono text-xs">{r.id}</span>
+        {#if r.accepted}
+          <span class="badge badge-green">Active</span>
+        {:else}
+          <span class="badge badge-amber">Pending</span>
+        {/if}
       </div>
       <div class="flex flex-wrap gap-1.5">
         {#each r.permissions ?? [] as p (p)}
@@ -129,6 +134,16 @@
       <div class="drawer-field">
         <div class="drawer-field-label">Name</div>
         <div class="drawer-field-value font-medium">{drawerRole.name}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
+        <div>
+          {#if drawerRole.accepted}
+            <span class="badge badge-green">Active</span>
+          {:else}
+            <span class="badge badge-amber">Pending approval</span>
+          {/if}
+        </div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Permissions</div>

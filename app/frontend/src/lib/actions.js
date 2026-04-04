@@ -185,7 +185,7 @@ export async function createRole({ name, permissions, scopesList, selectedScopes
   try {
     const scopes = selectedScopes ?? (scopesList ? scopesList.split('\n').map(s => s.trim()).filter(Boolean) : [])
     await apiFetch('POST', '/roles/create', { name, permissions, scopes }, { idempotency: true })
-    addToast('Role created')
+    addToast('Role creation requested')
     await loadView('roles')
   } catch (e) {
     addToast(e.message, 'error')
