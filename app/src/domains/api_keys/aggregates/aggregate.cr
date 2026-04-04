@@ -9,7 +9,7 @@ module CrystalBank::Domains::ApiKeys
     include CrystalBank::Domains::ApiKeys::Aggregates::Concerns::Revocation
 
     struct State < ES::Aggregate::State
-      property active : Bool = false
+      property status : String = "pending_approval"
       property name : String?
       property user_id : UUID?
       property encrypted_secret : String?

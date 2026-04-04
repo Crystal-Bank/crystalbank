@@ -28,7 +28,7 @@ module CrystalBank::Domains::Customers
         @[JSON::Field(description: "Type of the customer")]
         getter type : CrystalBank::Types::Customers::Type
 
-        @[JSON::Field(description: "Onboarding status of the customer: pending or active")]
+        @[JSON::Field(description: "Status of the customer: active, pending_approval")]
         getter status : String
 
         def initialize(

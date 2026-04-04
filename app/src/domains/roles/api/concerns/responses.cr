@@ -33,8 +33,8 @@ module CrystalBank::Domains::Roles
         @[JSON::Field(description: "Scope the role has access to")]
         getter scopes : Array(UUID)
 
-        @[JSON::Field(description: "Whether the role has been approved and is active")]
-        getter accepted : Bool
+        @[JSON::Field(description: "Status of the role: active, pending_approval")]
+        getter status : String
 
         def initialize(
           @id : UUID,
@@ -43,7 +43,7 @@ module CrystalBank::Domains::Roles
           @name : String,
           @permissions : Array(CrystalBank::Permissions),
           @scopes : Array(UUID),
-          @accepted : Bool,
+          @status : String,
         ); end
       end
     end

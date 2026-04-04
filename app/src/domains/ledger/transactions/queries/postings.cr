@@ -22,6 +22,7 @@ module CrystalBank::Domains::Ledger::Transactions
         getter payment_type : String?
         getter external_ref : String?
         getter channel : String?
+        getter status : String
       end
 
       def initialize

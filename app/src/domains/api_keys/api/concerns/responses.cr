@@ -13,10 +13,9 @@ module CrystalBank::Domains::ApiKeys
         @[JSON::Field(format: "uuid", description: "ID of the user associated with the api-key")]
         getter user_id : UUID
 
-        @[JSON::Field(description: "Is the api-key active?")]
-        getter active : Bool
-        @[JSON::Field(description: "Is the api-key pending approval?")]
-        getter pending_approval : Bool
+        @[JSON::Field(description: "Status of the api-key: active, pending_approval, revoked")]
+        getter status : String
+
         @[JSON::Field(format: "iso8601", description: "Timestamp of the generation of the api-key")]
         getter created_at : Time
         @[JSON::Field(description: "Custom name of the api-key")]
@@ -24,7 +23,7 @@ module CrystalBank::Domains::ApiKeys
         @[JSON::Field(format: "iso8601", description: "Timestamp of the revocation of the api-key")]
         getter revoked_at : Time?
 
-        def initialize(@id, @scope_id, @user_id, @active, @pending_approval, @name, @created_at, @revoked_at)
+        def initialize(@id, @scope_id, @user_id, @status, @name, @created_at, @revoked_at)
         end
       end
 

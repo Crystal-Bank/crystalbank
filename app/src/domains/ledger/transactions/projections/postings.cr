@@ -32,7 +32,8 @@ module CrystalBank::Domains::Ledger::Transactions
             "remittance_information" varchar NOT NULL,
             "payment_type" varchar,
             "external_ref" varchar,
-            "channel" varchar
+            "channel" varchar,
+            "status" varchar NOT NULL
           );
         )
 
@@ -83,9 +84,10 @@ module CrystalBank::Domains::Ledger::Transactions
                   remittance_information,
                   payment_type,
                   external_ref,
-                  channel
+                  channel,
+                  status
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
             ),
               entry.id,
               aggregate_id,
@@ -102,7 +104,8 @@ module CrystalBank::Domains::Ledger::Transactions
               remittance_information,
               payment_type,
               external_ref,
-              channel
+              channel,
+              "active"
           end
         end
       end

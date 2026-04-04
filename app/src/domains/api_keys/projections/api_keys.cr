@@ -17,8 +17,7 @@ module CrystalBank::Domains::ApiKeys
             "name" varchar NOT NULL,
             "user_id" UUID NOT NULL,
             "encrypted_secret" varchar NOT NULL,
-            "active" boolean NOT NULL default false,
-            "pending_approval" boolean NOT NULL default false,
+            "status" varchar NOT NULL,
             "revoked_at" timestamp NULL
           );
         )
@@ -36,30 +35,31 @@ module CrystalBank::Domains::ApiKeys
 
         body = event.body.as(::ApiKeys::Generation::Events::Requested::Body)
 
-        @projection_database.exec %(
-          INSERT INTO
-            "projections"."api_keys" (
-              uuid,
-              aggregate_version,
-              scope_id,
-              created_at,
-              name,
-              user_id,
-              encrypted_secret,
-              active,
-              pending_approval
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        ),
-          aggregate_id,
-          aggregate_version,
-          body.scope_id,
-          created_at,
-          body.name,
-          body.user_id,
-          body.api_secret,
-          false,
-          true
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(
+            INSERT INTO
+              "projections"."api_keys" (
+                uuid,
+                aggregate_version,
+                scope_id,
+                created_at,
+                name,
+                user_id,
+                encrypted_secret,
+                status
+              )
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          ),
+            aggregate_id,
+            aggregate_version,
+            body.scope_id,
+            created_at,
+            body.name,
+            body.user_id,
+            body.api_secret,
+            "pending_approval"
+        end
       end
 
       # ApiKeys::Generation::Events::Accepted
@@ -67,15 +67,13 @@ module CrystalBank::Domains::ApiKeys
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
-        @projection_database.exec %(
-          UPDATE "projections"."api_keys"
-          SET active=$1, pending_approval=$2, aggregate_version=$3
-          WHERE uuid=$4
-        ),
-          true,
-          false,
-          aggregate_version,
-          aggregate_id
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."api_keys" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "active",
+            aggregate_version,
+            aggregate_id
+        end
       end
 
       # ApiKeys::Revocation::Events::Accepted
@@ -87,14 +85,16 @@ module CrystalBank::Domains::ApiKeys
         aggregate = ::ApiKeys::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        @projection_database.exec %(
-          UPDATE "projections"."api_keys"
-          SET active=$1, revoked_at=$2
-          WHERE uuid=$3
-        ),
-          false,
-          aggregate.state.revoked_at,
-          aggregate_id
+        revoked_at = aggregate.state.revoked_at
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."api_keys" SET status=$1, revoked_at=$2, aggregate_version=$3 WHERE uuid=$4),
+            "revoked",
+            revoked_at,
+            aggregate_version,
+            aggregate_id
+        end
       end
     end
   end

@@ -48,7 +48,7 @@ module CrystalBank::Domains::Roles
             s.name,
             s.permissions,
             s.scopes,
-            s.accepted
+            s.status
           )
         end
 

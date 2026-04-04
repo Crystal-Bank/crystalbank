@@ -34,7 +34,7 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "Type of the account")]
         getter type : CrystalBank::Types::Accounts::Type
 
-        @[JSON::Field(description: "Status of the account (pending or active)")]
+        @[JSON::Field(description: "Status of the account: active, pending_approval")]
         getter status : String
 
         def initialize(

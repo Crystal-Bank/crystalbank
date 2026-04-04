@@ -27,15 +27,15 @@ module CrystalBank::Domains::Scopes
         @[JSON::Field(description: "ID of the parent scope")]
         getter parent_scope_id : UUID?
 
-        @[JSON::Field(description: "Whether the scope has been approved and is active")]
-        getter accepted : Bool
+        @[JSON::Field(description: "Status of the scope: active, pending_approval")]
+        getter status : String
 
         def initialize(
           @id : UUID,
           @scope_id : UUID,
           @name : String,
           @parent_scope_id : UUID?,
-          @accepted : Bool,
+          @status : String,
         ); end
       end
     end

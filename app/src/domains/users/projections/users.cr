@@ -26,19 +26,13 @@ module CrystalBank::Domains::Users
         m.each { |s| @projection_database.exec s }
       end
 
-      # Pending — insert user as pending when onboarding is requested
+      # Requested
       def apply(event : ::Users::Onboarding::Events::Requested)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
 
-        aggregate = ::Users::Aggregate.new(aggregate_id)
-        aggregate.hydrate(version: aggregate_version)
-
-        name = aggregate.state.name
-        email = aggregate.state.email
-        scope_id = aggregate.state.scope_id
-        role_ids = aggregate.state.role_ids
+        body = event.body.as(::Users::Onboarding::Events::Requested::Body)
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
@@ -54,30 +48,28 @@ module CrystalBank::Domains::Users
                 email,
                 status
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
           ),
             aggregate_id,
             aggregate_version,
-            scope_id,
-            role_ids.to_json,
+            body.scope_id,
+            "[]",
             created_at,
-            name,
-            email
+            body.name,
+            body.email,
+            "pending_approval"
         end
       end
 
-      # Accepted — mark user as active once approval is complete
+      # Accepted
       def apply(event : ::Users::Onboarding::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
-          cnn.exec %(
-            UPDATE "projections"."users"
-            SET status = 'active', aggregate_version = $1
-            WHERE uuid = $2
-          ),
+          cnn.exec %(UPDATE "projections"."users" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "active",
             aggregate_version,
             aggregate_id
         end

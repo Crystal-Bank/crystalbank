@@ -24,18 +24,13 @@ module CrystalBank::Domains::Customers
         m.each { |s| @projection_database.exec s }
       end
 
-      # Pending — insert customer as pending when onboarding is requested
+      # Requested
       def apply(event : ::Customers::Onboarding::Events::Requested)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
 
-        aggregate = ::Customers::Aggregate.new(aggregate_id)
-        aggregate.hydrate(version: aggregate_version)
-
-        name = aggregate.state.name
-        scope_id = aggregate.state.scope_id
-        type = aggregate.state.type.to_s.downcase
+        body = event.body.as(::Customers::Onboarding::Events::Requested::Body)
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
@@ -50,47 +45,29 @@ module CrystalBank::Domains::Customers
                 name,
                 status
               )
-              VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
           ),
             aggregate_id,
             aggregate_version,
-            scope_id,
+            body.scope_id,
             created_at,
-            type.to_s,
-            name
+            body.type.to_s.downcase,
+            body.name,
+            "pending_approval"
         end
       end
 
-      # Accepted — upsert customer as active once approval is complete
+      # Accepted
       def apply(event : ::Customers::Onboarding::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        aggregate = ::Customers::Aggregate.new(aggregate_id)
-        aggregate.hydrate(version: aggregate_version)
-
-        name = aggregate.state.name
-        scope_id = aggregate.state.scope_id
-        type = aggregate.state.type.to_s.downcase
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
-          cnn.exec %(
-            INSERT INTO "projections"."customers" (
-              uuid, aggregate_version, scope_id, created_at, type, name, status
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, 'active')
-            ON CONFLICT (uuid) DO UPDATE SET
-              status = 'active',
-              aggregate_version = $2
-          ),
-            aggregate_id,
+          cnn.exec %(UPDATE "projections"."customers" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "active",
             aggregate_version,
-            scope_id,
-            created_at,
-            type.to_s,
-            name
+            aggregate_id
         end
       end
     end

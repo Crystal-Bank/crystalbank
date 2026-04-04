@@ -22,6 +22,8 @@ module CrystalBank::Domains::Roles
 
         @[DB::Field(converter: CrystalBank::Converters::UUIDArray)]
         getter scopes : Array(UUID)
+
+        getter status : String
       end
 
       def initialize
