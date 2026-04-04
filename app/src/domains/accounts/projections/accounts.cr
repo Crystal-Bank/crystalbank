@@ -5,8 +5,11 @@ module CrystalBank::Domains::Accounts
         table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'accounts');), as: Bool
 
         if table_exists
-          # Migrate existing table: add status column if not present
+          # Migrate existing table: add status column if not present, backfilling
+          # existing rows (all accepted) as 'active', then drop the default so
+          # status must always be set explicitly going forward
           @projection_database.exec %(ALTER TABLE "projections"."accounts" ADD COLUMN IF NOT EXISTS "status" varchar NOT NULL DEFAULT 'active')
+          @projection_database.exec %(ALTER TABLE "projections"."accounts" ALTER COLUMN "status" DROP DEFAULT)
         else
           m = Array(String).new
           m << %(
@@ -20,7 +23,7 @@ module CrystalBank::Domains::Accounts
               "currencies" jsonb NOT NULL,
               "customer_ids" jsonb NOT NULL,
               "type" varchar NOT NULL,
-              "status" varchar NOT NULL DEFAULT 'active'
+              "status" varchar NOT NULL
             );
           )
 
