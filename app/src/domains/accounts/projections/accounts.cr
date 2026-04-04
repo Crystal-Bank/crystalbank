@@ -2,35 +2,29 @@ module CrystalBank::Domains::Accounts
   module Projections
     class Accounts < ES::Projection
       def prepare
-        table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'accounts');), as: Bool
+        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'accounts');), as: Bool
 
-        if table_exists
-          # Migrate existing table: add status column if not present, backfilling
-          # existing rows (all accepted) as 'active', then drop the default so
-          # status must always be set explicitly going forward
-          @projection_database.exec %(ALTER TABLE "projections"."accounts" ADD COLUMN IF NOT EXISTS "status" varchar NOT NULL DEFAULT 'active')
-          @projection_database.exec %(ALTER TABLE "projections"."accounts" ALTER COLUMN "status" DROP DEFAULT)
-        else
-          m = Array(String).new
-          m << %(
-            CREATE TABLE "projections"."accounts" (
-              "id" SERIAL PRIMARY KEY,
-              "uuid" UUID NOT NULL,
-              "aggregate_version" int8 NOT NULL,
-              "scope_id" UUID NOT NULL,
-              "created_at" timestamp NOT NULL,
-              "name" varchar NOT NULL,
-              "currencies" jsonb NOT NULL,
-              "customer_ids" jsonb NOT NULL,
-              "type" varchar NOT NULL,
-              "status" varchar NOT NULL
-            );
-          )
+        return true if skip
 
-          m << %(CREATE UNIQUE INDEX accounts_uuid_idx ON "projections"."accounts"(uuid);)
+        m = Array(String).new
+        m << %(
+          CREATE TABLE "projections"."accounts" (
+            "id" SERIAL PRIMARY KEY,
+            "uuid" UUID NOT NULL,
+            "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
+            "created_at" timestamp NOT NULL,
+            "name" varchar NOT NULL,
+            "currencies" jsonb NOT NULL,
+            "customer_ids" jsonb NOT NULL,
+            "type" varchar NOT NULL,
+            "status" varchar NOT NULL
+          );
+        )
 
-          m.each { |s| @projection_database.exec s }
-        end
+        m << %(CREATE UNIQUE INDEX accounts_uuid_idx ON "projections"."accounts"(uuid);)
+
+        m.each { |s| @projection_database.exec s }
       end
 
       # Pending - insert account with pending status when opening is requested
