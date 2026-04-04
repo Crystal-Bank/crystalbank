@@ -11,6 +11,7 @@ module CrystalBank::Domains::Scopes
       property parent_scope_id : UUID?
       property scope_id : UUID?
       property requestor_id : UUID?
+      property accepted : Bool = false
     end
 
     getter state : State

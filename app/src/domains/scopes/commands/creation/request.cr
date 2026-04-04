@@ -7,11 +7,12 @@ module CrystalBank::Domains::Scopes
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-          # Check if provided parent scope can be found
+          # Check if provided parent scope can be found and is active
           parent_scope_id = r.parent_scope_id
           unless parent_scope_id.nil?
             aggregate = Scopes::Aggregate.new(parent_scope_id)
             aggregate.hydrate
+            raise CrystalBank::Exception::InvalidArgument.new("Parent scope is not active") unless aggregate.state.accepted
           end
 
           # Create the scope creation request event
