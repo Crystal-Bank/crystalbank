@@ -11,6 +11,7 @@ module CrystalBank::Domains::Roles
       property permissions : Array(CrystalBank::Permissions)?
       property scope_id : UUID?
       property scopes : Array(UUID)?
+      property requestor_id : UUID?
     end
 
     getter state : State

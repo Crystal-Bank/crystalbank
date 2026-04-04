@@ -38,6 +38,7 @@ bus.subscribe(Customers::Onboarding::Events::Accepted, Customers::Projections::C
 # Roles
 bus.subscribe(Roles::Creation::Events::Requested, Roles::Creation::Commands::ProcessRequest)
 bus.subscribe(Roles::Creation::Events::Accepted, Roles::Projections::Roles)
+bus.subscribe(Approvals::Collection::Events::Completed, Roles::Creation::Commands::ProcessApproval)
 
 # Scopes
 bus.subscribe(Scopes::Creation::Events::Requested, Scopes::Creation::Commands::ProcessRequest)
