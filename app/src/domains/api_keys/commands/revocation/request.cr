@@ -18,7 +18,7 @@ module CrystalBank::Domains::ApiKeys
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope_id
 
           # Raise exception if api key is not active
-          raise CrystalBank::Exception::InvalidArgument.new("ApiKey '#{aggregate_id}' is in a non-active state and cannot be revoked") unless aggregate.state.active
+          raise CrystalBank::Exception::InvalidArgument.new("ApiKey '#{aggregate_id}' is in a non-active state and cannot be revoked") unless aggregate.state.status == "active"
 
           # Create the revocation request
           event = ApiKeys::Revocation::Events::Requested.new(
