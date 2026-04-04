@@ -34,7 +34,9 @@ bus.subscribe(ApiKeys::Revocation::Events::Accepted, ApiKeys::Projections::ApiKe
 
 # Customers
 bus.subscribe(Customers::Onboarding::Events::Requested, Customers::Onboarding::Commands::ProcessRequest)
+bus.subscribe(Customers::Onboarding::Events::Requested, Customers::Projections::Customers)
 bus.subscribe(Customers::Onboarding::Events::Accepted, Customers::Projections::Customers)
+bus.subscribe(Approvals::Collection::Events::Completed, Customers::Onboarding::Commands::ProcessApproval)
 
 # Roles
 bus.subscribe(Roles::Creation::Events::Requested, Roles::Creation::Commands::ProcessRequest)

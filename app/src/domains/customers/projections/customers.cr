@@ -14,7 +14,8 @@ module CrystalBank::Domains::Customers
             "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
             "name" varchar NOT NULL,
-            "type" varchar NOT NULL
+            "type" varchar NOT NULL,
+            "status" varchar NOT NULL
           );
         )
 
@@ -23,24 +24,19 @@ module CrystalBank::Domains::Customers
         m.each { |s| @projection_database.exec s }
       end
 
-      # Accepted
-      def apply(event : ::Customers::Onboarding::Events::Accepted)
-        # Extract attributes to local variables
-        uuid = event.header.event_id
-        created_at = event.header.created_at
+      # Pending — insert customer as pending when onboarding is requested
+      def apply(event : ::Customers::Onboarding::Events::Requested)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
+        created_at = event.header.created_at
 
-        # Build the customer aggregate up to the version of the event
         aggregate = ::Customers::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        # Extract attributes to local variables
         name = aggregate.state.name
         scope_id = aggregate.state.scope_id
         type = aggregate.state.type.to_s.downcase
 
-        # Insert the customer projection into the projection database
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -51,9 +47,43 @@ module CrystalBank::Domains::Customers
                 scope_id,
                 created_at,
                 type,
-                name
+                name,
+                status
               )
-              VALUES ($1, $2, $3, $4, $5,$6)
+              VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+          ),
+            aggregate_id,
+            aggregate_version,
+            scope_id,
+            created_at,
+            type.to_s,
+            name
+        end
+      end
+
+      # Accepted — upsert customer as active once approval is complete
+      def apply(event : ::Customers::Onboarding::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+        created_at = event.header.created_at
+
+        aggregate = ::Customers::Aggregate.new(aggregate_id)
+        aggregate.hydrate(version: aggregate_version)
+
+        name = aggregate.state.name
+        scope_id = aggregate.state.scope_id
+        type = aggregate.state.type.to_s.downcase
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(
+            INSERT INTO "projections"."customers" (
+              uuid, aggregate_version, scope_id, created_at, type, name, status
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, 'active')
+            ON CONFLICT (uuid) DO UPDATE SET
+              status = 'active',
+              aggregate_version = $2
           ),
             aggregate_id,
             aggregate_version,

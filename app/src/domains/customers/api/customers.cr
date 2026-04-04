@@ -45,7 +45,8 @@ module CrystalBank::Domains::Customers
             a.id,
             a.scope_id,
             a.name,
-            CrystalBank::Types::Customers::Type.parse(a.type)
+            CrystalBank::Types::Customers::Type.parse(a.type),
+            a.status
           )
         end
 

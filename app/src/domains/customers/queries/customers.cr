@@ -13,6 +13,7 @@ module CrystalBank::Domains::Customers
 
         getter name : String
         getter type : String
+        getter status : String
       end
 
       def initialize

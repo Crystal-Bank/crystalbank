@@ -32,16 +32,21 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Scope</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Scope</th></tr></thead>
     <tbody>
       {#if viewData.customers.length === 0 && !ui.loadingView}
-        <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No customers found</td></tr>
+        <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No customers found</td></tr>
       {/if}
       {#each viewData.customers as c (c.id)}
         <tr onclick={() => drawerCustomer = c} class="cursor-pointer">
           <td><span class="mono text-xs">{c.id}</span></td>
           <td class="font-medium">{c.name}</td>
           <td><span class="badge" class:badge-blue={c.type === 'individual'} class:badge-amber={c.type !== 'individual'}>{c.type}</span></td>
+          <td>
+            <span class="badge" class:badge-green={c.status === 'active'} class:badge-amber={c.status === 'pending'} class:badge-zinc={c.status !== 'active' && c.status !== 'pending'}>
+              {c.status}
+            </span>
+          </td>
           <td><span class="mono text-xs">{c.scope_id}</span></td>
         </tr>
       {/each}
@@ -83,6 +88,14 @@
         <div>
           <span class="badge" class:badge-blue={drawerCustomer.type === 'individual'} class:badge-amber={drawerCustomer.type !== 'individual'}>
             {drawerCustomer.type}
+          </span>
+        </div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
+        <div>
+          <span class="badge" class:badge-green={drawerCustomer.status === 'active'} class:badge-amber={drawerCustomer.status === 'pending'} class:badge-zinc={drawerCustomer.status !== 'active' && drawerCustomer.status !== 'pending'}>
+            {drawerCustomer.status}
           </span>
         </div>
       </div>
