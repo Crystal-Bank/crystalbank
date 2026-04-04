@@ -11,14 +11,11 @@ module CrystalBank::Domains::Accounts
 
           raise CrystalBank::Exception::InvalidArgument.new("At least one customer ID is required") if customer_ids.empty?
 
-          # Validate all customer IDs exist in the projection and belong to the same scope
-          found_customers = Customers::Queries::Customers.new.find_all(customer_ids)
-          found_by_id = found_customers.to_h { |c| {c.id, c} }
+          # Validate all customer IDs exist in the projection under the same scope
+          found_ids = Customers::Queries::Customers.new.find_all(customer_ids, scope_id: scope).map(&.id).to_set
 
           customer_ids.each do |customer_id|
-            customer = found_by_id[customer_id]?
-            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not exist") unless customer
-            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not belong to scope '#{scope}'") unless customer.scope_id == scope
+            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not exist") unless found_ids.includes?(customer_id)
           end
 
           # Create the account creation request event

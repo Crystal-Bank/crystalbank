@@ -65,7 +65,7 @@ describe CrystalBank::Domains::Accounts::Opening::Commands::Request do
     context = make_context(scope_id)
     request = make_request([customer_id])
 
-    expect_raises(CrystalBank::Exception::InvalidArgument, /does not belong to scope/) do
+    expect_raises(CrystalBank::Exception::InvalidArgument, /does not exist/) do
       Accounts::Opening::Commands::Request.new.call(request, context)
     end
   end
