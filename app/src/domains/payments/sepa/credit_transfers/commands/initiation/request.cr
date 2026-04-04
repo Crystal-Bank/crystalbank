@@ -44,7 +44,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             account = found_by_id[account_id]?
             raise CrystalBank::Exception::InvalidArgument.new(
               "Account '#{account_id}' is not open"
-            ) unless account
+            ) unless account && account.status == "active"
             raise CrystalBank::Exception::InvalidArgument.new(
               "Account '#{account_id}' does not support EUR"
             ) unless account.currencies.includes?(CrystalBank::Types::Currencies::Supported::EUR)

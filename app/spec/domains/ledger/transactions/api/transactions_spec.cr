@@ -24,7 +24,9 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
       TEST_EVENT_STORE.append(credit_requested)
       TEST_EVENT_STORE.append(credit_accepted)
 
+      Accounts::Projections::Accounts.new.apply(debit_requested)
       Accounts::Projections::Accounts.new.apply(debit_accepted)
+      Accounts::Projections::Accounts.new.apply(credit_requested)
       Accounts::Projections::Accounts.new.apply(credit_accepted)
 
       # Build a context as the API controller would after a successful authorized? call
