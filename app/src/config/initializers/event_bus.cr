@@ -6,6 +6,7 @@ bus = ES::Config.event_bus
 
 # Accounts
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands::ProcessRequest)
+bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Projections::Accounts)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
 # Account Blocks
