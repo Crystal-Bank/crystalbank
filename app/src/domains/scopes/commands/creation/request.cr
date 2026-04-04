@@ -11,7 +11,11 @@ module CrystalBank::Domains::Scopes
           parent_scope_id = r.parent_scope_id
           unless parent_scope_id.nil?
             aggregate = Scopes::Aggregate.new(parent_scope_id)
-            aggregate.hydrate
+            begin
+              aggregate.hydrate
+            rescue ES::Exception::NotFound
+              raise CrystalBank::Exception::InvalidArgument.new("Parent scope is not active")
+            end
             raise CrystalBank::Exception::InvalidArgument.new("Parent scope is not active") unless aggregate.state.accepted
           end
 
