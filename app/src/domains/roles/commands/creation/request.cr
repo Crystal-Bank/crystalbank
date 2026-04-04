@@ -11,11 +11,11 @@ module CrystalBank::Domains::Roles
           scopes = r.scopes
 
           # Validate that all provided scope IDs exist and are active
-          raise CrystalBank::Exception::InvalidArgument.new("Role needs to be applicable to at least one scope") if scopes.empty?
-
-          active_scope_ids = Scopes::Queries::Scopes.new.find_active(scopes)
-          invalid_scopes = scopes - active_scope_ids
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid or inactive scopes: #{invalid_scopes.map(&.to_s).join(", ")}") if !invalid_scopes.empty?
+          unless scopes.empty?
+            active_scope_ids = Scopes::Queries::Scopes.new.find_active(scopes)
+            invalid_scopes = scopes - active_scope_ids
+            raise CrystalBank::Exception::InvalidArgument.new("Invalid or inactive scopes: #{invalid_scopes.map(&.to_s).join(", ")}") unless invalid_scopes.empty?
+          end
 
           # Create the role creation request event
           event = Roles::Creation::Events::Requested.new(
