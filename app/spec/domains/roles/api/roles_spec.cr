@@ -87,7 +87,7 @@ describe CrystalBank::Domains::Roles::Api::Roles do
       results = Roles::Queries::Roles.new.list(context, cursor: nil, limit: 100)
       pending = results.find { |r| r.id == pending_role_id }
       pending.should_not be_nil
-      pending.not_nil!.accepted.should be_false
+      pending.not_nil!.status.should eq("pending_approval")
       pending.not_nil!.object.should eq("role_creation_request")
     end
 
@@ -103,7 +103,7 @@ describe CrystalBank::Domains::Roles::Api::Roles do
       results = Roles::Queries::Roles.new.list(context, cursor: nil, limit: 100)
       accepted = results.find { |r| r.id == role_id }
       accepted.should_not be_nil
-      accepted.not_nil!.accepted.should be_true
+      accepted.not_nil!.status.should eq("active")
       accepted.not_nil!.object.should eq("role")
     end
   end
