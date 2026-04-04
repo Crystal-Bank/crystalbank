@@ -45,7 +45,8 @@ module CrystalBank::Domains::Scopes
             s.id,
             s.scope_id,
             s.name,
-            s.parent_scope_id
+            s.parent_scope_id,
+            s.accepted
           )
         end
 
