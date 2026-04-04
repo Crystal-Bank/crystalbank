@@ -142,7 +142,7 @@ export async function createCustomer({ name, type }) {
   ui.loading = true
   try {
     await apiFetch('POST', '/customers/onboard', { name, type }, { idempotency: true })
-    addToast('Customer onboarded')
+    addToast('Customer onboarding requested')
     await loadView('customers')
   } catch (e) {
     addToast(e.message, 'error')
