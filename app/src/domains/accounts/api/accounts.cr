@@ -144,7 +144,8 @@ module CrystalBank::Domains::Accounts
             a.name,
             a.currencies,
             a.customer_ids,
-            CrystalBank::Types::Accounts::Type.parse(a.type)
+            CrystalBank::Types::Accounts::Type.parse(a.type),
+            a.status
           )
         end
 

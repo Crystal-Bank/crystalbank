@@ -19,6 +19,7 @@ module CrystalBank::Domains::Accounts
         getter customer_ids = Array(UUID).new
 
         getter type : String
+        getter status : String
       end
 
       def initialize

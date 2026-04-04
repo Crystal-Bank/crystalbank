@@ -34,6 +34,9 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "Type of the account")]
         getter type : CrystalBank::Types::Accounts::Type
 
+        @[JSON::Field(description: "Status of the account (pending or active)")]
+        getter status : String
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
@@ -41,6 +44,7 @@ module CrystalBank::Domains::Accounts
           @currencies : Array(CrystalBank::Types::Currencies::Supported),
           @customer_ids : Array(UUID),
           @type : CrystalBank::Types::Accounts::Type,
+          @status : String,
         ); end
       end
     end

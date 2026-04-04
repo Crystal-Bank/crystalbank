@@ -77,13 +77,13 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>Name</th><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th></tr></thead>
+    <thead><tr><th>Name</th><th>ID</th><th>Type</th><th>Currencies</th><th>Customers</th><th>Scope</th><th>Status</th></tr></thead>
     <tbody>
       {#if viewData.accounts.length === 0 && !ui.loadingView}
-        <tr><td colspan="6" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
+        <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
       {/if}
       {#each viewData.accounts as a (a.id)}
-        <tr onclick={() => openAccountDetail(a)} class="cursor-pointer">
+        <tr onclick={() => a.status !== 'pending' && openAccountDetail(a)} class:cursor-pointer={a.status !== 'pending'} class:opacity-60={a.status === 'pending'}>
           <td class="font-medium">{a.name}</td>
           <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge" class:badge-blue={a.type === 'checking'} class:badge-purple={a.type !== 'checking'}>{a.type?.replace('_', ' ')}</span></td>
@@ -96,6 +96,13 @@
           </td>
           <td class="text-xs text-zinc-500">{(a.customer_ids?.length ?? 0)} owner(s)</td>
           <td><span class="mono text-xs">{a.scope_id}</span></td>
+          <td>
+            {#if a.status === 'pending'}
+              <span class="badge badge-amber">pending</span>
+            {:else}
+              <span class="badge badge-green">active</span>
+            {/if}
+          </td>
         </tr>
       {/each}
     </tbody>
