@@ -13,7 +13,7 @@ describe CrystalBank::Domains::Customers::Projections::Customers do
     projection.apply(event)
 
     status = TEST_PROJECTION_DB.scalar(%(SELECT status FROM "projections"."customers" WHERE uuid = $1), uuid)
-    status.should eq("pending")
+    status.should eq("pending_approval")
   end
 
   it "correctly applies 'Customers::Onboarding::Events::Accepted' event" do

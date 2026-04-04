@@ -21,7 +21,7 @@ describe CrystalBank::Domains::Customers::Queries::Customers do
     results = Customers::Queries::Customers.new.list(context, cursor: nil, limit: 100)
     customer = results.find { |c| c.id == customer_id }
     customer.should_not be_nil
-    customer.not_nil!.status.should eq("pending")
+    customer.not_nil!.status.should eq("pending_approval")
   end
 
   it "returns the status field as active for an accepted customer" do

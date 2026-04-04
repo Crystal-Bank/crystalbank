@@ -72,7 +72,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Api::CreditTrans
         available_scopes: [available_scope_id]
       )
 
-      results = Payments::Sepa::CreditTransfers::Queries::CreditTransfers.new.list(context, cursor: nil, limit: 100, status: "pending")
+      results = Payments::Sepa::CreditTransfers::Queries::CreditTransfers.new.list(context, cursor: nil, limit: 100, status: "pending_approval")
       uuids = results.map(&.uuid)
       uuids.should contain(pending_transfer_id)
       uuids.should_not contain(accepted_transfer_id)

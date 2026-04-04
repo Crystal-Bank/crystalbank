@@ -21,7 +21,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Projections::Cre
       %(SELECT status FROM "projections"."sepa_credit_transfers" WHERE uuid = $1),
       uuid
     )
-    status.should eq("pending")
+    status.should eq("pending_approval")
   end
 
   it "updates status to 'accepted' and sets ledger_transaction_id when an Accepted event is applied" do

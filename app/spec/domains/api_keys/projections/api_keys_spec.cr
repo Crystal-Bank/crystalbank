@@ -36,8 +36,8 @@ describe CrystalBank::Domains::ApiKeys::Projections::ApiKeys do
     projection.apply(event_2)
     projection.apply(event_4)
 
-    active, revoked_at = TEST_PROJECTION_DB.query_one(%(SELECT active, revoked_at FROM "projections"."api_keys" WHERE uuid = $1), uuid, as: {Bool, Time})
-    active.should eq(false)
+    status, revoked_at = TEST_PROJECTION_DB.query_one(%(SELECT status, revoked_at FROM "projections"."api_keys" WHERE uuid = $1), uuid, as: {String, Time})
+    status.should eq("revoked")
     revoked_at.to_unix.should eq(event_1.header.created_at.to_unix)
   end
 end
