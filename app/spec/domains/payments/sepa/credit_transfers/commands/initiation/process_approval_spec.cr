@@ -15,6 +15,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
       accepted = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
       TEST_EVENT_STORE.append(requested)
       TEST_EVENT_STORE.append(accepted)
+      Accounts::Projections::Accounts.new.apply(requested)
       Accounts::Projections::Accounts.new.apply(accepted)
     end
 

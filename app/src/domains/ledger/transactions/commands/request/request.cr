@@ -39,8 +39,8 @@ module CrystalBank::Domains::Ledger::Transactions
             "Ledger entries do not balance: debit total #{debit_total} does not equal credit total #{credit_total}"
           ) unless debit_total == credit_total
 
-          # Validate all accounts exist in the projection in one query (presence == open,
-          # rows are only inserted on account.opening.accepted)
+          # Validate all accounts exist in the projection and are active (presence + status == open,
+          # rows are inserted on account.opening.requested and set to active on account.opening.accepted)
           account_ids = entries.map(&.account_id).uniq!
           found_accounts = Accounts::Queries::Accounts.new.find_all(account_ids)
           found_by_id = found_accounts.to_h { |a| {a.id, a} }
@@ -48,7 +48,7 @@ module CrystalBank::Domains::Ledger::Transactions
             account = found_by_id[id]?
             raise CrystalBank::Exception::InvalidArgument.new(
               "Account '#{id}' is not open"
-            ) unless account
+            ) unless account && account.status == "active"
             raise CrystalBank::Exception::InvalidArgument.new(
               "Account '#{id}' does not support currency #{r.currency}"
             ) unless account.currencies.includes?(r.currency)

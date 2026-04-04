@@ -23,7 +23,9 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     TEST_EVENT_STORE.append(credit_accepted)
 
     accounts_projection = Accounts::Projections::Accounts.new
+    accounts_projection.apply(debit_requested)
     accounts_projection.apply(debit_accepted)
+    accounts_projection.apply(credit_requested)
     accounts_projection.apply(credit_accepted)
 
     TestEnv.debit_account_id = debit_account_id

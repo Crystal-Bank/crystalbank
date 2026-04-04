@@ -9,6 +9,7 @@ describe CrystalBank::Domains::Accounts::Api::Accounts do
     acc = Test::Account::Events::Opening::Accepted.new.create(aggr_id: account_id)
     TEST_EVENT_STORE.append(req)
     TEST_EVENT_STORE.append(acc)
+    Accounts::Projections::Accounts.new.apply(req)
     Accounts::Projections::Accounts.new.apply(acc)
   end
 
