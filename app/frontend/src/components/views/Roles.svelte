@@ -25,7 +25,7 @@
     showModal = true
     try {
       const res = await apiFetch('GET', '/scopes/?limit=200')
-      scopeOptions = res.data.map(e => e.attributes)
+      scopeOptions = res.data.map(e => e.attributes).filter(s => s.accepted)
     } catch { scopeOptions = [] }
   }
 
