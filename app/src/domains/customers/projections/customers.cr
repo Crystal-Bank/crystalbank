@@ -2,30 +2,26 @@ module CrystalBank::Domains::Customers
   module Projections
     class Customers < ES::Projection
       def prepare
-        table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'customers');), as: Bool
+        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'customers');), as: Bool
+        return true if skip
 
-        if table_exists
-          # Migrate existing table: add status column if not present
-          @projection_database.exec %(ALTER TABLE "projections"."customers" ADD COLUMN IF NOT EXISTS "status" varchar NOT NULL DEFAULT 'active')
-        else
-          m = Array(String).new
-          m << %(
-            CREATE TABLE "projections"."customers" (
-              "id" SERIAL PRIMARY KEY,
-              "uuid" UUID NOT NULL,
-              "aggregate_version" int8 NOT NULL,
-              "scope_id" UUID NOT NULL,
-              "created_at" timestamp NOT NULL,
-              "name" varchar NOT NULL,
-              "type" varchar NOT NULL,
-              "status" varchar NOT NULL
-            );
-          )
+        m = Array(String).new
+        m << %(
+          CREATE TABLE "projections"."customers" (
+            "id" SERIAL PRIMARY KEY,
+            "uuid" UUID NOT NULL,
+            "aggregate_version" int8 NOT NULL,
+            "scope_id" UUID NOT NULL,
+            "created_at" timestamp NOT NULL,
+            "name" varchar NOT NULL,
+            "type" varchar NOT NULL,
+            "status" varchar NOT NULL
+          );
+        )
 
-          m << %(CREATE UNIQUE INDEX customers_uuid_idx ON "projections"."customers"(uuid);)
+        m << %(CREATE UNIQUE INDEX customers_uuid_idx ON "projections"."customers"(uuid);)
 
-          m.each { |s| @projection_database.exec s }
-        end
+        m.each { |s| @projection_database.exec s }
       end
 
       # Pending — insert customer as pending when onboarding is requested
