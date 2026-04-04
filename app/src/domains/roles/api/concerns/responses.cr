@@ -15,11 +15,14 @@ module CrystalBank::Domains::Roles
       struct Role
         include JSON::Serializable
 
-        @[JSON::Field(format: "uuid", description: "ID of the requested role")]
+        @[JSON::Field(format: "uuid", description: "ID of the role")]
         getter id : UUID
 
         @[JSON::Field(format: "uuid", description: "Scope of the data point")]
         getter scope_id : UUID
+
+        @[JSON::Field(description: "Object type: 'role' when accepted, 'role_creation_request' when pending approval")]
+        getter object : String
 
         @[JSON::Field(description: "Name of the role")]
         getter name : String
@@ -30,12 +33,17 @@ module CrystalBank::Domains::Roles
         @[JSON::Field(description: "Scope the role has access to")]
         getter scopes : Array(UUID)
 
+        @[JSON::Field(description: "Whether the role has been approved and is active")]
+        getter accepted : Bool
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
+          @object : String,
           @name : String,
           @permissions : Array(CrystalBank::Permissions),
           @scopes : Array(UUID),
+          @accepted : Bool,
         ); end
       end
     end

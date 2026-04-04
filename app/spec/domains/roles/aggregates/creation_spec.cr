@@ -38,6 +38,7 @@ describe CrystalBank::Domains::Roles::Aggregates::Concerns::Creation do
       state.name.should eq(name)
       state.permissions.should eq(permissions)
       state.scopes.should eq(scopes)
+      state.requestor_id.should eq(actor_id)
     end
   end
 end

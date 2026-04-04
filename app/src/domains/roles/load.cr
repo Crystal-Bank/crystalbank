@@ -7,6 +7,7 @@ require "./api/roles"
 # Commands
 require "./commands/creation/request"
 require "./commands/creation/process_request"
+require "./commands/creation/process_approval"
 
 # Events
 require "./events/creation/accepted"

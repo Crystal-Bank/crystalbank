@@ -22,6 +22,7 @@ module CrystalBank
     # Roles
     READ_roles_list
     WRITE_roles_creation_request
+    WRITE_roles_creation_approval
 
     # Scopes
     READ_scopes_list

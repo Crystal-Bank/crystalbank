@@ -8,8 +8,18 @@ module CrystalBank::Domains::Roles
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           permissions = r.permissions
-          # TODO check validity of scopes
           scopes = r.scopes
+
+          # Validate that all provided scope IDs exist and are active
+          unless scopes.empty?
+            active_scope_ids = Scopes::Queries::Scopes.new.find_active(scopes)
+            invalid_scopes = scopes - active_scope_ids
+            unless invalid_scopes.empty?
+              raise CrystalBank::Exception::InvalidArgument.new(
+                "Invalid or inactive scopes: #{invalid_scopes.map(&.to_s).join(", ")}"
+              )
+            end
+          end
 
           # Create the role creation request event
           event = Roles::Creation::Events::Requested.new(

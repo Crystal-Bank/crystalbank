@@ -12,5 +12,6 @@ describe CrystalBank::Domains::Roles::Aggregate do
     aggr.state.name.should eq(nil)
     aggr.state.permissions.should eq(nil)
     aggr.state.scopes.should eq(nil)
+    aggr.state.requestor_id.should eq(nil)
   end
 end
