@@ -16,7 +16,6 @@ module CrystalBank::Domains::ApiKeys
         getter user_id : UUID
         getter created_at : Time
         getter revoked_at : Time?
-        getter pending_approval : Bool
       end
 
       def initialize

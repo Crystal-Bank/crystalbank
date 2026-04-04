@@ -85,8 +85,8 @@ describe CrystalBank::Domains::ApiKeys::Api::ApiKeys do
 
       active = results.find { |k| k.id == active_key_id }.not_nil!
       revoked = results.find { |k| k.id == revoked_key_id }.not_nil!
-      active.active.should be_true
-      revoked.active.should be_false
+      active.status.should eq("active")
+      revoked.status.should eq("revoked")
     end
   end
 end
