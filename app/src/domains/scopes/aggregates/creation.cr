@@ -7,6 +7,7 @@ module CrystalBank::Domains::Scopes
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(Scopes::Creation::Events::Accepted::Body)
+          @state.accepted = true
         end
 
         # Apply 'Scopes::Creation::Events::Requested' to the aggregate state

@@ -201,7 +201,7 @@ export async function createScope({ name, parent_scope_id }) {
     const body = { name }
     if (parent_scope_id?.trim()) body.parent_scope_id = parent_scope_id.trim()
     await apiFetch('POST', '/scopes/create', body, { idempotency: true })
-    addToast('Scope created')
+    addToast('Scope creation requested')
     await loadView('scopes')
   } catch (e) {
     addToast(e.message, 'error')
