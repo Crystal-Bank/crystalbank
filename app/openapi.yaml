@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.11.1
+  version: 0.12.1
 paths:
   /.well-known/openid-configuration:
     get:
@@ -2033,6 +2033,9 @@ components:
                     - cpd
                     - frozen_funds
                     description: Type of the account
+                  status:
+                    type: string
+                    description: 'Status of the account: active, pending_approval'
                 required:
                 - id
                 - scope_id
@@ -2040,6 +2043,7 @@ components:
                 - currencies
                 - customer_ids
                 - type
+                - status
             required:
             - object
             - attributes
@@ -2134,9 +2138,10 @@ components:
                     type: string
                     format: uuid
                     description: ID of the user associated with the api-key
-                  active:
-                    type: boolean
-                    description: Is the api-key active?
+                  status:
+                    type: string
+                    description: 'Status of the api-key: active, pending_approval,
+                      revoked'
                   created_at:
                     type: string
                     format: iso8601
@@ -2153,7 +2158,7 @@ components:
                 - id
                 - scope_id
                 - user_id
-                - active
+                - status
                 - created_at
                 - name
             required:
@@ -2424,11 +2429,15 @@ components:
                     - business
                     - individual
                     description: Type of the customer
+                  status:
+                    type: string
+                    description: 'Status of the customer: active, pending_approval'
                 required:
                 - id
                 - scope_id
                 - name
                 - type
+                - status
             required:
             - object
             - attributes
@@ -2518,14 +2527,17 @@ components:
             - write_accounts_unblocking_approval
             - read_accounts_blocks
             - write_api_keys_generation_request
+            - write_api_keys_generation_approval
             - write_api_keys_revocation_request
             - read_api_keys_list
             - write_customers_onboarding_request
             - read_customers_list
             - read_roles_list
             - write_roles_creation_request
+            - write_roles_creation_approval
             - read_scopes_list
             - write_scopes_creation_request
+            - write_scopes_creation_approval
             - write_ledger_transactions_request
             - write_transactions_internal_transfers_initiation_request
             - read_postings_list
@@ -2537,6 +2549,7 @@ components:
             - read_approvals_list
             - write_accounts_opening_compliance_approval
             - write_accounts_opening_board_approval
+            - write_users_onboarding_compliance_approval
             - write_payments_sepa_credit_transfers_request
             - read_payments_sepa_credit_transfers_list
             - write_payments_sepa_credit_transfers_approval
@@ -2604,11 +2617,15 @@ components:
                   id:
                     type: string
                     format: uuid
-                    description: ID of the requested role
+                    description: ID of the role
                   scope_id:
                     type: string
                     format: uuid
                     description: Scope of the data point
+                  object:
+                    type: string
+                    description: 'Object type: ''role'' when accepted, ''role_creation_request''
+                      when pending approval'
                   name:
                     type: string
                     description: Name of the role
@@ -2626,14 +2643,17 @@ components:
                       - write_accounts_unblocking_approval
                       - read_accounts_blocks
                       - write_api_keys_generation_request
+                      - write_api_keys_generation_approval
                       - write_api_keys_revocation_request
                       - read_api_keys_list
                       - write_customers_onboarding_request
                       - read_customers_list
                       - read_roles_list
                       - write_roles_creation_request
+                      - write_roles_creation_approval
                       - read_scopes_list
                       - write_scopes_creation_request
+                      - write_scopes_creation_approval
                       - write_ledger_transactions_request
                       - write_transactions_internal_transfers_initiation_request
                       - read_postings_list
@@ -2645,6 +2665,7 @@ components:
                       - read_approvals_list
                       - write_accounts_opening_compliance_approval
                       - write_accounts_opening_board_approval
+                      - write_users_onboarding_compliance_approval
                       - write_payments_sepa_credit_transfers_request
                       - read_payments_sepa_credit_transfers_list
                       - write_payments_sepa_credit_transfers_approval
@@ -2656,12 +2677,17 @@ components:
                     items:
                       type: string
                       format: uuid
+                  status:
+                    type: string
+                    description: 'Status of the role: active, pending_approval'
                 required:
                 - id
                 - scope_id
+                - object
                 - name
                 - permissions
                 - scopes
+                - status
             required:
             - object
             - attributes
@@ -2749,10 +2775,14 @@ components:
                     format: uuid
                     description: ID of the parent scope
                     nullable: true
+                  status:
+                    type: string
+                    description: 'Status of the scope: active, pending_approval'
                 required:
                 - id
                 - scope_id
                 - name
+                - status
             required:
             - object
             - attributes
@@ -2957,6 +2987,9 @@ components:
                     type: string
                     description: Channel
                     nullable: true
+                  status:
+                    type: string
+                    description: 'Status of the posting: active, pending_approval'
                 required:
                 - id
                 - transaction_id
@@ -2968,6 +3001,7 @@ components:
                 - posting_date
                 - value_date
                 - remittance_information
+                - status
             required:
             - object
             - attributes
@@ -3111,7 +3145,7 @@ components:
                     description: Remittance information
                   status:
                     type: string
-                    description: 'Status: pending | executed'
+                    description: 'Status: pending_approval | accepted'
                   ledger_transaction_id:
                     type: string
                     format: uuid
@@ -3230,11 +3264,15 @@ components:
                     type: string
                     format: email
                     description: Email address of the user
+                  status:
+                    type: string
+                    description: 'Status of the user: active, pending_approval'
                 required:
                 - id
                 - scope_id
                 - name
                 - email
+                - status
             required:
             - object
             - attributes
