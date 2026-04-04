@@ -44,9 +44,11 @@ module CrystalBank::Domains::Roles
           Responses::Role.new(
             s.id,
             s.scope_id,
+            s.object,
             s.name,
             s.permissions,
-            s.scopes
+            s.scopes,
+            s.accepted
           )
         end
 
