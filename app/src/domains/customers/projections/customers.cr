@@ -2,45 +2,45 @@ module CrystalBank::Domains::Customers
   module Projections
     class Customers < ES::Projection
       def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'customers');), as: Bool
-        return true if skip
+        table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'customers');), as: Bool
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."customers" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "type" varchar NOT NULL
-          );
-        )
+        if table_exists
+          # Migrate existing table: add status column if not present
+          @projection_database.exec %(ALTER TABLE "projections"."customers" ADD COLUMN IF NOT EXISTS "status" varchar NOT NULL DEFAULT 'active')
+        else
+          m = Array(String).new
+          m << %(
+            CREATE TABLE "projections"."customers" (
+              "id" SERIAL PRIMARY KEY,
+              "uuid" UUID NOT NULL,
+              "aggregate_version" int8 NOT NULL,
+              "scope_id" UUID NOT NULL,
+              "created_at" timestamp NOT NULL,
+              "name" varchar NOT NULL,
+              "type" varchar NOT NULL,
+              "status" varchar NOT NULL
+            );
+          )
 
-        m << %(CREATE UNIQUE INDEX customers_uuid_idx ON "projections"."customers"(uuid);)
+          m << %(CREATE UNIQUE INDEX customers_uuid_idx ON "projections"."customers"(uuid);)
 
-        m.each { |s| @projection_database.exec s }
+          m.each { |s| @projection_database.exec s }
+        end
       end
 
-      # Accepted
-      def apply(event : ::Customers::Onboarding::Events::Accepted)
-        # Extract attributes to local variables
-        uuid = event.header.event_id
-        created_at = event.header.created_at
+      # Pending — insert customer as pending when onboarding is requested
+      def apply(event : ::Customers::Onboarding::Events::Requested)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
+        created_at = event.header.created_at
 
-        # Build the customer aggregate up to the version of the event
         aggregate = ::Customers::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        # Extract attributes to local variables
         name = aggregate.state.name
         scope_id = aggregate.state.scope_id
         type = aggregate.state.type.to_s.downcase
 
-        # Insert the customer projection into the projection database
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -51,9 +51,10 @@ module CrystalBank::Domains::Customers
                 scope_id,
                 created_at,
                 type,
-                name
+                name,
+                status
               )
-              VALUES ($1, $2, $3, $4, $5,$6)
+              VALUES ($1, $2, $3, $4, $5, $6, 'pending')
           ),
             aggregate_id,
             aggregate_version,
@@ -61,6 +62,23 @@ module CrystalBank::Domains::Customers
             created_at,
             type.to_s,
             name
+        end
+      end
+
+      # Accepted — mark customer as active once approval is complete
+      def apply(event : ::Customers::Onboarding::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(
+            UPDATE "projections"."customers"
+            SET status = 'active', aggregate_version = $1
+            WHERE uuid = $2
+          ),
+            aggregate_version,
+            aggregate_id
         end
       end
     end

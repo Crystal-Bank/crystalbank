@@ -28,11 +28,15 @@ module CrystalBank::Domains::Customers
         @[JSON::Field(description: "Type of the customer")]
         getter type : CrystalBank::Types::Customers::Type
 
+        @[JSON::Field(description: "Onboarding status of the customer: pending or active")]
+        getter status : String
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
           @name : String,
           @type : CrystalBank::Types::Customers::Type,
+          @status : String,
         ); end
       end
     end

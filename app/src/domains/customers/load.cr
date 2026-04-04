@@ -7,6 +7,7 @@ require "./api/customers"
 # Commands
 require "./commands/onboarding/request"
 require "./commands/onboarding/process_request"
+require "./commands/onboarding/process_approval"
 
 # Events
 require "./events/onboarding/accepted"
