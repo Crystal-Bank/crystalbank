@@ -15,9 +15,9 @@ describe CrystalBank::Domains::Roles::Creation::Commands::Request do
 
   def make_request(scopes : Array(UUID) = [] of UUID)
     Roles::Api::Requests::CreationRequest.from_json({
-      name: "Test Role",
+      name:        "Test Role",
       permissions: ["write_roles_creation_request"],
-      scopes: scopes.map(&.to_s),
+      scopes:      scopes.map(&.to_s),
     }.to_json)
   end
 
