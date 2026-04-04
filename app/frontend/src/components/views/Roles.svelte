@@ -2,6 +2,7 @@
   import { viewData, pagination, ui, ALL_PERMISSIONS } from '../../lib/store.svelte.js'
   import { loadMore, createRole } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
+  import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', selectedPermissions: [], selectedScopes: [] })
@@ -25,7 +26,7 @@
     showModal = true
     try {
       const res = await apiFetch('GET', '/scopes/?limit=200')
-      scopeOptions = res.data.map(e => e.attributes).filter(s => s.accepted)
+      scopeOptions = res.data.map(e => e.attributes).filter(s => s.status === 'active')
     } catch { scopeOptions = [] }
   }
 
@@ -82,11 +83,7 @@
       <div class="flex items-center gap-2 mb-2">
         <span class="font-semibold text-sm">{r.name}</span>
         <span class="mono text-xs">{r.id}</span>
-        {#if r.accepted}
-          <span class="badge badge-green">Active</span>
-        {:else}
-          <span class="badge badge-amber">Pending</span>
-        {/if}
+        <span class="badge {statusBadgeClass(r.status)}">{formatStatus(r.status)}</span>
       </div>
       <div class="flex flex-wrap gap-1.5">
         {#each r.permissions ?? [] as p (p)}
@@ -137,13 +134,7 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Status</div>
-        <div>
-          {#if drawerRole.accepted}
-            <span class="badge badge-green">Active</span>
-          {:else}
-            <span class="badge badge-amber">Pending approval</span>
-          {/if}
-        </div>
+        <div><span class="badge {statusBadgeClass(drawerRole.status)}">{formatStatus(drawerRole.status)}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Permissions</div>

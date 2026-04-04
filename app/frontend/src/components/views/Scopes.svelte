@@ -2,6 +2,7 @@
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createScope } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
+  import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', parent_scope_id: '' })
@@ -55,7 +56,7 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>ID</th><th>Name</th><th>Parent Scope</th><th>Status</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Parent Scope</th></tr></thead>
     <tbody>
       {#if viewData.scopes.length === 0 && !ui.loadingView}
         <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
@@ -64,18 +65,12 @@
         <tr onclick={() => drawerScope = s} class="cursor-pointer">
           <td><span class="mono text-xs">{s.id}</span></td>
           <td class="font-medium">{s.name}</td>
+          <td><span class="badge {statusBadgeClass(s.status)}">{formatStatus(s.status)}</span></td>
           <td>
             {#if s.parent_scope_id}
               <span class="mono text-xs">{s.parent_scope_id}</span>
             {:else}
               <span class="text-zinc-400 text-xs">Root</span>
-            {/if}
-          </td>
-          <td>
-            {#if s.accepted}
-              <span class="badge badge-green">Active</span>
-            {:else}
-              <span class="badge badge-amber">Pending</span>
             {/if}
           </td>
         </tr>
@@ -114,22 +109,16 @@
         <div class="drawer-field-value font-medium">{drawerScope.name}</div>
       </div>
       <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
+        <div><span class="badge {statusBadgeClass(drawerScope.status)}">{formatStatus(drawerScope.status)}</span></div>
+      </div>
+      <div class="drawer-field">
         <div class="drawer-field-label">Parent Scope ID</div>
         {#if drawerScope.parent_scope_id}
           <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerScope.parent_scope_id}</div>
         {:else}
           <div class="drawer-field-value text-zinc-400">Root scope</div>
         {/if}
-      </div>
-      <div class="drawer-field">
-        <div class="drawer-field-label">Status</div>
-        <div>
-          {#if drawerScope.accepted}
-            <span class="badge badge-green">Active</span>
-          {:else}
-            <span class="badge badge-amber">Pending approval</span>
-          {/if}
-        </div>
       </div>
     </div>
   </div>
