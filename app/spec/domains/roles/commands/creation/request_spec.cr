@@ -20,7 +20,15 @@ end
 
 describe CrystalBank::Domains::Roles::Creation::Commands::Request do
   it "appends a Requested event and returns the aggregate ID" do
-    role_id = Roles::Creation::Commands::Request.new.call(role_creation_request, role_creation_context)
+    active_scope_id = UUID.v7
+    scope_event = Test::Scope::Events::Creation::Requested.new.create(aggr_id: active_scope_id)
+    accepted_event = Test::Scope::Events::Creation::Accepted.new.create(aggr_id: active_scope_id)
+    TEST_EVENT_STORE.append(scope_event)
+    TEST_EVENT_STORE.append(accepted_event)
+    Scopes::Projections::Scopes.new.apply(scope_event)
+    Scopes::Projections::Scopes.new.apply(accepted_event)
+
+    role_id = Roles::Creation::Commands::Request.new.call(role_creation_request(scopes: [active_scope_id]), role_creation_context)
 
     role_id.should be_a(UUID)
 
@@ -30,6 +38,12 @@ describe CrystalBank::Domains::Roles::Creation::Commands::Request do
     aggregate.state.name.should eq("Test Role")
     aggregate.state.scope_id.should eq(UUID.new("00000000-0000-0000-0000-100000000001"))
     aggregate.state.aggregate_version.should eq(1)
+  end
+
+  it "raises when no scopes are provided" do
+    expect_raises(CrystalBank::Exception::InvalidArgument, /Role needs to be applicable to at least one scope/) do
+      Roles::Creation::Commands::Request.new.call(role_creation_request, role_creation_context)
+    end
   end
 
   it "raises when scope is missing from context" do
