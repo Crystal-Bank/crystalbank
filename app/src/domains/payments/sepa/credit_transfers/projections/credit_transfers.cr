@@ -26,7 +26,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             "currency"              varchar NOT NULL DEFAULT 'EUR',
             "execution_date"        date NOT NULL,
             "remittance_information" varchar NOT NULL,
-            "status"                varchar NOT NULL DEFAULT 'pending',
+            "status"                varchar NOT NULL,
             "ledger_transaction_id" UUID,
             "created_at"            timestamp NOT NULL,
             "updated_at"            timestamp NOT NULL
@@ -63,7 +63,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             status,
             created_at,
             updated_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'EUR', $10, $11, 'pending', $12, $12)
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'EUR', $10, $11, 'pending_approval', $12, $12)
         ),
           aggregate_id,
           aggregate_version,

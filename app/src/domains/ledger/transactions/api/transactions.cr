@@ -52,7 +52,8 @@ module CrystalBank::Domains::Ledger::Transactions
             p.remittance_information,
             p.payment_type,
             p.external_ref,
-            p.channel
+            p.channel,
+            p.status
           )
         end
 

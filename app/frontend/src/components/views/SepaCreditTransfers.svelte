@@ -2,6 +2,7 @@
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createSepaCreditTransfer } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
+  import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   // ── Create modal ──────────────────────────────────────────────────────────────
   let showModal = $state(false)
@@ -79,11 +80,6 @@
   // ── Detail drawer ─────────────────────────────────────────────────────────────
   let drawerTransfer = $state(null)
 
-  function statusBadgeClass(status) {
-    if (status === 'accepted') return 'badge-green'
-    return 'badge-amber'
-  }
-
   function fmtAmount(cents) {
     return (cents / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
@@ -133,7 +129,7 @@
           <td><span class="mono text-xs">{t.creditor_iban}</span></td>
           <td class="tabular-nums font-semibold">{fmtAmount(t.amount)}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{fmtDate(t.execution_date)}</td>
-          <td><span class="badge {statusBadgeClass(t.status)}">{t.status}</span></td>
+          <td><span class="badge {statusBadgeClass(t.status)}">{formatStatus(t.status)}</span></td>
         </tr>
       {/each}
     </tbody>
@@ -269,7 +265,7 @@
 
     <!-- Status -->
     <div class="mb-5">
-      <span class="badge {statusBadgeClass(drawerTransfer.status)} text-sm px-3 py-1">{drawerTransfer.status}</span>
+      <span class="badge {statusBadgeClass(drawerTransfer.status)} text-sm px-3 py-1">{formatStatus(drawerTransfer.status)}</span>
     </div>
 
     <dl class="space-y-3 text-sm">

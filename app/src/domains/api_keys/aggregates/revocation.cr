@@ -7,7 +7,7 @@ module CrystalBank::Domains::ApiKeys
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(ApiKeys::Revocation::Events::Accepted::Body)
-          @state.active = false
+          @state.status = "revoked"
           @state.revoked_at = event.header.created_at
         end
 

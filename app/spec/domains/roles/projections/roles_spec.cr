@@ -12,8 +12,8 @@ describe CrystalBank::Domains::Roles::Projections::Roles do
 
     projection.apply(event)
 
-    row = TEST_PROJECTION_DB.query_one(%(SELECT accepted FROM "projections"."roles" WHERE uuid = $1), uuid, as: Bool)
-    row.should be_false
+    row = TEST_PROJECTION_DB.query_one(%(SELECT status FROM "projections"."roles" WHERE uuid = $1), uuid, as: String)
+    row.should eq("pending_approval")
   end
 
   it "correctly applies 'Roles::Creation::Events::Accepted' event" do
@@ -28,7 +28,7 @@ describe CrystalBank::Domains::Roles::Projections::Roles do
     projection.apply(event_1)
     projection.apply(event_2)
 
-    row = TEST_PROJECTION_DB.query_one(%(SELECT accepted FROM "projections"."roles" WHERE uuid = $1), uuid, as: Bool)
-    row.should be_true
+    row = TEST_PROJECTION_DB.query_one(%(SELECT status FROM "projections"."roles" WHERE uuid = $1), uuid, as: String)
+    row.should eq("active")
   end
 end

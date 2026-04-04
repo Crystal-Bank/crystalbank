@@ -24,6 +24,7 @@ private def seed_opening_customer(scope_id : UUID) : UUID
   accepted = Test::Customer::Events::Onboarding::Accepted.new.create(aggr_id: customer_id)
   TEST_EVENT_STORE.append(requested)
   TEST_EVENT_STORE.append(accepted)
+  Customers::Projections::Customers.new.apply(requested)
   Customers::Projections::Customers.new.apply(accepted)
   customer_id
 end

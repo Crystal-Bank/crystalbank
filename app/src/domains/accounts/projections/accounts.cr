@@ -27,7 +27,7 @@ module CrystalBank::Domains::Accounts
         m.each { |s| @projection_database.exec s }
       end
 
-      # Pending - insert account with pending status when opening is requested
+      # Requested
       def apply(event : ::Accounts::Opening::Events::Requested)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
@@ -50,7 +50,7 @@ module CrystalBank::Domains::Accounts
                 customer_ids,
                 status
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending')
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
           ),
             aggregate_id,
             aggregate_version,
@@ -59,24 +59,20 @@ module CrystalBank::Domains::Accounts
             body.name,
             body.type.to_s.downcase,
             body.currencies.to_json,
-            body.customer_ids.to_json
+            body.customer_ids.to_json,
+            "pending_approval"
         end
       end
 
-      # Active - update status to active when opening is accepted
+      # Accepted
       def apply(event : ::Accounts::Opening::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
-          cnn.exec %(
-            UPDATE "projections"."accounts"
-            SET
-              "aggregate_version" = $1,
-              "status" = 'active'
-            WHERE "uuid" = $2
-          ),
+          cnn.exec %(UPDATE "projections"."accounts" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "active",
             aggregate_version,
             aggregate_id
         end

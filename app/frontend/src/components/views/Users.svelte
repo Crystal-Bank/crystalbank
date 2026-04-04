@@ -2,6 +2,7 @@
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createUser, assignRoles } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
+  import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   // ── Onboard modal ────────────────────────────────────
   let showOnboardModal = $state(false)
@@ -102,7 +103,7 @@
 
 <div class="card overflow-hidden">
   <table class="data-table">
-    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Scope</th><th>Status</th></tr></thead>
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Status</th><th>Scope</th></tr></thead>
     <tbody>
       {#if viewData.users.length === 0 && !ui.loadingView}
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No users found</td></tr>
@@ -112,12 +113,8 @@
           <td><span class="mono text-xs">{u.id}</span></td>
           <td class="font-medium">{u.name}</td>
           <td class="text-zinc-500">{u.email}</td>
+          <td><span class="badge {statusBadgeClass(u.status)}">{formatStatus(u.status)}</span></td>
           <td><span class="mono text-xs">{u.scope_id}</span></td>
-          <td>
-            <span class="badge" class:badge-green={u.status === 'active'} class:badge-amber={u.status === 'pending'} class:badge-zinc={u.status !== 'active' && u.status !== 'pending'}>
-              {u.status}
-            </span>
-          </td>
         </tr>
       {/each}
     </tbody>
@@ -160,11 +157,7 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Status</div>
-        <div class="drawer-field-value">
-          <span class="badge" class:badge-green={drawerUser.status === 'active'} class:badge-amber={drawerUser.status === 'pending'} class:badge-zinc={drawerUser.status !== 'active' && drawerUser.status !== 'pending'}>
-            {drawerUser.status}
-          </span>
-        </div>
+        <div><span class="badge {statusBadgeClass(drawerUser.status)}">{formatStatus(drawerUser.status)}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Scope ID</div>

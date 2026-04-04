@@ -47,7 +47,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
         @[JSON::Field(description: "Remittance information")]
         getter remittance_information : String
 
-        @[JSON::Field(description: "Status: pending | executed")]
+        @[JSON::Field(description: "Status: pending_approval | accepted")]
         getter status : String
 
         @[JSON::Field(format: "uuid", description: "Ledger transaction ID (set once executed)")]

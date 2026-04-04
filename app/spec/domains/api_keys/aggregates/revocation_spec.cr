@@ -34,7 +34,7 @@ describe CrystalBank::Domains::ApiKeys::Aggregates::Concerns::Revocation do
       state = aggregate.state
       state.aggregate_id.should eq(aggregate_id)
       state.aggregate_version.should eq(2)
-      state.active.should eq(false)
+      state.status.should eq("revoked")
       state.revoked_at.should_not be_nil
     end
   end

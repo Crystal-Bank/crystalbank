@@ -16,7 +16,7 @@ module CrystalBank::Domains::Roles
             "name" varchar NOT NULL,
             "permissions" JSONB NOT NULL,
             "scopes" JSONB NOT NULL,
-            "accepted" boolean NOT NULL DEFAULT false
+            "status" varchar NOT NULL
           );
         )
 
@@ -25,23 +25,14 @@ module CrystalBank::Domains::Roles
         m.each { |s| @projection_database.exec s }
       end
 
-      # Requested — insert as pending (accepted = false)
+      # Requested
       def apply(event : ::Roles::Creation::Events::Requested)
-        created_at = event.header.created_at
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
+        created_at = event.header.created_at
 
-        # Build the role aggregate up to the version of the event
-        aggregate = ::Roles::Aggregate.new(aggregate_id)
-        aggregate.hydrate(version: aggregate_version)
+        body = event.body.as(::Roles::Creation::Events::Requested::Body)
 
-        # Extract attributes to local variables
-        name = aggregate.state.name
-        permissions = aggregate.state.permissions
-        scope_id = aggregate.state.scope_id
-        scopes = aggregate.state.scopes
-
-        # Insert the role projection as pending approval
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -54,30 +45,32 @@ module CrystalBank::Domains::Roles
                 name,
                 permissions,
                 scopes,
-                accepted
+                status
               )
               VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
           ),
             aggregate_id,
             aggregate_version,
-            scope_id,
+            body.scope_id,
             created_at,
-            name,
-            permissions.to_json,
-            scopes.to_json,
-            false
+            body.name,
+            body.permissions.to_json,
+            body.scopes.to_json,
+            "pending_approval"
         end
       end
 
-      # Accepted — activate the role
+      # Accepted
       def apply(event : ::Roles::Creation::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
         @projection_database.transaction do |tx|
           cnn = tx.connection
-          cnn.exec %(UPDATE "projections"."roles" SET accepted=$1, aggregate_version=$2 WHERE uuid=$3),
-            true, aggregate_version, aggregate_id
+          cnn.exec %(UPDATE "projections"."roles" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "active",
+            aggregate_version,
+            aggregate_id
         end
       end
     end

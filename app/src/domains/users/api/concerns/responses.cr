@@ -28,7 +28,7 @@ module CrystalBank::Domains::Users
         @[JSON::Field(format: "email", description: "Email address of the user")]
         getter email : String
 
-        @[JSON::Field(description: "Onboarding status of the user: pending or active")]
+        @[JSON::Field(description: "Status of the user: active, pending_approval")]
         getter status : String
 
         def initialize(

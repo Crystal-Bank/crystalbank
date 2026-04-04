@@ -9,7 +9,7 @@ module CrystalBank::Domains::ApiKeys
           aggregate = ApiKeys::Aggregate.new(UUID.new(client_id))
           aggregate.hydrate
 
-          api_key_active = aggregate.state.active
+          api_key_status = aggregate.state.status
           user_id = aggregate.state.user_id
           encrypted_secret = aggregate.state.encrypted_secret
 
@@ -17,8 +17,8 @@ module CrystalBank::Domains::ApiKeys
           raise ES::Exception::InvalidState.new("Cannot verify api credentials") if encrypted_secret.nil?
           raise ES::Exception::InvalidState.new("Api key is missing user releation") if user_id.nil?
 
-          # Fail if api key is inactive
-          raise CrystalBank::Exception::Authentication.new("Invalid login credentials", HTTP::Status::UNAUTHORIZED) unless api_key_active
+          # Fail if api key is not active
+          raise CrystalBank::Exception::Authentication.new("Invalid login credentials", HTTP::Status::UNAUTHORIZED) unless api_key_status == "active"
 
           # Extract attributes to local variables
           api_secret = Crypto::Bcrypt::Password.new(encrypted_secret)

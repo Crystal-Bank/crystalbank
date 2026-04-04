@@ -53,6 +53,9 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(description: "Channel")]
         getter channel : String?
 
+        @[JSON::Field(description: "Status of the posting: active, pending_approval")]
+        getter status : String
+
         def initialize(
           @id : UUID,
           @transaction_id : UUID,
@@ -67,6 +70,7 @@ module CrystalBank::Domains::Ledger::Transactions
           @payment_type : String?,
           @external_ref : String?,
           @channel : String?,
+          @status : String,
         ); end
       end
     end

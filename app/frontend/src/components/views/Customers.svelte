@@ -1,6 +1,7 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createCustomer } from '../../lib/actions.js'
+  import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', type: '' })
@@ -42,11 +43,7 @@
           <td><span class="mono text-xs">{c.id}</span></td>
           <td class="font-medium">{c.name}</td>
           <td><span class="badge" class:badge-blue={c.type === 'individual'} class:badge-amber={c.type !== 'individual'}>{c.type}</span></td>
-          <td>
-            <span class="badge" class:badge-green={c.status === 'active'} class:badge-amber={c.status === 'pending'} class:badge-zinc={c.status !== 'active' && c.status !== 'pending'}>
-              {c.status}
-            </span>
-          </td>
+          <td><span class="badge {statusBadgeClass(c.status)}">{formatStatus(c.status)}</span></td>
           <td><span class="mono text-xs">{c.scope_id}</span></td>
         </tr>
       {/each}
@@ -93,11 +90,7 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Status</div>
-        <div>
-          <span class="badge" class:badge-green={drawerCustomer.status === 'active'} class:badge-amber={drawerCustomer.status === 'pending'} class:badge-zinc={drawerCustomer.status !== 'active' && drawerCustomer.status !== 'pending'}>
-            {drawerCustomer.status}
-          </span>
-        </div>
+        <div><span class="badge {statusBadgeClass(drawerCustomer.status)}">{formatStatus(drawerCustomer.status)}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Scope ID</div>

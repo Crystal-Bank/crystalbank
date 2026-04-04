@@ -9,7 +9,7 @@ describe CrystalBank::Domains::ApiKeys::Aggregate do
     aggr.state.aggregate_type.should eq("ApiKey")
     aggr.state.aggregate_version.should eq(0)
 
-    aggr.state.active.should eq(false)
+    aggr.state.status.should eq("pending_approval")
     aggr.state.name.should eq(nil)
     aggr.state.user_id.should eq(nil)
     aggr.state.encrypted_secret.should eq(nil)

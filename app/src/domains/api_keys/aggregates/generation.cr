@@ -7,7 +7,7 @@ module CrystalBank::Domains::ApiKeys
           @state.increase_version(event.header.aggregate_version)
 
           body = event.body.as(ApiKeys::Generation::Events::Accepted::Body)
-          @state.active = true
+          @state.status = "active"
         end
 
         # Apply 'ApiKeys::Generation::Events::Requested' to the aggregate state

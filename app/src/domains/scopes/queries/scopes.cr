@@ -13,7 +13,7 @@ module CrystalBank::Domains::Scopes
 
         getter name : String
         getter parent_scope_id : UUID?
-        getter accepted : Bool
+        getter status : String
       end
 
       def initialize
@@ -28,7 +28,7 @@ module CrystalBank::Domains::Scopes
         return [] of UUID if uuids.empty?
 
         @db.query_all(
-          %(SELECT uuid FROM "projections"."scopes" WHERE uuid = ANY($1::uuid[]) AND accepted = true),
+          %(SELECT uuid FROM "projections"."scopes" WHERE uuid = ANY($1::uuid[]) AND status = 'active'),
           args: [uuids],
           as: UUID
         )
