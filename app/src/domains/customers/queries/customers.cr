@@ -22,19 +22,19 @@ module CrystalBank::Domains::Customers
 
       def find_all(
         context : CrystalBank::Api::Context,
-        uuids : Array(UUID), 
-        scope_id : UUID? = nil, 
-        status : String? = nil
+        uuids : Array(UUID),
+        scope_id : UUID? = nil,
+        status : String? = nil,
       ) : Array(Customer)
         return Array(Customer).new if uuids.empty?
         query_param_counter = 0
         query = [] of String
         query_params = Array(Array(UUID) | UUID? | String?).new
-        
+
         query << %(SELECT * FROM "projections"."customers" WHERE 1=1)
 
         query_params << uuids
-        conditions = [%(\"uuid\" = ANY($1))]
+        conditions = [%("uuid" = ANY($1))]
 
         # Add scope query
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
