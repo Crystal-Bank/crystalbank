@@ -13,7 +13,7 @@ module CrystalBank::Domains::Roles
           # Validate that all provided scope IDs exist and are active
           raise CrystalBank::Exception::InvalidArgument.new("Role needs to be applicable to at least one scope") if scopes.empty?
 
-          active_scope_ids = Scopes::Queries::Scopes.new.find_active(scopes)
+          active_scope_ids = Scopes::Queries::Scopes.new.find_all(c, scopes, status: "active").map(&.id)
           invalid_scopes = scopes - active_scope_ids
           raise CrystalBank::Exception::InvalidArgument.new("Invalid or inactive scopes: #{invalid_scopes.map(&.to_s).join(", ")}") if !invalid_scopes.empty?
 

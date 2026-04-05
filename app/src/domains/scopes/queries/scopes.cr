@@ -24,14 +24,34 @@ module CrystalBank::Domains::Scopes
         @db.query_one("SELECT * FROM projections.scopes WHERE uuid = $1", args: [uuid], as: Scope)
       end
 
-      def find_active(uuids : Array(UUID)) : Array(UUID)
-        return [] of UUID if uuids.empty?
+      def find_all(
+        context : CrystalBank::Api::Context,
+        uuids : Array(UUID),
+        status : String? = nil,
+      ) : Array(Scope)
+        return [] of Scope if uuids.empty?
 
-        @db.query_all(
-          %(SELECT uuid FROM "projections"."scopes" WHERE uuid = ANY($1::uuid[]) AND status = 'active'),
-          args: [uuids],
-          as: UUID
-        )
+        query_param_counter = 0
+        query = [] of String
+        query_params = Array(Array(UUID) | String).new
+
+        query << %(SELECT * FROM "projections"."scopes" WHERE 1=1)
+
+        # Add scope query
+        query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << context.available_scopes
+
+        # Add id query
+        query << %(AND "uuid" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << uuids
+
+        # Add status filter
+        if status
+          query << %(AND "status" = $#{query_param_counter += 1})
+          query_params << status
+        end
+
+        @db.query_all(query.join(" "), args: query_params, as: Scope)
       end
 
       def list(

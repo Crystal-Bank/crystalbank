@@ -20,21 +20,37 @@ module CrystalBank::Domains::Customers
         @db = ES::Config.projection_database
       end
 
-      def find_all(uuids : Array(UUID), scope_id : UUID? = nil) : Array(Customer)
+      def find_all(
+        context : CrystalBank::Api::Context,
+        uuids : Array(UUID),
+        scope_id : UUID? = nil,
+        status : String? = nil,
+      ) : Array(Customer)
         return Array(Customer).new if uuids.empty?
+        query_param_counter = 0
+        query = [] of String
+        query_params = Array(Array(UUID) | UUID? | String?).new
+
+        query << %(SELECT * FROM "projections"."customers" WHERE 1=1)
+
+        # Add scope query
+        query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << context.available_scopes
+
+        # Add uuid conditions to query
+        query << %(AND "uuid" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << uuids
+
         if scope_id
-          @db.query_all(
-            %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1) AND "scope_id" = $2),
-            uuids, scope_id,
-            as: Customer
-          )
-        else
-          @db.query_all(
-            %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1)),
-            uuids,
-            as: Customer
-          )
+          query << %(AND "scope_id" = $#{query_param_counter += 1})
+          query_params << scope_id
         end
+        if status
+          query << %(AND "status" = $#{query_param_counter += 1})
+          query_params << status
+        end
+
+        @db.query_all(query.join(" "), args: query_params, as: Customer)
       end
 
       def list(
