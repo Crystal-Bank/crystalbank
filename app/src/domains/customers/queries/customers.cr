@@ -27,31 +27,30 @@ module CrystalBank::Domains::Customers
         status : String? = nil,
       ) : Array(Customer)
         return Array(Customer).new if uuids.empty?
-        if scope_id && status
-          @db.query_all(
-            %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1) AND "scope_id" = ANY($2::uuid[]) AND "scope_id" = $3 AND "status" = $4),
-            uuids, context.available_scopes, scope_id, status,
-            as: Customer
-          )
-        elsif scope_id
-          @db.query_all(
-            %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1) AND "scope_id" = ANY($2::uuid[]) AND "scope_id" = $3),
-            uuids, context.available_scopes, scope_id,
-            as: Customer
-          )
-        elsif status
-          @db.query_all(
-            %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1) AND "scope_id" = ANY($2::uuid[]) AND "status" = $3),
-            uuids, context.available_scopes, status,
-            as: Customer
-          )
-        else
-          @db.query_all(
-            %(SELECT * FROM "projections"."customers" WHERE "uuid" = ANY($1) AND "scope_id" = ANY($2::uuid[])),
-            uuids, context.available_scopes,
-            as: Customer
-          )
+        query_param_counter = 0
+        query = [] of String
+        query_params = Array(Array(UUID) | UUID? | String?).new
+
+        query << %(SELECT * FROM "projections"."customers" WHERE 1=1)
+
+        # Add scope query
+        query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << context.available_scopes
+
+        # Add uuid conditions to query
+        query << %(AND "uuid" = ANY($#{query_param_counter += 1}::uuid[]))
+        query_params << uuids
+
+        if scope_id
+          query << %(AND "scope_id" = $#{query_param_counter += 1})
+          query_params << scope_id
         end
+        if status
+          query << %(AND "status" = $#{query_param_counter += 1})
+          query_params << status
+        end
+
+        @db.query_all(query.join(" "), args: query_params, as: Customer)
       end
 
       def list(
