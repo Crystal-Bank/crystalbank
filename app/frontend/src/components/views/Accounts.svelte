@@ -32,7 +32,7 @@
     showModal = true
     try {
       const res = await apiFetch('GET', '/customers/?limit=200')
-      customerOptions = res.data.map(e => e.attributes)
+      customerOptions = res.data.map(e => e.attributes).filter(c => c.status === 'active')
     } catch { customerOptions = [] }
   }
 
