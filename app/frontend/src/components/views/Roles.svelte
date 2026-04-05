@@ -1,5 +1,5 @@
 <script>
-  import { viewData, pagination, ui, ALL_PERMISSIONS } from '../../lib/store.svelte.js'
+  import { viewData, pagination, ui, PERMISSION_GROUPS } from '../../lib/store.svelte.js'
   import { loadMore, createRole } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
@@ -34,6 +34,24 @@
     const idx = form.selectedPermissions.indexOf(p)
     if (idx === -1) form.selectedPermissions = [...form.selectedPermissions, p]
     else form.selectedPermissions = form.selectedPermissions.filter(x => x !== p)
+  }
+
+  function groupState(group) {
+    const perms = PERMISSION_GROUPS[group]
+    const selected = perms.filter(p => form.selectedPermissions.includes(p)).length
+    if (selected === 0) return 'none'
+    if (selected === perms.length) return 'all'
+    return 'some'
+  }
+
+  function toggleGroup(group) {
+    const perms = PERMISSION_GROUPS[group]
+    if (groupState(group) === 'all') {
+      form.selectedPermissions = form.selectedPermissions.filter(p => !perms.includes(p))
+    } else {
+      const toAdd = perms.filter(p => !form.selectedPermissions.includes(p))
+      form.selectedPermissions = [...form.selectedPermissions, ...toAdd]
+    }
   }
 
   function addScope(scopeId) {
@@ -174,11 +192,25 @@
         <div class="mb-4">
           <label class="field-label">Permissions</label>
           <div class="permission-list">
-            {#each ALL_PERMISSIONS as p (p)}
-              <label class="permission-item">
-                <input type="checkbox" checked={form.selectedPermissions.includes(p)} onchange={() => togglePermission(p)}>
-                <span class="font-mono">{p}</span>
-              </label>
+            {#each Object.entries(PERMISSION_GROUPS) as [group, perms] (group)}
+              <div class="permission-group">
+                <label class="permission-group-header">
+                  <input
+                    type="checkbox"
+                    checked={groupState(group) === 'all'}
+                    indeterminate={groupState(group) === 'some'}
+                    onchange={() => toggleGroup(group)}
+                  >
+                  <span>{group}</span>
+                  <span class="permission-group-count">{perms.filter(p => form.selectedPermissions.includes(p)).length}/{perms.length}</span>
+                </label>
+                {#each perms as p (p)}
+                  <label class="permission-item permission-item--indented">
+                    <input type="checkbox" checked={form.selectedPermissions.includes(p)} onchange={() => togglePermission(p)}>
+                    <span class="font-mono">{p}</span>
+                  </label>
+                {/each}
+              </div>
             {/each}
           </div>
         </div>

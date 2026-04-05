@@ -220,7 +220,14 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .drawer-footer { padding: 1rem 1.5rem; border-top: 1px solid hsl(var(--border)); flex-shrink: 0; }
 
 /* ── Permission list ──────────────────────────────────── */
-.permission-list { border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 2px); max-height: 13rem; overflow-y: auto; background: hsl(var(--muted)); }
+.permission-list { border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 2px); max-height: 18rem; overflow-y: auto; background: hsl(var(--muted)); }
 .permission-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.75rem; font-size: 0.78rem; cursor: pointer; }
 .permission-item:hover { background: white; }
 .permission-item input[type="checkbox"] { cursor: pointer; flex-shrink: 0; }
+.permission-group { border-bottom: 1px solid hsl(var(--border)); }
+.permission-group:last-child { border-bottom: none; }
+.permission-group-header { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; background: hsl(var(--muted)); position: sticky; top: 0; z-index: 1; }
+.permission-group-header:hover { background: hsl(240 4.8% 92%); }
+.permission-group-header input[type="checkbox"] { cursor: pointer; flex-shrink: 0; }
+.permission-group-count { margin-left: auto; font-size: 0.7rem; color: hsl(var(--muted-fg)); font-weight: 400; }
+.permission-item--indented { padding-left: 1.75rem; background: white; }
