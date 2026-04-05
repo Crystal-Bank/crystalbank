@@ -12,7 +12,7 @@ module CrystalBank::Domains::Accounts
           raise CrystalBank::Exception::InvalidArgument.new("At least one customer ID is required") if customer_ids.empty?
 
           # Validate all customer IDs exist, belong to the same scope, and are fully onboarded — single query
-          active_ids = Customers::Queries::Customers.new.find_all(context, customer_ids, scope_id: scope, status: "active").map(&.id).to_set
+          active_ids = Customers::Queries::Customers.new.find_all(context: c, uuids: customer_ids, scope_id: scope, status: "active").map(&.id).to_set
 
           customer_ids.each do |customer_id|
             raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not exist or is not fully onboarded") unless active_ids.includes?(customer_id)
