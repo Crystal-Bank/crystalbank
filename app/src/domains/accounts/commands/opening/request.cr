@@ -11,14 +11,11 @@ module CrystalBank::Domains::Accounts
 
           raise CrystalBank::Exception::InvalidArgument.new("At least one customer ID is required") if customer_ids.empty?
 
-          # Validate all customer IDs exist in the projection under the same scope and are fully onboarded
-          found_customers = Customers::Queries::Customers.new.find_all(customer_ids, scope_id: scope)
-          found_by_id = found_customers.each_with_object({} of UUID => Customers::Queries::Customers::Customer) { |c, h| h[c.id] = c }
+          # Validate all customer IDs exist, belong to the same scope, and are fully onboarded — single query
+          active_ids = Customers::Queries::Customers.new.find_all(customer_ids, scope_id: scope, status: "active").map(&.id).to_set
 
           customer_ids.each do |customer_id|
-            customer = found_by_id[customer_id]?
-            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not exist") unless customer
-            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' is not fully onboarded") unless customer.status == "active"
+            raise CrystalBank::Exception::InvalidArgument.new("Customer '#{customer_id}' does not exist or is not fully onboarded") unless active_ids.includes?(customer_id)
           end
 
           # Create the account creation request event
