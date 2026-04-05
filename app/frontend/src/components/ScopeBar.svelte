@@ -18,7 +18,7 @@
   async function fetchScopes() {
     try {
       const res = await apiFetch('GET', '/scopes/?limit=200')
-      scopeOptions = res.data.map(e => e.attributes)
+      scopeOptions = res.data.map(e => e.attributes).filter(s => s.status === 'active')
     } catch { scopeOptions = [] }
   }
 
