@@ -9,10 +9,10 @@ module CrystalBank
     class CorsHandler
       include HTTP::Handler
 
-      ALLOW_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-      ALLOW_HEADERS = "Authorization, Content-Type, X-Scope, idempotency_key"
+      ALLOW_METHODS  = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+      ALLOW_HEADERS  = "Authorization, Content-Type, X-Scope, idempotency_key"
       EXPOSE_HEADERS = "X-Request-ID"
-      MAX_AGE = "86400"
+      MAX_AGE        = "86400"
 
       def call(context : HTTP::Server::Context)
         origin = context.request.headers["Origin"]?
