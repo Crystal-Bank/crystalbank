@@ -21,7 +21,8 @@ module CrystalBank
 
       get "/" do
         response.content_type = "text/html; charset=utf-8"
-        response.print INDEX_HTML
+        api_url_script = %(<script>window.__API_URL__=#{CrystalBank::Env.api_base_url.to_json}</script>)
+        response.print INDEX_HTML.sub("</head>", "#{api_url_script}</head>")
         response.close
       end
 
