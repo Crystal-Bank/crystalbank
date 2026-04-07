@@ -4,6 +4,8 @@ module CrystalBank
 
     @@application_name : String?
     @@api_domain : String?
+    @@api_base_url : String?
+    @@dashboard_domain : String?
     @@server_environment : String?
     @@server_port : Int32?
     @@server_host : String?
@@ -11,6 +13,18 @@ module CrystalBank
 
     def application_name
       @@application_name ||= ENV["APPLICATION_NAME"]? || "crystalbank"
+    end
+
+    def api_domain : String
+      @@api_domain ||= ENV["API_DOMAIN"]? || "api.crystalbank.xyz"
+    end
+
+    def api_base_url : String
+      @@api_base_url ||= ENV["API_BASE_URL"]? || "https://#{api_domain}"
+    end
+
+    def dashboard_domain : String
+      @@dashboard_domain ||= ENV["DASHBOARD_DOMAIN"]? || "dashboard.crystalbank.xyz"
     end
 
     def api_domains : Array(String)

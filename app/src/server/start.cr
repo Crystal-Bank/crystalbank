@@ -12,6 +12,9 @@ require "./openapi"
 # Load Frontend controller (serves the embedded SPA at /)
 require "./frontend"
 
+# Load CORS handler (must be defined before server config registers it)
+require "./cors"
+
 # Server required after application controllers
 require "action-controller/server"
 

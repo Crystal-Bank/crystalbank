@@ -34,6 +34,7 @@ module CrystalBank
 
       # Add handlers that should run before your application
       ActionController::Server.before(
+        CrystalBank::Server::CorsHandler.new,
         ActionController::LogHandler.new(filter_params),
         HTTP::CompressHandler.new
       )

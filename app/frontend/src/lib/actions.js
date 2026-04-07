@@ -1,5 +1,5 @@
 import { auth, ui, viewData, pagination, VIEW_PATHS, approvalsMeta } from './store.svelte.js'
-import { apiFetch } from './api.js'
+import { apiFetch, API_BASE } from './api.js'
 
 // ── Toast ────────────────────────────────────────────────
 
@@ -17,7 +17,7 @@ export function addToast(msg, type = 'success') {
 export async function login(clientId, clientSecret) {
   ui.loading = true
   try {
-    const res = await fetch('/oauth/token', {
+    const res = await fetch(API_BASE + '/oauth/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
