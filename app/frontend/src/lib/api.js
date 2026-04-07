@@ -1,5 +1,7 @@
 import { auth } from './store.svelte.js'
 
+export const API_BASE = import.meta.env.VITE_API_URL ?? ''
+
 function clearSession() {
   auth.token = ''
   localStorage.removeItem('cb_token')
@@ -13,7 +15,7 @@ export async function apiFetch(method, path, body = null, opts = {}) {
   if (opts.scope !== false && auth.scope) headers['X-Scope'] = auth.scope
   if (opts.idempotency) headers['idempotency_key'] = crypto.randomUUID()
 
-  const res = await fetch(path, {
+  const res = await fetch(API_BASE + path, {
     method,
     headers,
     body: body ? JSON.stringify(body) : null,
