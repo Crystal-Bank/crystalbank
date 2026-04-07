@@ -16,22 +16,28 @@ module CrystalBank
 
       def call(context : HTTP::Server::Context)
         origin = context.request.headers["Origin"]?
-
-        if origin && allowed_origin?(origin)
-          h = context.response.headers
-          h["Access-Control-Allow-Origin"] = origin
-          h["Access-Control-Allow-Methods"] = ALLOW_METHODS
-          h["Access-Control-Allow-Headers"] = ALLOW_HEADERS
-          h["Access-Control-Expose-Headers"] = EXPOSE_HEADERS
-          h["Access-Control-Max-Age"] = MAX_AGE
-        end
+        allowed = !!(origin && allowed_origin?(origin))
 
         if context.request.method == "OPTIONS"
+          if allowed
+            set_cors_headers(context.response.headers, origin.not_nil!)
+          end
           context.response.status_code = 204
           return
         end
 
+        set_cors_headers(context.response.headers, origin.not_nil!) if allowed
         call_next(context)
+        set_cors_headers(context.response.headers, origin.not_nil!) if allowed
+      end
+
+      private def set_cors_headers(headers : HTTP::Headers, origin : String)
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Methods"] = ALLOW_METHODS
+        headers["Access-Control-Allow-Headers"] = ALLOW_HEADERS
+        headers["Access-Control-Expose-Headers"] = EXPOSE_HEADERS
+        headers["Access-Control-Max-Age"] = MAX_AGE
+        headers["Vary"] = "Origin"
       end
 
       private def allowed_origin?(origin : String) : Bool

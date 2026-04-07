@@ -12,8 +12,7 @@ module CrystalBank
       def check_api_domain
         host = (request.headers["Host"]? || "").split(":").first
         return if host == CrystalBank::Env.api_domain
-        response.status_code = 404
-        response.close
+        head :not_found
       end
 
       @[AC::Route::Filter(:before_action)]

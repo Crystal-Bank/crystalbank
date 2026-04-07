@@ -15,8 +15,7 @@ module CrystalBank
       def check_dashboard_domain
         host = (request.headers["Host"]? || "").split(":").first
         return if host == CrystalBank::Env.dashboard_domain
-        response.status_code = 404
-        response.close
+        head :not_found
       end
 
       get "/" do
