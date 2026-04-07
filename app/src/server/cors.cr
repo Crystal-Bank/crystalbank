@@ -24,6 +24,8 @@ module CrystalBank
           h["Access-Control-Allow-Headers"] = ALLOW_HEADERS
           h["Access-Control-Expose-Headers"] = EXPOSE_HEADERS
           h["Access-Control-Max-Age"] = MAX_AGE
+          h["Access-Control-Allow-Credentials"] = "true" # Critical for Auth
+          h["Vary"] = "Origin"                           # Critical for dynamic origins
         end
 
         if context.request.method == "OPTIONS"
