@@ -1,6 +1,8 @@
 import { auth } from './store.svelte.js'
 
-export const API_BASE = import.meta.env.VITE_API_URL ?? ''
+// Injected at runtime by the Crystal server into window.__API_URL__.
+// Falls back to empty string so relative paths work in a Vite dev-server session.
+export const API_BASE = window.__API_URL__ ?? ''
 
 function clearSession() {
   auth.token = ''
