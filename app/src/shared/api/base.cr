@@ -1,4 +1,5 @@
 require "action-controller"
+require "uri"
 require "./responses"
 require "./error_handler"
 
@@ -14,6 +15,19 @@ module CrystalBank
         return if host == CrystalBank::Env.api_domain
         response.status_code = 404
         response.close
+      end
+
+      @[AC::Route::Filter(:before_action)]
+      def set_cors_headers
+        return unless origin = request.headers["Origin"]?
+        host = URI.parse(origin).host || ""
+        return unless host == CrystalBank::Env.dashboard_domain ||
+                      host == "localhost" || host == "127.0.0.1"
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, X-Scope, idempotency_key"
+        response.headers["Access-Control-Expose-Headers"] = "X-Request-ID"
+      rescue URI::Error
       end
 
       @[AC::Route::Filter(:before_action)]
