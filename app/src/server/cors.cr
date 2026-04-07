@@ -35,7 +35,8 @@ module CrystalBank
       end
 
       private def allowed_origin?(origin : String) : Bool
-        URI.parse(origin).host == CrystalBank::Env.dashboard_domain
+        host = URI.parse(origin).host || ""
+        host == CrystalBank::Env.dashboard_domain || host == "localhost" || host == "127.0.0.1"
       rescue
         false
       end
