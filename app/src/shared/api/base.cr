@@ -9,6 +9,14 @@ module CrystalBank
       include CrystalBank::Api::Responses
 
       @[AC::Route::Filter(:before_action)]
+      def check_api_domain
+        host = (request.headers["Host"]? || "").split(":").first
+        return if host == CrystalBank::Env.api_domain
+        response.status_code = 404
+        response.close
+      end
+
+      @[AC::Route::Filter(:before_action)]
       def set_request_id
         request_id = UUID.v7.to_s
         Log.context.set(

@@ -11,6 +11,14 @@ module CrystalBank
       APP_JS     = {{ read_file("#{__DIR__}/../../public/app.js") }}
       APP_CSS    = {{ read_file("#{__DIR__}/../../public/style.css") }}
 
+      @[AC::Route::Filter(:before_action)]
+      def check_dashboard_domain
+        host = (request.headers["Host"]? || "").split(":").first
+        return if host == CrystalBank::Env.dashboard_domain
+        response.status_code = 404
+        response.close
+      end
+
       get "/" do
         response.content_type = "text/html; charset=utf-8"
         response.print INDEX_HTML
