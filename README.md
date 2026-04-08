@@ -6,7 +6,7 @@
 
 ## What it does
 
-At its core, CrystalBank is an **event-sourced ledger** with first-class support for accounts, transfers, and customers. Every state change is recorded as an immutable event, making the full history of the system auditable and replayable.
+At its core, CrystalBank is an **event-sourced ledger** (powered by [crystal-es](https://github.com/tristanholl/crystal-es)) with first-class support for accounts, transfers, and customers. Every state change is recorded as an immutable event, making the full history of the system auditable and replayable.
 
 The system is **multi-tenant ready** through an embedded roles and permissions model that provides fine-grained data scoping and ownership. Access rights and data visibility are controlled at the data level — not just at the API boundary.
 
@@ -37,7 +37,7 @@ A **Svelte-based frontend dashboard** provides a visual interface to the system,
 - More refined and optimized frontend
 - Dedicated project website
 - Self sign-up to the platform
-- Full event replay to re-project state at any point in time (via the `crystal-es` library)
+- Full event replay to re-project state at any point in time (via [crystal-es](https://github.com/tristanholl/crystal-es))
 - ISO 20022 connectors
 - ISO 8583 connectors
 
