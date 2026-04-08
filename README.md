@@ -2,17 +2,44 @@
 
 # crystalbank
 
-An open source project to showcase a banking system written in Crystal. The project will progress along the following domains:
+**CrystalBank** is an open source, event-sourced multi-purpose ledger system built in [Crystal](https://crystal-lang.org). It is designed to serve as a solid foundation for financial applications — demonstrating how core banking concepts can be implemented cleanly on a minimal, self-contained infrastructure.
 
-1. Accounts :white_check_mark:
-2. Transfers :white_check_mark:
-3. Customers :white_check_mark:
-4. Users :white_check_mark:
-5. ApiKeys :white_check_mark:
-6. Authentication :white_check_mark:
-7. Approvals :white_check_mark:
-8. Roles & Permissions (Data access rights) :white_check_mark:
-9. Scopes (Data ownership) :hourglass_flowing_sand:
+## What it does
+
+At its core, CrystalBank is an **event-sourced ledger** (powered by [crystal-es](https://github.com/tristanholl/crystal-es)) with first-class support for accounts, transfers, and customers. Every state change is recorded as an immutable event, making the full history of the system auditable and replayable.
+
+The system is **multi-tenant ready** through an embedded roles and permissions model that provides fine-grained data scoping and ownership. Access rights and data visibility are controlled at the data level — not just at the API boundary.
+
+**Multi-layer approval workflows** allow financial operations to be reviewed and approved across multiple levels before they take effect, making the system suitable for regulated environments where maker-checker controls are required.
+
+The entire stack runs on **PostgreSQL** — the same database instance handles the event store, projections, and the outbox queue. This keeps the infrastructure footprint minimal while preserving flexibility across different deployment contexts.
+
+A **Svelte-based frontend dashboard** provides a visual interface to the system, making it accessible to non-engineers and easier to demonstrate.
+
+## Capabilities
+
+| Domain | Status | Description |
+|---|---|---|
+| Accounts | :white_check_mark: | Full account lifecycle management including opening, blocking, and unblocking with stackable cause tracking |
+| Payments | :white_check_mark: | SEPA credit transfer processing with approval workflow integration and automated ledger posting |
+| Ledger | :white_check_mark: | Double-entry bookkeeping engine recording all money movements as immutable debit/credit entries |
+| Customers | :white_check_mark: | Customer onboarding and profile management for natural persons and organisations |
+| Users | :white_check_mark: | User management with role assignment and scope-based access control |
+| API Keys | :white_check_mark: | Generation, rotation, and revocation of API keys for programmatic access |
+| Authentication | :white_check_mark: | API key and credential-based authentication for both human users and machine clients |
+| Approval Workflows | :white_check_mark: | Multi-layer maker-checker workflows allowing sensitive operations to be reviewed and approved across multiple levels |
+| Roles & Permissions | :white_check_mark: | Fine-grained permission model with role grouping for controlling what each user can see and do |
+| Scopes | :white_check_mark: | Hierarchical tenant and business unit isolation — controls data ownership and visibility across the ledger |
+| Events | :white_check_mark: | Queryable audit trail exposing the full stream of domain events to authorised users |
+
+## Roadmap
+
+- More refined and optimized frontend
+- Dedicated project website
+- Self sign-up to the platform
+- Full event replay to re-project state at any point in time (via [crystal-es](https://github.com/tristanholl/crystal-es))
+- ISO 20022 connectors
+- ISO 8583 connectors
 
 ## Project Structure
 
