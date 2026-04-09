@@ -8,7 +8,8 @@ module CrystalBank::Domains::Scopes
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           # Check if provided parent scope can be found and is active
-          parent_scope_id = r.parent_scope_id
+          # Default to the current x-scope when no explicit parent is provided
+          parent_scope_id = r.parent_scope_id || c.scope
           unless parent_scope_id.nil?
             aggregate = Scopes::Aggregate.new(parent_scope_id)
             begin
