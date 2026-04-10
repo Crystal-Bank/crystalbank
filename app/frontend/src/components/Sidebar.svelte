@@ -51,23 +51,26 @@
   })
 
   async function fetchScopes() {
+    let meScope = null
+    try {
+      const me = await apiFetch('GET', '/me/', null, { scope: false })
+      if (me.scope) meScope = { id: me.scope.id, name: me.scope.name }
+    } catch {}
+
     try {
       const res = await apiFetch('GET', '/scopes/?limit=200', null, { scope: false })
-      scopeOptions = res.data.map(e => e.attributes)
+      const scopes = res.data.map(e => e.attributes).filter(s => s.status !== 'pending_approval')
+      if (meScope && !scopes.find(s => s.id === meScope.id)) {
+        scopes.push(meScope)
+      }
+      scopeOptions = scopes
       if (!auth.scope) {
         const root = scopeOptions.find(s => !s.parent_scope_id)
         if (root) setScope(root.id)
       }
-    } catch { scopeOptions = [] }
-
-    if (scopeOptions.length === 0) {
-      try {
-        const me = await apiFetch('GET', '/me/', null, { scope: false })
-        if (me.scope) {
-          scopeOptions = [{ id: me.scope.id, name: me.scope.name }]
-          if (!auth.scope) setScope(me.scope.id)
-        }
-      } catch {}
+    } catch {
+      scopeOptions = meScope ? [meScope] : []
+      if (meScope && !auth.scope) setScope(meScope.id)
     }
 
     scopesFetched = true
