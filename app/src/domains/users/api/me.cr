@@ -16,8 +16,9 @@ module CrystalBank::Domains::Users
         getter user_id : UUID
         getter role_ids : Array(UUID)
         getter scope : ScopeInfo?
+        getter scope_permissions : Array(String)
 
-        def initialize(@user_id : UUID, @role_ids : Array(UUID), @scope : ScopeInfo?); end
+        def initialize(@user_id : UUID, @role_ids : Array(UUID), @scope : ScopeInfo?, @scope_permissions : Array(String)); end
       end
 
       # Me
@@ -34,7 +35,9 @@ module CrystalBank::Domains::Users
                        ScopeInfo.new(s.id, s.name)
                      end
 
-        MeResponse.new(context.user_id, context.roles, scope_info)
+        scope_permissions = Roles::Queries::RolesPermissions.new.all_permissions(context.roles)
+
+        MeResponse.new(context.user_id, context.roles, scope_info, scope_permissions)
       end
     end
   end

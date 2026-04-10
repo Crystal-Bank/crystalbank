@@ -9,8 +9,28 @@ module CrystalBank::Domains::Roles
         getter scope_ids : Array(UUID)
       end
 
+      struct RolePerms
+        include DB::Serializable
+        include DB::Serializable::NonStrict
+
+        @[DB::Field(converter: CrystalBank::Converters::GenericArray(CrystalBank::Permissions))]
+        getter permissions : Array(CrystalBank::Permissions)
+      end
+
       def initialize
         @db = ES::Config.projection_database
+      end
+
+      def all_permissions(roles : Array(UUID)) : Array(String)
+        return [] of String if roles.empty?
+
+        rs = @db.query_all(
+          %(SELECT permissions FROM projections.roles WHERE uuid = ANY($1::uuid[])),
+          args: [roles],
+          as: RolePerms
+        )
+
+        rs.flat_map(&.permissions).uniq.map(&.to_s).sort
       end
 
       def available_scopes(roles : Array(UUID), permission : CrystalBank::Permissions) : Array(UUID)

@@ -3304,9 +3304,15 @@ components:
           - id
           - name
           nullable: true
+        scope_permissions:
+          type: array
+          description: Merged list of unique permissions from all assigned roles, sorted alphabetically
+          items:
+            type: string
       required:
       - user_id
       - role_ids
+      - scope_permissions
     CrystalBank__Api__Responses__ErrorResponse:
       type: object
       properties:
