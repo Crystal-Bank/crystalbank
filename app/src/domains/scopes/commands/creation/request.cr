@@ -9,7 +9,7 @@ module CrystalBank::Domains::Scopes
 
           # Check if provided parent scope can be found and is active
           # Default to the current x-scope when no explicit parent is provided
-          parent_scope_id = r.parent_scope_id || c.scope
+          parent_scope_id = r.parent_scope_id || scope
           unless parent_scope_id.nil?
             aggregate = Scopes::Aggregate.new(parent_scope_id)
             begin
