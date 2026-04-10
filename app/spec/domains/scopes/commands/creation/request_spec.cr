@@ -1,8 +1,13 @@
 require "../../../../spec_helper"
 
 describe CrystalBank::Domains::Scopes::Creation::Commands::Request do
-  it "creates a scope without a parent scope" do
+  it "defaults parent_scope_id to x-scope when not provided" do
     scope_id = UUID.v7
+    scope_requested = Test::Scope::Events::Creation::Requested.new.create(aggr_id: scope_id)
+    scope_accepted = Test::Scope::Events::Creation::Accepted.new.create(aggr_id: scope_id)
+    TEST_EVENT_STORE.append(scope_requested)
+    TEST_EVENT_STORE.append(scope_accepted)
+
     user_id = UUID.v7
 
     context = CrystalBank::Api::Context.new(
@@ -13,7 +18,7 @@ describe CrystalBank::Domains::Scopes::Creation::Commands::Request do
       available_scopes: [scope_id]
     )
 
-    request = Scopes::Api::Requests::CreationRequest.from_json(%({"name": "Root Scope"}))
+    request = Scopes::Api::Requests::CreationRequest.from_json(%({"name": "Child Scope"}))
     result = Scopes::Creation::Commands::Request.new.call(request, context)
 
     result.should be_a(UUID)
@@ -21,8 +26,8 @@ describe CrystalBank::Domains::Scopes::Creation::Commands::Request do
     aggregate = Scopes::Aggregate.new(result)
     aggregate.hydrate
 
-    aggregate.state.name.should eq("Root Scope")
-    aggregate.state.parent_scope_id.should be_nil
+    aggregate.state.name.should eq("Child Scope")
+    aggregate.state.parent_scope_id.should eq(scope_id)
     aggregate.state.scope_id.should eq(scope_id)
   end
 
