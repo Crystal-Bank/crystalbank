@@ -6,6 +6,7 @@ require "./initializers/projections"
 require "./initializers/queue"
 
 require "./permissions"
+require "./permission_groups"
 
 require "./types/accounts"
 require "./types/account_blocks"
