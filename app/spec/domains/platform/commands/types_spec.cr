@@ -65,8 +65,9 @@ describe Platform::Types::Commands::FetchCurrencies do
     result.should eq(Platform::Queries::Currencies.new.list)
   end
 
-  it "includes all supported currencies" do
+  it "contains exactly the supported currencies" do
     result = Platform::Types::Commands::FetchCurrencies.new.call(context)
+    result.size.should eq(CrystalBank::Types::Currencies::Supported.values.size)
     CrystalBank::Types::Currencies::Supported.values.each do |supported|
       result.should contain(supported.to_s)
     end

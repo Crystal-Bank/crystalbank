@@ -74,17 +74,24 @@ describe CrystalBank::Domains::Platform::Queries::Currencies do
     result.should eq(result.sort)
   end
 
-  it "includes known ISO 4217 currency codes" do
+  it "includes all supported currency codes" do
     result = subject.list
     result.should contain("eur")
     result.should contain("usd")
     result.should contain("gbp")
     result.should contain("chf")
+    result.should contain("jpy")
   end
 
-  it "contains all defined available currencies" do
+  it "contains exactly the supported currencies" do
     result = subject.list
-    result.size.should eq(CrystalBank::Types::Currencies::Available.values.size)
+    result.size.should eq(CrystalBank::Types::Currencies::Supported.values.size)
+  end
+
+  it "does not include unsupported currencies" do
+    result = subject.list
+    result.should_not contain("aed")
+    result.should_not contain("zar")
   end
 end
 

@@ -14,7 +14,7 @@ module CrystalBank::Domains::Platform
 
     class Currencies
       def list : Array(String)
-        CrystalBank::Types::Currencies::Available.values.map(&.to_s).sort
+        CrystalBank::Types::Currencies::Supported.values.map(&.to_s).sort
       end
     end
 
