@@ -66,6 +66,9 @@ module CrystalBank
     # Me
     READ_me
 
+    # Platform Types
+    READ_platform_types
+
     def to_s
       super.to_s.downcase
     end
