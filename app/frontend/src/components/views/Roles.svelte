@@ -11,6 +11,20 @@
   let scopeSearch = $state('')
   let showScopeDropdown = $state(false)
 
+  let allSelected = $derived(
+    permissionOptions.length > 0 && form.selectedPermissions.length === permissionOptions.length
+  )
+  let someSelected = $derived(
+    form.selectedPermissions.length > 0 && form.selectedPermissions.length < permissionOptions.length
+  )
+
+  let selectAllEl = $state(null)
+  $effect(() => { if (selectAllEl) selectAllEl.indeterminate = someSelected })
+
+  function toggleAll() {
+    form.selectedPermissions = allSelected ? [] : [...permissionOptions]
+  }
+
   let scopeSuggestions = $derived(
     scopeOptions
       .filter(s => {
@@ -179,6 +193,10 @@
         <div class="mb-4">
           <label class="field-label">Permissions</label>
           <div class="permission-list">
+            <label class="permission-item border-b border-zinc-200 mb-0.5 pb-0.5">
+              <input type="checkbox" bind:this={selectAllEl} checked={allSelected} onchange={toggleAll}>
+              <span class="font-mono text-zinc-500">Select all</span>
+            </label>
             {#each permissionOptions as p (p)}
               <label class="permission-item">
                 <input type="checkbox" checked={form.selectedPermissions.includes(p)} onchange={() => togglePermission(p)}>
