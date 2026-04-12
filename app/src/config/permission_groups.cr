@@ -10,7 +10,7 @@ module CrystalBank
         name: "Accounts",
         description: "Permissions governing account lifecycle: opening, blocking, unblocking, and compliance approvals.",
         permissions: {
-          Permissions::READ_accounts_list                          => PermissionMeta.new(description: "List all accounts visible within the caller's scope."),
+          Permissions::READ_accounts_list                         => PermissionMeta.new(description: "List all accounts visible within the caller's scope."),
           Permissions::WRITE_accounts_opening_request             => PermissionMeta.new(description: "Submit a request to open a new account."),
           Permissions::WRITE_accounts_blocking_request            => PermissionMeta.new(description: "Submit a request to place a block on an account."),
           Permissions::WRITE_accounts_unblocking_request          => PermissionMeta.new(description: "Submit a request to lift an existing block from an account."),
@@ -69,8 +69,7 @@ module CrystalBank
         name: "Transactions",
         description: "Permissions for initiating internal fund transfers between accounts.",
         permissions: {
-          Permissions::WRITE_transactions_internal_transfers_initiation_request =>
-            PermissionMeta.new(description: "Initiate an internal transfer between two accounts within the platform."),
+          Permissions::WRITE_transactions_internal_transfers_initiation_request => PermissionMeta.new(description: "Initiate an internal transfer between two accounts within the platform."),
         } of Permissions => PermissionMeta,
       ),
       Group.new(
@@ -86,10 +85,10 @@ module CrystalBank
         name: "Users",
         description: "Permissions for onboarding users, assigning roles, and querying user records.",
         permissions: {
-          Permissions::WRITE_users_onboarding_request              => PermissionMeta.new(description: "Submit a request to onboard a new platform user."),
-          Permissions::WRITE_users_assign_roles_request            => PermissionMeta.new(description: "Submit a request to assign one or more roles to a user."),
-          Permissions::READ_users_list                             => PermissionMeta.new(description: "List all users visible within the caller's scope."),
-          Permissions::WRITE_users_onboarding_compliance_approval  => PermissionMeta.new(description: "Provide compliance sign-off on a pending user onboarding request."),
+          Permissions::WRITE_users_onboarding_request             => PermissionMeta.new(description: "Submit a request to onboard a new platform user."),
+          Permissions::WRITE_users_assign_roles_request           => PermissionMeta.new(description: "Submit a request to assign one or more roles to a user."),
+          Permissions::READ_users_list                            => PermissionMeta.new(description: "List all users visible within the caller's scope."),
+          Permissions::WRITE_users_onboarding_compliance_approval => PermissionMeta.new(description: "Provide compliance sign-off on a pending user onboarding request."),
         } of Permissions => PermissionMeta,
       ),
       Group.new(
