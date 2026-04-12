@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.12.1
+  version: 0.13.1
 paths:
   /.well-known/openid-configuration:
     get:
@@ -1765,6 +1765,247 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /platform/types/permissions:
+    get:
+      summary: Get permissions
+      description: 'Get permissions
+
+        Returns a sorted list of all permission values available in the platform.
+
+        Intended to populate form dropdowns and value pickers on the frontend.
+
+
+        Required permission:
+
+        - **read_platform_types**'
+      tags:
+      - Types
+      operationId: CrystalBank::Domains::Platform::Api::Types_get_permissions
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /platform/types/account-types:
+    get:
+      summary: Get account types
+      description: 'Get account types
+
+        Returns a sorted list of all account type values available in the platform.
+
+        Intended to populate form dropdowns and value pickers on the frontend.
+
+
+        Required permission:
+
+        - **read_platform_types**'
+      tags:
+      - Types
+      operationId: CrystalBank::Domains::Platform::Api::Types_get_account_types
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /platform/types/currencies:
+    get:
+      summary: Get currencies
+      description: 'Get currencies
+
+        Returns a sorted list of all ISO 4217 currency codes available in the platform.
+
+        Intended to populate form dropdowns and value pickers on the frontend.
+
+
+        Required permission:
+
+        - **read_platform_types**'
+      tags:
+      - Types
+      operationId: CrystalBank::Domains::Platform::Api::Types_get_currencies
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /platform/types/customer-types:
+    get:
+      summary: Get customer types
+      description: 'Get customer types
+
+        Returns a sorted list of all customer type values available in the platform.
+
+        Intended to populate form dropdowns and value pickers on the frontend.
+
+
+        Required permission:
+
+        - **read_platform_types**'
+      tags:
+      - Types
+      operationId: CrystalBank::Domains::Platform::Api::Types_get_customer_types
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /platform/types/ledger-entry-types:
+    get:
+      summary: Get ledger transaction entry types
+      description: 'Get ledger transaction entry types
+
+        Returns a sorted list of all ledger transaction entry type values available
+        in the platform.
+
+        Intended to populate form dropdowns and value pickers on the frontend.
+
+
+        Required permission:
+
+        - **read_platform_types**'
+      tags:
+      - Types
+      operationId: CrystalBank::Domains::Platform::Api::Types_get_ledger_entry_types
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
 components:
   schemas:
     CrystalBank__Api__JWKS__OpenIDConfiguration:
@@ -2555,6 +2796,7 @@ components:
             - write_payments_sepa_credit_transfers_approval
             - read_events_list
             - read_me
+            - read_platform_types
         scopes:
           type: array
           items:
@@ -2671,6 +2913,7 @@ components:
                       - write_payments_sepa_credit_transfers_approval
                       - read_events_list
                       - read_me
+                      - read_platform_types
                   scopes:
                     type: array
                     description: Scope the role has access to
@@ -3307,6 +3550,16 @@ components:
       required:
       - user_id
       - role_ids
+    CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse:
+      type: object
+      properties:
+        values:
+          type: array
+          description: Sorted list of type values
+          items:
+            type: string
+      required:
+      - values
     CrystalBank__Api__Responses__ErrorResponse:
       type: object
       properties:

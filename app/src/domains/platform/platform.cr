@@ -4,3 +4,5 @@ module CrystalBank
     end
   end
 end
+
+alias Platform = CrystalBank::Domains::Platform
