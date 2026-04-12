@@ -1,15 +1,21 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createCustomer } from '../../lib/actions.js'
+  import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   let showModal = $state(false)
   let form = $state({ name: '', type: '' })
+  let customerTypeOptions = $state([])
   let drawerCustomer = $state(null)
 
-  function openModal() {
+  async function openModal() {
     form = { name: '', type: '' }
     showModal = true
+    try {
+      const res = await apiFetch('GET', '/platform/types/customer-types')
+      customerTypeOptions = res.values
+    } catch { customerTypeOptions = [] }
   }
 
   async function handleSubmit() {
@@ -115,8 +121,9 @@
           <label class="field-label">Customer Type</label>
           <select bind:value={form.type} class="field-input field-select" required>
             <option value="">Select type...</option>
-            <option value="individual">Individual</option>
-            <option value="business">Business</option>
+            {#each customerTypeOptions as t (t)}
+              <option value={t}>{t.replace(/\b\w/g, c => c.toUpperCase())}</option>
+            {/each}
           </select>
         </div>
         <div class="flex gap-2 justify-end">

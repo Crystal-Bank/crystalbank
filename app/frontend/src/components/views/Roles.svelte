@@ -1,5 +1,5 @@
 <script>
-  import { viewData, pagination, ui, ALL_PERMISSIONS } from '../../lib/store.svelte.js'
+  import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createRole } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
@@ -7,6 +7,7 @@
   let showModal = $state(false)
   let form = $state({ name: '', selectedPermissions: [], selectedScopes: [] })
   let scopeOptions = $state([])
+  let permissionOptions = $state([])
   let scopeSearch = $state('')
   let showScopeDropdown = $state(false)
 
@@ -24,10 +25,14 @@
     form = { name: '', selectedPermissions: [], selectedScopes: [] }
     scopeSearch = ''
     showModal = true
-    try {
-      const res = await apiFetch('GET', '/scopes/?limit=200')
-      scopeOptions = res.data.map(e => e.attributes).filter(s => s.status === 'active')
-    } catch { scopeOptions = [] }
+    const results = await Promise.allSettled([
+      apiFetch('GET', '/scopes/?limit=200'),
+      apiFetch('GET', '/platform/types/permissions'),
+    ])
+    scopeOptions = results[0].status === 'fulfilled'
+      ? results[0].value.data.map(e => e.attributes).filter(s => s.status === 'active')
+      : []
+    permissionOptions = results[1].status === 'fulfilled' ? results[1].value.values : []
   }
 
   function togglePermission(p) {
@@ -174,7 +179,7 @@
         <div class="mb-4">
           <label class="field-label">Permissions</label>
           <div class="permission-list">
-            {#each ALL_PERMISSIONS as p (p)}
+            {#each permissionOptions as p (p)}
               <label class="permission-item">
                 <input type="checkbox" checked={form.selectedPermissions.includes(p)} onchange={() => togglePermission(p)}>
                 <span class="font-mono">{p}</span>

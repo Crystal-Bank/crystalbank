@@ -1,5 +1,5 @@
 <script>
-  import { viewData, pagination, ui, SUPPORTED_CURRENCIES } from '../../lib/store.svelte.js'
+  import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createAccount } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
@@ -13,6 +13,8 @@
   let showModal = $state(false)
   let form = $state({ name: '', type: '', selectedCurrencies: [], customerIds: [] })
   let customerOptions = $state([])
+  let accountTypeOptions = $state([])
+  let currencyOptions = $state([])
   let customerSearch = $state('')
   let showCustomerDropdown = $state(false)
 
@@ -30,10 +32,16 @@
     form = { name: '', type: '', selectedCurrencies: [], customerIds: [] }
     customerSearch = ''
     showModal = true
-    try {
-      const res = await apiFetch('GET', '/customers/?limit=200')
-      customerOptions = res.data.map(e => e.attributes).filter(c => c.status === 'active')
-    } catch { customerOptions = [] }
+    const results = await Promise.allSettled([
+      apiFetch('GET', '/customers/?limit=200'),
+      apiFetch('GET', '/platform/types/account-types'),
+      apiFetch('GET', '/platform/types/currencies'),
+    ])
+    customerOptions = results[0].status === 'fulfilled'
+      ? results[0].value.data.map(e => e.attributes).filter(c => c.status === 'active')
+      : []
+    accountTypeOptions = results[1].status === 'fulfilled' ? results[1].value.values : []
+    currencyOptions = results[2].status === 'fulfilled' ? results[2].value.values : []
   }
 
   function toggleCurrency(c) {
@@ -129,16 +137,15 @@
           <label class="field-label">Account Type</label>
           <select bind:value={form.type} class="field-input field-select" required>
             <option value="">Select type...</option>
-            <option value="checking">Checking</option>
-            <option value="overnight_money">Overnight Money</option>
-            <option value="savings">Savings</option>
-            <option value="card">Card</option>
+            {#each accountTypeOptions as t (t)}
+              <option value={t}>{t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
+            {/each}
           </select>
         </div>
         <div class="mb-4">
           <label class="field-label">Currencies</label>
           <div class="checkbox-grid flex gap-4 flex-wrap mt-1">
-            {#each SUPPORTED_CURRENCIES as c (c)}
+            {#each currencyOptions as c (c)}
               <label class="checkbox-item">
                 <input type="checkbox" checked={form.selectedCurrencies.includes(c)} onchange={() => toggleCurrency(c)}>
                 <span class="font-mono text-sm">{c.toUpperCase()}</span>

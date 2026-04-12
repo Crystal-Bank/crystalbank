@@ -7,6 +7,8 @@
 
   let showModal = $state(false)
   let accountOptions = $state([])
+  let currencyOptions = $state([])
+  let ledgerEntryTypeOptions = $state([])
   let activeDropdown = $state(-1)
   let entryCounter = $state(1)
 
@@ -46,10 +48,16 @@
     entryCounter = 1
     activeDropdown = -1
     showModal = true
-    try {
-      const res = await apiFetch('GET', '/accounts/?limit=200')
-      accountOptions = res.data.map(e => e.attributes)
-    } catch { accountOptions = [] }
+    const results = await Promise.allSettled([
+      apiFetch('GET', '/accounts/?limit=200'),
+      apiFetch('GET', '/platform/types/currencies'),
+      apiFetch('GET', '/platform/types/ledger-entry-types'),
+    ])
+    accountOptions = results[0].status === 'fulfilled'
+      ? results[0].value.data.map(e => e.attributes)
+      : []
+    currencyOptions = results[1].status === 'fulfilled' ? results[1].value.values : []
+    ledgerEntryTypeOptions = results[2].status === 'fulfilled' ? results[2].value.values : []
   }
 
   function addEntry() {
@@ -225,11 +233,9 @@
             <label class="field-label">Currency</label>
             <select bind:value={form.currency} class="field-input field-select" required>
               <option value="">Select...</option>
-              <option value="chf">CHF</option>
-              <option value="eur">EUR</option>
-              <option value="gbp">GBP</option>
-              <option value="jpy">JPY</option>
-              <option value="usd">USD</option>
+              {#each currencyOptions as c (c)}
+                <option value={c}>{c.toUpperCase()}</option>
+              {/each}
             </select>
           </div>
           <div>
@@ -322,44 +328,9 @@
                 <div>
                   <label class="field-label text-xs">Entry Type</label>
                   <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
-                    <optgroup label="Core">
-                      <option value="principal">Principal</option>
-                      <option value="settlement">Settlement</option>
-                      <option value="sepa_credit_transfer">SEPA Credit Transfer</option>
-                      <option value="transaction_fee">Transaction Fee</option>
-                    </optgroup>
-                    <optgroup label="Interest">
-                      <option value="interest">Interest</option>
-                      <option value="accrued_interest">Accrued Interest</option>
-                      <option value="penalty_interest">Penalty Interest</option>
-                    </optgroup>
-                    <optgroup label="Fees">
-                      <option value="overdraft_fee">Overdraft Fee</option>
-                      <option value="maintenance_fee">Maintenance Fee</option>
-                      <option value="commission">Commission</option>
-                      <option value="foreign_exchange_fee">Foreign Exchange Fee</option>
-                    </optgroup>
-                    <optgroup label="FX &amp; Valuation">
-                      <option value="fx_gain">FX Gain</option>
-                      <option value="fx_loss">FX Loss</option>
-                      <option value="revaluation">Revaluation</option>
-                    </optgroup>
-                    <optgroup label="Credit Events">
-                      <option value="penalty">Penalty</option>
-                      <option value="charge_off">Charge Off</option>
-                      <option value="provision">Provision</option>
-                    </optgroup>
-                    <optgroup label="Corporate Actions">
-                      <option value="dividend">Dividend</option>
-                      <option value="premium">Premium</option>
-                      <option value="rebate">Rebate</option>
-                    </optgroup>
-                    <optgroup label="Operational">
-                      <option value="adjustment">Adjustment</option>
-                      <option value="reversal">Reversal</option>
-                      <option value="collateral">Collateral</option>
-                      <option value="escrow">Escrow</option>
-                    </optgroup>
+                    {#each ledgerEntryTypeOptions as t (t)}
+                      <option value={t}>{t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
+                    {/each}
                   </select>
                 </div>
 
