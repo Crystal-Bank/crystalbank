@@ -1,6 +1,6 @@
 <script>
   import { NAV_SECTIONS, auth } from '../lib/store.svelte.js'
-  import { switchView, logout, setScope } from '../lib/actions.js'
+  import { switchView, logout, setScope, refreshMe } from '../lib/actions.js'
   import { apiFetch } from '../lib/api.js'
   import { onMount } from 'svelte'
 
@@ -66,11 +66,15 @@
       scopeOptions = scopes
       if (!auth.scope) {
         const root = scopeOptions.find(s => !s.parent_scope_id)
-        if (root) setScope(root.id)
+        if (root) setScope(root.id)  // setScope calls refreshMe internally
+      } else {
+        // Scope was restored from localStorage — refreshMe was not called via setScope
+        refreshMe()
       }
     } catch {
       scopeOptions = meScope ? [meScope] : []
-      if (meScope && !auth.scope) setScope(meScope.id)
+      if (meScope && !auth.scope) setScope(meScope.id)  // setScope calls refreshMe internally
+      else if (auth.scope) refreshMe()
     }
 
     scopesFetched = true

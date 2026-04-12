@@ -5,6 +5,27 @@ module CrystalBank::Domains::Scopes
         @db = ES::Config.projection_database
       end
 
+      # Walks up the scope tree from the given UUID, returning the scope itself
+      # and all its ancestors up to the root (inclusive). Returns an empty array
+      # if the scope does not exist or is not active.
+      def parent_scopes(uuid : UUID) : Array(UUID)
+        @db.query_all(%(
+          WITH RECURSIVE ancestor_scopes (uuid, parent_scope_id) AS (
+            SELECT uuid, parent_scope_id
+            FROM projections.scopes
+            WHERE uuid = $1
+              AND status = 'active'
+            UNION ALL
+            SELECT s.uuid, s.parent_scope_id
+            FROM projections.scopes s
+            INNER JOIN ancestor_scopes a ON s.uuid = a.parent_scope_id
+            WHERE s.uuid <> a.uuid
+              AND s.status = 'active'
+          )
+          SELECT uuid FROM ancestor_scopes
+        ), args: [uuid], as: UUID)
+      end
+
       def child_scopes(uuid : UUID) : Array(UUID)
         child_scopes([uuid])
       end

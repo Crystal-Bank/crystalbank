@@ -5,6 +5,8 @@ export const auth = $state({
   token: localStorage.getItem('cb_token') || '',
   scope: localStorage.getItem('cb_scope') || '',
   scopeInput: localStorage.getItem('cb_scope') || '',
+  /** @type {string[]} */
+  scope_permissions: [],
 })
 
 export const ui = $state({

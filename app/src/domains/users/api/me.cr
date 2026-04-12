@@ -35,7 +35,7 @@ module CrystalBank::Domains::Users
                        ScopeInfo.new(s.id, s.name)
                      end
 
-        scope_permissions = Roles::Queries::RolesPermissions.new.all_permissions(context.roles)
+        scope_permissions = Roles::Queries::RolesPermissions.new.all_permissions(context.roles, context.scope)
 
         MeResponse.new(context.user_id, context.roles, scope_info, scope_permissions)
       end

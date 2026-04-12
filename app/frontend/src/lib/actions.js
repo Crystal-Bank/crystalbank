@@ -48,11 +48,23 @@ export function logout() {
   localStorage.removeItem('cb_token')
 }
 
+// Re-fetches /me with the current scope to refresh scope_permissions.
+// Called whenever the active scope changes so the frontend reflects the
+// permissions that apply in the selected scope tree.
+export async function refreshMe() {
+  if (!auth.scope) return
+  try {
+    const me = await apiFetch('GET', '/me/', null)
+    auth.scope_permissions = me.scope_permissions ?? []
+  } catch {}
+}
+
 export function setScope(value) {
   auth.scope = value
   auth.scopeInput = value
   if (value) localStorage.setItem('cb_scope', value)
   else localStorage.removeItem('cb_scope')
+  refreshMe()
   if (VIEW_PATHS[ui.view]) loadView(ui.view)
 }
 
