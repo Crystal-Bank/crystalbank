@@ -20,7 +20,7 @@ module CrystalBank::Domains::Scopes
             FROM
               projections.scopes
             WHERE
-              uuid IN ($1)
+              uuid = ANY($1::uuid[])
               AND status = 'active'
             UNION ALL
             SELECT
@@ -39,7 +39,7 @@ module CrystalBank::Domains::Scopes
             available_scopes
         )
 
-        @db.query_all(query.join(" "), args: uuids, as: UUID)
+        @db.query_all(query.join(" "), args: [uuids], as: UUID)
       end
     end
   end
