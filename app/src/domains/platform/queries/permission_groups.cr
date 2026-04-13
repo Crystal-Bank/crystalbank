@@ -23,7 +23,7 @@ module CrystalBank::Domains::Platform
         def initialize(group : CrystalBank::PermissionGroups::Group)
           @name = group.name
           @description = group.description
-          @permissions = group.permissions.map { |p, m| PermissionEntry.new(p, m) }
+          @permissions = group.permissions.map { |p, m| PermissionEntry.new(p, m) }.sort_by(&.key)
         end
       end
 

@@ -208,7 +208,7 @@
 
 {#if showModal}
   <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
-    <div class="modal-box">
+    <div class="modal-box modal-box-lg">
       <div class="modal-title">Create Role</div>
       <div class="modal-desc">Define a new permission role. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
