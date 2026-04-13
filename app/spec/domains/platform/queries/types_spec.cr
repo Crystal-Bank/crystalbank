@@ -148,3 +148,45 @@ describe CrystalBank::Domains::Platform::Queries::LedgerEntryTypes do
     result.size.should eq(CrystalBank::Types::LedgerTransactions::EntryType.values.size)
   end
 end
+
+describe CrystalBank::Domains::Platform::Queries::PermissionGroups do
+  subject = Platform::Queries::PermissionGroups.new
+
+  it "returns a non-empty list" do
+    subject.list.should_not be_empty
+  end
+
+  it "every group has a non-empty name and description" do
+    subject.list.each do |group|
+      group.name.should_not be_empty
+      group.description.should_not be_empty
+    end
+  end
+
+  it "every permission entry has a lowercase key and non-empty description" do
+    subject.list.each do |group|
+      group.permissions.each do |perm|
+        perm.key.should eq(perm.key.downcase)
+        perm.description.should_not be_empty
+      end
+    end
+  end
+
+  it "includes known groups" do
+    names = subject.list.map(&.name)
+    names.should contain("Accounts")
+    names.should contain("Platform")
+  end
+
+  it "places read_accounts_list in the Accounts group" do
+    accounts_group = subject.list.find { |g| g.name == "Accounts" }
+    accounts_group.should_not be_nil
+    accounts_group.not_nil!.permissions.map(&.key).should contain("read_accounts_list")
+  end
+
+  it "covers every Permissions value exactly once" do
+    all_keys = subject.list.flat_map { |g| g.permissions.map(&.key) }
+    all_keys.size.should eq(CrystalBank::Permissions.values.size)
+    all_keys.uniq.size.should eq(all_keys.size)
+  end
+end
