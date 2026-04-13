@@ -75,6 +75,20 @@ module CrystalBank::Domains::Platform
         values = ::Platform::Types::Commands::FetchLedgerEntryTypes.new.call(context)
         TypesResponse.new(values)
       end
+
+      # Get permission groups
+      # Returns all permission groups with their descriptions and per-permission metadata.
+      # Intended for role-builder UIs and documentation pages.
+      #
+      # Required permission:
+      # - **read_platform_types**
+      @[AC::Route::GET("/permission-groups")]
+      def get_permission_groups : PermissionGroupsResponse
+        authorized?("read_platform_types", request_scope: false)
+
+        groups = ::Platform::Types::Commands::FetchPermissionGroups.new.call(context)
+        PermissionGroupsResponse.new(groups)
+      end
     end
   end
 end

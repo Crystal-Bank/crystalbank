@@ -115,3 +115,29 @@ describe Platform::Types::Commands::FetchLedgerEntryTypes do
     result.should contain("reversal")
   end
 end
+
+describe Platform::Types::Commands::FetchPermissionGroups do
+  context = make_types_context
+
+  it "returns a non-empty list" do
+    result = Platform::Types::Commands::FetchPermissionGroups.new.call(context)
+    result.should_not be_empty
+  end
+
+  it "matches the query output exactly" do
+    result = Platform::Types::Commands::FetchPermissionGroups.new.call(context)
+    expected = Platform::Queries::PermissionGroups.new.list
+    result.size.should eq(expected.size)
+    result.zip(expected).each do |cmd_group, query_group|
+      cmd_group.name.should eq(query_group.name)
+      cmd_group.description.should eq(query_group.description)
+      cmd_group.permissions.size.should eq(query_group.permissions.size)
+    end
+  end
+
+  it "covers all defined permissions" do
+    result = Platform::Types::Commands::FetchPermissionGroups.new.call(context)
+    total = result.sum(&.permissions.size)
+    total.should eq(CrystalBank::Permissions.values.size)
+  end
+end

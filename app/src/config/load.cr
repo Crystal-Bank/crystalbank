@@ -5,6 +5,7 @@ require "./initializers/event_bus"
 require "./initializers/projections"
 require "./initializers/queue"
 
+require "./permissions_dsl"
 require "./permissions"
 
 require "./types/accounts"
