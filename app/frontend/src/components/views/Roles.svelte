@@ -7,22 +7,48 @@
   let showModal = $state(false)
   let form = $state({ name: '', selectedPermissions: [], selectedScopes: [] })
   let scopeOptions = $state([])
-  let permissionOptions = $state([])
+  let permissionGroups = $state([])
   let scopeSearch = $state('')
   let showScopeDropdown = $state(false)
 
+  let allPermissionKeys = $derived(permissionGroups.flatMap(g => g.permissions.map(p => p.key)))
+
   let allSelected = $derived(
-    permissionOptions.length > 0 && form.selectedPermissions.length === permissionOptions.length
+    allPermissionKeys.length > 0 && form.selectedPermissions.length === allPermissionKeys.length
   )
   let someSelected = $derived(
-    form.selectedPermissions.length > 0 && form.selectedPermissions.length < permissionOptions.length
+    form.selectedPermissions.length > 0 && form.selectedPermissions.length < allPermissionKeys.length
   )
 
   let selectAllEl = $state(null)
   $effect(() => { if (selectAllEl) selectAllEl.indeterminate = someSelected })
 
+  function indeterminate(node, value) {
+    node.indeterminate = value
+    return { update(v) { node.indeterminate = v } }
+  }
+
   function toggleAll() {
-    form.selectedPermissions = allSelected ? [] : [...permissionOptions]
+    form.selectedPermissions = allSelected ? [] : [...allPermissionKeys]
+  }
+
+  function groupAllSelected(group) {
+    return group.permissions.every(p => form.selectedPermissions.includes(p.key))
+  }
+
+  function groupSomeSelected(group) {
+    const count = group.permissions.filter(p => form.selectedPermissions.includes(p.key)).length
+    return count > 0 && count < group.permissions.length
+  }
+
+  function toggleGroup(group) {
+    const keys = group.permissions.map(p => p.key)
+    if (groupAllSelected(group)) {
+      form.selectedPermissions = form.selectedPermissions.filter(k => !keys.includes(k))
+    } else {
+      const toAdd = keys.filter(k => !form.selectedPermissions.includes(k))
+      form.selectedPermissions = [...form.selectedPermissions, ...toAdd]
+    }
   }
 
   let scopeSuggestions = $derived(
@@ -41,18 +67,18 @@
     showModal = true
     const results = await Promise.allSettled([
       apiFetch('GET', '/scopes/?limit=200'),
-      apiFetch('GET', '/platform/types/permissions'),
+      apiFetch('GET', '/platform/types/permission-groups'),
     ])
     scopeOptions = results[0].status === 'fulfilled'
       ? results[0].value.data.map(e => e.attributes).filter(s => s.status === 'active')
       : []
-    permissionOptions = results[1].status === 'fulfilled' ? results[1].value.values : []
+    permissionGroups = results[1].status === 'fulfilled' ? results[1].value.groups : []
   }
 
-  function togglePermission(p) {
-    const idx = form.selectedPermissions.indexOf(p)
-    if (idx === -1) form.selectedPermissions = [...form.selectedPermissions, p]
-    else form.selectedPermissions = form.selectedPermissions.filter(x => x !== p)
+  function togglePermission(key) {
+    const idx = form.selectedPermissions.indexOf(key)
+    if (idx === -1) form.selectedPermissions = [...form.selectedPermissions, key]
+    else form.selectedPermissions = form.selectedPermissions.filter(x => x !== key)
   }
 
   function addScope(scopeId) {
@@ -193,15 +219,38 @@
         <div class="mb-4">
           <label class="field-label">Permissions</label>
           <div class="permission-list">
-            <label class="permission-item border-b border-zinc-200 mb-0.5 pb-0.5">
+            <label class="permission-item border-b border-zinc-200">
               <input type="checkbox" bind:this={selectAllEl} checked={allSelected} onchange={toggleAll}>
-              <span class="font-mono text-zinc-500">Select all</span>
+              <span class="text-zinc-500 font-medium">Select all</span>
             </label>
-            {#each permissionOptions as p (p)}
-              <label class="permission-item">
-                <input type="checkbox" checked={form.selectedPermissions.includes(p)} onchange={() => togglePermission(p)}>
-                <span class="font-mono">{p}</span>
-              </label>
+            {#each permissionGroups as group (group.name)}
+              <div class="permission-group">
+                <label class="permission-item permission-group-header">
+                  <input
+                    type="checkbox"
+                    use:indeterminate={groupSomeSelected(group)}
+                    checked={groupAllSelected(group)}
+                    onchange={() => toggleGroup(group)}
+                  >
+                  <div class="min-w-0">
+                    <div class="font-semibold text-xs text-zinc-700">{group.name}</div>
+                    <div class="text-zinc-400 leading-tight mt-0.5">{group.description}</div>
+                  </div>
+                </label>
+                {#each group.permissions as p (p.key)}
+                  <label class="permission-item permission-item-nested">
+                    <input
+                      type="checkbox"
+                      checked={form.selectedPermissions.includes(p.key)}
+                      onchange={() => togglePermission(p.key)}
+                    >
+                    <div class="min-w-0">
+                      <div class="font-mono text-zinc-700">{p.key}</div>
+                      <div class="text-zinc-400 leading-tight mt-0.5">{p.description}</div>
+                    </div>
+                  </label>
+                {/each}
+              </div>
             {/each}
           </div>
         </div>
