@@ -30,7 +30,7 @@ module CrystalBank
         GROUPS = [
           {% for group_def in group_defs %}
             Group.new(
-              name: {{group_def[:name]}},
+              name: {{group_def[:group]}},
               description: {{group_def[:description]}},
               permissions: {
                 {% for perm in group_def[:permissions] %}

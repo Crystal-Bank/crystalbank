@@ -3,7 +3,7 @@ module CrystalBank
 
   define_permissions(
     {
-      name:        "Accounts",
+      group:       "Accounts",
       description: "Permissions governing account lifecycle: opening, blocking, unblocking, and compliance approvals.",
       permissions: [
         {key: "READ_accounts_list", description: "List all accounts visible within the caller's scope."},
@@ -18,7 +18,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "API Keys",
+      group:       "API Keys",
       description: "Permissions for generating, approving, and revoking machine-to-machine API credentials.",
       permissions: [
         {key: "WRITE_api_keys_generation_request", description: "Submit a request to generate a new API key."},
@@ -28,7 +28,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "Customers",
+      group:       "Customers",
       description: "Permissions for onboarding and querying customer entities.",
       permissions: [
         {key: "WRITE_customers_onboarding_request", description: "Submit a request to onboard a new customer."},
@@ -36,7 +36,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "Roles",
+      group:       "Roles",
       description: "Permissions for creating and querying roles that bundle permissions for assignment to users.",
       permissions: [
         {key: "READ_roles_list", description: "List all roles visible within the caller's scope."},
@@ -45,7 +45,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "Scopes",
+      group:       "Scopes",
       description: "Permissions for creating and querying organizational scopes used in access control.",
       permissions: [
         {key: "READ_scopes_list", description: "List all scopes visible to the caller."},
@@ -54,7 +54,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "Ledger",
+      group:       "Ledger",
       description: "Permissions for creating ledger entries and reading posting records.",
       permissions: [
         {key: "WRITE_ledger_transactions_request", description: "Submit a double-entry ledger transaction request."},
@@ -62,14 +62,14 @@ module CrystalBank
       ],
     },
     {
-      name:        "Transactions",
+      group:       "Transactions",
       description: "Permissions for initiating internal fund transfers between accounts.",
       permissions: [
         {key: "WRITE_transactions_internal_transfers_initiation_request", description: "Initiate an internal transfer between two accounts within the platform."},
       ],
     },
     {
-      name:        "Payments",
+      group:       "Payments",
       description: "Permissions for requesting, approving, and querying SEPA Credit Transfer payment instructions.",
       permissions: [
         {key: "WRITE_payments_sepa_credit_transfers_request", description: "Submit a SEPA Credit Transfer payment request."},
@@ -78,7 +78,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "Users",
+      group:       "Users",
       description: "Permissions for onboarding users, assigning roles, and querying user records.",
       permissions: [
         {key: "WRITE_users_onboarding_request", description: "Submit a request to onboard a new platform user."},
@@ -88,7 +88,7 @@ module CrystalBank
       ],
     },
     {
-      name:        "Approvals",
+      group:       "Approvals",
       description: "Permissions for driving the generic approval workflow across all domains.",
       permissions: [
         {key: "WRITE_approvals_collection_request", description: "Submit an approval decision on any pending approval item."},
@@ -97,14 +97,14 @@ module CrystalBank
       ],
     },
     {
-      name:        "Events",
+      group:       "Events",
       description: "Permissions for reading the raw event stream, intended for audit and debugging.",
       permissions: [
         {key: "READ_events_list", description: "Read the event store stream within the caller's scope."},
       ],
     },
     {
-      name:        "Platform",
+      group:       "Platform",
       description: "Meta-permissions for querying platform configuration, types, and the caller's own session context.",
       permissions: [
         {key: "READ_me", description: "Read the caller's own user profile and session information."},
