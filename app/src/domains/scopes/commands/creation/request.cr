@@ -20,13 +20,18 @@ module CrystalBank::Domains::Scopes
             raise CrystalBank::Exception::InvalidArgument.new("Parent scope is not active") unless aggregate.state.accepted
           end
 
+          # Generate the aggregate ID for the new scope upfront so scope_id can
+          # reference itself (the new scope belongs to itself)
+          aggregate_id = UUID.v7
+
           # Create the scope creation request event
           event = Scopes::Creation::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
             name: r.name,
             parent_scope_id: parent_scope_id,
-            scope_id: scope,
+            scope_id: aggregate_id,
+            aggregate_id: aggregate_id,
           )
 
           # Append event to event store

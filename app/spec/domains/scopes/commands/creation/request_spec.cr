@@ -28,7 +28,7 @@ describe CrystalBank::Domains::Scopes::Creation::Commands::Request do
 
     aggregate.state.name.should eq("Child Scope")
     aggregate.state.parent_scope_id.should eq(scope_id)
-    aggregate.state.scope_id.should eq(scope_id)
+    aggregate.state.scope_id.should eq(result)
   end
 
   it "creates a scope with an active parent scope" do
@@ -58,6 +58,7 @@ describe CrystalBank::Domains::Scopes::Creation::Commands::Request do
 
     aggregate.state.name.should eq("Child Scope")
     aggregate.state.parent_scope_id.should eq(parent_scope_id)
+    aggregate.state.scope_id.should eq(result)
   end
 
   it "raises when parent scope is not yet active (only requested, not accepted)" do
