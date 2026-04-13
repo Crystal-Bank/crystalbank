@@ -1,10 +1,12 @@
 require "./creation"
+require "./permissions_update_concern"
 
 module CrystalBank::Domains::Roles
   class Aggregate < ES::Aggregate
     @@type = "Role"
 
     include CrystalBank::Domains::Roles::Aggregates::Concerns::Creation
+    include CrystalBank::Domains::Roles::Aggregates::Concerns::PermissionsUpdate
 
     struct State < ES::Aggregate::State
       property name : String?

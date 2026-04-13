@@ -1,6 +1,16 @@
 module CrystalBank::Domains::Roles
   module Api
     module Responses
+      # Response to a role permissions update request
+      struct PermissionsUpdateResponse
+        include JSON::Serializable
+
+        @[JSON::Field(format: "uuid", description: "ID of the permissions update request")]
+        getter id : UUID
+
+        def initialize(@id : UUID); end
+      end
+
       # Response to an role creation request
       struct CreationResponse
         include JSON::Serializable

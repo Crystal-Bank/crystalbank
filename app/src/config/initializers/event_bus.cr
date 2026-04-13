@@ -44,6 +44,12 @@ bus.subscribe(Roles::Creation::Events::Requested, Roles::Projections::Roles)
 bus.subscribe(Roles::Creation::Events::Accepted, Roles::Projections::Roles)
 bus.subscribe(Approvals::Collection::Events::Completed, Roles::Creation::Commands::ProcessApproval)
 
+# Roles — Permissions Update
+bus.subscribe(Roles::PermissionsUpdate::Events::Requested, Roles::Projections::RolesPermissionsUpdates)
+bus.subscribe(Roles::PermissionsUpdate::Events::Completed, Roles::Projections::RolesPermissionsUpdates)
+bus.subscribe(Roles::PermissionsUpdate::Events::Accepted, Roles::Projections::Roles)
+bus.subscribe(Approvals::Collection::Events::Completed, Roles::PermissionsUpdate::Commands::ProcessApproval)
+
 # Scopes
 bus.subscribe(Scopes::Creation::Events::Requested, Scopes::Creation::Commands::ProcessRequest)
 bus.subscribe(Scopes::Creation::Events::Requested, Scopes::Projections::Scopes)
@@ -84,6 +90,8 @@ bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Requested, Ev
 bus.subscribe(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Roles::Creation::Events::Requested, Events::Projections::Events)
 bus.subscribe(Roles::Creation::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Roles::PermissionsUpdate::Events::Requested, Events::Projections::Events)
+bus.subscribe(Roles::PermissionsUpdate::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Scopes::Creation::Events::Requested, Events::Projections::Events)
 bus.subscribe(Scopes::Creation::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::Onboarding::Events::Requested, Events::Projections::Events)

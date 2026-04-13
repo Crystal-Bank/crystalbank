@@ -60,7 +60,7 @@ module CrystalBank::Domains::Roles
         end
       end
 
-      # Accepted
+      # Accepted (creation)
       def apply(event : ::Roles::Creation::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
@@ -69,6 +69,22 @@ module CrystalBank::Domains::Roles
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."roles" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
             "active",
+            aggregate_version,
+            aggregate_id
+        end
+      end
+
+      # Accepted (permissions update) — replaces the role's permissions with the computed set
+      def apply(event : ::Roles::PermissionsUpdate::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        body = event.body.as(::Roles::PermissionsUpdate::Events::Accepted::Body)
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."roles" SET permissions=$1, aggregate_version=$2 WHERE uuid=$3),
+            body.permissions.to_json,
             aggregate_version,
             aggregate_id
         end

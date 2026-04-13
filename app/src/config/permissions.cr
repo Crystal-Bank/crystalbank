@@ -37,11 +37,13 @@ module CrystalBank
     },
     {
       group:       "Roles",
-      description: "Permissions for creating and querying roles that bundle permissions for assignment to users.",
+      description: "Permissions for creating, updating, and querying roles that bundle permissions for assignment to users.",
       permissions: [
         {key: "READ_roles_list", description: "List all roles visible within the caller's scope."},
         {key: "WRITE_roles_creation_request", description: "Submit a request to create a new role."},
         {key: "WRITE_roles_creation_approval", description: "Approve or reject a pending role creation request."},
+        {key: "WRITE_roles_permissions_update_request", description: "Submit a request to add or remove permissions on an existing role."},
+        {key: "WRITE_roles_permissions_update_approval", description: "Approve or reject a pending role permissions update request."},
       ],
     },
     {
