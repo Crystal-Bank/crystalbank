@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.13.1
+  version: 0.14.1
 paths:
   /.well-known/openid-configuration:
     get:
@@ -2006,6 +2006,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /platform/types/permission-groups:
+    get:
+      summary: Get permission groups
+      description: 'Get permission groups
+
+        Returns all permission groups with their descriptions and per-permission metadata.
+
+        Intended for role-builder UIs and documentation pages.
+
+
+        Required permission:
+
+        - **read_platform_types**'
+      tags:
+      - Types
+      operationId: CrystalBank::Domains::Platform::Api::Types_get_permission_groups
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__PermissionGroupsResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
 components:
   schemas:
     CrystalBank__Api__JWKS__OpenIDConfiguration:
@@ -2767,6 +2815,8 @@ components:
             - write_accounts_blocking_approval
             - write_accounts_unblocking_approval
             - read_accounts_blocks
+            - write_accounts_opening_compliance_approval
+            - write_accounts_opening_board_approval
             - write_api_keys_generation_request
             - write_api_keys_generation_approval
             - write_api_keys_revocation_request
@@ -2780,20 +2830,18 @@ components:
             - write_scopes_creation_request
             - write_scopes_creation_approval
             - write_ledger_transactions_request
-            - write_transactions_internal_transfers_initiation_request
             - read_postings_list
-            - write_users_onboarding_request
-            - write_users_assign_roles_request
-            - read_users_list
-            - write_approvals_collection_request
-            - write_approvals_rejection_request
-            - read_approvals_list
-            - write_accounts_opening_compliance_approval
-            - write_accounts_opening_board_approval
-            - write_users_onboarding_compliance_approval
+            - write_transactions_internal_transfers_initiation_request
             - write_payments_sepa_credit_transfers_request
             - read_payments_sepa_credit_transfers_list
             - write_payments_sepa_credit_transfers_approval
+            - write_users_onboarding_request
+            - write_users_assign_roles_request
+            - read_users_list
+            - write_users_onboarding_compliance_approval
+            - write_approvals_collection_request
+            - write_approvals_rejection_request
+            - read_approvals_list
             - read_events_list
             - read_me
             - read_platform_types
@@ -2884,6 +2932,8 @@ components:
                       - write_accounts_blocking_approval
                       - write_accounts_unblocking_approval
                       - read_accounts_blocks
+                      - write_accounts_opening_compliance_approval
+                      - write_accounts_opening_board_approval
                       - write_api_keys_generation_request
                       - write_api_keys_generation_approval
                       - write_api_keys_revocation_request
@@ -2897,20 +2947,18 @@ components:
                       - write_scopes_creation_request
                       - write_scopes_creation_approval
                       - write_ledger_transactions_request
-                      - write_transactions_internal_transfers_initiation_request
                       - read_postings_list
-                      - write_users_onboarding_request
-                      - write_users_assign_roles_request
-                      - read_users_list
-                      - write_approvals_collection_request
-                      - write_approvals_rejection_request
-                      - read_approvals_list
-                      - write_accounts_opening_compliance_approval
-                      - write_accounts_opening_board_approval
-                      - write_users_onboarding_compliance_approval
+                      - write_transactions_internal_transfers_initiation_request
                       - write_payments_sepa_credit_transfers_request
                       - read_payments_sepa_credit_transfers_list
                       - write_payments_sepa_credit_transfers_approval
+                      - write_users_onboarding_request
+                      - write_users_assign_roles_request
+                      - read_users_list
+                      - write_users_onboarding_compliance_approval
+                      - write_approvals_collection_request
+                      - write_approvals_rejection_request
+                      - read_approvals_list
                       - read_events_list
                       - read_me
                       - read_platform_types
@@ -3560,6 +3608,37 @@ components:
             type: string
       required:
       - values
+    CrystalBank__Domains__Platform__Api__TypeResponses__PermissionGroupsResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          description: Permission groups with descriptions and per-permission metadata
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              permissions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                    description:
+                      type: string
+                  required:
+                  - key
+                  - description
+            required:
+            - name
+            - description
+            - permissions
+      required:
+      - groups
     CrystalBank__Api__Responses__ErrorResponse:
       type: object
       properties:
