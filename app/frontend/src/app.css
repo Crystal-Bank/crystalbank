@@ -220,7 +220,11 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .drawer-footer { padding: 1rem 1.5rem; border-top: 1px solid hsl(var(--border)); flex-shrink: 0; }
 
 /* ── Permission list ──────────────────────────────────── */
-.permission-list { border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 2px); max-height: 13rem; overflow-y: auto; background: hsl(var(--muted)); }
-.permission-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.75rem; font-size: 0.78rem; cursor: pointer; }
+.permission-list { border: 1px solid hsl(var(--border)); border-radius: calc(var(--radius) - 2px); max-height: 22rem; overflow-y: auto; background: hsl(var(--muted)); }
+.permission-item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0.75rem; font-size: 0.78rem; cursor: pointer; }
 .permission-item:hover { background: white; }
-.permission-item input[type="checkbox"] { cursor: pointer; flex-shrink: 0; }
+.permission-item input[type="checkbox"] { cursor: pointer; flex-shrink: 0; margin-top: 0.15rem; }
+.permission-group-header { background: white; border-top: 1px solid hsl(var(--border)); padding-top: 0.45rem; padding-bottom: 0.45rem; }
+.permission-group:first-child .permission-group-header { border-top: none; }
+.permission-item-nested { padding-left: 2rem; }
+.permission-item-nested:last-child { padding-bottom: 0.45rem; }
