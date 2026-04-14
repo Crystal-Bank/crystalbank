@@ -45,8 +45,8 @@ bus.subscribe(Roles::Creation::Events::Accepted, Roles::Projections::Roles)
 bus.subscribe(Approvals::Collection::Events::Completed, Roles::Creation::Commands::ProcessApproval)
 
 # Roles — Permissions Update
-bus.subscribe(Roles::PermissionsUpdate::Events::Requested, Roles::Projections::RolesPermissionsUpdates)
-bus.subscribe(Roles::PermissionsUpdate::Events::Completed, Roles::Projections::RolesPermissionsUpdates)
+bus.subscribe(Roles::PermissionsUpdate::Events::Requested, Roles::PermissionsUpdate::Commands::ProcessRequest)
+bus.subscribe(Roles::PermissionsUpdate::Events::Requested, Roles::Projections::Roles)
 bus.subscribe(Roles::PermissionsUpdate::Events::Accepted, Roles::Projections::Roles)
 bus.subscribe(Approvals::Collection::Events::Completed, Roles::PermissionsUpdate::Commands::ProcessApproval)
 

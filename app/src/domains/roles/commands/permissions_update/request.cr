@@ -7,36 +7,41 @@ module CrystalBank::Domains::Roles
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-          # Validate the role exists and is active
-          role = Roles::Queries::Roles.new.find!(r.role_id)
-          raise CrystalBank::Exception::InvalidArgument.new("Role '#{r.role_id}' is not active") unless role.status == "active"
+          # Hydrate the role aggregate — this is our consistency boundary.
+          # Appending the Requested event at next_version serialises concurrent
+          # requests via the event store's unique (aggregate_id, version) constraint.
+          role = Roles::Aggregate.new(r.role_id)
+          begin
+            role.hydrate
+          rescue ES::Exception::NotFound
+            raise CrystalBank::Exception::InvalidArgument.new("Role '#{r.role_id}' not found")
+          end
+
+          raise CrystalBank::Exception::InvalidArgument.new("Role '#{r.role_id}' is not active") unless role.state.status == "active"
+
+          # Guard: only one permissions update may be in flight at a time
+          if role.state.has_pending_permissions_update
+            raise CrystalBank::Exception::InvalidArgument.new("Role '#{r.role_id}' already has a pending permissions update")
+          end
 
           # Guard against no-op updates
-          if r.permissions.sort_by(&.to_s) == role.permissions.sort_by(&.to_s)
+          if r.permissions.sort_by(&.to_s) == role.state.permissions.as(Array(CrystalBank::Permissions)).sort_by(&.to_s)
             raise CrystalBank::Exception::InvalidArgument.new("Permissions are unchanged — the submitted list is identical to the role's current permissions")
           end
 
-          # Create the permissions update request event (new aggregate)
+          # Append Requested directly onto the Role aggregate.
+          # The event store's unique constraint on (aggregate_id, aggregate_version)
+          # rejects any truly concurrent request that races past the guard above.
           event = Roles::PermissionsUpdate::Events::Requested.new(
             actor_id: actor,
+            aggregate_id: r.role_id,
+            aggregate_version: role.state.next_version,
             command_handler: self.class.to_s,
-            role_id: r.role_id,
             permissions: r.permissions
           )
           @event_store.append(event)
 
-          update_request_id = UUID.new(event.header.aggregate_id.to_s)
-
-          # Create an approval workflow for this permissions update
-          Approvals::Creation::Commands::Request.new.call(
-            source_aggregate_type: "RolePermissionsUpdate",
-            source_aggregate_id: update_request_id,
-            scope_id: scope,
-            required_approvals: ["write_roles_permissions_update_approval"],
-            actor_id: actor
-          )
-
-          update_request_id
+          r.role_id
         end
       end
     end
