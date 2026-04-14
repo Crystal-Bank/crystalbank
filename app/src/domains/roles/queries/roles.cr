@@ -55,6 +55,16 @@ module CrystalBank::Domains::Roles
 
         @db.query_all(query.join(" "), args: query_params, as: Role)
       end
+
+      def find!(role_id : UUID) : Role
+        @db.query_one(
+          %(SELECT * FROM "projections"."roles" WHERE uuid = $1),
+          role_id,
+          as: Role
+        )
+      rescue DB::NoResultsError
+        raise CrystalBank::Exception::InvalidArgument.new("Role '#{role_id}' not found")
+      end
     end
   end
 end

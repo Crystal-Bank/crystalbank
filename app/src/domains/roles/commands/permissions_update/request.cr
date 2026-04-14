@@ -8,7 +8,7 @@ module CrystalBank::Domains::Roles
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
           # Validate the role exists and is active
-          role = Roles::Queries::FindRole.new.find!(r.role_id)
+          role = Roles::Queries::Roles.new.find!(r.role_id)
           raise CrystalBank::Exception::InvalidArgument.new("Role '#{r.role_id}' is not active") unless role.status == "active"
 
           # Guard against no-op updates

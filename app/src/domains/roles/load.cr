@@ -26,7 +26,6 @@ require "./projections/roles_permissions_updates"
 # Queries
 require "./queries/roles"
 require "./queries/roles_permissions"
-require "./queries/find_role"
 
 # Domain
 require "./roles"
