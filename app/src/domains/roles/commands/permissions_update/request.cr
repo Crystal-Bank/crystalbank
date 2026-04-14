@@ -7,27 +7,13 @@ module CrystalBank::Domains::Roles
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-          # Validate that at least one side of the diff is non-empty
-          if r.permissions_to_add.empty? && r.permissions_to_remove.empty?
-            raise CrystalBank::Exception::InvalidArgument.new("At least one permission must be added or removed")
-          end
-
-          # Validate that the same permission does not appear in both lists
-          overlap = r.permissions_to_add & r.permissions_to_remove
-          unless overlap.empty?
-            raise CrystalBank::Exception::InvalidArgument.new("Permissions cannot appear in both permissions_to_add and permissions_to_remove: #{overlap.map(&.to_s).join(", ")}")
-          end
-
           # Validate the role exists and is active
           role = Roles::Queries::FindRole.new.find!(r.role_id)
           raise CrystalBank::Exception::InvalidArgument.new("Role '#{r.role_id}' is not active") unless role.status == "active"
 
-          # Validate that permissions being removed are actually present on the role
-          unless r.permissions_to_remove.empty?
-            missing = r.permissions_to_remove - role.permissions
-            unless missing.empty?
-              raise CrystalBank::Exception::InvalidArgument.new("Permissions not present on role and cannot be removed: #{missing.map(&.to_s).join(", ")}")
-            end
+          # Guard against no-op updates
+          if r.permissions.sort_by(&.to_s) == role.permissions.sort_by(&.to_s)
+            raise CrystalBank::Exception::InvalidArgument.new("Permissions are unchanged — the submitted list is identical to the role's current permissions")
           end
 
           # Create the permissions update request event (new aggregate)
@@ -35,8 +21,7 @@ module CrystalBank::Domains::Roles
             actor_id: actor,
             command_handler: self.class.to_s,
             role_id: r.role_id,
-            permissions_to_add: r.permissions_to_add,
-            permissions_to_remove: r.permissions_to_remove
+            permissions: r.permissions
           )
           @event_store.append(event)
 

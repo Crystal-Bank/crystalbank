@@ -5,8 +5,7 @@ module CrystalBank::Domains::Roles
 
       struct State < ES::Aggregate::State
         property role_id : UUID?
-        property permissions_to_add : Array(CrystalBank::Permissions)?
-        property permissions_to_remove : Array(CrystalBank::Permissions)?
+        property permissions : Array(CrystalBank::Permissions)?
         property requestor_id : UUID?
         property completed : Bool = false
       end
@@ -27,8 +26,7 @@ module CrystalBank::Domains::Roles
         @state.increase_version(event.header.aggregate_version)
         body = event.body.as(::Roles::PermissionsUpdate::Events::Requested::Body)
         @state.role_id = body.role_id
-        @state.permissions_to_add = body.permissions_to_add
-        @state.permissions_to_remove = body.permissions_to_remove
+        @state.permissions = body.permissions
         @state.requestor_id = event.header.actor_id
       end
 

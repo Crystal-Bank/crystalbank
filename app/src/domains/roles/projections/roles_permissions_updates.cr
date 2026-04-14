@@ -14,8 +14,7 @@ module CrystalBank::Domains::Roles
             "role_id" UUID NOT NULL,
             "scope_id" UUID NOT NULL,
             "created_at" timestamp NOT NULL,
-            "permissions_to_add" JSONB NOT NULL,
-            "permissions_to_remove" JSONB NOT NULL,
+            "permissions" JSONB NOT NULL,
             "status" varchar NOT NULL
           );
         )
@@ -51,19 +50,17 @@ module CrystalBank::Domains::Roles
                 role_id,
                 scope_id,
                 created_at,
-                permissions_to_add,
-                permissions_to_remove,
+                permissions,
                 status
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+              VALUES ($1, $2, $3, $4, $5, $6, $7)
           ),
             aggregate_id,
             aggregate_version,
             body.role_id,
             role_scope_id,
             created_at,
-            body.permissions_to_add.to_json,
-            body.permissions_to_remove.to_json,
+            body.permissions.to_json,
             "pending_approval"
         end
       end

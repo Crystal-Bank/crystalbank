@@ -22,23 +22,19 @@ module CrystalBank::Domains::Roles
           return if update_request.state.completed
 
           role_id = update_request.state.role_id.as(UUID)
-          permissions_to_add = update_request.state.permissions_to_add.as(Array(CrystalBank::Permissions))
-          permissions_to_remove = update_request.state.permissions_to_remove.as(Array(CrystalBank::Permissions))
+          permissions = update_request.state.permissions.as(Array(CrystalBank::Permissions))
 
-          # Hydrate the role aggregate to compute the final permissions and get next version
+          # Hydrate the role aggregate to get the next aggregate version
           role = Roles::Aggregate.new(role_id)
           role.hydrate
 
-          current_permissions = role.state.permissions.as(Array(CrystalBank::Permissions))
-          new_permissions = (current_permissions + permissions_to_add - permissions_to_remove).uniq
-
-          # Append the accepted event to the role aggregate
+          # Append the accepted event to the role aggregate with the new permissions set
           accepted_event = Roles::PermissionsUpdate::Events::Accepted.new(
             actor_id: approval.state.requestor_id,
             aggregate_id: role_id,
             aggregate_version: role.state.next_version,
             command_handler: self.class.to_s,
-            permissions: new_permissions
+            permissions: permissions
           )
           @event_store.append(accepted_event)
 
