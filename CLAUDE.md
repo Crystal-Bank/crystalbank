@@ -60,8 +60,9 @@ HTTP Request
 ```
 
 **Database layout:**
-- `public` schema — immutable event log (event store)
+- `eventstore` schema — immutable event log (event store)
 - `projections` schema — denormalized read models
+- `pgmq` schema — queue used exclusively for async event delivery
 
 **Cross-domain interaction** happens in exactly two ways:
 1. The event bus wires cross-domain command triggers (e.g. a completed approval triggers the originating domain's command)
