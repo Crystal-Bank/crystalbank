@@ -12,15 +12,23 @@ module CrystalBank::Domains::Roles
           # Only process if this approval is for a RolePermissionsUpdate
           return unless approval.state.source_aggregate_type == "RolePermissionsUpdate"
 
-          # source_aggregate_id IS the Role aggregate — no separate aggregate to hydrate
-          role_id = approval.state.source_aggregate_id.as(UUID)
+          update_request_id = approval.state.source_aggregate_id.as(UUID)
 
+          # Hydrate the permissions update request aggregate
+          update_request = Roles::PermissionsUpdate::Aggregate.new(update_request_id)
+          update_request.hydrate
+
+          # Guard against double-processing
+          return if update_request.state.completed
+
+          role_id = update_request.state.role_id.as(UUID)
+          permissions = update_request.state.permissions.as(Array(CrystalBank::Permissions))
+
+          # Hydrate the role aggregate to get the next version
           role = Roles::Aggregate.new(role_id)
           role.hydrate
 
-          # The pending permissions were recorded on the Role aggregate when Requested was appended
-          permissions = role.state.pending_permissions.as(Array(CrystalBank::Permissions))
-
+          # Apply the approved permissions onto the Role aggregate
           accepted_event = Roles::PermissionsUpdate::Events::Accepted.new(
             actor_id: approval.state.requestor_id,
             aggregate_id: role_id,
@@ -29,6 +37,15 @@ module CrystalBank::Domains::Roles
             permissions: permissions
           )
           @event_store.append(accepted_event)
+
+          # Mark the update request itself as completed
+          completed_event = Roles::PermissionsUpdate::Events::Completed.new(
+            actor_id: nil,
+            aggregate_id: update_request_id,
+            aggregate_version: update_request.state.next_version,
+            command_handler: self.class.to_s
+          )
+          @event_store.append(completed_event)
         end
       end
     end

@@ -35,6 +35,7 @@ event_handlers.register(Customers::Onboarding::Events::Requested)
 event_handlers.register(Roles::Creation::Events::Accepted)
 event_handlers.register(Roles::Creation::Events::Requested)
 event_handlers.register(Roles::PermissionsUpdate::Events::Requested)
+event_handlers.register(Roles::PermissionsUpdate::Events::Completed)
 event_handlers.register(Roles::PermissionsUpdate::Events::Accepted)
 
 # Scopes

@@ -4,7 +4,8 @@ module CrystalBank::Domains::Roles
       class Requested < ES::Event
         include ::ES::EventDSL
 
-        define_event "Role", "role.permissions_update.requested" do
+        define_event "RolePermissionsUpdate", "role.permissions_update.requested" do
+          attribute :role_id, UUID
           attribute :permissions, Array(CrystalBank::Permissions)
         end
       end

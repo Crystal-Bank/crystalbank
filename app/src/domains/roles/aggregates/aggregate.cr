@@ -14,8 +14,6 @@ module CrystalBank::Domains::Roles
       property scope_id : UUID?
       property scopes : Array(UUID)?
       property requestor_id : UUID?
-      property pending_permissions : Array(CrystalBank::Permissions)?
-      property has_pending_permissions_update : Bool = false
     end
 
     getter state : State
