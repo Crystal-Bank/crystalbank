@@ -60,4 +60,47 @@ module Test::Role::Events
       end
     end
   end
+
+  module PermissionsUpdate
+    class Requested
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000003"), role_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Roles::PermissionsUpdate::Events::Requested
+        Roles::PermissionsUpdate::Events::Requested.new(
+          actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
+          aggregate_id: aggr_id,
+          role_id: role_id,
+          permissions: [CrystalBank::Permissions::WRITE_roles_permissions_update_request],
+          command_handler: "test"
+        )
+      end
+    end
+
+    class Completed
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000003"), aggregate_version = 2) : Roles::PermissionsUpdate::Events::Completed
+        Roles::PermissionsUpdate::Events::Completed.new(
+          actor_id: nil,
+          aggregate_id: aggr_id,
+          aggregate_version: aggregate_version,
+          command_handler: "test"
+        )
+      end
+    end
+
+    class Accepted
+      def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001"), aggregate_version = 3) : Roles::PermissionsUpdate::Events::Accepted
+        Roles::PermissionsUpdate::Events::Accepted.new(
+          actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
+          aggregate_id: aggr_id,
+          aggregate_version: aggregate_version,
+          permissions: [CrystalBank::Permissions::WRITE_roles_permissions_update_request],
+          command_handler: "test"
+        )
+      end
+
+      def json_string : String
+        {
+          "permissions": ["write_roles_permissions_update_request"],
+        }.to_json
+      end
+    end
+  end
 end
