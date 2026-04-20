@@ -32,6 +32,7 @@ module CrystalBank
       description: "Permissions for onboarding and querying customer entities.",
       permissions: [
         {key: "WRITE_customers_onboarding_request", description: "Submit a request to onboard a new customer."},
+        {key: "WRITE_customers_onboarding_compliance_approval", description: "Provide compliance sign-off on a pending customer onboarding request."},
         {key: "READ_customers_list", description: "List all customers visible within the caller's scope."},
       ],
     },
