@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.14.1
+  version: 0.14.2
 paths:
   /.well-known/openid-configuration:
     get:
@@ -1094,6 +1094,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Domains__Roles__Api__Responses__CreationResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /roles/update_permissions:
+    post:
+      summary: Update permissions
+      description: 'Update permissions
+
+        Request an update to the permissions of an existing role.
+
+        The caller must hold write_roles_permissions_update_request.
+
+        The change is held pending approval from a user with write_roles_permissions_update_approval.
+
+
+        Required permission:
+
+        - **write_roles_permissions_update_request**'
+      tags:
+      - Roles
+      operationId: CrystalBank::Domains::Roles::Api::Roles_update_permissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Roles__Api__Requests__PermissionsUpdateRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Roles__Api__Responses__PermissionsUpdateResponse'
         401:
           description: Unauthorized
           content:
@@ -2822,10 +2885,13 @@ components:
             - write_api_keys_revocation_request
             - read_api_keys_list
             - write_customers_onboarding_request
+            - write_customers_onboarding_compliance_approval
             - read_customers_list
             - read_roles_list
             - write_roles_creation_request
             - write_roles_creation_approval
+            - write_roles_permissions_update_request
+            - write_roles_permissions_update_approval
             - read_scopes_list
             - write_scopes_creation_request
             - write_scopes_creation_approval
@@ -2864,6 +2930,72 @@ components:
       required:
       - id
       description: Response to an role creation request
+    CrystalBank__Domains__Roles__Api__Requests__PermissionsUpdateRequest:
+      type: object
+      properties:
+        role_id:
+          type: string
+          format: uuid
+          description: ID of the role whose permissions should be updated
+        permissions:
+          type: array
+          description: Complete new set of permissions for the role
+          items:
+            type: string
+            enum:
+            - read_accounts_list
+            - write_accounts_opening_request
+            - write_accounts_blocking_request
+            - write_accounts_unblocking_request
+            - write_accounts_blocking_approval
+            - write_accounts_unblocking_approval
+            - read_accounts_blocks
+            - write_accounts_opening_compliance_approval
+            - write_accounts_opening_board_approval
+            - write_api_keys_generation_request
+            - write_api_keys_generation_approval
+            - write_api_keys_revocation_request
+            - read_api_keys_list
+            - write_customers_onboarding_request
+            - write_customers_onboarding_compliance_approval
+            - read_customers_list
+            - read_roles_list
+            - write_roles_creation_request
+            - write_roles_creation_approval
+            - write_roles_permissions_update_request
+            - write_roles_permissions_update_approval
+            - read_scopes_list
+            - write_scopes_creation_request
+            - write_scopes_creation_approval
+            - write_ledger_transactions_request
+            - read_postings_list
+            - write_transactions_internal_transfers_initiation_request
+            - write_payments_sepa_credit_transfers_request
+            - read_payments_sepa_credit_transfers_list
+            - write_payments_sepa_credit_transfers_approval
+            - write_users_onboarding_request
+            - write_users_assign_roles_request
+            - read_users_list
+            - write_users_onboarding_compliance_approval
+            - write_approvals_collection_request
+            - write_approvals_rejection_request
+            - read_approvals_list
+            - read_events_list
+            - read_me
+            - read_platform_types
+      required:
+      - role_id
+      - permissions
+    CrystalBank__Domains__Roles__Api__Responses__PermissionsUpdateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the permissions update request
+      required:
+      - id
+      description: Response to a role permissions update request
     CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Roles__Api__Responses__Role_:
       type: object
       properties:
@@ -2939,10 +3071,13 @@ components:
                       - write_api_keys_revocation_request
                       - read_api_keys_list
                       - write_customers_onboarding_request
+                      - write_customers_onboarding_compliance_approval
                       - read_customers_list
                       - read_roles_list
                       - write_roles_creation_request
                       - write_roles_creation_approval
+                      - write_roles_permissions_update_request
+                      - write_roles_permissions_update_approval
                       - read_scopes_list
                       - write_scopes_creation_request
                       - write_scopes_creation_approval
