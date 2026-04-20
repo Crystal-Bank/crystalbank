@@ -82,7 +82,6 @@ module CrystalBank::Domains::Users
         created_at = event.header.created_at
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
-        CrystalBank.print_verbose("Aggregate Version", aggregate_version)
 
         # Build the account aggregate up to the version of the event
         aggregate = ::Users::Aggregate.new(aggregate_id)
@@ -90,7 +89,6 @@ module CrystalBank::Domains::Users
 
         # Extract attributes to local variables
         role_ids = aggregate.state.role_ids
-        CrystalBank.print_verbose("Role IDs", role_ids)
 
         @projection_database.transaction do |tx|
           cnn = tx.connection

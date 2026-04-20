@@ -38,7 +38,6 @@ module CrystalBank
 
       private def allowed_origin?(origin : String) : Bool
         host = URI.parse(origin).host || ""
-        CrystalBank.print_verbose("CORS request", "from origin: #{origin}, host: #{host}, dashboard domain: #{CrystalBank::Env.dashboard_domain}")
         host == CrystalBank::Env.dashboard_domain || host == "localhost" || host == "127.0.0.1"
       rescue
         false
