@@ -1,4 +1,4 @@
-import { auth } from './store.svelte.js'
+import { auth, ui } from './store.svelte.js'
 
 // Injected at runtime by the Crystal server into window.__API_URL__.
 // Falls back to empty string so relative paths work in a Vite dev-server session.
@@ -26,6 +26,13 @@ export async function apiFetch(method, path, body = null, opts = {}) {
   if (res.status === 401) {
     clearSession()
     throw new Error('Session expired')
+  }
+
+  if (res.status === 403) {
+    let msg = 'You do not have permission to perform this action.'
+    try { const e = await res.json(); msg = e.message || msg } catch {}
+    ui.permissionError = msg
+    throw new Error(msg)
   }
 
   if (!res.ok) {

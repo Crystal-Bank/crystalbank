@@ -18,6 +18,7 @@
   import Payments from './components/views/Payments.svelte'
   import SepaCreditTransfers from './components/views/SepaCreditTransfers.svelte'
   import Events from './components/views/Events.svelte'
+  import PermissionErrorDialog from './components/PermissionErrorDialog.svelte'
 
   const KNOWN_VIEWS = ['dashboard', 'accounts', 'customers', 'postings', 'users', 'roles', 'scopes', 'api_keys', 'approvals', 'payments', 'sepa_credit_transfers', 'events']
 
@@ -51,6 +52,7 @@
 </script>
 
 <ToastContainer />
+<PermissionErrorDialog />
 
 {#if !auth.token}
   <Login />
