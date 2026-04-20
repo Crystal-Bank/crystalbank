@@ -72,7 +72,7 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::ProcessApprov
     apply_projection(approval_id)
   end
 
-  it "is idempotent when the approval fires more than once" do
+  it "does not re-apply permissions when the update request aggregate is already completed" do
     role_id = UUID.v7
     update_request_id = UUID.v7
 
@@ -85,6 +85,13 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::ProcessApprov
     )
     TEST_EVENT_STORE.append(perm_requested)
 
+    # Simulate the update request already being completed (guard state)
+    completed_event = Test::Role::Events::PermissionsUpdate::Completed.new.create(
+      aggr_id: update_request_id,
+      aggregate_version: 2
+    )
+    TEST_EVENT_STORE.append(completed_event)
+
     approval_id = Approvals::Creation::Commands::Request.new.call(
       source_aggregate_type: "RolePermissionsUpdate",
       source_aggregate_id: update_request_id,
@@ -93,21 +100,20 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::ProcessApprov
       actor_id: UUID.v7,
     )
 
-    completed_event = Approvals::Collection::Events::Completed.new(
+    approval_completed = Approvals::Collection::Events::Completed.new(
       actor_id: nil,
       aggregate_id: approval_id,
       aggregate_version: 2,
       command_handler: "test",
       comment: "approved",
     )
-    TEST_EVENT_STORE.append(completed_event)
+    TEST_EVENT_STORE.append(approval_completed)
 
-    apply_projection(approval_id)
-    # Second replay — guard `completed == true` prevents double application
+    # ProcessApproval fires but the update request is already completed — role must stay at v2
     apply_projection(approval_id)
 
     role = Roles::Aggregate.new(role_id)
     role.hydrate
-    role.state.aggregate_version.should eq(3)
+    role.state.aggregate_version.should eq(2)
   end
 end

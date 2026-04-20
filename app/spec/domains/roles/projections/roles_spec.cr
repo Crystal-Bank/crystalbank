@@ -51,7 +51,7 @@ describe CrystalBank::Domains::Roles::Projections::Roles do
     projection.apply(event_3)
 
     permissions_json = TEST_PROJECTION_DB.query_one(
-      %(SELECT permissions FROM "projections"."roles" WHERE uuid = $1),
+      %(SELECT permissions::text FROM "projections"."roles" WHERE uuid = $1),
       uuid,
       as: String
     )

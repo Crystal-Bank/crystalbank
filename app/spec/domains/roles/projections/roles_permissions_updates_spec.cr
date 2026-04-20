@@ -47,7 +47,7 @@ describe CrystalBank::Domains::Roles::Projections::RolesPermissionsUpdates do
     Roles::Projections::RolesPermissionsUpdates.new.apply(event)
 
     permissions_json = TEST_PROJECTION_DB.query_one(
-      %(SELECT permissions FROM "projections"."roles_permissions_updates" WHERE uuid = $1),
+      %(SELECT permissions::text FROM "projections"."roles_permissions_updates" WHERE uuid = $1),
       update_request_id,
       as: String
     )
