@@ -98,6 +98,7 @@ module Test::Role::Events
 
       def json_string : String
         {
+          "comment":     "",
           "permissions": ["write_roles_permissions_update_request"],
         }.to_json
       end
