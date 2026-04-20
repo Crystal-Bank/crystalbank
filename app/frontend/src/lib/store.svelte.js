@@ -15,6 +15,8 @@ export const ui = $state({
   toasts: [],
   /** @type {object|null} */
   selectedAccount: null,
+  /** @type {string|null} */
+  permissionError: null,
 })
 
 export const viewData = $state({
