@@ -1,6 +1,6 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
-  import { loadMore, createRole } from '../../lib/actions.js'
+  import { loadMore, createRole, updateRolePermissions } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
@@ -104,6 +104,73 @@
     } catch {}
   }
 
+  // ── Update permissions modal ──────────────────────────
+  let showUpdateModal = $state(false)
+  let updateTargetRole = $state(null)
+  let updateForm = $state({ selectedPermissions: [] })
+
+  let updateAllSelected = $derived(
+    allPermissionKeys.length > 0 && updateForm.selectedPermissions.length === allPermissionKeys.length
+  )
+  let updateSomeSelected = $derived(
+    updateForm.selectedPermissions.length > 0 && updateForm.selectedPermissions.length < allPermissionKeys.length
+  )
+
+  let updateSelectAllEl = $state(null)
+  $effect(() => { if (updateSelectAllEl) updateSelectAllEl.indeterminate = updateSomeSelected })
+
+  function updateGroupAllSelected(group) {
+    return group.permissions.every(p => updateForm.selectedPermissions.includes(p.key))
+  }
+
+  function updateGroupSomeSelected(group) {
+    const count = group.permissions.filter(p => updateForm.selectedPermissions.includes(p.key)).length
+    return count > 0 && count < group.permissions.length
+  }
+
+  function updateToggleGroup(group) {
+    const keys = group.permissions.map(p => p.key)
+    if (updateGroupAllSelected(group)) {
+      updateForm.selectedPermissions = updateForm.selectedPermissions.filter(k => !keys.includes(k))
+    } else {
+      const toAdd = keys.filter(k => !updateForm.selectedPermissions.includes(k))
+      updateForm.selectedPermissions = [...updateForm.selectedPermissions, ...toAdd]
+    }
+  }
+
+  function updateToggleAll() {
+    updateForm.selectedPermissions = updateAllSelected ? [] : [...allPermissionKeys]
+  }
+
+  function updateTogglePermission(key) {
+    const idx = updateForm.selectedPermissions.indexOf(key)
+    if (idx === -1) updateForm.selectedPermissions = [...updateForm.selectedPermissions, key]
+    else updateForm.selectedPermissions = updateForm.selectedPermissions.filter(x => x !== key)
+  }
+
+  let updatePermissionsUnchanged = $derived(
+    updateTargetRole !== null &&
+    [...updateForm.selectedPermissions].sort().join(',') ===
+    [...(updateTargetRole.permissions ?? [])].sort().join(',')
+  )
+
+  async function openUpdateModal(role) {
+    updateTargetRole = role
+    updateForm = { selectedPermissions: [...(role.permissions ?? [])] }
+    showUpdateModal = true
+    if (permissionGroups.length === 0) {
+      const res = await apiFetch('GET', '/platform/types/permission-groups').catch(() => null)
+      if (res) permissionGroups = res.groups
+    }
+  }
+
+  async function handleUpdateSubmit() {
+    try {
+      await updateRolePermissions(updateTargetRole.id, updateForm.selectedPermissions)
+      showUpdateModal = false
+    } catch {}
+  }
+
   // ── Detail drawer ─────────────────────────────────────
   let drawerRole = $state(null)
 </script>
@@ -202,6 +269,66 @@
           </div>
         </div>
       {/if}
+    </div>
+    {#if drawerRole.status === 'active'}
+      <div class="drawer-footer">
+        <button onclick={() => openUpdateModal(drawerRole)} class="btn btn-primary btn-sm w-full">
+          Update Permissions
+        </button>
+      </div>
+    {/if}
+  </div>
+{/if}
+
+{#if showUpdateModal && updateTargetRole}
+  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showUpdateModal = false }}>
+    <div class="modal-box modal-box-lg">
+      <div class="modal-title">Update Permissions</div>
+      <div class="modal-desc">Select the full desired permission set for <strong>{updateTargetRole.name}</strong>. This will replace the current permissions.</div>
+      <form onsubmit={(e) => { e.preventDefault(); handleUpdateSubmit() }}>
+        <div class="mb-4">
+          <label class="field-label">Permissions</label>
+          <div class="permission-list">
+            <label class="permission-item border-b border-zinc-200">
+              <input type="checkbox" bind:this={updateSelectAllEl} checked={updateAllSelected} onchange={updateToggleAll}>
+              <span class="text-zinc-500 font-medium">Select all</span>
+            </label>
+            {#each permissionGroups as group (group.name)}
+              <div class="permission-group">
+                <label class="permission-item permission-group-header">
+                  <input
+                    type="checkbox"
+                    use:indeterminate={updateGroupSomeSelected(group)}
+                    checked={updateGroupAllSelected(group)}
+                    onchange={() => updateToggleGroup(group)}
+                  >
+                  <div class="min-w-0">
+                    <div class="font-semibold text-xs text-zinc-700">{group.name}</div>
+                    <div class="text-zinc-400 leading-tight mt-0.5">{group.description}</div>
+                  </div>
+                </label>
+                {#each group.permissions as p (p.key)}
+                  <label class="permission-item permission-item-nested">
+                    <input
+                      type="checkbox"
+                      checked={updateForm.selectedPermissions.includes(p.key)}
+                      onchange={() => updateTogglePermission(p.key)}
+                    >
+                    <div class="min-w-0">
+                      <div class="font-mono text-zinc-700">{p.key}</div>
+                      <div class="text-zinc-400 leading-tight mt-0.5">{p.description}</div>
+                    </div>
+                  </label>
+                {/each}
+              </div>
+            {/each}
+          </div>
+        </div>
+        <div class="flex gap-2 justify-end">
+          <button type="button" onclick={() => showUpdateModal = false} class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary" disabled={ui.loading || updatePermissionsUnchanged}>Submit for Approval</button>
+        </div>
+      </form>
     </div>
   </div>
 {/if}
