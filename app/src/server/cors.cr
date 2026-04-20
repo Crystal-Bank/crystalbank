@@ -17,8 +17,6 @@ module CrystalBank
       def call(context : HTTP::Server::Context)
         origin = context.request.headers["Origin"]?
 
-        CrystalBank.print_verbose("REQUEST", context.request.headers["Origin"]?)
-
         if origin && allowed_origin?(origin)
           h = context.response.headers
           h["Access-Control-Allow-Origin"] = origin

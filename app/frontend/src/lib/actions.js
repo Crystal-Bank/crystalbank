@@ -195,6 +195,20 @@ export async function createRole({ name, permissions, scopesList, selectedScopes
   }
 }
 
+export async function updateRolePermissions(roleId, permissions) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/roles/update_permissions', { role_id: roleId, permissions }, { idempotency: true })
+    addToast('Permissions update requested — awaiting approval')
+    await loadView('roles')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function createScope({ name, parent_scope_id }) {
   ui.loading = true
   try {

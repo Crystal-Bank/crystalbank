@@ -26,6 +26,26 @@ module CrystalBank::Domains::Roles
         CreationResponse.new(aggregate_id)
       end
 
+      # Update permissions
+      # Request an update to the permissions of an existing role.
+      # The caller must hold write_roles_permissions_update_request.
+      # The change is held pending approval from a user with write_roles_permissions_update_approval.
+      #
+      # Required permission:
+      # - **write_roles_permissions_update_request**
+      @[AC::Route::POST("/update_permissions", body: :r)]
+      def update_permissions(
+        r : PermissionsUpdateRequest,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID,
+      ) : Responses::PermissionsUpdateResponse
+        authorized?("write_roles_permissions_update_request")
+
+        update_request_id = ::Roles::PermissionsUpdate::Commands::Request.new.call(r, context)
+
+        Responses::PermissionsUpdateResponse.new(update_request_id)
+      end
+
       # List
       # List all roles
       #
