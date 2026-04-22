@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="200" height="240">
+  <defs>
+    <linearGradient id="gT" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7EEEFF"/><stop offset="100%" stop-color="#00B8E6"/></linearGradient>
+    <linearGradient id="gL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00AADD"/><stop offset="100%" stop-color="#0066BB"/></linearGradient>
+    <linearGradient id="gR" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#005FA3"/><stop offset="100%" stop-color="#003A75"/></linearGradient>
+    <linearGradient id="gIL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00C8F0"/><stop offset="100%" stop-color="#0088CC"/></linearGradient>
+    <linearGradient id="gIR" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0077BB"/><stop offset="100%" stop-color="#004488"/></linearGradient>
+  </defs>
+  <rect width="200" height="240" fill="#0D1B3E"/>
+  <!-- Gem: pointy-top regular hex, cx=100 cy=85 r=72 -->
+  <polygon points="100,13    37.65,49   100,87.88"  fill="url(#gT)"  opacity="0.95"/>
+  <polygon points="100,13    100,87.88  162.35,49"  fill="url(#gL)"  opacity="0.90"/>
+  <polygon points="37.65,49  37.65,121  100,87.88"  fill="url(#gL)"  opacity="0.85"/>
+  <polygon points="162.35,49 100,87.88  162.35,121" fill="url(#gR)"  opacity="0.85"/>
+  <polygon points="37.65,121 100,87.88  100,157"    fill="url(#gIL)" opacity="0.90"/>
+  <polygon points="162.35,121 100,157   100,87.88"  fill="url(#gIR)" opacity="0.90"/>
+  <line x1="100"    y1="13"  x2="100"    y2="87.88" stroke="#ffffff" stroke-width="0.6" opacity="0.35"/>
+  <line x1="100"    y1="87.88" x2="100"  y2="157"   stroke="#ffffff" stroke-width="0.6" opacity="0.22"/>
+  <line x1="37.65"  y1="49"  x2="100"    y2="87.88" stroke="#ffffff" stroke-width="0.5" opacity="0.18"/>
+  <line x1="162.35" y1="49"  x2="100"    y2="87.88" stroke="#ffffff" stroke-width="0.5" opacity="0.18"/>
+  <line x1="37.65"  y1="121" x2="100"    y2="87.88" stroke="#ffffff" stroke-width="0.5" opacity="0.12"/>
+  <line x1="162.35" y1="121" x2="100"    y2="87.88" stroke="#ffffff" stroke-width="0.5" opacity="0.12"/>
+  <polygon points="100,13 162.35,49 162.35,121 100,157 37.65,121 37.65,49" fill="none" stroke="#3DCCFF" stroke-width="1.2" opacity="0.45"/>
+  <!-- Wordmark -->
+  <text x="100" y="186" font-family="'Outfit', 'Arial Black', sans-serif" font-size="26" font-weight="900" letter-spacing="4" text-anchor="middle" fill="#FFFFFF">CRYSTAL</text>
+  <text x="100" y="218" font-family="'Outfit', Arial, sans-serif" font-size="14" font-weight="300" letter-spacing="11" text-anchor="middle" fill="#5DDDFF">BANK</text>
+</svg>

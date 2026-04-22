@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Rounded background -->
+  <rect width="32" height="32" rx="6" fill="#0D1B3E"/>
+  <!-- Gem: pointy-top regular hexagon, cx=16 cy=16 r=12, inner=(16,16.48) -->
+  <!-- T(16,4) TR(26.39,10) BR(26.39,22) B(16,28) BL(5.61,22) TL(5.61,10) -->
+  <polygon points="16,4    5.61,10   16,16.48"  fill="#7EEEFF"/>
+  <polygon points="16,4    16,16.48  26.39,10"  fill="#00AADD"/>
+  <polygon points="5.61,10  5.61,22  16,16.48"  fill="#00AADD"/>
+  <polygon points="26.39,10 16,16.48 26.39,22"  fill="#005FA3"/>
+  <polygon points="5.61,22  16,16.48 16,28"     fill="#00C8F0"/>
+  <polygon points="26.39,22 16,28    16,16.48"  fill="#0077BB"/>
+  <!-- Outline -->
+  <polygon points="16,4 26.39,10 26.39,22 16,28 5.61,22 5.61,10" fill="none" stroke="#3DCCFF" stroke-width="0.6" opacity="0.55"/>
+</svg>

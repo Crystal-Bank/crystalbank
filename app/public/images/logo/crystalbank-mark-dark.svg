@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="gT" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7EEEFF"/><stop offset="100%" stop-color="#00B8E6"/></linearGradient>
+    <linearGradient id="gL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00AADD"/><stop offset="100%" stop-color="#0066BB"/></linearGradient>
+    <linearGradient id="gR" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#005FA3"/><stop offset="100%" stop-color="#003A75"/></linearGradient>
+    <linearGradient id="gIL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00C8F0"/><stop offset="100%" stop-color="#0088CC"/></linearGradient>
+    <linearGradient id="gIR" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0077BB"/><stop offset="100%" stop-color="#004488"/></linearGradient>
+    <linearGradient id="gBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#122252"/><stop offset="100%" stop-color="#0D1B3E"/></linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="184" fill="url(#gBg)"/>
+  <!-- Gem: pointy-top regular hex, cx=512 cy=512 r=380 -->
+  <!-- T(512,132) TR(841.1,322) BR(841.1,702) B(512,892) BL(182.9,702) TL(182.9,322) inner(512,527.2) -->
+  <polygon points="512,132   182.9,322  512,527.2"  fill="url(#gT)"  opacity="0.95"/>
+  <polygon points="512,132   512,527.2  841.1,322"  fill="url(#gL)"  opacity="0.90"/>
+  <polygon points="182.9,322 182.9,702  512,527.2"  fill="url(#gL)"  opacity="0.85"/>
+  <polygon points="841.1,322 512,527.2  841.1,702"  fill="url(#gR)"  opacity="0.85"/>
+  <polygon points="182.9,702 512,527.2  512,892"    fill="url(#gIL)" opacity="0.90"/>
+  <polygon points="841.1,702 512,892    512,527.2"  fill="url(#gIR)" opacity="0.90"/>
+  <line x1="512"   y1="132"   x2="512"   y2="527.2" stroke="#ffffff" stroke-width="3"   opacity="0.35"/>
+  <line x1="512"   y1="527.2" x2="512"   y2="892"   stroke="#ffffff" stroke-width="3"   opacity="0.22"/>
+  <line x1="182.9" y1="322"   x2="512"   y2="527.2" stroke="#ffffff" stroke-width="2.5" opacity="0.18"/>
+  <line x1="841.1" y1="322"   x2="512"   y2="527.2" stroke="#ffffff" stroke-width="2.5" opacity="0.18"/>
+  <line x1="182.9" y1="702"   x2="512"   y2="527.2" stroke="#ffffff" stroke-width="2.5" opacity="0.12"/>
+  <line x1="841.1" y1="702"   x2="512"   y2="527.2" stroke="#ffffff" stroke-width="2.5" opacity="0.12"/>
+  <polygon points="512,132 841.1,322 841.1,702 512,892 182.9,702 182.9,322" fill="none" stroke="#3DCCFF" stroke-width="7" opacity="0.48"/>
+</svg>
