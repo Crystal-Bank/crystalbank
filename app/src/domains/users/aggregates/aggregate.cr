@@ -1,5 +1,6 @@
 require "./assign_roles"
 require "./onboarding"
+require "./remove_roles"
 
 module CrystalBank::Domains::Users
   class Aggregate < ES::Aggregate
@@ -7,6 +8,7 @@ module CrystalBank::Domains::Users
 
     include CrystalBank::Domains::Users::Aggregates::Concerns::AssignRoles
     include CrystalBank::Domains::Users::Aggregates::Concerns::Onboarding
+    include CrystalBank::Domains::Users::Aggregates::Concerns::RemoveRoles
 
     struct State < ES::Aggregate::State
       property onboarded : Bool = false
@@ -14,7 +16,8 @@ module CrystalBank::Domains::Users
       property email : String?
       property scope_id : UUID?
       property role_ids = Array(UUID).new                    # Array of Role IDs
-      property pending_role_id_assignments = Array(UUID).new # Array of Role IDs pending assignment approval
+      property pending_role_id_assignments = Array(UUID).new # Array of Role IDs pending assignment
+      property pending_role_id_removals = Array(UUID).new    # Array of Role IDs pending removal
       property requestor_id : UUID?
     end
 

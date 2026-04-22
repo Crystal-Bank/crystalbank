@@ -180,6 +180,20 @@ export async function assignRoles(userId, roleIds) {
   }
 }
 
+export async function removeRoles(userId, roleIds) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/users/' + userId + '/remove_roles', { role_ids: roleIds }, { idempotency: true })
+    addToast('Roles removed')
+    await loadView('users')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function createRole({ name, permissions, scopesList, selectedScopes }) {
   ui.loading = true
   try {

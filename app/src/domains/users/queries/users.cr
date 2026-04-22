@@ -14,6 +14,14 @@ module CrystalBank::Domains::Users
         getter name : String
         getter email : String
         getter status : String
+
+        @[DB::Field(key: "role_ids")]
+        @[JSON::Field(ignore: true)]
+        @role_ids_raw : String = "[]"
+
+        def role_ids : Array(UUID)
+          Array(UUID).from_json(@role_ids_raw)
+        end
       end
 
       def initialize

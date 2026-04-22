@@ -1,6 +1,6 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
-  import { loadMore, createUser, assignRoles } from '../../lib/actions.js'
+  import { loadMore, createUser, assignRoles, removeRoles } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
@@ -23,12 +23,33 @@
   // ── User drawer ──────────────────────────────────────
   let drawerUser = $state(null)
 
+  // ── Remove roles (inside drawer) ─────────────────────
+  let rolesToRemove = $state([])
+
+  function toggleRemoveRole(roleId) {
+    if (rolesToRemove.includes(roleId)) {
+      rolesToRemove = rolesToRemove.filter(id => id !== roleId)
+    } else {
+      rolesToRemove = [...rolesToRemove, roleId]
+    }
+  }
+
+  async function handleRemove() {
+    try {
+      await removeRoles(drawerUser.id, rolesToRemove)
+      rolesToRemove = []
+    } catch {}
+  }
+
   function openDrawer(user) {
     drawerUser = user
     roleOptions = []
     selectedRoles = []
+    rolesToRemove = []
     roleSearch = ''
     showRoleDropdown = false
+    rolesLoaded = false
+    if (user.role_ids && user.role_ids.length > 0) loadRoles()
   }
 
   function closeDrawer() {
@@ -205,9 +226,30 @@
         </div>
         <div class="field-hint">Search and select role(s) to assign to this user</div>
       </div>
+
+      {#if drawerUser.role_ids && drawerUser.role_ids.length > 0}
+        <div class="border-t border-zinc-100 pt-5 mt-1">
+          <div class="text-sm font-semibold text-zinc-700 mb-3">Remove Roles</div>
+          <div class="flex flex-wrap gap-1.5">
+            {#each drawerUser.role_ids as roleId (roleId)}
+              <button
+                type="button"
+                onclick={() => toggleRemoveRole(roleId)}
+                class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs border transition-colors {rolesToRemove.includes(roleId) ? 'bg-red-50 border-red-300 text-red-700' : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:border-red-300 hover:text-red-600'}"
+              >
+                <span class="font-mono">{getRoleName(roleId)}</span>
+                {#if rolesToRemove.includes(roleId)}
+                  <span class="leading-none">&#x2715;</span>
+                {/if}
+              </button>
+            {/each}
+          </div>
+          <div class="field-hint mt-2">Click a role to mark it for removal</div>
+        </div>
+      {/if}
     </div>
 
-    <div class="drawer-footer">
+    <div class="drawer-footer flex flex-col gap-2">
       <button
         onclick={handleAssign}
         class="btn btn-primary w-full"
@@ -215,6 +257,15 @@
       >
         Assign Roles
       </button>
+      {#if drawerUser.role_ids && drawerUser.role_ids.length > 0}
+        <button
+          onclick={handleRemove}
+          class="btn btn-ghost w-full text-red-600 hover:bg-red-50 border border-red-200"
+          disabled={ui.loading || rolesToRemove.length === 0}
+        >
+          Remove Selected Roles
+        </button>
+      {/if}
     </div>
   </div>
 {/if}

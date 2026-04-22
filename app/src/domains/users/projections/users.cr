@@ -75,6 +75,34 @@ module CrystalBank::Domains::Users
         end
       end
 
+      # Remove Roles Accepted
+      def apply(event : ::Users::RemoveRoles::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        # Build the user aggregate up to the version of the event
+        aggregate = ::Users::Aggregate.new(aggregate_id)
+        aggregate.hydrate(version: aggregate_version)
+
+        role_ids = aggregate.state.role_ids
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(
+            UPDATE
+              "projections"."users"
+            SET
+              role_ids=$1,
+              aggregate_version=$2
+            WHERE
+              uuid=$3;
+          ),
+            role_ids.to_json,
+            aggregate_version,
+            aggregate_id
+        end
+      end
+
       # Assign Roles Accepted
       def apply(event : ::Users::AssignRoles::Events::Accepted)
         # Extract attributes to local variables
