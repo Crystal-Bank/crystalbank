@@ -16,6 +16,7 @@ module CrystalBank::Domains::Users
 
           body = event.body.as(Users::RemoveRoles::Events::Requested::Body)
           @state.pending_role_id_removals = body.role_ids
+          @state.requestor_id = event.header.actor_id
         end
       end
     end

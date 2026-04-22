@@ -184,7 +184,7 @@ export async function removeRoles(userId, roleIds) {
   ui.loading = true
   try {
     await apiFetch('POST', '/users/' + userId + '/remove_roles', { role_ids: roleIds }, { idempotency: true })
-    addToast('Roles removed')
+    addToast('Role removal requested — awaiting approval')
     await loadView('users')
   } catch (e) {
     addToast(e.message, 'error')

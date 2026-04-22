@@ -263,7 +263,7 @@
           class="btn btn-ghost w-full text-red-600 hover:bg-red-50 border border-red-200"
           disabled={ui.loading || rolesToRemove.length === 0}
         >
-          Remove Selected Roles
+          Request Role Removal
         </button>
       {/if}
     </div>

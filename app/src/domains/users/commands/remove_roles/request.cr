@@ -11,6 +11,11 @@ module CrystalBank::Domains::Users
           aggregate = Users::Aggregate.new(aggregate_id)
           aggregate.hydrate
 
+          # Reject if a removal is already awaiting approval
+          if !aggregate.state.pending_role_id_removals.empty?
+            raise CrystalBank::Exception::InvalidArgument.new("A role removal is already pending approval for this user")
+          end
+
           # Check if provided roles are actually assigned to the user
           missing_roles = r.role_ids - aggregate.state.role_ids
           if !missing_roles.empty?

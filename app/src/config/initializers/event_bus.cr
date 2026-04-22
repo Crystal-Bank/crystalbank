@@ -23,6 +23,7 @@ bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Users::Onboarding::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Users::RemoveRoles::Commands::ProcessApproval)
 
 # ApiKeys
 bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
