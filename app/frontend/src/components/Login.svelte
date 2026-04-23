@@ -19,8 +19,7 @@
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100">
   <div class="w-full max-w-sm">
     <div class="text-center mb-8">
-      <img src="/images/logo/crystalbank-stacked-dark.svg" alt="CrystalBank" class="w-16 h-16 mb-4 mx-auto block">
-      <h1 class="text-2xl font-bold text-zinc-900">CrystalBank</h1>
+      <img src="/images/logo/crystalbank-stacked-dark.svg" alt="CrystalBank" class="w-32 h-32 mb-4 mx-auto block">
       <p class="text-sm text-zinc-500 mt-1">Sign in with your API credentials</p>
     </div>
 
