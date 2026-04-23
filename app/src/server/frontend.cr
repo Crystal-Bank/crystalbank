@@ -7,14 +7,15 @@ module CrystalBank
     class Frontend < ::AC::Base
       base "/"
 
-      INDEX_HTML        = {{ read_file("#{__DIR__}/../../public/index.html") }}
-      APP_JS            = {{ read_file("#{__DIR__}/../../public/app.js") }}
-      APP_CSS           = {{ read_file("#{__DIR__}/../../public/style.css") }}
-      APP_LOGO_SVG      = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-horizontal-dark.svg") }}
-      APP_FACICON_ICO   = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon.ico") }}
-      APP_FAVICON_SVG   = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon.svg") }}
-      APP_FAVICON32_png = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon-32x32.png") }}
-      APP_FAVICON16_png = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon-16x16.png") }}
+      INDEX_HTML              = {{ read_file("#{__DIR__}/../../public/index.html") }}
+      APP_JS                  = {{ read_file("#{__DIR__}/../../public/app.js") }}
+      APP_CSS                 = {{ read_file("#{__DIR__}/../../public/style.css") }}
+      APP_LOGO_HORIZONTAL_SVG = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-horizontal-dark.svg") }}
+      APP_LOGO_STACKED_SVG    = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-stacked-light.svg") }}
+      APP_FACICON_ICO         = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon.ico") }}
+      APP_FAVICON_SVG         = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon.svg") }}
+      APP_FAVICON32_png       = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon-32x32.png") }}
+      APP_FAVICON16_png       = {{ read_file("#{__DIR__}/../../public/images/logo/crystalbank-favicon-16x16.png") }}
 
       @[AC::Route::Filter(:before_action)]
       def check_dashboard_domain
@@ -69,7 +70,13 @@ module CrystalBank
 
       get "/images/logo/crystalbank-horizontal-dark.svg" do
         response.content_type = "image/svg+xml; charset=utf-8"
-        response.print APP_LOGO_SVG
+        response.print APP_LOGO_HORIZONTAL_SVG
+        response.close
+      end
+
+      get "/images/logo/crystalbank-stacked-dark.svg" do
+        response.content_type = "image/svg+xml; charset=utf-8"
+        response.print APP_LOGO_STACKED_SVG
         response.close
       end
     end
