@@ -29,7 +29,11 @@ module CrystalBank::Domains::Users
       end
 
       def get(uuid : UUID) : User?
-        @db.query_one?("SELECT * FROM projections.users WHERE uuid = $1", args: [uuid], as: User)
+        @db.query_one?(
+          %(SELECT id, uuid, aggregate_version, scope_id, role_ids::text AS role_ids, created_at, name, email, status FROM projections.users WHERE uuid = $1),
+          args: [uuid],
+          as: User
+        )
       end
 
       def list(
@@ -41,7 +45,7 @@ module CrystalBank::Domains::Users
         query = [] of String
         query_params = Array(Array(UUID) | UUID? | Int32).new
 
-        query << %(SELECT * FROM "projections"."users" WHERE 1=1)
+        query << %(SELECT id, uuid, aggregate_version, scope_id, role_ids::text AS role_ids, created_at, name, email, status FROM "projections"."users" WHERE 1=1)
 
         # Add scope query
         query << %(AND "scope_id" = ANY($#{query_param_counter += 1}::uuid[]))
