@@ -16,12 +16,12 @@
   }
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-off-white to-[#d8ecff]">
   <div class="w-full max-w-sm">
     <div class="text-center mb-8">
       <img src="/images/logo/crystalbank-stacked-dark.svg" alt="CrystalBank" class="w-16 h-16 mb-4 mx-auto block">
-      <h1 class="text-2xl font-bold text-zinc-900">CrystalBank</h1>
-      <p class="text-sm text-zinc-500 mt-1">Sign in with your API credentials</p>
+      <h1 class="text-2xl font-bold text-brand-deep-navy">CrystalBank</h1>
+      <p class="text-sm text-brand-deep-navy/60 mt-1">Sign in with your API credentials</p>
     </div>
 
     <div class="card p-6 shadow-sm">
@@ -49,6 +49,6 @@
       </form>
     </div>
 
-    <p class="text-center text-xs text-zinc-400 mt-4">CrystalBank &mdash; Event-sourced Banking Platform</p>
+    <p class="text-center text-xs text-brand-deep-navy/50 mt-4">CrystalBank &mdash; Event-sourced Banking Platform</p>
   </div>
 </div>

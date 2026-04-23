@@ -3,19 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --card: 0 0% 100%;
-  --border: 240 5.9% 90%;
-  --primary: 240 5.9% 10%;
-  --primary-fg: 0 0% 98%;
-  --muted: 240 4.8% 95.9%;
-  --muted-fg: 240 3.8% 46.1%;
+  /* ── CrystalBank brand palette (light theme) ─── */
+  --background: 209 100% 96%;   /* off_white   #E8F4FF */
+  --foreground: 223 65% 15%;    /* deep_navy   #0D1B3E */
+  --card: 0 0% 100%;            /* white       #FFFFFF */
+  --border: 214 40% 86%;        /* navy-tinted border  */
+  --primary: 200 100% 40%;      /* ocean       #0088CC */
+  --primary-fg: 0 0% 100%;      /* white       #FFFFFF */
+  --muted: 210 55% 94%;         /* soft blue surface   */
+  --muted-fg: 223 30% 50%;      /* mid-navy secondary  */
   --radius: 0.5rem;
   --destructive: 0 72% 51%;
 }
 
-body { font-family: 'Inter', system-ui, sans-serif; }
+body { font-family: 'Outfit', 'Arial Black', Helvetica, sans-serif; }
 
 /* ── Buttons ──────────────────────────────────────────── */
 .btn {
@@ -34,7 +35,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   white-space: nowrap;
 }
 .btn-primary { background: hsl(var(--primary)); color: hsl(var(--primary-fg)); }
-.btn-primary:hover { background: hsl(240 5.9% 20%); }
+.btn-primary:hover { background: hsl(200 100% 33%); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-ghost { background: transparent; color: hsl(var(--muted-fg)); border: 1px solid hsl(var(--border)); }
 .btn-ghost:hover { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
@@ -60,7 +61,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   color: hsl(var(--foreground));
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-.field-input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 2px hsla(240, 5.9%, 10%, 0.1); }
+.field-input:focus { border-color: hsl(var(--primary)); box-shadow: 0 0 0 2px hsla(200, 100%, 40%, 0.15); }
 .field-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
@@ -73,7 +74,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .badge { display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.15rem 0.55rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.01em; }
 .badge-green  { background: #dcfce7; color: #15803d; }
 .badge-red    { background: #fee2e2; color: #b91c1c; }
-.badge-blue   { background: #dbeafe; color: #1d4ed8; }
+.badge-blue   { background: #cce8f5; color: #0066BB; }
 .badge-zinc   { background: #f4f4f5; color: #52525b; }
 .badge-purple { background: #f3e8ff; color: #7e22ce; }
 .badge-amber  { background: #fef3c7; color: #b45309; }
@@ -93,7 +94,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 }
 .data-table td { padding: 0.8rem 1rem; border-bottom: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); vertical-align: middle; }
 .data-table tbody tr:last-child td { border-bottom: none; }
-.data-table tbody tr:hover td { background: hsl(240 4.8% 97%); }
+.data-table tbody tr:hover td { background: hsl(210 60% 97%); }
 
 /* ── Mono / UUID ──────────────────────────────────────── */
 .mono { font-family: 'Menlo', 'Monaco', 'Consolas', monospace; font-size: 0.75rem; background: hsl(var(--muted)); padding: 0.15rem 0.4rem; border-radius: 4px; color: hsl(var(--foreground)); }
@@ -167,7 +168,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 
 /* ── Scope bar ────────────────────────────────────────── */
 .scope-bar {
-  background: hsl(240 4.8% 97%);
+  background: hsl(210 60% 97%);
   border-bottom: 1px solid hsl(var(--border));
   padding: 0.625rem 1.5rem;
   display: flex;

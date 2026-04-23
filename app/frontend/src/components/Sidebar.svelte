@@ -97,14 +97,14 @@
   }
 </script>
 
-<aside class="w-56 bg-zinc-900 flex flex-col flex-shrink-0">
+<aside class="w-56 bg-brand-deep-navy flex flex-col flex-shrink-0">
   <!-- Invisible overlay to close dropdown when clicking outside -->
   {#if showDropdown}
     <div class="fixed inset-0 z-40" onclick={() => showDropdown = false}></div>
   {/if}
 
   <!-- Sidebar Header -->
-  <div class="px-3 pt-3 pb-2 border-b border-zinc-800" bind:this={switcherEl}>
+  <div class="px-3 pt-3 pb-2 border-b border-brand-navy-mid" bind:this={switcherEl}>
     <!-- App branding -->
     <div class="flex items-center gap-2 px-1 mb-3">
       <img src="/images/logo/crystalbank-horizontal-dark.svg" alt="CrystalBank" class="h-7 w-auto flex-shrink-0">
@@ -121,7 +121,7 @@
         onmouseleave={(e) => { if (!showDropdown) e.currentTarget.style.background = 'transparent' }}
       >
         <!-- Scope Icon -->
-        <div class="w-6 h-6 rounded bg-zinc-700 flex items-center justify-center flex-shrink-0">
+        <div class="w-6 h-6 rounded bg-brand-navy-mid flex items-center justify-center flex-shrink-0">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2">
             <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
             <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
@@ -135,7 +135,7 @@
         </svg>
       </button>
       {#if auth.scope}
-        <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 z-50 bg-zinc-900 border border-zinc-700 text-zinc-300 text-xs font-mono rounded px-2.5 py-1.5 whitespace-nowrap shadow-lg pointer-events-none hidden group-hover:block">
+        <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 z-50 bg-brand-deep-navy border border-brand-navy-mid text-brand-off-white text-xs font-mono rounded px-2.5 py-1.5 whitespace-nowrap shadow-lg pointer-events-none hidden group-hover:block">
           {auth.scope}
         </div>
       {/if}
@@ -146,7 +146,7 @@
   <!-- Dropdown Menu — fixed position so it floats over the layout -->
   {#if showDropdown}
     <div
-      class="fixed z-50 bg-zinc-800 border border-zinc-700/80 rounded-lg shadow-2xl overflow-hidden"
+      class="fixed z-50 bg-brand-navy-mid border border-white/10 rounded-lg shadow-2xl overflow-hidden"
       style="top: {dropdownTop}px; left: {dropdownLeft}px; min-width: 260px; max-width: 340px;"
     >
       {#if flatTree.length > 0}
@@ -172,7 +172,7 @@
               >
                 {s.name ? s.name[0].toUpperCase() : '?'}
               </div>
-              <span class="flex-1 text-sm text-zinc-200 truncate">{s.name}</span>
+              <span class="flex-1 text-sm text-brand-off-white truncate">{s.name}</span>
               {#if auth.scope === s.id}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.5">
                   <path d="M20 6L9 17l-5-5"/>
@@ -182,7 +182,7 @@
           {/each}
         </div>
       {:else}
-        <div class="px-3 py-3 text-xs text-zinc-500 text-center">Loading scopes…</div>
+        <div class="px-3 py-3 text-xs text-brand-crystal-glow/50 text-center">Loading scopes…</div>
       {/if}
     </div>
   {/if}
@@ -190,7 +190,7 @@
   <nav class="flex-1 px-3 py-3 space-y-4 overflow-y-auto">
     {#each NAV_SECTIONS as section (section.label)}
       <div>
-        <div class="px-2 mb-1 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+        <div class="px-2 mb-1 text-xs font-semibold uppercase tracking-wider text-brand-crystal-glow/50">
           {section.label}
         </div>
         <div class="space-y-0.5">
@@ -205,7 +205,7 @@
     {/each}
   </nav>
 
-  <div class="px-3 py-3 border-t border-zinc-800">
+  <div class="px-3 py-3 border-t border-brand-navy-mid">
     <button onclick={logout} class="nav-link w-full text-left">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
