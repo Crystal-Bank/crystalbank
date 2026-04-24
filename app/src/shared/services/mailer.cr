@@ -1,4 +1,4 @@
-require "crystal-email"
+require "email"
 
 module CrystalBank
   module Services
