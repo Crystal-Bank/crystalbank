@@ -82,5 +82,51 @@ module CrystalBank
     def sepa_settlement_account_id : UUID
       UUID.new(ENV["SEPA_SETTLEMENT_ACCOUNT_ID"]? || "00000000-0000-0000-0000-900000000001")
     end
+
+    @@smtp_host : String?
+    @@smtp_port : Int32?
+    @@smtp_from : String?
+    @@smtp_username : String?
+    @@smtp_password : String?
+    @@smtp_tls : Bool?
+    @@totp_encryption_key : String?
+    @@invitation_token_ttl : Int32?
+    @@password_reset_token_ttl : Int32?
+
+    def smtp_host : String
+      @@smtp_host ||= ENV["SMTP_HOST"]? || "mailhog"
+    end
+
+    def smtp_port : Int32
+      @@smtp_port ||= (ENV["SMTP_PORT"]? || "1025").to_i
+    end
+
+    def smtp_from : String
+      @@smtp_from ||= ENV["SMTP_FROM"]? || "noreply@crystalbank.xyz"
+    end
+
+    def smtp_username : String?
+      @@smtp_username ||= ENV["SMTP_USERNAME"]?.presence
+    end
+
+    def smtp_password : String?
+      @@smtp_password ||= ENV["SMTP_PASSWORD"]?.presence
+    end
+
+    def smtp_tls : Bool
+      (ENV["SMTP_TLS"]? || "false") == "true"
+    end
+
+    def totp_encryption_key : String
+      @@totp_encryption_key ||= ENV["TOTP_ENCRYPTION_KEY"]? || "0" * 64
+    end
+
+    def invitation_token_ttl : Int32
+      @@invitation_token_ttl ||= (ENV["INVITATION_TOKEN_TTL"]? || "604800").to_i
+    end
+
+    def password_reset_token_ttl : Int32
+      @@password_reset_token_ttl ||= (ENV["PASSWORD_RESET_TOKEN_TTL"]? || "3600").to_i
+    end
   end
 end
