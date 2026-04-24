@@ -86,6 +86,8 @@ module CrystalBank
       permissions: [
         {key: "WRITE_users_onboarding_request", description: "Submit a request to onboard a new platform user."},
         {key: "WRITE_users_assign_roles_request", description: "Submit a request to assign one or more roles to a user."},
+        {key: "WRITE_users_remove_roles_request", description: "Submit a request to remove one or more roles from a user."},
+        {key: "WRITE_users_remove_roles_approval", description: "Approve or reject a pending role removal request for a user."},
         {key: "READ_users_list", description: "List all users visible within the caller's scope."},
         {key: "WRITE_users_onboarding_compliance_approval", description: "Provide compliance sign-off on a pending user onboarding request."},
       ],

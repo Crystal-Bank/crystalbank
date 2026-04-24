@@ -46,6 +46,26 @@ module CrystalBank::Domains::Users
         head :accepted
       end
 
+      # Request removal of roles
+      # Remove roles from a user
+      #
+      # Required permission:
+      # - **write_users_remove_roles_request**
+      @[AC::Route::POST("/:id/remove_roles", body: :r)]
+      def remove_roles(
+        id : String,
+        r : RemoveRolesRequest,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID,
+      )
+        authorized?("write_users_remove_roles_request")
+
+        user_id = UUID.new(id)
+        ::Users::RemoveRoles::Commands::Request.new.call(user_id, r, context)
+
+        head :accepted
+      end
+
       # List
       # List all users
       #
@@ -66,7 +86,8 @@ module CrystalBank::Domains::Users
             a.scope_id,
             a.name,
             a.email,
-            a.status
+            a.status,
+            a.role_ids
           )
         end
 

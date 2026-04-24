@@ -23,6 +23,7 @@ bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Users::Onboarding::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Users::RemoveRoles::Commands::ProcessApproval)
 
 # ApiKeys
 bus.subscribe(ApiKeys::Generation::Events::Requested, ApiKeys::Generation::Commands::ProcessRequest)
@@ -70,6 +71,8 @@ bus.subscribe(Users::Onboarding::Events::Requested, Users::Projections::Users)
 bus.subscribe(Users::Onboarding::Events::Accepted, Users::Projections::Users)
 bus.subscribe(Users::AssignRoles::Events::Requested, Users::AssignRoles::Commands::ProcessRequest)
 bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)
+bus.subscribe(Users::RemoveRoles::Events::Requested, Users::RemoveRoles::Commands::ProcessRequest)
+bus.subscribe(Users::RemoveRoles::Events::Accepted, Users::Projections::Users)
 
 # Events (cross-cutting audit projection)
 bus.subscribe(Accounts::Opening::Events::Requested, Events::Projections::Events)
@@ -98,3 +101,5 @@ bus.subscribe(Users::Onboarding::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::Onboarding::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::AssignRoles::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::AssignRoles::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Users::RemoveRoles::Events::Requested, Events::Projections::Events)
+bus.subscribe(Users::RemoveRoles::Events::Accepted, Events::Projections::Events)
