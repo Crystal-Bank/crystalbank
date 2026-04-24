@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { ui } from '../../lib/store.svelte.js'
   import { apiFetch } from '../../lib/api.js'
-  import { requestBlock, requestUnblock, switchView } from '../../lib/actions.js'
+  import { requestBlock, requestUnblock, requestClosure, switchView } from '../../lib/actions.js'
   import { shortId, formatDate } from '../../lib/utils.js'
 
   /** @type {{ account: object }} */
@@ -88,6 +88,44 @@
     if (e === 'Full')  return 'badge-red'
     if (e === 'Debit') return 'badge-amber'
     return 'badge-amber'
+  }
+
+  // ── Closure state ─────────────────────────────────────
+  const CLOSURE_REASONS = [
+    { value: 'by_customer',              label: 'By Customer' },
+    { value: 'inactivity',               label: 'Inactivity' },
+    { value: 'fraud',                    label: 'Fraud' },
+    { value: 'suspicious_activity',      label: 'Suspicious Activity' },
+    { value: 'aml_violation',            label: 'AML Violation' },
+    { value: 'kyc_failure',              label: 'KYC Failure' },
+    { value: 'negative_balance',         label: 'Negative Balance' },
+    { value: 'repeated_overdraft',       label: 'Repeated Overdraft' },
+    { value: 'terms_violation',          label: 'Terms Violation' },
+    { value: 'court_order',              label: 'Court Order' },
+    { value: 'death_of_account_holder',  label: 'Death of Account Holder' },
+    { value: 'duplicate_account',        label: 'Duplicate Account' },
+    { value: 'product_discontinued',     label: 'Product Discontinued' },
+    { value: 'regulatory_requirement',   label: 'Regulatory Requirement' },
+    { value: 'sanctions_match',          label: 'Sanctions Match' },
+    { value: 'bankruptcy',               label: 'Bankruptcy' },
+    { value: 'minor_reached_age_limit',  label: 'Minor Reached Age Limit' },
+    { value: 'business_dissolution',     label: 'Business Dissolution' },
+    { value: 'failed_reactivation',      label: 'Failed Reactivation' },
+    { value: 'bank_decision',            label: 'Bank Decision' },
+  ]
+
+  let showClosureModal = $state(false)
+  let closureForm = $state({ reason: 'by_customer', closure_comment: '' })
+  let lastClosureRequest = $state(null)
+
+  async function submitClosure() {
+    try {
+      const res = await requestClosure(account.id, closureForm.reason, closureForm.closure_comment)
+      lastClosureRequest = res
+      showClosureModal = false
+      closureForm = { reason: 'by_customer', closure_comment: '' }
+      ui.selectedAccount.status = 'closure_pending'
+    } catch {}
   }
 
   onMount(() => {
@@ -222,6 +260,32 @@
     </table>
   {:else if blocks}
     <div class="py-8 text-center text-sm text-zinc-400">No active block causes</div>
+  {/if}
+</div>
+
+<!-- ── Closure ──────────────────────────────────────── -->
+<div class="flex items-center justify-between mb-3">
+  <div class="flex items-center gap-2">
+    <span class="text-sm font-semibold text-zinc-700">Closure</span>
+    {#if account.status === 'closure_pending'}
+      <span class="badge badge-amber">Closure Pending</span>
+    {:else if account.status === 'closed'}
+      <span class="badge badge-red">Closed</span>
+    {/if}
+  </div>
+  {#if account.status === 'active'}
+    <button onclick={() => showClosureModal = true} class="btn btn-sm btn-danger">
+      Request Closure
+    </button>
+  {/if}
+</div>
+<div class="card p-4 mb-5 text-sm text-zinc-500">
+  {#if account.status === 'closure_pending'}
+    A closure request has been submitted and is awaiting approval. Go to Approvals to sign it off.
+  {:else if account.status === 'closed'}
+    This account has been closed.
+  {:else}
+    No closure request pending.
   {/if}
 </div>
 
@@ -392,6 +456,79 @@
       <button onclick={() => lastRequest = null} class="btn btn-ghost">Close</button>
       <button
         onclick={() => { lastRequest = null; switchView('approvals') }}
+        class="btn btn-primary"
+      >
+        Go to Approvals
+      </button>
+    </div>
+  </div>
+{/if}
+
+<!-- ── Request Closure modal ────────────────────────── -->
+{#if showClosureModal}
+  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showClosureModal = false }}>
+    <div class="modal-box">
+      <div class="modal-title">Request Closure</div>
+      <div class="modal-desc">The account will not be closed until approved by a user with the closure approval permission.</div>
+      <form onsubmit={(e) => { e.preventDefault(); submitClosure() }}>
+        <div class="mb-4">
+          <label class="field-label" for="closure-reason">Reason</label>
+          <select id="closure-reason" bind:value={closureForm.reason} class="field-select">
+            {#each CLOSURE_REASONS as r (r.value)}
+              <option value={r.value}>{r.label}</option>
+            {/each}
+          </select>
+        </div>
+        <div class="mb-5">
+          <label class="field-label" for="closure-comment">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <textarea
+            id="closure-comment"
+            bind:value={closureForm.closure_comment}
+            class="field-input resize-none"
+            rows="3"
+            placeholder="Additional details about the closure..."
+          ></textarea>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick={() => showClosureModal = false} class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-danger" disabled={ui.loading}>Request Closure</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{/if}
+
+<!-- ── Closure request submitted drawer ─────────────── -->
+{#if lastClosureRequest}
+  <div class="drawer-backdrop" onclick={() => lastClosureRequest = null}></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Closure Request Submitted</div>
+      <button onclick={() => lastClosureRequest = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
+        The closure request is pending approval. Go to Approvals to sign it off.
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Approval ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{lastClosureRequest.approval_id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Closure Request ID</div>
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{lastClosureRequest.closure_request_id}</div>
+      </div>
+      <div class="drawer-field">
+        <div class="drawer-field-label">Status</div>
+        <span class="badge badge-amber">{lastClosureRequest.status?.replace('_', ' ')}</span>
+      </div>
+    </div>
+    <div class="drawer-footer">
+      <button onclick={() => lastClosureRequest = null} class="btn btn-ghost">Close</button>
+      <button
+        onclick={() => { lastClosureRequest = null; switchView('approvals') }}
         class="btn btn-primary"
       >
         Go to Approvals

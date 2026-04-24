@@ -306,6 +306,27 @@ export async function requestBlock(accountId, blockType, reason) {
   }
 }
 
+export async function requestClosure(accountId, reason, closureComment) {
+  ui.loading = true
+  try {
+    const body = { reason }
+    if (closureComment?.trim()) body.closure_comment = closureComment.trim()
+    const res = await apiFetch(
+      'POST',
+      `/accounts/${accountId}/close`,
+      body,
+      { idempotency: true },
+    )
+    addToast('Closure requested — awaiting approval')
+    return res
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function requestUnblock(accountId, blockType, reason) {
   ui.loading = true
   try {
