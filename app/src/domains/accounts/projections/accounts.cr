@@ -77,6 +77,34 @@ module CrystalBank::Domains::Accounts
             aggregate_id
         end
       end
+
+      # Closure requested — account enters pending closure state
+      def apply(event : ::Accounts::Closure::Events::Requested)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."accounts" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "closure_pending",
+            aggregate_version,
+            aggregate_id
+        end
+      end
+
+      # Closure accepted — account is now closed
+      def apply(event : ::Accounts::Closure::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."accounts" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
+            "closed",
+            aggregate_version,
+            aggregate_id
+        end
+      end
     end
   end
 end

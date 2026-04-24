@@ -1,6 +1,30 @@
 module CrystalBank::Domains::Accounts
   module Api
     module Responses
+      # Response to an account closure request
+      struct ClosureResponse
+        include JSON::Serializable
+
+        @[JSON::Field(format: "uuid", description: "ID of the account being closed")]
+        getter account_id : UUID
+
+        @[JSON::Field(format: "uuid", description: "ID of the closure request aggregate")]
+        getter closure_request_id : UUID
+
+        @[JSON::Field(format: "uuid", description: "ID of the approval workflow that must be completed")]
+        getter approval_id : UUID
+
+        @[JSON::Field(description: "Current status of the closure request")]
+        getter status : String
+
+        def initialize(
+          @account_id : UUID,
+          @closure_request_id : UUID,
+          @approval_id : UUID,
+          @status : String = "closure_pending",
+        ); end
+      end
+
       # Response to an account opening request
       struct OpeningResponse
         include JSON::Serializable

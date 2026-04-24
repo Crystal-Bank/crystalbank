@@ -9,6 +9,11 @@ bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands:
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Projections::Accounts)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
+# Account Closure
+bus.subscribe(Accounts::Closure::Events::Requested, Accounts::Projections::Accounts)
+bus.subscribe(Accounts::Closure::Events::Accepted, Accounts::Projections::Accounts)
+bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Closure::Commands::ProcessApproval)
+
 # Account Blocks
 bus.subscribe(Accounts::Blocking::Events::Applied, Accounts::Projections::AccountBlocks)
 bus.subscribe(Accounts::Blocking::Events::Removed, Accounts::Projections::AccountBlocks)
@@ -74,6 +79,8 @@ bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)
 # Events (cross-cutting audit projection)
 bus.subscribe(Accounts::Opening::Events::Requested, Events::Projections::Events)
 bus.subscribe(Accounts::Opening::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Accounts::Closure::Events::Requested, Events::Projections::Events)
+bus.subscribe(Accounts::Closure::Events::Accepted, Events::Projections::Events)
 bus.subscribe(ApiKeys::Generation::Events::Requested, Events::Projections::Events)
 bus.subscribe(ApiKeys::Generation::Events::Accepted, Events::Projections::Events)
 bus.subscribe(ApiKeys::Revocation::Events::Requested, Events::Projections::Events)
