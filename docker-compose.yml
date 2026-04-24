@@ -59,7 +59,7 @@ services:
       - ./app/openapi.yaml:/oas/openapi.yaml
 
   mailhog:
-    image: mailhog/mailhog:v1.0.1
+    image: axllent/mailpit:latest
     restart: always
     ports:
       - "4020:1025"  # SMTP
