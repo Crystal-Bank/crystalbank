@@ -1,5 +1,6 @@
 require "./opening"
 require "./blocking"
+require "./closure"
 
 module CrystalBank::Domains::Accounts
   class Aggregate < ES::Aggregate
@@ -7,6 +8,7 @@ module CrystalBank::Domains::Accounts
 
     include CrystalBank::Domains::Accounts::Aggregates::Concerns::Opening
     include CrystalBank::Domains::Accounts::Aggregates::Concerns::Blocking
+    include CrystalBank::Domains::Accounts::Aggregates::Concerns::Closure
 
     struct State < ES::Aggregate::State
       property open : Bool = false
@@ -17,6 +19,9 @@ module CrystalBank::Domains::Accounts
       property type : CrystalBank::Types::Accounts::Type?
       property requestor_id : UUID?
       property active_blocks = Array(CrystalBank::Types::Accounts::BlockType).new
+      property closure_pending : Bool = false
+      property closure_reason : CrystalBank::Types::Accounts::ClosureReason?
+      property closure_comment : String?
     end
 
     getter state : State

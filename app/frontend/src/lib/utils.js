@@ -15,6 +15,8 @@ export function shortId(id) {
 export function statusBadgeClass(status) {
   if (status === 'active') return 'badge-green'
   if (status === 'pending_approval') return 'badge-amber'
+  if (status === 'closure_pending') return 'badge-amber'
+  if (status === 'closed') return 'badge-red'
   if (status === 'revoked') return 'badge-red'
   if (status === 'accepted') return 'badge-green'
   return 'badge-zinc'
@@ -22,6 +24,7 @@ export function statusBadgeClass(status) {
 
 export function formatStatus(status) {
   if (status === 'pending_approval') return 'Pending Approval'
+  if (status === 'closure_pending') return 'Closure Pending'
   if (!status) return '—'
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
