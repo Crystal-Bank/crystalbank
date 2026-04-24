@@ -5,8 +5,8 @@ require "openssl/hmac"
 module CrystalBank
   module Services
     module TOTP
-      STEP   =  30_u64
-      DIGITS =       6
+      STEP   = 30_u64
+      DIGITS =      6
       ALPHA  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 
       def self.generate_secret : String
