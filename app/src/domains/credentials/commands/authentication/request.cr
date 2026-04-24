@@ -2,7 +2,7 @@ module CrystalBank::Domains::Credentials
   module Authentication
     module Commands
       class Request < ES::Command
-        class TotpRequired < Exception; end
+        class TotpRequired < ::Exception; end
 
         def call(email : String, password : String, totp_code : String?) : String
           user = Credentials::Repositories::Users.new.fetch_by_email!(email)
