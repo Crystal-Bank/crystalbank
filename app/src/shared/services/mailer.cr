@@ -44,7 +44,8 @@ BODY
       private def send!(msg : EMail::Message)
         config = EMail::Client::Config.new(
           CrystalBank::Env.smtp_host,
-          CrystalBank::Env.smtp_port
+          CrystalBank::Env.smtp_port,
+          helo_domain: CrystalBank::Env.api_domain
         )
         if CrystalBank::Env.smtp_tls
           config.use_tls(EMail::Client::TLSMode::STARTTLS)
