@@ -7,35 +7,24 @@ module CrystalBank::Domains::Users
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-          # Build the user aggregate
-          aggregate = Users::Aggregate.new(aggregate_id)
-          aggregate.hydrate
+          # Build the user aggregate and validate role assignments
+          user = Users::Aggregate.new(aggregate_id)
+          user.hydrate
 
-          # Reject if a removal is already awaiting approval
-          if !aggregate.state.pending_role_id_removals.empty?
-            raise CrystalBank::Exception::InvalidArgument.new("A role removal is already pending approval for this user")
-          end
-
-          # Check if provided roles are actually assigned to the user
-          missing_roles = r.role_ids - aggregate.state.role_ids
+          missing_roles = r.role_ids - user.state.role_ids
           if !missing_roles.empty?
             raise CrystalBank::Exception::InvalidArgument.new("The roles [#{missing_roles.map(&.to_s).join(", ")}] are not assigned to the user")
           end
 
-          # Calculate the next aggregate version
-          next_version = aggregate.state.next_version
-
-          # Create the remove roles request event
+          # Create a new request aggregate (auto-generates its own UUID)
           event = Users::RemoveRoles::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
-            aggregate_id: aggregate_id,
-            aggregate_version: next_version,
+            user_id: aggregate_id,
             role_ids: r.role_ids,
             scope_id: scope,
           )
 
-          # Append event to event store
           @event_store.append(event)
 
           UUID.new(event.header.aggregate_id.to_s)
