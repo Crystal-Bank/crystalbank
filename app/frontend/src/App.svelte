@@ -3,6 +3,10 @@
   import { auth, ui, VIEW_PATHS } from './lib/store.svelte.js'
   import { switchView, refreshView } from './lib/actions.js'
   import Login from './components/Login.svelte'
+  import SetupPassword from './components/SetupPassword.svelte'
+  import ForgotPassword from './components/ForgotPassword.svelte'
+  import ResetPassword from './components/ResetPassword.svelte'
+  import TotpSetup from './components/TotpSetup.svelte'
   import Sidebar from './components/Sidebar.svelte'
   import ToastContainer from './components/ToastContainer.svelte'
   import Dashboard from './components/views/Dashboard.svelte'
@@ -21,14 +25,31 @@
   import PermissionErrorDialog from './components/PermissionErrorDialog.svelte'
 
   const KNOWN_VIEWS = ['dashboard', 'accounts', 'customers', 'postings', 'users', 'roles', 'scopes', 'api_keys', 'approvals', 'payments', 'sepa_credit_transfers', 'events']
+  const PRE_AUTH_VIEWS = ['setup-password', 'forgot-password', 'reset-password']
+
+  let preAuthView = $state(null)
+  let preAuthParams = $state({})
+
+  function parsePreAuthHash() {
+    const raw = window.location.hash.slice(1)
+    const [view, qs] = raw.split('?')
+    if (!PRE_AUTH_VIEWS.includes(view)) { preAuthView = null; return }
+    const params = {}
+    if (qs) qs.split('&').forEach(p => { const [k, v] = p.split('='); params[k] = decodeURIComponent(v || '') })
+    preAuthView = view
+    preAuthParams = params
+  }
 
   onMount(() => {
+    parsePreAuthHash()
+
     if (auth.token) {
       const hash = window.location.hash.slice(1)
       switchView(KNOWN_VIEWS.includes(hash) ? hash : 'dashboard')
     }
 
     function onHashChange() {
+      parsePreAuthHash()
       if (!auth.token) return
       const hash = window.location.hash.slice(1)
       if (hash === 'accounts' && ui.view === 'account_detail') {
@@ -55,7 +76,15 @@
 <PermissionErrorDialog />
 
 {#if !auth.token}
-  <Login />
+  {#if preAuthView === 'setup-password'}
+    <SetupPassword userId={preAuthParams.user_id} token={preAuthParams.token} />
+  {:else if preAuthView === 'forgot-password'}
+    <ForgotPassword />
+  {:else if preAuthView === 'reset-password'}
+    <ResetPassword userId={preAuthParams.user_id} token={preAuthParams.token} />
+  {:else}
+    <Login />
+  {/if}
 {:else}
   <div class="flex h-screen overflow-hidden">
     <Sidebar currentView={ui.view} />
@@ -88,6 +117,8 @@
           <SepaCreditTransfers />
         {:else if ui.view === 'events'}
           <Events />
+        {:else if ui.view === 'totp_setup'}
+          <TotpSetup />
         {/if}
       </main>
     </div>

@@ -55,3 +55,11 @@ event_handlers.register(Users::Onboarding::Events::Accepted)
 event_handlers.register(Users::Onboarding::Events::Requested)
 event_handlers.register(Users::AssignRoles::Events::Accepted)
 event_handlers.register(Users::AssignRoles::Events::Requested)
+
+# Credentials
+event_handlers.register(Credentials::Invitation::Events::Sent)
+event_handlers.register(Credentials::PasswordSetup::Events::Completed)
+event_handlers.register(Credentials::PasswordReset::Events::Requested)
+event_handlers.register(Credentials::PasswordReset::Events::Confirmed)
+event_handlers.register(Credentials::Totp::Events::SetupInitiated)
+event_handlers.register(Credentials::Totp::Events::Enabled)

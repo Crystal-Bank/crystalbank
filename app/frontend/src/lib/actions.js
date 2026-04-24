@@ -14,6 +14,78 @@ export function addToast(msg, type = 'success') {
 
 // ── Auth ─────────────────────────────────────────────────
 
+export async function loginWithPassword(email, password, totpCode = null) {
+  ui.loading = true
+  try {
+    const body = { email, password }
+    if (totpCode) body.totp_code = totpCode
+    const res = await fetch(API_BASE + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    if (res.status === 428) return { totp_required: true }
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.message || 'Authentication failed')
+    }
+    const data = await res.json()
+    auth.token = data.token
+    localStorage.setItem('cb_token', auth.token)
+    auth.scope = ''
+    auth.scopeInput = ''
+    localStorage.removeItem('cb_scope')
+    window.location.hash = 'dashboard'
+    ui.view = 'dashboard'
+  } finally {
+    ui.loading = false
+  }
+}
+
+export async function setupPassword(userId, token, password) {
+  const res = await fetch(API_BASE + '/auth/setup_password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, token, password }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.message || 'Failed to set password')
+  }
+}
+
+export async function requestPasswordReset(email) {
+  const res = await fetch(API_BASE + '/auth/forgot_password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.message || 'Request failed')
+  }
+}
+
+export async function confirmPasswordReset(userId, token, password) {
+  const res = await fetch(API_BASE + '/auth/reset_password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, token, password }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.message || 'Failed to reset password')
+  }
+}
+
+export async function setupTotp() {
+  return apiFetch('POST', '/auth/totp/setup')
+}
+
+export async function confirmTotp(code) {
+  return apiFetch('POST', '/auth/totp/confirm', { code })
+}
+
 export async function login(clientId, clientSecret) {
   ui.loading = true
   try {

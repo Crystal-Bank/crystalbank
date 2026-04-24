@@ -25,6 +25,9 @@ dependencies:
   crystal_iban:
     github: tristanholl/crystal-iban
 
+  email:
+    github: arcage/crystal-email
+
 crystal: '>= 1.14.0'
 
 license: MIT

@@ -16,6 +16,8 @@ require "./api/jwks"
 
 # Load Services
 require "./services/access_control"
+require "./services/totp"
+require "./services/mailer"
 
 # Load Exceptions
 require "./exceptions/authentication"

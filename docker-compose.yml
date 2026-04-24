@@ -3,6 +3,7 @@ x-app: &app
   image: crystalbank:dev
   depends_on:
     - database
+    - mailhog
   env_file:
     - .env-dev
   volumes:
@@ -56,6 +57,13 @@ services:
       - 4003:8080
     volumes:
       - ./app/openapi.yaml:/oas/openapi.yaml
+
+  mailhog:
+    image: axllent/mailpit:latest
+    restart: always
+    ports:
+      - "4020:1025"  # SMTP
+      - "4021:8025"  # Web UI → http://localhost:4021
 
   frontend:
     image: node:22-alpine

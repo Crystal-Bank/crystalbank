@@ -114,5 +114,13 @@ module CrystalBank
         {key: "READ_platform_types", description: "Read platform-level type catalogues (account types, currencies, permissions, etc.)."},
       ],
     },
+    {
+      group:       "Credentials",
+      description: "Permissions for managing user credentials such as TOTP two-factor authentication.",
+      permissions: [
+        {key: "WRITE_credentials_totp_setup", description: "Initiate TOTP two-factor authentication setup for the calling user's account."},
+        {key: "WRITE_credentials_totp_confirm", description: "Confirm and activate TOTP two-factor authentication for the calling user's account."},
+      ],
+    },
   )
 end
