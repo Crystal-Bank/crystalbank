@@ -54,7 +54,9 @@ BODY
         p = CrystalBank::Env.smtp_password
         config.use_auth(u, p) if u && p
         client = EMail::Client.new(config)
-        client.start { |c| c.send(msg) }
+        client.start do
+          send(msg)
+        end
       rescue ex
         Log.error { "Mailer error: #{ex.message}" }
       end
