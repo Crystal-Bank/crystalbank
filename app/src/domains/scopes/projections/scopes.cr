@@ -57,7 +57,23 @@ module CrystalBank::Domains::Scopes
         end
       end
 
-      # Accepted
+      # Accepted (name change) — updates the scope's name
+      def apply(event : ::Scopes::NameChange::Events::Accepted)
+        aggregate_id = event.header.aggregate_id
+        aggregate_version = event.header.aggregate_version
+
+        body = event.body.as(::Scopes::NameChange::Events::Accepted::Body)
+
+        @projection_database.transaction do |tx|
+          cnn = tx.connection
+          cnn.exec %(UPDATE "projections"."scopes" SET name=$1, aggregate_version=$2 WHERE uuid=$3),
+            body.name,
+            aggregate_version,
+            aggregate_id
+        end
+      end
+
+      # Accepted (creation)
       def apply(event : ::Scopes::Creation::Events::Accepted)
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version

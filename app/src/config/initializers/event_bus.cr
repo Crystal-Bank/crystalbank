@@ -56,6 +56,12 @@ bus.subscribe(Scopes::Creation::Events::Requested, Scopes::Projections::Scopes)
 bus.subscribe(Scopes::Creation::Events::Accepted, Scopes::Projections::Scopes)
 bus.subscribe(Approvals::Collection::Events::Completed, Scopes::Creation::Commands::ProcessApproval)
 
+# Scopes — Name Change
+bus.subscribe(Scopes::NameChange::Events::Requested, Scopes::Projections::ScopesNameChanges)
+bus.subscribe(Scopes::NameChange::Events::Completed, Scopes::Projections::ScopesNameChanges)
+bus.subscribe(Scopes::NameChange::Events::Accepted, Scopes::Projections::Scopes)
+bus.subscribe(Approvals::Collection::Events::Completed, Scopes::NameChange::Commands::ProcessApproval)
+
 # Ledger
 bus.subscribe(Ledger::Transactions::Request::Events::Requested, Ledger::Transactions::Request::Commands::ProcessRequest)
 bus.subscribe(Ledger::Transactions::Request::Events::Accepted, Ledger::Transactions::Projections::Postings)
@@ -94,6 +100,8 @@ bus.subscribe(Roles::PermissionsUpdate::Events::Requested, Events::Projections::
 bus.subscribe(Roles::PermissionsUpdate::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Scopes::Creation::Events::Requested, Events::Projections::Events)
 bus.subscribe(Scopes::Creation::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Scopes::NameChange::Events::Requested, Events::Projections::Events)
+bus.subscribe(Scopes::NameChange::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::Onboarding::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::Onboarding::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::AssignRoles::Events::Requested, Events::Projections::Events)

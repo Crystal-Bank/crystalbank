@@ -1,6 +1,6 @@
 <script>
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
-  import { loadMore, createScope } from '../../lib/actions.js'
+  import { loadMore, createScope, changeScopeName } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
@@ -41,6 +41,25 @@
 
   // ── Detail drawer ─────────────────────────────────────
   let drawerScope = $state(null)
+  let showRenameForm = $state(false)
+  let renameForm = $state({ name: '' })
+
+  function openRenameForm() {
+    renameForm = { name: drawerScope?.name ?? '' }
+    showRenameForm = true
+  }
+
+  async function handleRename() {
+    try {
+      await changeScopeName({ scope_id: drawerScope.id, name: renameForm.name })
+      showRenameForm = false
+      drawerScope = null
+    } catch {}
+  }
+
+  $effect(() => {
+    if (!drawerScope) showRenameForm = false
+  })
 </script>
 
 <div class="page-header">
@@ -120,6 +139,27 @@
           <div class="drawer-field-value text-zinc-400">Root scope</div>
         {/if}
       </div>
+      {#if drawerScope.status === 'active'}
+        <div class="drawer-field mt-4 pt-4 border-t border-zinc-100">
+          {#if !showRenameForm}
+            <button onclick={openRenameForm} class="btn btn-ghost btn-sm w-full">Rename scope</button>
+          {:else}
+            <div class="drawer-field-label mb-2">New name</div>
+            <form onsubmit={(e) => { e.preventDefault(); handleRename() }} class="flex gap-2">
+              <input
+                bind:value={renameForm.name}
+                type="text"
+                class="field-input flex-1"
+                placeholder="New scope name"
+                required
+                autofocus
+              >
+              <button type="submit" class="btn btn-primary btn-sm" disabled={ui.loading}>Submit</button>
+              <button type="button" onclick={() => showRenameForm = false} class="btn btn-ghost btn-sm">Cancel</button>
+            </form>
+          {/if}
+        </div>
+      {/if}
     </div>
   </div>
 {/if}
