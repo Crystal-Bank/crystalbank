@@ -225,6 +225,20 @@ export async function createScope({ name, parent_scope_id }) {
   }
 }
 
+export async function changeScopeName({ scope_id, name }) {
+  ui.loading = true
+  try {
+    await apiFetch('POST', '/scopes/change-name', { scope_id, name }, { idempotency: true })
+    addToast('Scope rename requested — awaiting approval')
+    await loadView('scopes')
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function generateApiKey({ name, user_id }) {
   ui.loading = true
   try {

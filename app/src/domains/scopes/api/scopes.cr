@@ -26,6 +26,24 @@ module CrystalBank::Domains::Scopes
         CreationResponse.new(aggregate_id)
       end
 
+      # Request name change
+      # Request renaming of an existing active scope
+      #
+      # Required permission:
+      # - **write_scopes_name_change_request**
+      @[AC::Route::POST("/change-name", body: :r)]
+      def change_name(
+        r : NameChangeRequest,
+        @[AC::Param::Info(description: "Idempotency key to ensure unique processing", header: "idempotency_key")]
+        idempotency_key : UUID,
+      ) : NameChangeResponse
+        authorized?("write_scopes_name_change_request")
+
+        name_change_request_id = ::Scopes::NameChange::Commands::Request.new.call(r, context)
+
+        NameChangeResponse.new(name_change_request_id)
+      end
+
       # List
       # List all scopes
       #

@@ -54,6 +54,8 @@ module CrystalBank
         {key: "READ_scopes_list", description: "List all scopes visible to the caller."},
         {key: "WRITE_scopes_creation_request", description: "Submit a request to create a new scope."},
         {key: "WRITE_scopes_creation_approval", description: "Approve or reject a pending scope creation request."},
+        {key: "WRITE_scopes_name_change_request", description: "Submit a request to rename an existing scope."},
+        {key: "WRITE_scopes_name_change_approval", description: "Approve or reject a pending scope rename request."},
       ],
     },
     {
