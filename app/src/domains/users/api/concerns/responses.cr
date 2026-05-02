@@ -31,12 +31,16 @@ module CrystalBank::Domains::Users
         @[JSON::Field(description: "Status of the user: active, pending_approval")]
         getter status : String
 
+        @[JSON::Field(description: "UUIDs of roles currently assigned to the user")]
+        getter role_ids : Array(UUID)
+
         def initialize(
           @id : UUID,
           @scope_id : UUID,
           @name : String,
           @email : String,
           @status : String,
+          @role_ids : Array(UUID),
         ); end
       end
     end

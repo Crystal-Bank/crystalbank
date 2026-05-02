@@ -8,6 +8,13 @@ module CrystalBank::Domains::Users
         getter role_ids : Array(UUID)
       end
 
+      struct RemoveRolesRequest
+        include JSON::Serializable
+
+        @[JSON::Field(description: "UUID of the roles to be removed from the user")]
+        getter role_ids : Array(UUID)
+      end
+
       struct OnboardingRequest
         include JSON::Serializable
 

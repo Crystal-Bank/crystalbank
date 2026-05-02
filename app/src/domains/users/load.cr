@@ -1,5 +1,6 @@
 # Aggregate
 require "./aggregates/aggregate"
+require "./aggregates/remove_roles_request"
 
 # API
 require "./api/users"
@@ -8,6 +9,9 @@ require "./api/me"
 # Commands
 require "./commands/assign_roles/request"
 require "./commands/assign_roles/process_request"
+require "./commands/remove_roles/request"
+require "./commands/remove_roles/process_request"
+require "./commands/remove_roles/process_approval"
 require "./commands/onboarding/request"
 require "./commands/onboarding/process_request"
 require "./commands/onboarding/process_approval"
@@ -15,6 +19,9 @@ require "./commands/onboarding/process_approval"
 # Events
 require "./events/assign_roles/accepted"
 require "./events/assign_roles/requested"
+require "./events/remove_roles/accepted"
+require "./events/remove_roles/completed"
+require "./events/remove_roles/requested"
 require "./events/onboarding/accepted"
 require "./events/onboarding/requested"
 
