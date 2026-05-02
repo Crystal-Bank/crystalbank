@@ -103,3 +103,4 @@ bus.subscribe(Users::AssignRoles::Events::Requested, Events::Projections::Events
 bus.subscribe(Users::AssignRoles::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Users::RemoveRoles::Events::Completed, Events::Projections::Events)
