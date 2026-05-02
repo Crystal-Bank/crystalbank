@@ -7,6 +7,8 @@ module CrystalBank::Domains::Approvals
         if table_exists
           # Migrate existing table: add rejected column if not present
           @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejected" boolean NOT NULL DEFAULT false)
+          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "context" JSONB)
+          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejection_reason" varchar)
         else
           m = Array(String).new
           m << %(
@@ -22,6 +24,8 @@ module CrystalBank::Domains::Approvals
               "collected_approvals" JSONB NOT NULL DEFAULT '[]'::jsonb,
               "completed" boolean NOT NULL DEFAULT false,
               "rejected" boolean NOT NULL DEFAULT false,
+              "context" JSONB,
+              "rejection_reason" varchar,
               "created_at" timestamp NOT NULL,
               "updated_at" timestamp NOT NULL
             );
@@ -56,10 +60,11 @@ module CrystalBank::Domains::Approvals
                 required_approvals,
                 collected_approvals,
                 completed,
+                context,
                 created_at,
                 updated_at
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11)
           ),
             aggregate_id,
             aggregate_version,
@@ -70,6 +75,7 @@ module CrystalBank::Domains::Approvals
             body.required_approvals.to_json,
             "[]",
             false,
+            body.context.try(&.to_json),
             created_at
         end
       end
@@ -128,6 +134,8 @@ module CrystalBank::Domains::Approvals
         aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
 
+        body = event.body.as(::Approvals::Rejection::Events::Rejected::Body)
+
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -135,10 +143,12 @@ module CrystalBank::Domains::Approvals
             SET
               "aggregate_version" = $1,
               "rejected" = true,
-              "updated_at" = $2
-            WHERE "uuid" = $3
+              "rejection_reason" = $2,
+              "updated_at" = $3
+            WHERE "uuid" = $4
           ),
             aggregate_version,
+            body.comment.try { |c| c.empty? ? nil : c },
             updated_at,
             aggregate_id
         end

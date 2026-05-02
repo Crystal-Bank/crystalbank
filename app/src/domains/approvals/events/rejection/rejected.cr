@@ -6,6 +6,7 @@ module CrystalBank::Domains::Approvals
 
         define_event "Approval", "approval.rejection.rejected" do
           attribute :user_id, UUID
+          attribute :comment, String?
         end
       end
     end

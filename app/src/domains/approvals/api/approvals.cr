@@ -78,7 +78,9 @@ module CrystalBank::Domains::Approvals
             a.required_approvals,
             collected,
             a.completed,
-            a.rejected
+            a.rejected,
+            a.context,
+            a.rejection_reason
           )
         end
 

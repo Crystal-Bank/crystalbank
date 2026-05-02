@@ -30,12 +30,28 @@ module CrystalBank::Domains::Accounts
 
           block_request_id = UUID.new(block_request_event.header.aggregate_id.to_s)
 
+          # Build approval context from account and block details for the approver's benefit
+          account_name = ::Accounts::Queries::Accounts.new.find(r.account_id).try(&.name) || r.account_id.to_s
+          block_context_fields = [
+            Approvals::ApprovalContext::Field.new("Account", account_name),
+            Approvals::ApprovalContext::Field.new("Block Type", r.block_type.to_s),
+          ] of Approvals::ApprovalContext::Field
+          if (reason = r.reason) && !reason.empty?
+            block_context_fields << Approvals::ApprovalContext::Field.new("Reason", reason)
+          end
+          approval_context = Approvals::ApprovalContext.new(
+            title: "Account Block",
+            summary: "#{r.block_type} on \"#{account_name}\"",
+            fields: block_context_fields
+          )
+
           approval_id = Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "AccountBlock",
             source_aggregate_id: block_request_id,
             scope_id: scope,
             required_approvals: ["write_accounts_blocking_approval"],
             actor_id: actor,
+            context: approval_context,
           )
 
           {block_request_id: block_request_id, approval_id: approval_id}

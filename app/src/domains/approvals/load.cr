@@ -1,3 +1,6 @@
+# Shared types
+require "./approval_context"
+
 # Aggregate
 require "./aggregates/aggregate"
 

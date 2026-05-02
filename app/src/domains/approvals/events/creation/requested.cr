@@ -9,6 +9,7 @@ module CrystalBank::Domains::Approvals
           attribute :source_aggregate_type, String
           attribute :source_aggregate_id, UUID
           attribute :required_approvals, Array(String)
+          attribute :context, CrystalBank::Domains::Approvals::ApprovalContext?
         end
       end
     end

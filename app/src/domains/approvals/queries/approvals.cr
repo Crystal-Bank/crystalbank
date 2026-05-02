@@ -33,6 +33,11 @@ module CrystalBank::Domains::Approvals
 
         getter completed : Bool
         getter rejected : Bool
+
+        @[DB::Field(converter: CrystalBank::Converters::JsonObject(CrystalBank::Domains::Approvals::ApprovalContext))]
+        getter context : CrystalBank::Domains::Approvals::ApprovalContext?
+
+        getter rejection_reason : String?
       end
 
       def initialize

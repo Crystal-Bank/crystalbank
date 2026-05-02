@@ -30,6 +30,7 @@ module CrystalBank::Domains::Approvals
       property completed : Bool = false
       property rejected : Bool = false
       property requestor_id : UUID?
+      property context : CrystalBank::Domains::Approvals::ApprovalContext?
     end
 
     getter state : State
