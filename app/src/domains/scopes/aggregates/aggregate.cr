@@ -1,10 +1,12 @@
 require "./creation"
+require "./name_change_concern"
 
 module CrystalBank::Domains::Scopes
   class Aggregate < ES::Aggregate
     @@type = "Scope"
 
     include CrystalBank::Domains::Scopes::Aggregates::Concerns::Creation
+    include CrystalBank::Domains::Scopes::Aggregates::Concerns::NameChange
 
     struct State < ES::Aggregate::State
       property name : String?

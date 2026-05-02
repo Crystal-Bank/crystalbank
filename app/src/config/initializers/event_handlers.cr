@@ -41,6 +41,9 @@ event_handlers.register(Roles::PermissionsUpdate::Events::Accepted)
 # Scopes
 event_handlers.register(Scopes::Creation::Events::Accepted)
 event_handlers.register(Scopes::Creation::Events::Requested)
+event_handlers.register(Scopes::NameChange::Events::Requested)
+event_handlers.register(Scopes::NameChange::Events::Accepted)
+event_handlers.register(Scopes::NameChange::Events::Completed)
 
 # Ledger
 event_handlers.register(Ledger::Transactions::Request::Events::Accepted)

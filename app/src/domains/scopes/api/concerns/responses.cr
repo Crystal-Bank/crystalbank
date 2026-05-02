@@ -11,6 +11,16 @@ module CrystalBank::Domains::Scopes
         def initialize(@id : UUID); end
       end
 
+      # Response to a scope name change request
+      struct NameChangeResponse
+        include JSON::Serializable
+
+        @[JSON::Field(format: "uuid", description: "ID of the name change request")]
+        getter id : UUID
+
+        def initialize(@id : UUID); end
+      end
+
       # Respond with a single scope entity
       struct Scope
         include JSON::Serializable
