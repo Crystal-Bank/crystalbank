@@ -3,26 +3,30 @@ module CrystalBank::Domains::Users
     module Commands
       class ProcessRequest < ES::Command
         def call
-          aggregate_id = @aggregate_id.as(UUID)
-          # TODO: Run checks to check the availability of the roles provided to the context
+          request_aggregate_id = @aggregate_id.as(UUID)
 
-          # Build the user aggregate
-          aggregate = Users::Aggregate.new(aggregate_id)
-          aggregate.hydrate
+          # Hydrate the request aggregate to get intent
+          request = Users::AssignRolesRequest::Aggregate.new(request_aggregate_id)
+          request.hydrate
 
-          # Calculate the next aggregate version
-          next_version = aggregate.state.next_version
+          user_id = request.state.user_id.as(UUID)
 
-          # Create the account creation acceptance event
-          event = Users::AssignRoles::Events::Accepted.new(
-            actor_id: nil,
-            aggregate_id: aggregate_id,
-            aggregate_version: next_version,
-            command_handler: self.class.to_s
+          # Hydrate the user aggregate to get scope_id
+          user = Users::Aggregate.new(user_id)
+          user.hydrate
+
+          scope_id = user.state.scope_id.as(UUID)
+
+          # Create an approval workflow for this role assignment
+          Approvals::Creation::Commands::Request.new.call(
+            source_aggregate_type: "UserRolesAssignment",
+            source_aggregate_id: request_aggregate_id,
+            scope_id: scope_id,
+            required_approvals: [
+              "write_users_assign_roles_approval",
+            ],
+            actor_id: request.state.requestor_id
           )
-
-          # Append event to event store
-          @event_store.append(event)
         end
       end
     end

@@ -23,6 +23,7 @@ bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Users::Onboarding::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Users::AssignRoles::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Users::RemoveRoles::Commands::ProcessApproval)
 
 # ApiKeys
@@ -107,6 +108,7 @@ bus.subscribe(Users::Onboarding::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::Onboarding::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::AssignRoles::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::AssignRoles::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Users::AssignRoles::Events::Completed, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Completed, Events::Projections::Events)

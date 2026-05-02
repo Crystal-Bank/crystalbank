@@ -12,32 +12,26 @@ module CrystalBank::Domains::Users
           r.role_ids.each { |role_id| repository.exists!(role_id) }
 
           # Build the user aggregate
-          aggregate = Users::Aggregate.new(aggregate_id)
-          aggregate.hydrate
+          user = Users::Aggregate.new(aggregate_id)
+          user.hydrate
 
-          # Check if roles are already assigned to aggregate
-          common_roles = r.role_ids & aggregate.state.role_ids
+          # Check if roles are already assigned to the user
+          common_roles = r.role_ids & user.state.role_ids
           if !common_roles.empty?
             raise CrystalBank::Exception::InvalidArgument.new("The roles [#{common_roles.map(&.to_s).join(", ")}] are already assigned to the user")
           end
 
-          # Calculate the next aggregate version
-          next_version = aggregate.state.next_version
-
-          # Create the assign roles request event
+          # Create a new request aggregate (auto-generates its own UUID)
           event = Users::AssignRoles::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
-            aggregate_id: aggregate_id,
-            aggregate_version: next_version,
+            user_id: aggregate_id,
             role_ids: r.role_ids,
             scope_id: scope,
           )
 
-          # Append event to event store
           @event_store.append(event)
 
-          # Return the aggregate ID of the newly created user aggregate
           UUID.new(event.header.aggregate_id.to_s)
         end
       end
