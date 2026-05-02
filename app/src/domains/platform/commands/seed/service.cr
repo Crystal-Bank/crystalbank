@@ -84,21 +84,22 @@ module CrystalBank::Domains::Platform
     end
 
     # The user aggregate has Onboarding::Requested (v1) + Accepted (v2) by the
-    # time roles are assigned, so AssignRoles::Requested is v3 and Accepted v4.
+    # time roles are assigned. AssignRoles::Requested now targets its own
+    # UserRolesAssignment aggregate, so AssignRoles::Accepted lands at v3.
     private def assign_role(user_id : UUID, role_id : UUID, scope_id : UUID)
       @event_store.append(Users::AssignRoles::Events::Requested.new(
         actor_id: ACTOR_ID,
         command_handler: self.class.to_s,
-        aggregate_id: user_id,
-        aggregate_version: 3,
+        user_id: user_id,
         role_ids: [role_id],
         scope_id: scope_id,
       ))
       @event_store.append(Users::AssignRoles::Events::Accepted.new(
         actor_id: ACTOR_ID,
         aggregate_id: user_id,
-        aggregate_version: 4,
+        aggregate_version: 3,
         command_handler: self.class.to_s,
+        role_ids: [role_id],
       ))
     end
 
