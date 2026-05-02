@@ -21,7 +21,6 @@ require "./events/name_change/completed"
 
 # Projections
 require "./projections/scopes"
-require "./projections/scopes_name_changes"
 
 # Queries
 require "./queries/scopes"

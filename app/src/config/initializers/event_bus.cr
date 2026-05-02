@@ -57,8 +57,6 @@ bus.subscribe(Scopes::Creation::Events::Accepted, Scopes::Projections::Scopes)
 bus.subscribe(Approvals::Collection::Events::Completed, Scopes::Creation::Commands::ProcessApproval)
 
 # Scopes — Name Change
-bus.subscribe(Scopes::NameChange::Events::Requested, Scopes::Projections::ScopesNameChanges)
-bus.subscribe(Scopes::NameChange::Events::Completed, Scopes::Projections::ScopesNameChanges)
 bus.subscribe(Scopes::NameChange::Events::Accepted, Scopes::Projections::Scopes)
 bus.subscribe(Approvals::Collection::Events::Completed, Scopes::NameChange::Commands::ProcessApproval)
 

@@ -17,16 +17,6 @@ module CrystalBank::Domains::Scopes
             raise CrystalBank::Exception::InvalidArgument.new("Name is unchanged — the submitted name is identical to the scope's current name")
           end
 
-          # Pending guard: at most one rename request may be in flight per scope
-          has_pending = ES::Config.projection_database.query_one(
-            %(SELECT EXISTS (SELECT 1 FROM "projections"."scopes_name_changes" WHERE scope_id = $1 AND status = 'pending_approval')),
-            r.scope_id,
-            as: Bool
-          )
-          if has_pending
-            raise CrystalBank::Exception::InvalidArgument.new("Scope '#{r.scope_id}' already has a pending name change request")
-          end
-
           event = Scopes::NameChange::Events::Requested.new(
             actor_id: actor,
             command_handler: self.class.to_s,
