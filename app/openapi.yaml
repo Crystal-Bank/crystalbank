@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.14.2
+  version: 0.15.0
 paths:
   /.well-known/openid-configuration:
     get:
@@ -29,6 +29,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Api__JWKS__OpenIDConfiguration'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -75,6 +81,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Api__JWKS__JWKSResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -138,6 +150,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -191,6 +209,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__BlocksResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -284,6 +308,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -365,6 +395,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -421,6 +457,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -484,6 +526,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -535,6 +583,12 @@ paths:
           description: OK
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -599,6 +653,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -647,6 +707,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Response'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -716,6 +782,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -768,6 +840,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Approvals__Api__Responses__RejectResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -842,6 +920,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -897,6 +981,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Customers__Api__Responses__OnboardingResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -957,6 +1047,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Customers__Api__Responses__Customer_'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1041,6 +1137,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1096,6 +1198,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Roles__Api__Responses__CreationResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1163,6 +1271,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1223,6 +1337,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1278,6 +1398,77 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Scopes__Api__Responses__CreationResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /scopes/change-name:
+    post:
+      summary: Request name change
+      description: 'Request name change
+
+        Request renaming of an existing active scope
+
+
+        Required permission:
+
+        - **write_scopes_name_change_request**'
+      tags:
+      - Scopes
+      operationId: CrystalBank::Domains::Scopes::Api::Scopes_change_name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Scopes__Api__Requests__NameChangeRequest'
+        required: true
+      parameters:
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Scopes__Api__Responses__NameChangeResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1342,6 +1533,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1390,6 +1587,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Ledger__Transactions__Api__Responses__TransactionResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1461,6 +1664,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1528,6 +1737,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1580,6 +1795,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Payments__Sepa__CreditTransfers__Api__Responses__CreditTransferResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1639,6 +1860,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Responses__OnboardingResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1703,6 +1930,135 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /users/{id}/remove_roles:
+    post:
+      summary: Request removal of roles
+      description: 'Request removal of roles
+
+        Remove roles from a user
+
+
+        Required permission:
+
+        - **write_users_remove_roles_request**'
+      tags:
+      - Users
+      operationId: CrystalBank::Domains::Users::Api::Users_remove_roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Requests__RemoveRolesRequest'
+        required: true
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: idempotency_key
+        in: header
+        description: Idempotency key to ensure unique processing
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /users/{id}/pending_role_assignments:
+    get:
+      summary: Pending role assignments
+      description: 'Pending role assignments
+
+        List role IDs that have been requested but not yet approved for a user
+
+
+        Required permission:
+
+        - **read_users_list**'
+      tags:
+      - Users
+      operationId: CrystalBank::Domains::Users::Api::Users_pending_role_assignments
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Responses__PendingRoleAssignmentsResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1763,6 +2119,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1806,6 +2168,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Users__Api__Me__MeResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1858,6 +2226,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1902,6 +2276,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -1954,6 +2334,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -1998,6 +2384,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__TypesResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -2051,6 +2443,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
         400:
           description: Bad Request
           content:
@@ -2095,6 +2493,12 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Domains__Platform__Api__TypeResponses__PermissionGroupsResponse'
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -2895,6 +3299,8 @@ components:
             - read_scopes_list
             - write_scopes_creation_request
             - write_scopes_creation_approval
+            - write_scopes_name_change_request
+            - write_scopes_name_change_approval
             - write_ledger_transactions_request
             - read_postings_list
             - write_transactions_internal_transfers_initiation_request
@@ -2903,6 +3309,9 @@ components:
             - write_payments_sepa_credit_transfers_approval
             - write_users_onboarding_request
             - write_users_assign_roles_request
+            - write_users_assign_roles_approval
+            - write_users_remove_roles_request
+            - write_users_remove_roles_approval
             - read_users_list
             - write_users_onboarding_compliance_approval
             - write_approvals_collection_request
@@ -2967,6 +3376,8 @@ components:
             - read_scopes_list
             - write_scopes_creation_request
             - write_scopes_creation_approval
+            - write_scopes_name_change_request
+            - write_scopes_name_change_approval
             - write_ledger_transactions_request
             - read_postings_list
             - write_transactions_internal_transfers_initiation_request
@@ -2975,6 +3386,9 @@ components:
             - write_payments_sepa_credit_transfers_approval
             - write_users_onboarding_request
             - write_users_assign_roles_request
+            - write_users_assign_roles_approval
+            - write_users_remove_roles_request
+            - write_users_remove_roles_approval
             - read_users_list
             - write_users_onboarding_compliance_approval
             - write_approvals_collection_request
@@ -3081,6 +3495,8 @@ components:
                       - read_scopes_list
                       - write_scopes_creation_request
                       - write_scopes_creation_approval
+                      - write_scopes_name_change_request
+                      - write_scopes_name_change_approval
                       - write_ledger_transactions_request
                       - read_postings_list
                       - write_transactions_internal_transfers_initiation_request
@@ -3089,6 +3505,9 @@ components:
                       - write_payments_sepa_credit_transfers_approval
                       - write_users_onboarding_request
                       - write_users_assign_roles_request
+                      - write_users_assign_roles_approval
+                      - write_users_remove_roles_request
+                      - write_users_remove_roles_approval
                       - read_users_list
                       - write_users_onboarding_compliance_approval
                       - write_approvals_collection_request
@@ -3145,6 +3564,29 @@ components:
       required:
       - id
       description: Response to an scope creation request
+    CrystalBank__Domains__Scopes__Api__Requests__NameChangeRequest:
+      type: object
+      properties:
+        scope_id:
+          type: string
+          format: uuid
+          description: ID of the scope to rename
+        name:
+          type: string
+          description: New name for the scope
+      required:
+      - scope_id
+      - name
+    CrystalBank__Domains__Scopes__Api__Responses__NameChangeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the name change request
+      required:
+      - id
+      description: Response to a scope name change request
     CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Scopes__Api__Responses__Scope_:
       type: object
       properties:
@@ -3635,6 +4077,28 @@ components:
             format: uuid
       required:
       - role_ids
+    CrystalBank__Domains__Users__Api__Requests__RemoveRolesRequest:
+      type: object
+      properties:
+        role_ids:
+          type: array
+          description: UUID of the roles to be removed from the user
+          items:
+            type: string
+            format: uuid
+      required:
+      - role_ids
+    CrystalBank__Domains__Users__Api__Responses__PendingRoleAssignmentsResponse:
+      type: object
+      properties:
+        pending_role_ids:
+          type: array
+          description: UUIDs of roles with a pending assignment request
+          items:
+            type: string
+            format: uuid
+      required:
+      - pending_role_ids
     CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Users__Api__Responses__User_:
       type: object
       properties:
@@ -3693,12 +4157,19 @@ components:
                   status:
                     type: string
                     description: 'Status of the user: active, pending_approval'
+                  role_ids:
+                    type: array
+                    description: UUIDs of roles currently assigned to the user
+                    items:
+                      type: string
+                      format: uuid
                 required:
                 - id
                 - scope_id
                 - name
                 - email
                 - status
+                - role_ids
             required:
             - object
             - attributes
