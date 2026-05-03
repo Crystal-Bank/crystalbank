@@ -170,7 +170,7 @@ export async function assignRoles(userId, roleIds) {
   ui.loading = true
   try {
     await apiFetch('POST', '/users/' + userId + '/assign_roles', { role_ids: roleIds }, { idempotency: true })
-    addToast('Roles assigned')
+    addToast('Role assignment requested — pending approval')
     await loadView('users')
   } catch (e) {
     addToast(e.message, 'error')
