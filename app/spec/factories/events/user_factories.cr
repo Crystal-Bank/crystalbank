@@ -1,4 +1,52 @@
 module Test::User::Events
+  module AssignRoles
+    class Requested
+      def create(user_id = UUID.v7, role_ids = [UUID.v7]) : Users::AssignRoles::Events::Requested
+        Users::AssignRoles::Events::Requested.new(
+          actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
+          command_handler: "test",
+          user_id: user_id,
+          role_ids: role_ids,
+          scope_id: UUID.new("00000000-0000-0000-0000-100000000001"),
+        )
+      end
+    end
+
+    class Accepted
+      def create(aggr_id = UUID.v7, role_ids = [UUID.v7]) : Users::AssignRoles::Events::Accepted
+        Users::AssignRoles::Events::Accepted.new(
+          actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
+          aggregate_id: aggr_id,
+          aggregate_version: 3,
+          command_handler: "test",
+          role_ids: role_ids,
+        )
+      end
+    end
+
+    class Completed
+      def create(aggr_id = UUID.v7) : Users::AssignRoles::Events::Completed
+        Users::AssignRoles::Events::Completed.new(
+          actor_id: nil,
+          aggregate_id: aggr_id,
+          aggregate_version: 2,
+          command_handler: "test",
+        )
+      end
+    end
+
+    class Rejected
+      def create(aggr_id = UUID.v7) : Users::AssignRoles::Events::Rejected
+        Users::AssignRoles::Events::Rejected.new(
+          actor_id: nil,
+          aggregate_id: aggr_id,
+          aggregate_version: 2,
+          command_handler: "test",
+        )
+      end
+    end
+  end
+
   module Onboarding
     class Accepted
       def create(aggr_id = UUID.new("00000000-0000-0000-0000-000000000001")) : Users::Onboarding::Events::Accepted

@@ -57,6 +57,8 @@ event_handlers.register(CrystalBank::Domains::Payments::Sepa::CreditTransfers::I
 event_handlers.register(Users::Onboarding::Events::Accepted)
 event_handlers.register(Users::Onboarding::Events::Requested)
 event_handlers.register(Users::AssignRoles::Events::Accepted)
+event_handlers.register(Users::AssignRoles::Events::Completed)
+event_handlers.register(Users::AssignRoles::Events::Rejected)
 event_handlers.register(Users::AssignRoles::Events::Requested)
 event_handlers.register(Users::RemoveRoles::Events::Accepted)
 event_handlers.register(Users::RemoveRoles::Events::Completed)

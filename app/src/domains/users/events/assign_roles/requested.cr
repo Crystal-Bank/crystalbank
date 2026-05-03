@@ -4,7 +4,8 @@ module CrystalBank::Domains::Users
       class Requested < ES::Event
         include ::ES::EventDSL
 
-        define_event "User", "user.assign_roles.requested" do
+        define_event "UserRolesAssignment", "user.assign_roles.requested" do
+          attribute :user_id, UUID
           attribute :role_ids, Array(UUID)
           attribute :scope_id, UUID
         end

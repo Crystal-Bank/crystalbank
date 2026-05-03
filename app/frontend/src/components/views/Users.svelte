@@ -22,6 +22,7 @@
 
   // ── User drawer ──────────────────────────────────────
   let drawerUser = $state(null)
+  let pendingRoleIds = $state([])
 
   // ── Remove roles (inside drawer) ─────────────────────
   let rolesToRemove = $state([])
@@ -41,6 +42,25 @@
     } catch {}
   }
 
+  $effect(() => {
+    if (!drawerUser) return
+    const userId = drawerUser.id
+
+    async function poll() {
+      try {
+        const res = await apiFetch('GET', '/users/' + userId + '/pending_role_assignments')
+        pendingRoleIds = res.pending_role_ids ?? []
+        if (pendingRoleIds.length > 0) loadRoles()
+      } catch {
+        pendingRoleIds = []
+      }
+    }
+
+    poll()
+    const interval = setInterval(poll, 5000)
+    return () => clearInterval(interval)
+  })
+
   function openDrawer(user) {
     drawerUser = user
     roleOptions = []
@@ -49,6 +69,7 @@
     roleSearch = ''
     showRoleDropdown = false
     rolesLoaded = false
+    pendingRoleIds = []
     if (user.role_ids && user.role_ids.length > 0) loadRoles()
   }
 
@@ -184,6 +205,21 @@
         <div class="drawer-field-label">Scope ID</div>
         <div class="drawer-field-value font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerUser.scope_id}</div>
       </div>
+
+      {#if pendingRoleIds.length > 0}
+        <div class="border-t border-zinc-100 pt-5 mt-1">
+          <div class="text-sm font-semibold text-zinc-700 mb-3">Pending Role Assignments</div>
+          <div class="flex flex-wrap gap-1.5">
+            {#each pendingRoleIds as roleId (roleId)}
+              <span class="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 rounded px-2 py-0.5 text-xs text-amber-800">
+                <span class="font-mono">{getRoleName(roleId)}</span>
+                <span class="badge badge-amber ml-1">pending</span>
+              </span>
+            {/each}
+          </div>
+          <div class="field-hint mt-2">These role assignments are awaiting approval</div>
+        </div>
+      {/if}
 
       <div class="border-t border-zinc-100 pt-5 mt-1">
         <div class="text-sm font-semibold text-zinc-700 mb-3">Assign Roles</div>

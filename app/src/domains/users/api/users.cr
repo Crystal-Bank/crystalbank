@@ -66,6 +66,29 @@ module CrystalBank::Domains::Users
         head :accepted
       end
 
+      # Pending role assignments
+      # List role IDs that have been requested but not yet approved for a user
+      #
+      # Required permission:
+      # - **read_users_list**
+      @[AC::Route::GET("/:id/pending_role_assignments")]
+      def pending_role_assignments(id : String) : Responses::PendingRoleAssignmentsResponse
+        authorized?("read_users_list", request_scope: false)
+
+        user_id = UUID.new(id)
+        db = ES::Config.projection_database
+
+        rows = db.query_all(
+          %(SELECT role_ids::text FROM "projections"."user_assign_roles_requests" WHERE user_id = $1 AND NOT completed),
+          args: [user_id],
+          as: String
+        )
+
+        role_ids = rows.flat_map { |r| Array(UUID).from_json(r) }.uniq
+
+        Responses::PendingRoleAssignmentsResponse.new(role_ids)
+      end
+
       # List
       # List all users
       #
