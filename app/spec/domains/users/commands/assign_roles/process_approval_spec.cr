@@ -89,7 +89,7 @@ describe CrystalBank::Domains::Users::AssignRoles::Commands::ProcessApproval do
     TEST_EVENT_STORE.append(completed_event)
 
     apply_projection(approval_id)
-    apply_projection(approval_id)
+    Users::AssignRoles::Commands::ProcessApproval.new(aggregate_id: approval_id).call
 
     aggregate = Users::Aggregate.new(user_id)
     aggregate.hydrate

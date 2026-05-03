@@ -6,9 +6,11 @@ describe CrystalBank::Domains::Users::Aggregates::Concerns::AssignRoles do
     role_id = UUID.v7
 
     onboarded = Test::User::Events::Onboarding::Requested.new.create(aggr_id: user_id)
+    onboarding_accepted = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: user_id)
     accepted = Test::User::Events::AssignRoles::Accepted.new.create(aggr_id: user_id, role_ids: [role_id])
 
     TEST_EVENT_STORE.append(onboarded)
+    TEST_EVENT_STORE.append(onboarding_accepted)
     TEST_EVENT_STORE.append(accepted)
 
     aggregate = Users::Aggregate.new(user_id)
@@ -22,6 +24,7 @@ describe CrystalBank::Domains::Users::Aggregates::Concerns::AssignRoles do
     role_id = UUID.v7
 
     onboarded = Test::User::Events::Onboarding::Requested.new.create(aggr_id: user_id)
+    onboarding_accepted = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: user_id)
     first = Test::User::Events::AssignRoles::Accepted.new.create(aggr_id: user_id, role_ids: [role_id])
     second = Users::AssignRoles::Events::Accepted.new(
       actor_id: nil,
@@ -32,6 +35,7 @@ describe CrystalBank::Domains::Users::Aggregates::Concerns::AssignRoles do
     )
 
     TEST_EVENT_STORE.append(onboarded)
+    TEST_EVENT_STORE.append(onboarding_accepted)
     TEST_EVENT_STORE.append(first)
     TEST_EVENT_STORE.append(second)
 

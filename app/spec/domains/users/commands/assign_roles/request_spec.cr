@@ -65,8 +65,10 @@ describe CrystalBank::Domains::Users::AssignRoles::Commands::Request do
     user_id = UUID.v7
 
     onboarded = Test::User::Events::Onboarding::Requested.new.create(aggr_id: user_id)
+    onboarding_accepted = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: user_id)
     already_assigned = Test::User::Events::AssignRoles::Accepted.new.create(aggr_id: user_id, role_ids: [role_id])
     TEST_EVENT_STORE.append(onboarded)
+    TEST_EVENT_STORE.append(onboarding_accepted)
     TEST_EVENT_STORE.append(already_assigned)
 
     r = Users::Api::Requests::AssignRolesRequest.from_json(%({"role_ids":["#{role_id}"]}))
