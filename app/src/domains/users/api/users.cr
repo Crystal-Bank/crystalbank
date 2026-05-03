@@ -79,7 +79,7 @@ module CrystalBank::Domains::Users
         db = ES::Config.projection_database
 
         rows = db.query_all(
-          %(SELECT role_ids::text FROM "projections"."assign_roles_requests" WHERE user_id = $1 AND NOT completed),
+          %(SELECT role_ids::text FROM "projections"."user_assign_roles_requests" WHERE user_id = $1 AND NOT completed),
           args: [user_id],
           as: String
         )
