@@ -42,15 +42,24 @@
     } catch {}
   }
 
-  async function loadPendingAssignments() {
-    try {
-      const res = await apiFetch('GET', '/users/' + drawerUser.id + '/pending_role_assignments')
-      pendingRoleIds = res.pending_role_ids ?? []
-      if (pendingRoleIds.length > 0) loadRoles()
-    } catch {
-      pendingRoleIds = []
+  $effect(() => {
+    if (!drawerUser) return
+    const userId = drawerUser.id
+
+    async function poll() {
+      try {
+        const res = await apiFetch('GET', '/users/' + userId + '/pending_role_assignments')
+        pendingRoleIds = res.pending_role_ids ?? []
+        if (pendingRoleIds.length > 0) loadRoles()
+      } catch {
+        pendingRoleIds = []
+      }
     }
-  }
+
+    poll()
+    const interval = setInterval(poll, 5000)
+    return () => clearInterval(interval)
+  })
 
   function openDrawer(user) {
     drawerUser = user
@@ -62,7 +71,6 @@
     rolesLoaded = false
     pendingRoleIds = []
     if (user.role_ids && user.role_ids.length > 0) loadRoles()
-    loadPendingAssignments()
   }
 
   function closeDrawer() {
@@ -114,7 +122,6 @@
       await assignRoles(drawerUser.id, selectedRoles)
       selectedRoles = []
       roleSearch = ''
-      await loadPendingAssignments()
     } catch {}
   }
 
