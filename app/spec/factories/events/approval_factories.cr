@@ -34,7 +34,6 @@ module Test::Approval::Events
           "source_aggregate_type": "Account",
           "source_aggregate_id":   "00000000-0000-0000-0000-200000000001",
           "required_approvals":    ["write_accounts_opening_compliance_approval", "write_accounts_opening_board_approval"],
-          "context":               nil,
         }.to_json
       end
     end
