@@ -22,7 +22,8 @@ describe CrystalBank::Domains::Approvals::Aggregates::Concerns::Creation do
         scope_id: scope_id,
         source_aggregate_type: source_aggregate_type,
         source_aggregate_id: source_aggregate_id,
-        required_approvals: required_approvals
+        required_approvals: required_approvals,
+        context: nil
       )
       aggregate.apply(event)
 
