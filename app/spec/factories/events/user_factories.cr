@@ -34,6 +34,17 @@ module Test::User::Events
         )
       end
     end
+
+    class Rejected
+      def create(aggr_id = UUID.v7) : Users::AssignRoles::Events::Rejected
+        Users::AssignRoles::Events::Rejected.new(
+          actor_id: nil,
+          aggregate_id: aggr_id,
+          aggregate_version: 2,
+          command_handler: "test",
+        )
+      end
+    end
   end
 
   module Onboarding

@@ -39,6 +39,13 @@ module CrystalBank::Domains::Users
         ),
           event.header.aggregate_id
       end
+
+      def apply(event : ::Users::AssignRoles::Events::Rejected)
+        @projection_database.exec %(
+          DELETE FROM "projections"."user_assign_roles_requests" WHERE id = $1
+        ),
+          event.header.aggregate_id
+      end
     end
   end
 end

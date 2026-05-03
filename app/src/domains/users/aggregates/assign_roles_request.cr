@@ -8,6 +8,7 @@ module CrystalBank::Domains::Users
         property role_ids = Array(UUID).new
         property requestor_id : UUID?
         property completed : Bool = false
+        property rejected : Bool = false
       end
 
       getter state : State
@@ -33,6 +34,11 @@ module CrystalBank::Domains::Users
       def apply(event : ::Users::AssignRoles::Events::Completed)
         @state.increase_version(event.header.aggregate_version)
         @state.completed = true
+      end
+
+      def apply(event : ::Users::AssignRoles::Events::Rejected)
+        @state.increase_version(event.header.aggregate_version)
+        @state.rejected = true
       end
     end
   end
