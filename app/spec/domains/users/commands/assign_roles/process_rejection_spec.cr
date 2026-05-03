@@ -1,7 +1,7 @@
 require "../../../../spec_helper"
 
 describe CrystalBank::Domains::Users::AssignRoles::Commands::ProcessRejection do
-  it "removes the pending request from the projection after rejection" do
+  it "marks the request aggregate as rejected after the approval is rejected" do
     scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
     user_id = UUID.v7
     role_id = UUID.v7
@@ -12,7 +12,6 @@ describe CrystalBank::Domains::Users::AssignRoles::Commands::ProcessRejection do
     requested = Test::User::Events::AssignRoles::Requested.new.create(user_id: user_id, role_ids: [role_id])
     request_id = UUID.new(requested.header.aggregate_id.to_s)
     TEST_EVENT_STORE.append(requested)
-    Users::Projections::AssignRolesRequests.new.apply(requested)
 
     approval_id = Approvals::Creation::Commands::Request.new.call(
       source_aggregate_type: "UserRolesAssignment",
@@ -34,11 +33,10 @@ describe CrystalBank::Domains::Users::AssignRoles::Commands::ProcessRejection do
 
     apply_projection(approval_id)
 
-    count = TEST_PROJECTION_DB.scalar(
-      %(SELECT count(*) FROM "projections"."user_assign_roles_requests" WHERE id = $1),
-      request_id
-    )
-    count.should eq(0)
+    request = Users::AssignRolesRequest::Aggregate.new(request_id)
+    request.hydrate
+
+    request.state.rejected.should be_true
   end
 
   it "ignores a rejected approval with a different source aggregate type" do
