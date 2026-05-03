@@ -12,6 +12,15 @@ module CrystalBank::Domains::Users
         end
       end
 
+      struct PendingRoleAssignmentsResponse
+        include JSON::Serializable
+
+        @[JSON::Field(description: "UUIDs of roles with a pending assignment request")]
+        getter pending_role_ids : Array(UUID)
+
+        def initialize(@pending_role_ids : Array(UUID)); end
+      end
+
       # Respond with a single user entity
       struct User
         include JSON::Serializable

@@ -75,6 +75,8 @@ bus.subscribe(Users::Onboarding::Events::Requested, Users::Onboarding::Commands:
 bus.subscribe(Users::Onboarding::Events::Requested, Users::Projections::Users)
 bus.subscribe(Users::Onboarding::Events::Accepted, Users::Projections::Users)
 bus.subscribe(Users::AssignRoles::Events::Requested, Users::AssignRoles::Commands::ProcessRequest)
+bus.subscribe(Users::AssignRoles::Events::Requested, Users::Projections::AssignRolesRequests)
+bus.subscribe(Users::AssignRoles::Events::Completed, Users::Projections::AssignRolesRequests)
 bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)
 bus.subscribe(Users::RemoveRoles::Events::Requested, Users::RemoveRoles::Commands::ProcessRequest)
 bus.subscribe(Users::RemoveRoles::Events::Accepted, Users::Projections::Users)

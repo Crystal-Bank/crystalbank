@@ -30,6 +30,7 @@ require "./events/onboarding/requested"
 
 # Projections
 require "./projections/users"
+require "./projections/assign_roles_requests"
 
 # Queries
 require "./queries/users"
