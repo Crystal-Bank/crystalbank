@@ -147,9 +147,9 @@
           <td><span class="mono text-xs">{a.id}</span></td>
           <td>
             <div class="flex flex-col gap-0.5">
-              <span class="badge badge-zinc self-start">{a.context ? a.context.title : a.source_aggregate_type}</span>
-              {#if a.context}
-                <span class="text-xs text-zinc-600">{a.context.summary}</span>
+              <span class="badge badge-zinc self-start">{a.subject ? a.subject.title : a.source_aggregate_type}</span>
+              {#if a.subject}
+                <span class="text-xs text-zinc-600">{a.subject.summary}</span>
               {:else}
                 <span class="mono text-xs text-zinc-400">{a.source_aggregate_id}</span>
               {/if}
@@ -228,12 +228,12 @@
       </div>
 
       <!-- Context snapshot -->
-      {#if drawerApproval.context}
+      {#if drawerApproval.subject}
         <div class="drawer-field">
           <div class="drawer-field-label">Subject</div>
           <div class="rounded border border-zinc-200 overflow-hidden">
             <table class="w-full text-xs">
-              {#each drawerApproval.context.fields as f (f.label)}
+              {#each drawerApproval.subject.fields as f (f.label)}
                 <tr class="border-b border-zinc-100 last:border-0">
                   <td class="px-3 py-2 text-zinc-500 font-medium whitespace-nowrap w-1/3">{f.label}</td>
                   <td class="px-3 py-2 text-zinc-800 break-all">{f.value}</td>

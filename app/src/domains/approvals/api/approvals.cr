@@ -79,7 +79,7 @@ module CrystalBank::Domains::Approvals
             collected,
             a.completed,
             a.rejected,
-            a.context,
+            a.subject,
             a.rejection_reason
           )
         end

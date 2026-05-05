@@ -11,7 +11,7 @@ private def seed_collection_pending_approval(requestor_id : UUID) : UUID
       source_aggregate_type: "Account",
       source_aggregate_id: UUID.v7,
       required_approvals: ["write_accounts_opening_compliance_approval"],
-      context: nil,
+      subject: nil,
       comment: ""
     )
   )

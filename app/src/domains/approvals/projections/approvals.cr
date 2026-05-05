@@ -7,7 +7,7 @@ module CrystalBank::Domains::Approvals
         if table_exists
           # Migrate existing table: add rejected column if not present
           @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejected" boolean NOT NULL DEFAULT false)
-          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "context" JSONB)
+          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "subject" JSONB)
           @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejection_reason" varchar)
         else
           m = Array(String).new
@@ -24,7 +24,7 @@ module CrystalBank::Domains::Approvals
               "collected_approvals" JSONB NOT NULL DEFAULT '[]'::jsonb,
               "completed" boolean NOT NULL DEFAULT false,
               "rejected" boolean NOT NULL DEFAULT false,
-              "context" JSONB,
+              "subject" JSONB,
               "rejection_reason" varchar,
               "created_at" timestamp NOT NULL,
               "updated_at" timestamp NOT NULL
@@ -60,7 +60,7 @@ module CrystalBank::Domains::Approvals
                 required_approvals,
                 collected_approvals,
                 completed,
-                context,
+                subject,
                 created_at,
                 updated_at
               )
@@ -75,7 +75,7 @@ module CrystalBank::Domains::Approvals
             body.required_approvals.to_json,
             "[]",
             false,
-            body.context.try(&.to_json),
+            body.subject.try(&.to_json),
             created_at
         end
       end

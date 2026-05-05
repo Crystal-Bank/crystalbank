@@ -70,8 +70,8 @@ module CrystalBank::Domains::Approvals
         @[JSON::Field(description: "Whether the approval process is rejected")]
         getter rejected : Bool
 
-        @[JSON::Field(description: "Human-readable context snapshot of the entity pending approval")]
-        getter context : CrystalBank::Domains::Approvals::ApprovalContext?
+        @[JSON::Field(description: "Human-readable snapshot of the entity pending approval")]
+        getter subject : CrystalBank::Domains::Approvals::ApprovalSubject?
 
         @[JSON::Field(description: "Reason provided when the approval was rejected")]
         getter rejection_reason : String?
@@ -86,7 +86,7 @@ module CrystalBank::Domains::Approvals
           @collected_approvals : Array(CollectedApproval),
           @completed : Bool,
           @rejected : Bool,
-          @context : CrystalBank::Domains::Approvals::ApprovalContext?,
+          @subject : CrystalBank::Domains::Approvals::ApprovalSubject?,
           @rejection_reason : String?,
         ); end
       end

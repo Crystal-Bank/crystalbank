@@ -74,6 +74,19 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     approval.should_not be_nil
     approval.not_nil!.completed.should be_false
     approval.not_nil!.required_approvals.should contain("write_payments_sepa_credit_transfers_approval")
+
+    subject = approval.not_nil!.subject
+    subject.should_not be_nil
+    subject.not_nil!.title.should eq("SEPA Credit Transfer")
+    subject.not_nil!.summary.should contain("250.00 EUR")
+    subject.not_nil!.summary.should contain("Acme GmbH")
+    field_labels = subject.not_nil!.fields.map(&.label)
+    field_labels.should contain("Amount")
+    field_labels.should contain("Creditor Name")
+    field_labels.should contain("Creditor IBAN")
+    field_labels.should contain("Debtor Account")
+    amount_field = subject.not_nil!.fields.find { |f| f.label == "Amount" }
+    amount_field.not_nil!.value.should eq("250.00 EUR")
   end
 
   it "raises when debtor account is not open" do

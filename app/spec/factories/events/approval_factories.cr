@@ -22,7 +22,7 @@ module Test::Approval::Events
           source_aggregate_type: source_aggregate_type,
           source_aggregate_id: source_aggregate_id,
           required_approvals: required_approvals,
-          context: nil,
+          subject: nil,
           comment: comment
         )
       end

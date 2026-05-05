@@ -34,8 +34,8 @@ module CrystalBank::Domains::Approvals
         getter completed : Bool
         getter rejected : Bool
 
-        @[DB::Field(converter: CrystalBank::Converters::JsonObject(CrystalBank::Domains::Approvals::ApprovalContext))]
-        getter context : CrystalBank::Domains::Approvals::ApprovalContext?
+        @[DB::Field(converter: CrystalBank::Converters::JsonObject(CrystalBank::Domains::Approvals::ApprovalSubject))]
+        getter subject : CrystalBank::Domains::Approvals::ApprovalSubject?
 
         getter rejection_reason : String?
       end
