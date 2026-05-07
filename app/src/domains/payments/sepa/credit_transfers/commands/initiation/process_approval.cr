@@ -29,6 +29,15 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           remittance_information = payment.state.remittance_information.to_s
           end_to_end_id = payment.state.end_to_end_id.to_s
 
+          # Re-validate account status at execution time — an account may have been
+          # closed or entered closure_pending between request and approval.
+          account_ids = [debtor_account_id, settlement_account_id].uniq
+          found_accounts = Accounts::Queries::Accounts.new.find_all(account_ids).to_h { |a| {a.id, a} }
+          account_ids.each do |account_id|
+            account = found_accounts[account_id]?
+            return unless account && account.status == "active"
+          end
+
           # Build two balanced ledger entries:
           #   Debit  the debtor's account  (funds leave customer)
           #   Credit the settlement nostro  (funds arrive at SEPA clearing)
