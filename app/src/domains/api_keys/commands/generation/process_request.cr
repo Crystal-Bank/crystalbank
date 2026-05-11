@@ -13,15 +13,15 @@ module CrystalBank::Domains::ApiKeys
 
           key_name = aggregate.state.name || "unknown"
           user_label = if (uid = aggregate.state.user_id)
-            user = Users::Queries::Users.new.get(uid)
-            if user
-              "#{user.name} <#{user.email}>"
-            else
-              uid.to_s
-            end
-          else
-            "unknown"
-          end
+                         user = Users::Queries::Users.new.get(uid)
+                         if user
+                           "#{user.name} <#{user.email}>"
+                         else
+                           uid.to_s
+                         end
+                       else
+                         "unknown"
+                       end
           approval_subject = Approvals::ApprovalSubject.new(
             title: "API Key Generation",
             summary: key_name,
