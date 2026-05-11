@@ -261,12 +261,14 @@
       {#if drawerApproval.requestor}
         <div class="drawer-field">
           <div class="drawer-field-label">Requestor</div>
-          <div class="text-sm">{drawerApproval.requestor.name} <span class="text-zinc-400">&lt;{drawerApproval.requestor.email}&gt;</span></div>
+          <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm">
+            {drawerApproval.requestor.name} <span class="text-zinc-400">&lt;{drawerApproval.requestor.email}&gt;</span>
+          </div>
         </div>
       {:else if drawerApproval.requestor_id}
         <div class="drawer-field">
           <div class="drawer-field-label">Requestor</div>
-          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.requestor_id}</div>
+          <div class="font-mono text-xs bg-zinc-100 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.requestor_id}</div>
         </div>
       {/if}
       <div class="drawer-field">
