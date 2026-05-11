@@ -16,7 +16,11 @@ module CrystalBank::Domains::Scopes
             Approvals::ApprovalSubject::Field.new("Name", scope_name),
           ] of Approvals::ApprovalSubject::Field
           if (pid = aggregate.state.parent_scope_id)
-            parent_name = Scopes::Queries::Scopes.new.get(pid).try(&.name)
+            parent_name = begin
+              Scopes::Queries::Scopes.new.get(pid).try(&.name)
+            rescue DB::NoResultsError
+              nil
+            end
             parent_label = parent_name ? "#{parent_name} (#{pid})" : pid.to_s
             scope_fields << Approvals::ApprovalSubject::Field.new("Parent Scope", parent_label)
           end

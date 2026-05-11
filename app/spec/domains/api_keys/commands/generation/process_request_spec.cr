@@ -1,11 +1,23 @@
 require "../../../../spec_helper"
 
 describe CrystalBank::Domains::ApiKeys::Generation::Commands::ProcessRequest do
-  it "creates an approval with a subject snapshot containing name, user, and key ID" do
+  it "creates an approval with a subject snapshot containing name, user name and email, and key ID" do
+    user_id = UUID.new("00000000-0000-0000-0000-000000000001")
     api_key_id = UUID.v7
-    expected_user_id = UUID.new("00000000-0000-0000-0000-000000000000")
 
-    event = Test::ApiKey::Events::Generation::Requested.new.create(aggr_id: api_key_id)
+    user_req = Test::User::Events::Onboarding::Requested.new.create(aggr_id: user_id)
+    TEST_EVENT_STORE.append(user_req)
+
+    event = ApiKeys::Generation::Events::Requested.new(
+      actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
+      aggregate_id: api_key_id,
+      api_secret: "api_secret",
+      command_handler: "test",
+      comment: "test comment",
+      name: "test name",
+      scope_id: UUID.new("00000000-0000-0000-0000-000000000001"),
+      user_id: user_id
+    )
     TEST_EVENT_STORE.append(event)
 
     approval_id = ApiKeys::Generation::Commands::ProcessRequest.new(aggregate_id: api_key_id).call
@@ -24,7 +36,7 @@ describe CrystalBank::Domains::ApiKeys::Generation::Commands::ProcessRequest do
     field_labels.should contain("User")
     field_labels.should contain("Key ID")
     subject.not_nil!.fields.find { |f| f.label == "Name" }.not_nil!.value.should eq("test name")
-    subject.not_nil!.fields.find { |f| f.label == "User" }.not_nil!.value.should eq(expected_user_id.to_s)
+    subject.not_nil!.fields.find { |f| f.label == "User" }.not_nil!.value.should eq("Peter Pan <test@crystalbank.xyz>")
     subject.not_nil!.fields.find { |f| f.label == "Key ID" }.not_nil!.value.should eq(api_key_id.to_s)
   end
 end

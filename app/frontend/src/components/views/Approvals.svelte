@@ -230,13 +230,13 @@
       <!-- Context snapshot -->
       {#if drawerApproval.subject}
         <div class="drawer-field">
-          <div class="rounded-lg border-2 border-zinc-900 overflow-hidden">
-            <div class="px-3 py-2.5 bg-zinc-900 flex items-center gap-2.5">
-              <span class="text-xs font-semibold text-zinc-400 uppercase tracking-wider shrink-0">Subject</span>
-              <span class="text-sm font-semibold text-white">{drawerApproval.subject.title}</span>
+          <div class="rounded-lg border-2 border-green-300 overflow-hidden">
+            <div class="px-3 py-2.5 bg-green-100 flex items-center gap-2.5">
+              <span class="text-xs font-semibold text-green-700 uppercase tracking-wider shrink-0">Subject</span>
+              <span class="text-sm font-semibold text-green-900">{drawerApproval.subject.title}</span>
             </div>
             {#if drawerApproval.subject.summary}
-              <div class="px-3 py-2 text-sm text-zinc-600 bg-zinc-50 border-b border-zinc-200">{drawerApproval.subject.summary}</div>
+              <div class="px-3 py-2 text-sm text-green-800 bg-green-50 border-b border-green-200">{drawerApproval.subject.summary}</div>
             {/if}
             <table class="w-full text-xs bg-white">
               {#each drawerApproval.subject.fields as f (f.label)}

@@ -2,7 +2,7 @@ module CrystalBank::Domains::Roles
   module PermissionsUpdate
     module Commands
       class Request < ES::Command
-        def call(r : Roles::Api::Requests::PermissionsUpdateRequest, c : CrystalBank::Api::Context) : UUID
+        def call(r : Roles::Api::Requests::PermissionsUpdateRequest, c : CrystalBank::Api::Context) : {update_request_id: UUID, approval_id: UUID}
           actor = c.user_id
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
@@ -48,8 +48,7 @@ module CrystalBank::Domains::Roles
             ] of Approvals::ApprovalSubject::Field
           )
 
-          # Create the approval workflow inline (same pattern as account blocking)
-          Approvals::Creation::Commands::Request.new.call(
+          approval_id = Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "RolePermissionsUpdate",
             source_aggregate_id: update_request_id,
             scope_id: scope,
@@ -58,7 +57,7 @@ module CrystalBank::Domains::Roles
             subject: approval_subject,
           )
 
-          update_request_id
+          {update_request_id: update_request_id, approval_id: approval_id}
         end
       end
     end

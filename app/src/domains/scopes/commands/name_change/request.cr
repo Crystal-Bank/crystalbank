@@ -2,7 +2,7 @@ module CrystalBank::Domains::Scopes
   module NameChange
     module Commands
       class Request < ES::Command
-        def call(r : Scopes::Api::Requests::NameChangeRequest, c : CrystalBank::Api::Context) : UUID
+        def call(r : Scopes::Api::Requests::NameChangeRequest, c : CrystalBank::Api::Context) : {name_change_request_id: UUID, approval_id: UUID}
           actor = c.user_id
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
@@ -36,7 +36,7 @@ module CrystalBank::Domains::Scopes
             ] of Approvals::ApprovalSubject::Field
           )
 
-          Approvals::Creation::Commands::Request.new.call(
+          approval_id = Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "ScopeNameChange",
             source_aggregate_id: name_change_request_id,
             scope_id: scope,
@@ -45,7 +45,7 @@ module CrystalBank::Domains::Scopes
             subject: approval_subject,
           )
 
-          name_change_request_id
+          {name_change_request_id: name_change_request_id, approval_id: approval_id}
         end
       end
     end

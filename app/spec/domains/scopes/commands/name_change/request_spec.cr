@@ -25,11 +25,11 @@ describe CrystalBank::Domains::Scopes::NameChange::Commands::Request do
     request = Scopes::Api::Requests::NameChangeRequest.from_json(
       {scope_id: scope_id.to_s, name: "New Scope Name"}.to_json
     )
-    name_change_id = Scopes::NameChange::Commands::Request.new.call(request, context)
+    result = Scopes::NameChange::Commands::Request.new.call(request, context)
 
-    apply_projection(name_change_id)
+    apply_projection(result[:approval_id])
 
-    approval = Approvals::Queries::Approvals.new.find_by_source("ScopeNameChange", name_change_id)
+    approval = Approvals::Queries::Approvals.new.find_by_source("ScopeNameChange", result[:name_change_request_id])
     approval.should_not be_nil
     approval.not_nil!.required_approvals.should contain("write_scopes_name_change_approval")
 
