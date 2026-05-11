@@ -49,7 +49,7 @@
     showModal = true
     try {
       const res = await apiFetch('GET', '/accounts/?limit=200')
-      accountOptions = res.data.map(e => e.attributes)
+      accountOptions = res.data.map(e => e.attributes).filter(a => a.status === 'active')
     } catch {
       accountOptions = []
     }

@@ -15,6 +15,8 @@ module CrystalBank
         {key: "READ_accounts_blocks", description: "Read the active and historical blocks on accounts."},
         {key: "WRITE_accounts_opening_compliance_approval", description: "Provide compliance sign-off on a pending account opening request."},
         {key: "WRITE_accounts_opening_board_approval", description: "Provide board-level sign-off on a pending account opening request."},
+        {key: "WRITE_accounts_closure_request", description: "Submit a request to close an account."},
+        {key: "WRITE_accounts_closure_approval", description: "Approve or reject a pending account closure request."},
       ],
     },
     {

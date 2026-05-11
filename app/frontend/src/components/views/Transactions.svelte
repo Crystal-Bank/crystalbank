@@ -54,7 +54,7 @@
       apiFetch('GET', '/platform/types/ledger-entry-types'),
     ])
     accountOptions = results[0].status === 'fulfilled'
-      ? results[0].value.data.map(e => e.attributes)
+      ? results[0].value.data.map(e => e.attributes).filter(a => a.status === 'active')
       : []
     currencyOptions = results[1].status === 'fulfilled' ? results[1].value.values : []
     ledgerEntryTypeOptions = results[2].status === 'fulfilled' ? results[2].value.values : []

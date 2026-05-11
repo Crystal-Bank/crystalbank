@@ -27,6 +27,31 @@ module CrystalBank::Domains::Accounts
         OpeningResponse.new(aggregate_id)
       end
 
+      # Request closure
+      # Request that an account be closed. The account will not be closed immediately —
+      # an approval workflow is created that must be signed off by a user with
+      # **write_accounts_closure_approval**. The account status transitions to
+      # `closure_pending` immediately and to `closed` once the approval completes.
+      #
+      # Required permission:
+      # - **write_accounts_closure_request**
+      @[AC::Route::POST("/:account_id/close", body: :r)]
+      def request_closure(
+        @[AC::Param::Info(description: "Account ID to close", format: "uuid")]
+        account_id : UUID,
+        r : ClosureRequest,
+      ) : Responses::ClosureResponse
+        authorized?("write_accounts_closure_request")
+
+        result = ::Accounts::Closure::Commands::Request.new.call(r, account_id, context)
+
+        Responses::ClosureResponse.new(
+          account_id: account_id,
+          closure_request_id: result[:closure_request_id],
+          approval_id: result[:approval_id]
+        )
+      end
+
       # Request block
       # Request that a block cause be applied to an account. Blocks are stackable —
       # multiple causes can coexist simultaneously and the effective block state is

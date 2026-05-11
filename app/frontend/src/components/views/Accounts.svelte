@@ -92,7 +92,8 @@
         <tr><td colspan="7" class="text-center py-10 text-zinc-400 text-sm">No accounts found</td></tr>
       {/if}
       {#each viewData.accounts as a (a.id)}
-        <tr onclick={() => a.status !== 'pending_approval' && openAccountDetail(a)} class:cursor-pointer={a.status !== 'pending_approval'} class:opacity-60={a.status === 'pending_approval'}>
+        {@const clickable = a.status !== 'pending_approval' && a.status !== 'closed'}
+        <tr onclick={() => clickable && openAccountDetail(a)} class:cursor-pointer={clickable} class:opacity-60={a.status === 'pending_approval' || a.status === 'closed'}>
           <td class="font-medium">{a.name}</td>
           <td><span class="mono text-xs">{a.id}</span></td>
           <td><span class="badge" class:badge-blue={a.type === 'checking'} class:badge-purple={a.type !== 'checking'}>{a.type?.replace('_', ' ')}</span></td>

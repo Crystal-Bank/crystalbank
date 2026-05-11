@@ -1,6 +1,16 @@
 module CrystalBank::Domains::Accounts
   module Api
     module Requests
+      struct ClosureRequest
+        include JSON::Serializable
+
+        @[JSON::Field(description: "Reason for closing the account")]
+        getter reason : CrystalBank::Types::Accounts::ClosureReason
+
+        @[JSON::Field(description: "Optional free-text comment elaborating on the closure reason")]
+        getter closure_comment : String?
+      end
+
       struct OpeningRequest
         include JSON::Serializable
 

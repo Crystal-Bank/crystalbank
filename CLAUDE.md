@@ -87,6 +87,7 @@ HTTP Request
 - **Test with factories + `apply_projection()`.** Seed events directly into the store via factories, replay through the bus with `apply_projection(aggregate_id)`, then assert on projection state.
 - **Put new account/currency/payment types in `app/src/config/types/`.** That's where the type catalogue lives.
 - **Wire new event-bus subscriptions in `app/src/config/initializers/event_bus.cr`** — that file is the single source of truth for cross-domain event wiring.
+- **Register every new event class in `app/src/config/initializers/event_handlers.cr`** — the event store uses this registry to deserialize events when hydrating aggregates. Every event defined with `define_event` must have a matching `event_handlers.register(...)` call, or hydration will fail at runtime.
 
 ---
 
