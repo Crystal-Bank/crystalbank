@@ -12,7 +12,11 @@ module CrystalBank::Domains::Roles
           scope_id = aggregate.state.scope_id.as(UUID)
 
           role_name = aggregate.state.name || "unknown"
-          scope = Scopes::Queries::Scopes.new.get(scope_id)
+          scope = begin
+            Scopes::Queries::Scopes.new.get(scope_id)
+          rescue DB::NoResultsError
+            nil
+          end
           scope_label = scope ? "#{scope.name} (#{scope_id})" : scope_id.to_s
           approval_subject = Approvals::ApprovalSubject.new(
             title: "Role Creation",
