@@ -13,14 +13,9 @@ module CrystalBank::Domains::ApiKeys
 
           key_name = aggregate.state.name || "unknown"
           user_label = if (uid = aggregate.state.user_id)
-            user_aggr = Users::Aggregate.new(uid)
-            user_aggr.hydrate
-            user_name = user_aggr.state.name
-            user_email = user_aggr.state.email
-            if user_name && user_email
-              "#{user_name} <#{user_email}>"
-            elsif user_name
-              user_name
+            user = Users::Queries::Users.new.get(uid)
+            if user
+              "#{user.name} <#{user.email}>"
             else
               uid.to_s
             end

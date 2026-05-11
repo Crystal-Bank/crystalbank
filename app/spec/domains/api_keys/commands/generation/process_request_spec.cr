@@ -6,7 +6,11 @@ describe CrystalBank::Domains::ApiKeys::Generation::Commands::ProcessRequest do
     api_key_id = UUID.v7
 
     user_req = Test::User::Events::Onboarding::Requested.new.create(aggr_id: user_id)
+    user_acc = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: user_id)
     TEST_EVENT_STORE.append(user_req)
+    TEST_EVENT_STORE.append(user_acc)
+    Users::Projections::Users.new.apply(user_req)
+    Users::Projections::Users.new.apply(user_acc)
 
     event = ApiKeys::Generation::Events::Requested.new(
       actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
