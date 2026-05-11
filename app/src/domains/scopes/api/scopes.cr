@@ -39,9 +39,9 @@ module CrystalBank::Domains::Scopes
       ) : NameChangeResponse
         authorized?("write_scopes_name_change_request")
 
-        name_change_request_id = ::Scopes::NameChange::Commands::Request.new.call(r, context)
+        result = ::Scopes::NameChange::Commands::Request.new.call(r, context)
 
-        NameChangeResponse.new(name_change_request_id)
+        NameChangeResponse.new(result[:name_change_request_id])
       end
 
       # List

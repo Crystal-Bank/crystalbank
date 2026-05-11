@@ -1,7 +1,46 @@
 require "../../../../spec_helper"
 
 describe CrystalBank::Domains::ApiKeys::Generation::Commands::ProcessRequest do
-  pending "pending" do
-    false.should eq(true)
+  it "creates an approval with a subject snapshot containing name, user name and email, and key ID" do
+    user_id = UUID.new("00000000-0000-0000-0000-000000000001")
+    api_key_id = UUID.v7
+
+    user_req = Test::User::Events::Onboarding::Requested.new.create(aggr_id: user_id)
+    user_acc = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: user_id)
+    TEST_EVENT_STORE.append(user_req)
+    TEST_EVENT_STORE.append(user_acc)
+    Users::Projections::Users.new.apply(user_req)
+    Users::Projections::Users.new.apply(user_acc)
+
+    event = ApiKeys::Generation::Events::Requested.new(
+      actor_id: UUID.new("00000000-0000-0000-0000-000000000000"),
+      aggregate_id: api_key_id,
+      api_secret: "api_secret",
+      command_handler: "test",
+      comment: "test comment",
+      name: "test name",
+      scope_id: UUID.new("00000000-0000-0000-0000-000000000001"),
+      user_id: user_id
+    )
+    TEST_EVENT_STORE.append(event)
+
+    approval_id = ApiKeys::Generation::Commands::ProcessRequest.new(aggregate_id: api_key_id).call
+    apply_projection(approval_id)
+
+    approval = Approvals::Queries::Approvals.new.find_by_source("ApiKey", api_key_id)
+    approval.should_not be_nil
+    approval.not_nil!.required_approvals.should contain("write_api_keys_generation_approval")
+
+    subject = approval.not_nil!.subject
+    subject.should_not be_nil
+    subject.not_nil!.title.should eq("API Key Generation")
+    subject.not_nil!.summary.should eq("test name")
+    field_labels = subject.not_nil!.fields.map(&.label)
+    field_labels.should contain("Name")
+    field_labels.should contain("User")
+    field_labels.should contain("Key ID")
+    subject.not_nil!.fields.find { |f| f.label == "Name" }.not_nil!.value.should eq("test name")
+    subject.not_nil!.fields.find { |f| f.label == "User" }.not_nil!.value.should eq("Peter Pan <test@crystalbank.xyz>")
+    subject.not_nil!.fields.find { |f| f.label == "Key ID" }.not_nil!.value.should eq(api_key_id.to_s)
   end
 end

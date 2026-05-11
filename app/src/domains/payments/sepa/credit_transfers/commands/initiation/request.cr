@@ -69,6 +69,21 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
           payment_id = UUID.new(event.header.aggregate_id.to_s)
 
+          # Build approval subject snapshot for the approver's benefit
+          debtor_name = found_by_id[r.debtor_account_id]?.try(&.name) || r.debtor_account_id.to_s
+          amount_formatted = "%.2f EUR" % (r.amount / 100.0)
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "SEPA Credit Transfer",
+            summary: "#{amount_formatted} → #{r.creditor_iban} (#{r.creditor_name})",
+            fields: [
+              Approvals::ApprovalSubject::Field.new("Amount", amount_formatted),
+              Approvals::ApprovalSubject::Field.new("Creditor Name", r.creditor_name),
+              Approvals::ApprovalSubject::Field.new("Creditor IBAN", r.creditor_iban),
+              Approvals::ApprovalSubject::Field.new("Reference", r.remittance_information),
+              Approvals::ApprovalSubject::Field.new("Debtor Account", debtor_name),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           # Create the approval workflow, referencing the payment aggregate
           approval_id = Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "SepaCreditTransfer",
@@ -76,6 +91,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             scope_id: scope,
             required_approvals: ["write_payments_sepa_credit_transfers_approval"],
             actor_id: actor,
+            subject: approval_subject,
           )
 
           {payment_id: payment_id, approval_id: approval_id}

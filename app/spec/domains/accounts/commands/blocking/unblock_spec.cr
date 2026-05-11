@@ -62,6 +62,15 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::Unblock do
     approval.should_not be_nil
     approval.not_nil!.completed.should be_false
     approval.not_nil!.required_approvals.should contain("write_accounts_unblocking_approval")
+
+    subject = approval.not_nil!.subject
+    subject.should_not be_nil
+    subject.not_nil!.title.should eq("Account Unblock")
+    subject.not_nil!.summary.should contain("compliance_block")
+    field_labels = subject.not_nil!.fields.map(&.label)
+    field_labels.should contain("Account")
+    field_labels.should contain("Block Type")
+    subject.not_nil!.fields.find { |f| f.label == "Block Type" }.not_nil!.value.should eq("compliance_block")
   end
 
   it "raises when account does not exist or is not open" do

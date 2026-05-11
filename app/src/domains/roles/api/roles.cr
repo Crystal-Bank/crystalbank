@@ -41,9 +41,9 @@ module CrystalBank::Domains::Roles
       ) : Responses::PermissionsUpdateResponse
         authorized?("write_roles_permissions_update_request")
 
-        update_request_id = ::Roles::PermissionsUpdate::Commands::Request.new.call(r, context)
+        result = ::Roles::PermissionsUpdate::Commands::Request.new.call(r, context)
 
-        Responses::PermissionsUpdateResponse.new(update_request_id)
+        Responses::PermissionsUpdateResponse.new(result[:update_request_id])
       end
 
       # List

@@ -64,9 +64,14 @@ module CrystalBank::Domains::Approvals
       ) : ListResponse(Responses::Approval)
         authorized?("read_approvals_list", request_scope: false)
 
+        users_query = ::Users::Queries::Users.new
         approvals = ::Approvals::Queries::Approvals.new.list(context, cursor: cursor, limit: limit + 1, status: status).map do |a|
           collected = a.collected_approvals.map do |ca|
             Responses::CollectedApproval.new(ca.user_id, ca.permissions, ca.comment)
+          end
+
+          requestor = a.requestor_id.try do |rid|
+            users_query.get(rid).try { |u| Responses::Requestor.new(u.name, u.email) }
           end
 
           Responses::Approval.new(
@@ -75,10 +80,13 @@ module CrystalBank::Domains::Approvals
             a.source_aggregate_type,
             a.source_aggregate_id,
             a.requestor_id,
+            requestor,
             a.required_approvals,
             collected,
             a.completed,
-            a.rejected
+            a.rejected,
+            a.subject,
+            a.rejection_reason
           )
         end
 

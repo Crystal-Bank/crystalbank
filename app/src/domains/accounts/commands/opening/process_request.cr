@@ -11,6 +11,19 @@ module CrystalBank::Domains::Accounts
 
           scope_id = aggregate.state.scope_id.as(UUID)
 
+          account_name = aggregate.state.name || "unknown"
+          account_type = aggregate.state.type.try(&.to_s) || "unknown"
+          currencies = aggregate.state.supported_currencies.map(&.to_s).join(", ")
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Account Opening",
+            summary: "#{account_name} (#{account_type})",
+            fields: [
+              Approvals::ApprovalSubject::Field.new("Name", account_name),
+              Approvals::ApprovalSubject::Field.new("Type", account_type),
+              Approvals::ApprovalSubject::Field.new("Currencies", currencies),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           # Create an approval workflow for this account opening
           Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "Account",
@@ -20,7 +33,8 @@ module CrystalBank::Domains::Accounts
               "write_accounts_opening_compliance_approval",
               # "write_accounts_opening_board_approval",
             ],
-            actor_id: aggregate.state.requestor_id
+            actor_id: aggregate.state.requestor_id,
+            subject: approval_subject,
           )
         end
       end

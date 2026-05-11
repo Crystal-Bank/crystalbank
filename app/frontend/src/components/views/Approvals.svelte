@@ -126,9 +126,7 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Source</th>
-        <th>Source ID</th>
-        <th>Requestor ID</th>
+        <th>Subject</th>
         <th>Required</th>
         <th>Progress</th>
         {#if activeTab === 'pending'}
@@ -139,7 +137,7 @@
     <tbody>
       {#if currentData.length === 0 && ui.loadingView !== currentViewId}
         <tr>
-          <td colspan="7" class="text-center py-10 text-zinc-400 text-sm">
+          <td colspan="5" class="text-center py-10 text-zinc-400 text-sm">
             {activeTab === 'pending' ? 'No pending approvals' : activeTab === 'completed' ? 'No completed approvals' : 'No rejected approvals'}
           </td>
         </tr>
@@ -147,14 +145,15 @@
       {#each currentData as a (a.id)}
         <tr onclick={() => openDrawer(a)} class="cursor-pointer">
           <td><span class="mono text-xs">{a.id}</span></td>
-          <td><span class="badge badge-zinc">{a.source_aggregate_type}</span></td>
-          <td><span class="mono text-xs">{a.source_aggregate_id}</span></td>
           <td>
-            {#if a.requestor_id}
-              <span class="mono text-xs">{a.requestor_id}</span>
-            {:else}
-              <span class="text-zinc-400 text-xs">—</span>
-            {/if}
+            <div class="flex flex-col gap-0.5">
+              <span class="badge badge-zinc self-start">{a.subject ? a.subject.title : a.source_aggregate_type}</span>
+              {#if a.subject}
+                <span class="text-xs text-zinc-600">{a.subject.summary}</span>
+              {:else}
+                <span class="mono text-xs text-zinc-400">{a.source_aggregate_id}</span>
+              {/if}
+            </div>
           </td>
           <td>
             <div class="flex flex-wrap gap-1">
@@ -212,9 +211,22 @@
     </div>
     <div class="drawer-body">
       <div class="drawer-field">
-        <div class="drawer-field-label">ID</div>
+        <div class="drawer-field-label">Approval request ID</div>
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.id}</div>
       </div>
+      {#if drawerApproval.requestor}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Requestor</div>
+          <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm">
+            {drawerApproval.requestor.name} <span class="text-zinc-400">&lt;{drawerApproval.requestor.email}&gt;</span>
+          </div>
+        </div>
+      {:else if drawerApproval.requestor_id}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Requestor</div>
+          <div class="font-mono text-xs bg-zinc-100 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.requestor_id}</div>
+        </div>
+      {/if}
       <div class="drawer-field">
         <div class="drawer-field-label">Status</div>
         <div>
@@ -227,19 +239,38 @@
           {/if}
         </div>
       </div>
-      <div class="drawer-field">
-        <div class="drawer-field-label">Source</div>
-        <div class="flex items-center gap-2">
-          <span class="badge badge-zinc">{drawerApproval.source_aggregate_type}</span>
-          <span class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all flex-1">{drawerApproval.source_aggregate_id}</span>
-        </div>
-      </div>
-      {#if drawerApproval.requestor_id}
+
+      <!-- Context snapshot -->
+      {#if drawerApproval.subject}
         <div class="drawer-field">
-          <div class="drawer-field-label">Requestor ID</div>
-          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerApproval.requestor_id}</div>
+          <div class="rounded-lg border-2 border-green-300 overflow-hidden">
+            <div class="px-3 py-2.5 bg-green-100 flex items-center gap-2.5">
+              <span class="text-xs font-semibold text-green-700 uppercase tracking-wider shrink-0">Subject</span>
+              <span class="text-sm font-semibold text-green-900">{drawerApproval.subject.title}</span>
+            </div>
+            {#if drawerApproval.subject.summary}
+              <div class="px-3 py-2 text-sm text-green-800 bg-green-50 border-b border-green-200">{drawerApproval.subject.summary}</div>
+            {/if}
+            <table class="w-full text-xs bg-white">
+              {#each drawerApproval.subject.fields as f (f.label)}
+                <tr class="border-b border-zinc-100 last:border-0">
+                  <td class="px-3 py-2 text-zinc-500 font-medium whitespace-nowrap w-1/3">{f.label}</td>
+                  <td class="px-3 py-2 text-zinc-800 font-medium break-all">{f.value}</td>
+                </tr>
+              {/each}
+            </table>
+          </div>
+        </div>
+      {:else}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Source</div>
+          <div class="flex items-center gap-2">
+            <span class="badge badge-zinc">{drawerApproval.source_aggregate_type}</span>
+            <span class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all flex-1">{drawerApproval.source_aggregate_id}</span>
+          </div>
         </div>
       {/if}
+
       <div class="drawer-field">
         <div class="drawer-field-label">Required Approvals</div>
         <div class="flex flex-wrap gap-1">
@@ -280,6 +311,15 @@
                 {/if}
               </div>
             {/each}
+          </div>
+        </div>
+      {/if}
+
+      {#if drawerApproval.rejected && drawerApproval.rejection_reason}
+        <div class="drawer-field">
+          <div class="drawer-field-label">Rejection Reason</div>
+          <div class="bg-red-50 border border-red-100 rounded px-3 py-2 text-sm text-red-700 italic">
+            "{drawerApproval.rejection_reason}"
           </div>
         </div>
       {/if}

@@ -11,6 +11,18 @@ module CrystalBank::Domains::Roles
 
           scope_id = aggregate.state.scope_id.as(UUID)
 
+          role_name = aggregate.state.name || "unknown"
+          scope = Scopes::Queries::Scopes.new.get(scope_id)
+          scope_label = scope ? "#{scope.name} (#{scope_id})" : scope_id.to_s
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Role Creation",
+            summary: role_name,
+            fields: [
+              Approvals::ApprovalSubject::Field.new("Name", role_name),
+              Approvals::ApprovalSubject::Field.new("Scope", scope_label),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           # Create an approval workflow for this role creation
           Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "Role",
@@ -19,7 +31,8 @@ module CrystalBank::Domains::Roles
             required_approvals: [
               "write_roles_creation_approval",
             ],
-            actor_id: aggregate.state.requestor_id
+            actor_id: aggregate.state.requestor_id,
+            subject: approval_subject,
           )
         end
       end

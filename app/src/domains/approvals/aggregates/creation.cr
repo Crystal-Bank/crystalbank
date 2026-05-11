@@ -12,6 +12,7 @@ module CrystalBank::Domains::Approvals
           @state.source_aggregate_id = body.source_aggregate_id
           @state.required_approvals = body.required_approvals
           @state.requestor_id = event.header.actor_id
+          @state.subject = body.subject
         end
       end
     end

@@ -19,7 +19,8 @@ describe CrystalBank::Domains::Approvals::Aggregates::Concerns::Collection do
         required_approvals: [
           "write_accounts_opening_compliance_approval",
           "write_accounts_opening_board_approval",
-        ]
+        ],
+        subject: nil
       )
       aggregate.apply(creation_event)
 
@@ -57,7 +58,8 @@ describe CrystalBank::Domains::Approvals::Aggregates::Concerns::Collection do
         scope_id: UUID.new("00000000-0000-0000-0000-100000000001"),
         source_aggregate_type: "Account",
         source_aggregate_id: UUID.new("00000000-0000-0000-0000-200000000001"),
-        required_approvals: ["write_accounts_opening_compliance_approval"]
+        required_approvals: ["write_accounts_opening_compliance_approval"],
+        subject: nil
       )
       aggregate.apply(creation_event)
 

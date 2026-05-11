@@ -31,19 +31,46 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
     role_id = UUID.v7
     seed_active_role(role_id)
 
-    update_request_id = Roles::PermissionsUpdate::Commands::Request.new.call(
+    result = Roles::PermissionsUpdate::Commands::Request.new.call(
       permissions_update_request(role_id: role_id),
       permissions_update_context
     )
 
-    update_request_id.should be_a(UUID)
+    result[:update_request_id].should be_a(UUID)
+    result[:approval_id].should be_a(UUID)
 
-    aggregate = Roles::PermissionsUpdate::Aggregate.new(update_request_id)
+    aggregate = Roles::PermissionsUpdate::Aggregate.new(result[:update_request_id])
     aggregate.hydrate
 
     aggregate.state.role_id.should eq(role_id)
     aggregate.state.permissions.should eq([CrystalBank::Permissions::WRITE_roles_permissions_update_request])
     aggregate.state.completed.should be_false
+  end
+
+  it "creates an approval with a subject snapshot containing role name and permission count" do
+    role_id = UUID.v7
+    seed_active_role(role_id)
+
+    result = Roles::PermissionsUpdate::Commands::Request.new.call(
+      permissions_update_request(role_id: role_id),
+      permissions_update_context
+    )
+
+    apply_projection(result[:approval_id])
+
+    approval = Approvals::Queries::Approvals.new.find_by_source("RolePermissionsUpdate", result[:update_request_id])
+    approval.should_not be_nil
+
+    subject = approval.not_nil!.subject
+    subject.should_not be_nil
+    subject.not_nil!.title.should eq("Role Permissions Update")
+    subject.not_nil!.summary.should contain("Scope name test")
+    subject.not_nil!.summary.should contain("1 permissions")
+    field_labels = subject.not_nil!.fields.map(&.label)
+    field_labels.should contain("Role")
+    field_labels.should contain("Permissions")
+    subject.not_nil!.fields.find { |f| f.label == "Role" }.not_nil!.value.should eq("Scope name test")
+    subject.not_nil!.fields.find { |f| f.label == "Permissions" }.not_nil!.value.should eq("1")
   end
 
   it "raises when the role does not exist" do
@@ -87,13 +114,13 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
     seed_active_role(role_id)
 
     # First request succeeds
-    update_request_id = Roles::PermissionsUpdate::Commands::Request.new.call(
+    result = Roles::PermissionsUpdate::Commands::Request.new.call(
       permissions_update_request(role_id: role_id),
       permissions_update_context
     )
 
     # Project the Requested event so the pending guard has data
-    apply_projection(update_request_id)
+    apply_projection(result[:update_request_id])
 
     # Second request for the same role must be rejected
     expect_raises(CrystalBank::Exception::InvalidArgument, /already has a pending permissions update/) do
