@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.15.0
+  version: 0.16.0
 paths:
   /.well-known/openid-configuration:
     get:
@@ -144,6 +144,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__OpeningResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /accounts/{account_id}/close:
+    post:
+      summary: Request closure
+      description: 'Request closure
+
+        Request that an account be closed. The account will not be closed immediately
+        —
+
+        an approval workflow is created that must be signed off by a user with
+
+        **write_accounts_closure_approval**. The account status transitions to
+
+        `closure_pending` immediately and to `closed` once the approval completes.
+
+
+        Required permission:
+
+        - **write_accounts_closure_request**'
+      tags:
+      - Accounts
+      operationId: CrystalBank::Domains::Accounts::Api::Accounts_request_closure
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Requests__ClosureRequest'
+        required: true
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID to close
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__Accounts__Api__Responses__ClosureResponse'
         401:
           description: Unauthorized
           content:
@@ -2617,6 +2689,63 @@ components:
       required:
       - id
       description: Response to an account opening request
+    CrystalBank__Domains__Accounts__Api__Requests__ClosureRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          enum:
+          - by_customer
+          - inactivity
+          - fraud
+          - suspicious_activity
+          - aml_violation
+          - kyc_failure
+          - negative_balance
+          - repeated_overdraft
+          - terms_violation
+          - court_order
+          - death_of_account_holder
+          - duplicate_account
+          - product_discontinued
+          - regulatory_requirement
+          - sanctions_match
+          - bankruptcy
+          - minor_reached_age_limit
+          - business_dissolution
+          - failed_reactivation
+          - bank_decision
+          description: Reason for closing the account
+        closure_comment:
+          type: string
+          description: Optional free-text comment elaborating on the closure reason
+          nullable: true
+      required:
+      - reason
+    CrystalBank__Domains__Accounts__Api__Responses__ClosureResponse:
+      type: object
+      properties:
+        account_id:
+          type: string
+          format: uuid
+          description: ID of the account being closed
+        closure_request_id:
+          type: string
+          format: uuid
+          description: ID of the closure request aggregate
+        approval_id:
+          type: string
+          format: uuid
+          description: ID of the approval workflow that must be completed
+        status:
+          type: string
+          description: Current status of the closure request
+      required:
+      - account_id
+      - closure_request_id
+      - approval_id
+      - status
+      description: Response to an account closure request
     CrystalBank__Domains__Accounts__Api__Requests__BlockingRequest:
       type: object
       properties:
@@ -3053,6 +3182,19 @@ components:
                     format: uuid
                     description: ID of the user who initiated the request
                     nullable: true
+                  requestor:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the requesting user
+                      email:
+                        type: string
+                        description: Email of the requesting user
+                    required:
+                    - name
+                    - email
+                    nullable: true
                   required_approvals:
                     type: array
                     description: List of required approval permissions
@@ -3086,6 +3228,34 @@ components:
                   rejected:
                     type: boolean
                     description: Whether the approval process is rejected
+                  subject:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      summary:
+                        type: string
+                      fields:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                            value:
+                              type: string
+                          required:
+                          - label
+                          - value
+                    required:
+                    - title
+                    - summary
+                    - fields
+                    nullable: true
+                  rejection_reason:
+                    type: string
+                    description: Reason provided when the approval was rejected
+                    nullable: true
                 required:
                 - id
                 - scope_id
@@ -3284,6 +3454,8 @@ components:
             - read_accounts_blocks
             - write_accounts_opening_compliance_approval
             - write_accounts_opening_board_approval
+            - write_accounts_closure_request
+            - write_accounts_closure_approval
             - write_api_keys_generation_request
             - write_api_keys_generation_approval
             - write_api_keys_revocation_request
@@ -3361,6 +3533,8 @@ components:
             - read_accounts_blocks
             - write_accounts_opening_compliance_approval
             - write_accounts_opening_board_approval
+            - write_accounts_closure_request
+            - write_accounts_closure_approval
             - write_api_keys_generation_request
             - write_api_keys_generation_approval
             - write_api_keys_revocation_request
@@ -3480,6 +3654,8 @@ components:
                       - read_accounts_blocks
                       - write_accounts_opening_compliance_approval
                       - write_accounts_opening_board_approval
+                      - write_accounts_closure_request
+                      - write_accounts_closure_approval
                       - write_api_keys_generation_request
                       - write_api_keys_generation_approval
                       - write_api_keys_revocation_request
