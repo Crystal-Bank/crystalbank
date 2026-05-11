@@ -3,7 +3,7 @@
   import { ui } from '../../lib/store.svelte.js'
   import { apiFetch } from '../../lib/api.js'
   import { requestBlock, requestUnblock, requestClosure, switchView } from '../../lib/actions.js'
-  import { shortId, formatDate } from '../../lib/utils.js'
+  import { shortId, formatDate, statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   /** @type {{ account: object }} */
   let { account } = $props()
@@ -144,10 +144,18 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <div>
-      <div class="page-title">{account.name}</div>
+      <div class="flex items-center gap-2">
+        <div class="page-title">{account.name}</div>
+        <span class="badge {statusBadgeClass(account.status)}">{formatStatus(account.status)}</span>
+      </div>
       <div class="page-subtitle">Account details and transaction history</div>
     </div>
   </div>
+  {#if account.status === 'active'}
+    <button onclick={() => showClosureModal = true} class="btn btn-sm btn-danger">
+      Request Closure
+    </button>
+  {/if}
 </div>
 
 <!-- Account metadata card -->
@@ -263,31 +271,18 @@
   {/if}
 </div>
 
-<!-- ── Closure ──────────────────────────────────────── -->
-<div class="flex items-center justify-between mb-3">
-  <div class="flex items-center gap-2">
-    <span class="text-sm font-semibold text-zinc-700">Closure</span>
-    {#if account.status === 'closure_pending'}
-      <span class="badge badge-amber">Closure Pending</span>
-    {:else if account.status === 'closed'}
-      <span class="badge badge-red">Closed</span>
-    {/if}
-  </div>
-  {#if account.status === 'active'}
-    <button onclick={() => showClosureModal = true} class="btn btn-sm btn-danger">
-      Request Closure
-    </button>
-  {/if}
-</div>
-<div class="card p-4 mb-5 text-sm text-zinc-500">
+{#if account.status === 'closure_pending' || account.status === 'closed'}
+<!-- ── Closure status ────────────────────────────────── -->
+<div class="card p-4 mb-5 text-sm text-zinc-500 flex items-center gap-2">
   {#if account.status === 'closure_pending'}
+    <span class="badge badge-amber">Closure Pending</span>
     A closure request has been submitted and is awaiting approval. Go to Approvals to sign it off.
-  {:else if account.status === 'closed'}
-    This account has been closed.
   {:else}
-    No closure request pending.
+    <span class="badge badge-red">Closed</span>
+    This account has been closed and is no longer operational.
   {/if}
 </div>
+{/if}
 
 <!-- ── Transaction History ───────────────────────────── -->
 <div class="mb-3 text-sm font-semibold text-zinc-700">Transaction History</div>
