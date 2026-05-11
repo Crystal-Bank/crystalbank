@@ -12,11 +12,13 @@ module CrystalBank::Domains::Roles
           scope_id = aggregate.state.scope_id.as(UUID)
 
           role_name = aggregate.state.name || "unknown"
+          role_scope_id = aggregate.state.scope_id.as(UUID)
           approval_subject = Approvals::ApprovalSubject.new(
             title: "Role Creation",
             summary: role_name,
             fields: [
               Approvals::ApprovalSubject::Field.new("Name", role_name),
+              Approvals::ApprovalSubject::Field.new("Scope", role_scope_id.to_s),
             ] of Approvals::ApprovalSubject::Field
           )
 

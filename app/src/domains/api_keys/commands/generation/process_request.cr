@@ -12,11 +12,14 @@ module CrystalBank::Domains::ApiKeys
           scope_id = aggregate.state.scope_id.as(UUID)
 
           key_name = aggregate.state.name || "unknown"
+          key_user_id = aggregate.state.user_id.try(&.to_s) || "unknown"
           approval_subject = Approvals::ApprovalSubject.new(
             title: "API Key Generation",
             summary: key_name,
             fields: [
               Approvals::ApprovalSubject::Field.new("Name", key_name),
+              Approvals::ApprovalSubject::Field.new("User", key_user_id),
+              Approvals::ApprovalSubject::Field.new("Key ID", aggregate_id.to_s),
             ] of Approvals::ApprovalSubject::Field
           )
 

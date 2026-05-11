@@ -46,6 +46,32 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
     aggregate.state.completed.should be_false
   end
 
+  it "creates an approval with a subject snapshot containing role name and permission count" do
+    role_id = UUID.v7
+    seed_active_role(role_id)
+
+    update_request_id = Roles::PermissionsUpdate::Commands::Request.new.call(
+      permissions_update_request(role_id: role_id),
+      permissions_update_context
+    )
+
+    apply_projection(update_request_id)
+
+    approval = Approvals::Queries::Approvals.new.find_by_source("RolePermissionsUpdate", update_request_id)
+    approval.should_not be_nil
+
+    subject = approval.not_nil!.subject
+    subject.should_not be_nil
+    subject.not_nil!.title.should eq("Role Permissions Update")
+    subject.not_nil!.summary.should contain("Scope name test")
+    subject.not_nil!.summary.should contain("1 permissions")
+    field_labels = subject.not_nil!.fields.map(&.label)
+    field_labels.should contain("Role")
+    field_labels.should contain("Permissions")
+    subject.not_nil!.fields.find { |f| f.label == "Role" }.not_nil!.value.should eq("Scope name test")
+    subject.not_nil!.fields.find { |f| f.label == "Permissions" }.not_nil!.value.should eq("1")
+  end
+
   it "raises when the role does not exist" do
     expect_raises(CrystalBank::Exception::InvalidArgument, /not found/) do
       Roles::PermissionsUpdate::Commands::Request.new.call(

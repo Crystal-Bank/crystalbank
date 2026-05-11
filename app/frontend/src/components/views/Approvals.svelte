@@ -230,13 +230,19 @@
       <!-- Context snapshot -->
       {#if drawerApproval.subject}
         <div class="drawer-field">
-          <div class="drawer-field-label">Subject</div>
-          <div class="rounded border border-zinc-200 overflow-hidden">
-            <table class="w-full text-xs">
+          <div class="rounded-lg border-2 border-zinc-900 overflow-hidden">
+            <div class="px-3 py-2.5 bg-zinc-900 flex items-center gap-2.5">
+              <span class="text-xs font-semibold text-zinc-400 uppercase tracking-wider shrink-0">Subject</span>
+              <span class="text-sm font-semibold text-white">{drawerApproval.subject.title}</span>
+            </div>
+            {#if drawerApproval.subject.summary}
+              <div class="px-3 py-2 text-sm text-zinc-600 bg-zinc-50 border-b border-zinc-200">{drawerApproval.subject.summary}</div>
+            {/if}
+            <table class="w-full text-xs bg-white">
               {#each drawerApproval.subject.fields as f (f.label)}
                 <tr class="border-b border-zinc-100 last:border-0">
                   <td class="px-3 py-2 text-zinc-500 font-medium whitespace-nowrap w-1/3">{f.label}</td>
-                  <td class="px-3 py-2 text-zinc-800 break-all">{f.value}</td>
+                  <td class="px-3 py-2 text-zinc-800 font-medium break-all">{f.value}</td>
                 </tr>
               {/each}
             </table>
