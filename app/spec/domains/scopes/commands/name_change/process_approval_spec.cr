@@ -81,7 +81,10 @@ describe CrystalBank::Domains::Scopes::NameChange::Commands::ProcessApproval do
     TEST_EVENT_STORE.append(completed_event)
 
     apply_projection(approval_id)
-    apply_projection(approval_id)
+
+    # Simulate queue redelivery by calling ProcessApproval a second time directly.
+    # The completed guard must prevent a second Accepted event from being appended.
+    Scopes::NameChange::Commands::ProcessApproval.new(aggregate_id: approval_id).call
 
     scope = Scopes::Aggregate.new(scope_id)
     scope.hydrate
