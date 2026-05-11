@@ -1,6 +1,18 @@
 module CrystalBank::Domains::Approvals
   module Api
     module Responses
+      struct Requestor
+        include JSON::Serializable
+
+        @[JSON::Field(description: "Name of the requesting user")]
+        getter name : String
+
+        @[JSON::Field(description: "Email of the requesting user")]
+        getter email : String
+
+        def initialize(@name : String, @email : String); end
+      end
+
       struct CollectedApproval
         include JSON::Serializable
 
@@ -58,6 +70,9 @@ module CrystalBank::Domains::Approvals
         @[JSON::Field(format: "uuid", description: "ID of the user who initiated the request")]
         getter requestor_id : UUID?
 
+        @[JSON::Field(description: "Resolved name and email of the requesting user")]
+        getter requestor : Requestor?
+
         @[JSON::Field(description: "List of required approval permissions")]
         getter required_approvals : Array(String)
 
@@ -82,6 +97,7 @@ module CrystalBank::Domains::Approvals
           @source_aggregate_type : String,
           @source_aggregate_id : UUID,
           @requestor_id : UUID?,
+          @requestor : Requestor?,
           @required_approvals : Array(String),
           @collected_approvals : Array(CollectedApproval),
           @completed : Bool,
