@@ -17,6 +17,14 @@ describe CrystalBank::Domains::Roles::Creation::Commands::ProcessRequest do
 
   it "creates an approval with a subject snapshot containing name and scope" do
     role_id = UUID.v7
+    scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
+
+    scope_req = Test::Scope::Events::Creation::Requested.new.create(aggr_id: scope_id)
+    scope_acc = Test::Scope::Events::Creation::Accepted.new.create(aggr_id: scope_id)
+    TEST_EVENT_STORE.append(scope_req)
+    TEST_EVENT_STORE.append(scope_acc)
+    Scopes::Projections::Scopes.new.apply(scope_req)
+    Scopes::Projections::Scopes.new.apply(scope_acc)
 
     event = Test::Role::Events::Creation::Requested.new.create(aggr_id: role_id)
     TEST_EVENT_STORE.append(event)
@@ -36,6 +44,6 @@ describe CrystalBank::Domains::Roles::Creation::Commands::ProcessRequest do
     field_labels.should contain("Name")
     field_labels.should contain("Scope")
     subject.not_nil!.fields.find { |f| f.label == "Name" }.not_nil!.value.should eq("Scope name test")
-    subject.not_nil!.fields.find { |f| f.label == "Scope" }.not_nil!.value.should eq("00000000-0000-0000-0000-100000000001")
+    subject.not_nil!.fields.find { |f| f.label == "Scope" }.not_nil!.value.should eq("Scope name test (#{scope_id})")
   end
 end
