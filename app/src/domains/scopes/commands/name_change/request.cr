@@ -27,12 +27,22 @@ module CrystalBank::Domains::Scopes
 
           name_change_request_id = UUID.new(event.header.aggregate_id.to_s)
 
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Scope Rename",
+            summary: "\"#{target.name}\" → \"#{r.name}\"",
+            fields: [
+              Approvals::ApprovalSubject::Field.new("From", target.name),
+              Approvals::ApprovalSubject::Field.new("To", r.name),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "ScopeNameChange",
             source_aggregate_id: name_change_request_id,
             scope_id: scope,
             required_approvals: ["write_scopes_name_change_approval"],
-            actor_id: actor
+            actor_id: actor,
+            subject: approval_subject,
           )
 
           name_change_request_id

@@ -38,13 +38,24 @@ module CrystalBank::Domains::Roles
 
           update_request_id = UUID.new(event.header.aggregate_id.to_s)
 
+          permission_count = r.permissions.size.to_s
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Role Permissions Update",
+            summary: "#{role.name}: #{permission_count} permissions",
+            fields: [
+              Approvals::ApprovalSubject::Field.new("Role", role.name),
+              Approvals::ApprovalSubject::Field.new("Permissions", permission_count),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           # Create the approval workflow inline (same pattern as account blocking)
           Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "RolePermissionsUpdate",
             source_aggregate_id: update_request_id,
             scope_id: scope,
             required_approvals: ["write_roles_permissions_update_approval"],
-            actor_id: actor
+            actor_id: actor,
+            subject: approval_subject,
           )
 
           update_request_id

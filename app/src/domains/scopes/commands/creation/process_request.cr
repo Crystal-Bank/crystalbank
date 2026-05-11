@@ -11,6 +11,15 @@ module CrystalBank::Domains::Scopes
 
           scope_id = aggregate.state.scope_id.as(UUID)
 
+          scope_name = aggregate.state.name || "unknown"
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Scope Creation",
+            summary: scope_name,
+            fields: [
+              Approvals::ApprovalSubject::Field.new("Name", scope_name),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           # Create an approval workflow for this scope creation
           Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "Scope",
@@ -19,7 +28,8 @@ module CrystalBank::Domains::Scopes
             required_approvals: [
               "write_scopes_creation_approval",
             ],
-            actor_id: aggregate.state.requestor_id
+            actor_id: aggregate.state.requestor_id,
+            subject: approval_subject,
           )
         end
       end

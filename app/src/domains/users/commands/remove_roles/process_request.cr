@@ -17,6 +17,17 @@ module CrystalBank::Domains::Users
 
           scope_id = user.state.scope_id.as(UUID)
 
+          user_name = user.state.name || user.state.email || user_id.to_s
+          role_count = request.state.role_ids.size.to_s
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Role Removal",
+            summary: "Remove #{role_count} role(s) from #{user_name}",
+            fields: [
+              Approvals::ApprovalSubject::Field.new("User", user_name),
+              Approvals::ApprovalSubject::Field.new("Roles", role_count),
+            ] of Approvals::ApprovalSubject::Field
+          )
+
           # Create an approval workflow for this role removal
           Approvals::Creation::Commands::Request.new.call(
             source_aggregate_type: "UserRolesRemoval",
@@ -25,7 +36,8 @@ module CrystalBank::Domains::Users
             required_approvals: [
               "write_users_remove_roles_approval",
             ],
-            actor_id: request.state.requestor_id
+            actor_id: request.state.requestor_id,
+            subject: approval_subject,
           )
         end
       end
