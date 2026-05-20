@@ -17,6 +17,9 @@ module CrystalBank
         {key: "WRITE_accounts_opening_board_approval", description: "Provide board-level sign-off on a pending account opening request."},
         {key: "WRITE_accounts_closure_request", description: "Submit a request to close an account."},
         {key: "WRITE_accounts_closure_approval", description: "Approve or reject a pending account closure request."},
+        {key: "WRITE_accounts_virtual_opening_request", description: "Submit a request to open a new virtual subaccount under an existing account."},
+        {key: "WRITE_accounts_virtual_opening_approval", description: "Approve or reject a pending virtual subaccount opening request."},
+        {key: "READ_accounts_virtual_list", description: "List virtual subaccounts under a parent account."},
       ],
     },
     {

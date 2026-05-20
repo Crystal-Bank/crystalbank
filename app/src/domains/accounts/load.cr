@@ -4,6 +4,17 @@ require "./aggregates/blocking_request"
 require "./aggregates/unblocking_request"
 require "./aggregates/closure_request"
 
+# Virtual Accounts
+require "./virtual/events/opening/requested"
+require "./virtual/events/opening/accepted"
+require "./virtual/aggregate"
+require "./virtual/commands/opening/request"
+require "./virtual/commands/opening/process_request"
+require "./virtual/commands/opening/process_approval"
+require "./virtual/projections/virtual_accounts"
+require "./virtual/queries/virtual_accounts"
+require "./virtual/api/virtual_accounts"
+
 # API
 require "./api/accounts"
 

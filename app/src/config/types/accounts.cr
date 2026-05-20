@@ -7,6 +7,7 @@ module CrystalBank::Types::Accounts
     Overnight_Money
     Savings
     Card
+    Virtual
 
     # Internal account types (ledger use only)
     Settlement
