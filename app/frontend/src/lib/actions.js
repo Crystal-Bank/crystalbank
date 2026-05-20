@@ -354,6 +354,25 @@ export async function requestClosure(accountId, reason, closureComment) {
   }
 }
 
+export async function requestVirtualAccount(accountId, name) {
+  ui.loading = true
+  try {
+    const res = await apiFetch(
+      'POST',
+      `/accounts/${accountId}/virtual`,
+      { name },
+      { idempotency: true },
+    )
+    addToast('Virtual account opening requested — awaiting approval')
+    return res
+  } catch (e) {
+    addToast(e.message, 'error')
+    throw e
+  } finally {
+    ui.loading = false
+  }
+}
+
 export async function requestUnblock(accountId, blockType, reason) {
   ui.loading = true
   try {
