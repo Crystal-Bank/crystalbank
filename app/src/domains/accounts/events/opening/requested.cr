@@ -10,6 +10,7 @@ module CrystalBank::Domains::Accounts
           attribute :customer_ids, Array(UUID)
           attribute :scope_id, UUID
           attribute :type, CrystalBank::Types::Accounts::Type
+          attribute :category, CrystalBank::Types::Accounts::Category
         end
       end
     end

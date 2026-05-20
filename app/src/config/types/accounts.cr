@@ -1,6 +1,17 @@
 module CrystalBank::Types::Accounts
   INTERNAL_TYPES = ["settlement", "nostro", "cpd", "frozen_funds"]
 
+  enum Category
+    Asset
+    Liability
+    Income
+    Expense
+
+    def to_s
+      super.to_s.downcase
+    end
+  end
+
   enum Type
     # Public account types
     Checking

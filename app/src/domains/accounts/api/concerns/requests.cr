@@ -25,6 +25,9 @@ module CrystalBank::Domains::Accounts
 
         @[JSON::Field(description: "Type of the account")]
         getter type : CrystalBank::Types::Accounts::Type
+
+        @[JSON::Field(description: "Category of the account")]
+        getter category : CrystalBank::Types::Accounts::Category
       end
     end
   end

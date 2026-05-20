@@ -170,6 +170,7 @@ module CrystalBank::Domains::Accounts
             a.currencies,
             a.customer_ids,
             CrystalBank::Types::Accounts::Type.parse(a.type),
+            CrystalBank::Types::Accounts::Category.parse(a.category),
             a.status
           )
         end

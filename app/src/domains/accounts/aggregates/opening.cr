@@ -19,6 +19,7 @@ module CrystalBank::Domains::Accounts
           @state.supported_currencies = body.currencies
           @state.scope_id = body.scope_id
           @state.type = body.type
+          @state.category = body.category
           @state.customer_ids = body.customer_ids
           @state.requestor_id = event.header.actor_id
         end
