@@ -58,6 +58,9 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "Type of the account")]
         getter type : CrystalBank::Types::Accounts::Type
 
+        @[JSON::Field(description: "Category of the account")]
+        getter category : CrystalBank::Types::Accounts::Category
+
         @[JSON::Field(description: "Status of the account: active, pending_approval")]
         getter status : String
 
@@ -68,6 +71,7 @@ module CrystalBank::Domains::Accounts
           @currencies : Array(CrystalBank::Types::Currencies::Supported),
           @customer_ids : Array(UUID),
           @type : CrystalBank::Types::Accounts::Type,
+          @category : CrystalBank::Types::Accounts::Category,
           @status : String,
         ); end
       end

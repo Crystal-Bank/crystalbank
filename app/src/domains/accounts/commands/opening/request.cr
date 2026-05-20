@@ -26,7 +26,8 @@ module CrystalBank::Domains::Accounts
             currencies: r.currencies,
             customer_ids: r.customer_ids,
             scope_id: scope,
-            type: r.type
+            type: r.type,
+            category: r.category
           )
 
           # Append event to event store

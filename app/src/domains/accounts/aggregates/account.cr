@@ -17,6 +17,7 @@ module CrystalBank::Domains::Accounts
       property supported_currencies = Array(CrystalBank::Types::Currencies::Supported).new
       property scope_id : UUID?
       property type : CrystalBank::Types::Accounts::Type?
+      property category : CrystalBank::Types::Accounts::Category?
       property requestor_id : UUID?
       property active_blocks = Array(CrystalBank::Types::Accounts::BlockType).new
       property closure_pending : Bool = false

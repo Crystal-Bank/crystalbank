@@ -18,6 +18,7 @@ module CrystalBank::Domains::Accounts
             "currencies" jsonb NOT NULL,
             "customer_ids" jsonb NOT NULL,
             "type" varchar NOT NULL,
+            "category" varchar NOT NULL,
             "status" varchar NOT NULL
           );
         )
@@ -46,11 +47,12 @@ module CrystalBank::Domains::Accounts
                 created_at,
                 name,
                 type,
+                category,
                 currencies,
                 customer_ids,
                 status
               )
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
           ),
             aggregate_id,
             aggregate_version,
@@ -58,6 +60,7 @@ module CrystalBank::Domains::Accounts
             created_at,
             body.name,
             body.type.to_s.downcase,
+            body.category.to_s.downcase,
             body.currencies.to_json,
             body.customer_ids.to_json,
             "pending_approval"
