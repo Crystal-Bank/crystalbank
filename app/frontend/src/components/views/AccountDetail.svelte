@@ -160,10 +160,23 @@
     } catch {}
   }
 
+  async function refreshVirtualAccounts() {
+    if (loadingVirtual) return
+    try {
+      const res = await apiFetch('GET', `/accounts/${account.id}/virtual?limit=20`)
+      const items = res.data.map(e => e.attributes)
+      virtualAccounts = items
+      hasMoreVirtual = res.meta.has_more
+      cursorVirtual = res.meta.next_cursor || null
+    } catch {}
+  }
+
   onMount(() => {
     loadPostings(true)
     loadBlocks()
     loadVirtualAccounts(true)
+    const interval = setInterval(refreshVirtualAccounts, 10000)
+    return () => clearInterval(interval)
   })
 </script>
 
