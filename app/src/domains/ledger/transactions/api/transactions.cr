@@ -17,9 +17,9 @@ module CrystalBank::Domains::Ledger::Transactions
       def create(r : TransactionRequest) : Responses::TransactionResponse
         authorized?("write_ledger_transactions_request")
 
-        aggregate_id = ::Ledger::Transactions::Request::Commands::Request.new.call(r, context)
+        result = ::Ledger::Transactions::Request::Commands::Request.new.call(r, context)
 
-        Responses::TransactionResponse.new(aggregate_id)
+        Responses::TransactionResponse.new(result[:transaction_id], result[:approval_id])
       end
 
       # List postings

@@ -50,18 +50,20 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
       }.to_json
 
       request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
-      transaction_id = Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+      result = Ledger::Transactions::Request::Commands::Request.new.call(request, context)
 
-      transaction_id.should be_a(UUID)
+      result[:transaction_id].should be_a(UUID)
+      result[:approval_id].should be_a(UUID)
 
-      # Verify the Requested event was persisted for the returned id
-      aggregate = Ledger::Transactions::Aggregate.new(transaction_id)
+      # Verify the Requested event was persisted and the transaction is pending approval
+      aggregate = Ledger::Transactions::Aggregate.new(result[:transaction_id])
       aggregate.hydrate
 
       aggregate.state.currency.should eq(CrystalBank::Types::Currencies::Supported::EUR)
       aggregate.state.remittance_information.should eq("Invoice INV-2024-001")
       aggregate.state.scope_id.should eq(scope_id)
       aggregate.state.entries.not_nil!.size.should eq(2)
+      aggregate.state.status.should eq("pending_approval")
     end
 
     it "rejects the request when a referenced account is not open" do
