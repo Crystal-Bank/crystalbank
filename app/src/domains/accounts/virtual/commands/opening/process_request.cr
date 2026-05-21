@@ -12,6 +12,7 @@ module CrystalBank::Domains::Accounts
             scope_id = aggregate.state.scope_id.as(UUID)
             parent_account_id = aggregate.state.parent_account_id.as(UUID)
             virtual_name = aggregate.state.name || "unknown"
+            currencies = aggregate.state.supported_currencies.map(&.to_s).join(", ")
 
             approval_subject = Approvals::ApprovalSubject.new(
               title: "Virtual Account Opening",
@@ -19,6 +20,7 @@ module CrystalBank::Domains::Accounts
               fields: [
                 Approvals::ApprovalSubject::Field.new("Name", virtual_name),
                 Approvals::ApprovalSubject::Field.new("Parent Account", parent_account_id.to_s),
+                Approvals::ApprovalSubject::Field.new("Currencies (inherited)", currencies),
               ] of Approvals::ApprovalSubject::Field
             )
 
