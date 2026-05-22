@@ -1,7 +1,7 @@
 require "../../../../spec_helper"
 
-describe CrystalBank::Domains::Accounts::Virtual::Projections::VirtualAccounts do
-  projection = Accounts::Virtual::Projections::VirtualAccounts.new
+describe CrystalBank::Domains::Accounts::VirtualAccount::Projections::VirtualAccounts do
+  projection = Accounts::VirtualAccount::Projections::VirtualAccounts.new
 
   it "inserts a row with status pending_activation on Requested event" do
     uuid = UUID.v7

@@ -16,7 +16,7 @@ module CrystalBank::Domains::Accounts
 
           raise CrystalBank::Exception::InvalidArgument.new("Account '#{account_id}' is not active") unless account.state.open
           raise CrystalBank::Exception::InvalidArgument.new("Account '#{account_id}' already has a pending closure request") if account.state.closure_pending
-          raise CrystalBank::Exception::InvalidArgument.new("Account '#{account_id}' has virtual subaccounts that are not inactive; deactivate them first") if ::Accounts::Virtual::Queries::VirtualAccounts.new.any_non_inactive?(account_id)
+          raise CrystalBank::Exception::InvalidArgument.new("Account '#{account_id}' has virtual subaccounts that are not inactive; deactivate them first") if ::Accounts::VirtualAccount::Queries::VirtualAccounts.new.any_non_inactive?(account_id)
 
           # Mark the account as closure-pending
           account_event = ::Accounts::Closure::Events::Requested.new(

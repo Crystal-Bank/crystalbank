@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Api
       module Requests
         struct VirtualOpeningRequest
@@ -61,8 +61,8 @@ module CrystalBank::Domains::Accounts
       end
 
       class VirtualAccounts < CrystalBank::Api::Base
-        include CrystalBank::Domains::Accounts::Virtual::Api::Requests
-        include CrystalBank::Domains::Accounts::Virtual::Api::Responses
+        include CrystalBank::Domains::Accounts::VirtualAccount::Api::Requests
+        include CrystalBank::Domains::Accounts::VirtualAccount::Api::Responses
         base "/accounts"
 
         # Request virtual subaccount opening
@@ -81,7 +81,7 @@ module CrystalBank::Domains::Accounts
         ) : VirtualOpeningResponse
           authorized?("write_accounts_virtual_opening_request")
 
-          aggregate_id = ::Accounts::Virtual::Opening::Commands::Request.new.call(r, account_id, context)
+          aggregate_id = ::Accounts::VirtualAccount::Opening::Commands::Request.new.call(r, account_id, context)
 
           VirtualOpeningResponse.new(aggregate_id, account_id)
         end
@@ -102,7 +102,7 @@ module CrystalBank::Domains::Accounts
         ) : ListResponse(Responses::VirtualAccount)
           authorized?("read_accounts_virtual_list", request_scope: false)
 
-          accounts = ::Accounts::Virtual::Queries::VirtualAccounts.new.list(account_id, context, cursor: cursor, limit: limit + 1).map do |a|
+          accounts = ::Accounts::VirtualAccount::Queries::VirtualAccounts.new.list(account_id, context, cursor: cursor, limit: limit + 1).map do |a|
             Responses::VirtualAccount.new(
               a.id,
               a.parent_account_id,

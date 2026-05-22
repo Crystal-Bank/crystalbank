@@ -1,9 +1,9 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Opening
       module Commands
         class Request < ES::Command
-          def call(r : Accounts::Virtual::Api::Requests::VirtualOpeningRequest, parent_account_id : UUID, c : CrystalBank::Api::Context) : UUID
+          def call(r : Accounts::VirtualAccount::Api::Requests::VirtualOpeningRequest, parent_account_id : UUID, c : CrystalBank::Api::Context) : UUID
             actor = c.user_id
 
             # Validate parent exists in projections.accounts (natural depth guard: virtual accounts
@@ -12,7 +12,7 @@ module CrystalBank::Domains::Accounts
             raise CrystalBank::Exception::InvalidArgument.new("Parent account '#{parent_account_id}' does not exist") unless parent
             raise CrystalBank::Exception::InvalidArgument.new("Parent account '#{parent_account_id}' is not active") unless parent.status == "active"
 
-            event = Virtual::Opening::Events::Requested.new(
+            event = VirtualAccount::Opening::Events::Requested.new(
               actor_id: actor,
               command_handler: self.class.to_s,
               name: r.name,

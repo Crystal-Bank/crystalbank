@@ -10,10 +10,10 @@ bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Projections::Accou
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
 # Virtual Accounts
-bus.subscribe(Accounts::Virtual::Opening::Events::Requested, Accounts::Virtual::Opening::Commands::ProcessRequest)
-bus.subscribe(Accounts::Virtual::Opening::Events::Requested, Accounts::Virtual::Projections::VirtualAccounts)
-bus.subscribe(Accounts::Virtual::Opening::Events::Accepted, Accounts::Virtual::Projections::VirtualAccounts)
-bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Virtual::Opening::Commands::ProcessApproval)
+bus.subscribe(Accounts::VirtualAccount::Opening::Events::Requested, Accounts::VirtualAccount::Opening::Commands::ProcessRequest)
+bus.subscribe(Accounts::VirtualAccount::Opening::Events::Requested, Accounts::VirtualAccount::Projections::VirtualAccounts)
+bus.subscribe(Accounts::VirtualAccount::Opening::Events::Accepted, Accounts::VirtualAccount::Projections::VirtualAccounts)
+bus.subscribe(Approvals::Collection::Events::Completed, Accounts::VirtualAccount::Opening::Commands::ProcessApproval)
 
 # Account Closure
 bus.subscribe(Accounts::Closure::Events::Requested, Accounts::Projections::Accounts)

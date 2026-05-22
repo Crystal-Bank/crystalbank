@@ -1,12 +1,12 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Opening
       module Commands
         class ProcessRequest < ES::Command
           def call
             aggregate_id = @aggregate_id.as(UUID)
 
-            aggregate = Virtual::Aggregate.new(aggregate_id)
+            aggregate = VirtualAccount::Aggregate.new(aggregate_id)
             aggregate.hydrate
 
             scope_id = aggregate.state.scope_id.as(UUID)

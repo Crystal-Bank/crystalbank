@@ -1,6 +1,6 @@
 require "../../../../spec_helper"
 
-describe CrystalBank::Domains::Accounts::Virtual::Api::VirtualAccounts do
+describe CrystalBank::Domains::Accounts::VirtualAccount::Api::VirtualAccounts do
   parent_account_id = UUID.v7
   scope_id = UUID.new("00000000-0000-0000-0000-300000000001")
   other_scope_id = UUID.v7
@@ -24,8 +24,8 @@ describe CrystalBank::Domains::Accounts::Virtual::Api::VirtualAccounts do
     virt_acc = Test::VirtualAccount::Events::Opening::Accepted.new.create(aggr_id: virt_id)
     TEST_EVENT_STORE.append(virt_req)
     TEST_EVENT_STORE.append(virt_acc)
-    Accounts::Virtual::Projections::VirtualAccounts.new.apply(virt_req)
-    Accounts::Virtual::Projections::VirtualAccounts.new.apply(virt_acc)
+    Accounts::VirtualAccount::Projections::VirtualAccounts.new.apply(virt_req)
+    Accounts::VirtualAccount::Projections::VirtualAccounts.new.apply(virt_acc)
   end
 
   describe "GET /accounts/:id/virtual - scope filtering" do
@@ -38,7 +38,7 @@ describe CrystalBank::Domains::Accounts::Virtual::Api::VirtualAccounts do
         available_scopes: [scope_id]
       )
 
-      results = Accounts::Virtual::Queries::VirtualAccounts.new.list(parent_account_id, context, cursor: nil, limit: 100)
+      results = Accounts::VirtualAccount::Queries::VirtualAccounts.new.list(parent_account_id, context, cursor: nil, limit: 100)
       results.map(&.parent_account_id).should contain(parent_account_id)
     end
 
@@ -51,7 +51,7 @@ describe CrystalBank::Domains::Accounts::Virtual::Api::VirtualAccounts do
         available_scopes: [other_scope_id]
       )
 
-      results = Accounts::Virtual::Queries::VirtualAccounts.new.list(parent_account_id, context, cursor: nil, limit: 100)
+      results = Accounts::VirtualAccount::Queries::VirtualAccounts.new.list(parent_account_id, context, cursor: nil, limit: 100)
       results.should be_empty
     end
 
@@ -64,7 +64,7 @@ describe CrystalBank::Domains::Accounts::Virtual::Api::VirtualAccounts do
         available_scopes: [scope_id]
       )
 
-      results = Accounts::Virtual::Queries::VirtualAccounts.new.list(UUID.v7, context, cursor: nil, limit: 100)
+      results = Accounts::VirtualAccount::Queries::VirtualAccounts.new.list(UUID.v7, context, cursor: nil, limit: 100)
       results.should be_empty
     end
   end

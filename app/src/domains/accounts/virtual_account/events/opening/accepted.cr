@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Opening
       module Events
         class Accepted < ES::Event

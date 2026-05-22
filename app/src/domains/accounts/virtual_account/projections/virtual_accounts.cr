@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Projections
       class VirtualAccounts < ES::Projection
         def prepare
@@ -30,12 +30,12 @@ module CrystalBank::Domains::Accounts
         end
 
         # Requested — insert row as pending_activation
-        def apply(event : ::Accounts::Virtual::Opening::Events::Requested)
+        def apply(event : ::Accounts::VirtualAccount::Opening::Events::Requested)
           aggregate_id = event.header.aggregate_id
           aggregate_version = event.header.aggregate_version
           created_at = event.header.created_at
 
-          body = event.body.as(::Accounts::Virtual::Opening::Events::Requested::Body)
+          body = event.body.as(::Accounts::VirtualAccount::Opening::Events::Requested::Body)
 
           @projection_database.transaction do |tx|
             cnn = tx.connection
@@ -67,7 +67,7 @@ module CrystalBank::Domains::Accounts
         end
 
         # Accepted — activate
-        def apply(event : ::Accounts::Virtual::Opening::Events::Accepted)
+        def apply(event : ::Accounts::VirtualAccount::Opening::Events::Accepted)
           aggregate_id = event.header.aggregate_id
           aggregate_version = event.header.aggregate_version
 

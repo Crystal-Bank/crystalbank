@@ -21,11 +21,11 @@ private def make_virtual_opening_context(scope_id : UUID) : CrystalBank::Api::Co
   )
 end
 
-private def make_virtual_opening_request(name : String) : Accounts::Virtual::Api::Requests::VirtualOpeningRequest
-  Accounts::Virtual::Api::Requests::VirtualOpeningRequest.from_json({"name" => name}.to_json)
+private def make_virtual_opening_request(name : String) : Accounts::VirtualAccount::Api::Requests::VirtualOpeningRequest
+  Accounts::VirtualAccount::Api::Requests::VirtualOpeningRequest.from_json({"name" => name}.to_json)
 end
 
-describe CrystalBank::Domains::Accounts::Virtual::Opening::Commands::Request do
+describe CrystalBank::Domains::Accounts::VirtualAccount::Opening::Commands::Request do
   scope_id = UUID.new("00000000-0000-0000-0000-300000000001")
 
   it "raises when parent account does not exist" do
@@ -33,7 +33,7 @@ describe CrystalBank::Domains::Accounts::Virtual::Opening::Commands::Request do
     request = make_virtual_opening_request("Reserves")
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /does not exist/) do
-      Accounts::Virtual::Opening::Commands::Request.new.call(request, UUID.v7, context)
+      Accounts::VirtualAccount::Opening::Commands::Request.new.call(request, UUID.v7, context)
     end
   end
 
@@ -47,7 +47,7 @@ describe CrystalBank::Domains::Accounts::Virtual::Opening::Commands::Request do
     request = make_virtual_opening_request("Reserves")
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /not active/) do
-      Accounts::Virtual::Opening::Commands::Request.new.call(request, account_id, context)
+      Accounts::VirtualAccount::Opening::Commands::Request.new.call(request, account_id, context)
     end
   end
 
@@ -58,14 +58,14 @@ describe CrystalBank::Domains::Accounts::Virtual::Opening::Commands::Request do
     virt_acc = Test::VirtualAccount::Events::Opening::Accepted.new.create(aggr_id: virtual_id)
     TEST_EVENT_STORE.append(virt_req)
     TEST_EVENT_STORE.append(virt_acc)
-    Accounts::Virtual::Projections::VirtualAccounts.new.apply(virt_req)
-    Accounts::Virtual::Projections::VirtualAccounts.new.apply(virt_acc)
+    Accounts::VirtualAccount::Projections::VirtualAccounts.new.apply(virt_req)
+    Accounts::VirtualAccount::Projections::VirtualAccounts.new.apply(virt_acc)
 
     context = make_virtual_opening_context(scope_id)
     request = make_virtual_opening_request("Sub-Reserves")
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /does not exist/) do
-      Accounts::Virtual::Opening::Commands::Request.new.call(request, virtual_id, context)
+      Accounts::VirtualAccount::Opening::Commands::Request.new.call(request, virtual_id, context)
     end
   end
 
@@ -74,7 +74,7 @@ describe CrystalBank::Domains::Accounts::Virtual::Opening::Commands::Request do
     context = make_virtual_opening_context(scope_id)
     request = make_virtual_opening_request("Reserves")
 
-    result = Accounts::Virtual::Opening::Commands::Request.new.call(request, account_id, context)
+    result = Accounts::VirtualAccount::Opening::Commands::Request.new.call(request, account_id, context)
     result.should be_a(UUID)
   end
 end

@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     class Aggregate < ES::Aggregate
       @@type = "VirtualAccount"
 
@@ -25,10 +25,10 @@ module CrystalBank::Domains::Accounts
         @state.set_type(@@type)
       end
 
-      def apply(event : Virtual::Opening::Events::Requested)
+      def apply(event : VirtualAccount::Opening::Events::Requested)
         @state.increase_version(event.header.aggregate_version)
 
-        body = event.body.as(Virtual::Opening::Events::Requested::Body)
+        body = event.body.as(VirtualAccount::Opening::Events::Requested::Body)
         @state.name = body.name
         @state.parent_account_id = body.parent_account_id
         @state.supported_currencies = body.currencies
@@ -37,7 +37,7 @@ module CrystalBank::Domains::Accounts
         @state.requestor_id = event.header.actor_id
       end
 
-      def apply(event : Virtual::Opening::Events::Accepted)
+      def apply(event : VirtualAccount::Opening::Events::Accepted)
         @state.increase_version(event.header.aggregate_version)
         @state.active = true
       end

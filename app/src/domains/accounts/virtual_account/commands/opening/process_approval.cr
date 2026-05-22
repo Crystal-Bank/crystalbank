@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Opening
       module Commands
         class ProcessApproval < ES::Command
@@ -13,12 +13,12 @@ module CrystalBank::Domains::Accounts
 
             virtual_account_id = approval.state.source_aggregate_id.as(UUID)
 
-            virtual_account = Virtual::Aggregate.new(virtual_account_id)
+            virtual_account = VirtualAccount::Aggregate.new(virtual_account_id)
             virtual_account.hydrate
 
             next_version = virtual_account.state.next_version
 
-            event = Virtual::Opening::Events::Accepted.new(
+            event = VirtualAccount::Opening::Events::Accepted.new(
               actor_id: nil,
               aggregate_id: virtual_account_id,
               aggregate_version: next_version,

@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Virtual
+  module VirtualAccount
     module Queries
       class VirtualAccounts
         struct VirtualAccount
