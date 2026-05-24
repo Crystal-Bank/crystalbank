@@ -11,7 +11,8 @@ require "./config/load"
 require "./shared/load"
 
 # Load domains
-require "./domains/accounts/load"
+require "./domains/account_management/accounts/load"
+require "./domains/account_management/virtual_accounts/load"
 require "./domains/api_keys/load"
 require "./domains/approvals/load"
 require "./domains/customers/load"

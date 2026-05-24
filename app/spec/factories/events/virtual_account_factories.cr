@@ -5,12 +5,12 @@ module Test::VirtualAccount::Events
         aggr_id = UUID.new("00000000-0000-0000-0000-000000000002"),
         parent_account_id = UUID.new("00000000-0000-0000-0000-000000000001"),
         scope_id = UUID.new("00000000-0000-0000-0000-300000000001"),
-      ) : Accounts::VirtualAccount::Opening::Events::Requested
+      ) : VirtualAccounts::Opening::Events::Requested
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         currencies = ["eur", "usd"].map { |c| CrystalBank::Types::Currencies::Supported.parse(c) }
         customer_ids = [UUID.new("00000000-0000-0000-0000-200000000001")]
 
-        Accounts::VirtualAccount::Opening::Events::Requested.new(
+        VirtualAccounts::Opening::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggr_id,
           name: "Test Virtual Account",
@@ -38,11 +38,11 @@ module Test::VirtualAccount::Events
     class Accepted
       def create(
         aggr_id = UUID.new("00000000-0000-0000-0000-000000000002"),
-      ) : Accounts::VirtualAccount::Opening::Events::Accepted
+      ) : VirtualAccounts::Opening::Events::Accepted
         actor_id = UUID.new("00000000-0000-0000-0000-000000000000")
         aggregate_version = 2
 
-        Accounts::VirtualAccount::Opening::Events::Accepted.new(
+        VirtualAccounts::Opening::Events::Accepted.new(
           actor_id: actor_id,
           aggregate_id: aggr_id,
           aggregate_version: aggregate_version,
