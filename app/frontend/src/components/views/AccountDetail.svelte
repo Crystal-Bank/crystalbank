@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { ui } from '../../lib/store.svelte.js'
   import { apiFetch } from '../../lib/api.js'
-  import { requestBlock, requestUnblock, requestClosure, switchView } from '../../lib/actions.js'
+  import { requestBlock, requestUnblock, requestClosure, requestVirtualAccount, switchView } from '../../lib/actions.js'
   import { shortId, formatDate, statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
   /** @type {{ account: object }} */
@@ -128,9 +128,55 @@
     } catch {}
   }
 
+  // ── Virtual accounts state ────────────────────────────
+  let virtualAccounts = $state([])
+  let hasMoreVirtual = $state(false)
+  let cursorVirtual = $state(null)
+  let loadingVirtual = $state(false)
+  let showVirtualModal = $state(false)
+  let virtualForm = $state({ name: '' })
+
+  async function loadVirtualAccounts(reset = false) {
+    if (loadingVirtual) return
+    loadingVirtual = true
+    try {
+      let url = `/accounts/${account.id}/virtual?limit=20`
+      if (!reset && cursorVirtual) url += `&cursor=${cursorVirtual}`
+      const res = await apiFetch('GET', url)
+      const items = res.data.map(e => e.attributes)
+      virtualAccounts = reset ? items : [...virtualAccounts, ...items]
+      hasMoreVirtual = res.meta.has_more
+      cursorVirtual = res.meta.next_cursor || null
+    } catch {}
+    loadingVirtual = false
+  }
+
+  async function submitVirtualAccount() {
+    try {
+      await requestVirtualAccount(account.id, virtualForm.name)
+      showVirtualModal = false
+      virtualForm = { name: '' }
+      await loadVirtualAccounts(true)
+    } catch {}
+  }
+
+  async function refreshVirtualAccounts() {
+    if (loadingVirtual) return
+    try {
+      const res = await apiFetch('GET', `/accounts/${account.id}/virtual?limit=20`)
+      const items = res.data.map(e => e.attributes)
+      virtualAccounts = items
+      hasMoreVirtual = res.meta.has_more
+      cursorVirtual = res.meta.next_cursor || null
+    } catch {}
+  }
+
   onMount(() => {
     loadPostings(true)
     loadBlocks()
+    loadVirtualAccounts(true)
+    const interval = setInterval(refreshVirtualAccounts, 10000)
+    return () => clearInterval(interval)
   })
 </script>
 
@@ -283,6 +329,58 @@
   {/if}
 </div>
 {/if}
+
+<!-- ── Virtual Subaccounts ──────────────────────────── -->
+<div class="flex items-center justify-between mb-3">
+  <span class="text-sm font-semibold text-zinc-700">Virtual Subaccounts</span>
+  {#if account.status === 'active'}
+    <button onclick={() => showVirtualModal = true} class="btn btn-sm btn-primary">
+      Request Virtual Account
+    </button>
+  {/if}
+</div>
+
+<div class="card overflow-hidden mb-5">
+  {#if loadingVirtual && virtualAccounts.length === 0}
+    <div class="flex justify-center py-6">
+      <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+    </div>
+  {:else if virtualAccounts.length > 0}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Currencies</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each virtualAccounts as va (va.id)}
+          <tr>
+            <td><span class="mono text-xs">{shortId(va.id)}</span></td>
+            <td class="font-medium">{va.name}</td>
+            <td><span class="badge {statusBadgeClass(va.status)}">{formatStatus(va.status)}</span></td>
+            <td>
+              <div class="flex gap-1 flex-wrap">
+                {#each va.currencies ?? [] as c (c)}
+                  <span class="badge badge-zinc">{c.toUpperCase()}</span>
+                {/each}
+              </div>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  {:else}
+    <div class="py-8 text-center text-sm text-zinc-400">No virtual subaccounts</div>
+  {/if}
+  {#if hasMoreVirtual && !loadingVirtual}
+    <div class="p-4 border-t border-zinc-100 flex justify-center">
+      <button onclick={() => loadVirtualAccounts()} class="btn btn-ghost btn-sm">Load more</button>
+    </div>
+  {/if}
+</div>
 
 <!-- ── Transaction History ───────────────────────────── -->
 <div class="mb-3 text-sm font-semibold text-zinc-700">Transaction History</div>
@@ -528,6 +626,33 @@
       >
         Go to Approvals
       </button>
+    </div>
+  </div>
+{/if}
+
+<!-- ── Request Virtual Account modal ────────────────── -->
+{#if showVirtualModal}
+  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showVirtualModal = false }}>
+    <div class="modal-box">
+      <div class="modal-title">Request Virtual Account</div>
+      <div class="modal-desc">A virtual subaccount will be created under this account. It inherits all currencies, customers, and scope from the parent.</div>
+      <form onsubmit={(e) => { e.preventDefault(); submitVirtualAccount() }}>
+        <div class="mb-5">
+          <label class="field-label" for="virtual-name">Name</label>
+          <input
+            id="virtual-name"
+            bind:value={virtualForm.name}
+            type="text"
+            class="field-input"
+            placeholder="e.g. Reserves"
+            required
+          />
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick={() => showVirtualModal = false} class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary" disabled={ui.loading || !virtualForm.name.trim()}>Request</button>
+        </div>
+      </form>
     </div>
   </div>
 {/if}

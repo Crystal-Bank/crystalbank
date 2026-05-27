@@ -9,6 +9,12 @@ bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Opening::Commands:
 bus.subscribe(Accounts::Opening::Events::Requested, Accounts::Projections::Accounts)
 bus.subscribe(Accounts::Opening::Events::Accepted, Accounts::Projections::Accounts)
 
+# Virtual Accounts
+bus.subscribe(VirtualAccounts::Opening::Events::Requested, VirtualAccounts::Opening::Commands::ProcessRequest)
+bus.subscribe(VirtualAccounts::Opening::Events::Requested, VirtualAccounts::Projections::VirtualAccounts)
+bus.subscribe(VirtualAccounts::Opening::Events::Accepted, VirtualAccounts::Projections::VirtualAccounts)
+bus.subscribe(Approvals::Collection::Events::Completed, VirtualAccounts::Opening::Commands::ProcessApproval)
+
 # Account Closure
 bus.subscribe(Accounts::Closure::Events::Requested, Accounts::Projections::Accounts)
 bus.subscribe(Accounts::Closure::Events::Accepted, Accounts::Projections::Accounts)

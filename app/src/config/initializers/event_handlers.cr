@@ -6,6 +6,9 @@ event_handlers = ES::Config.event_handlers
 event_handlers.register(Accounts::Opening::Events::Accepted)
 event_handlers.register(Accounts::Opening::Events::Requested)
 
+event_handlers.register(VirtualAccounts::Opening::Events::Requested)
+event_handlers.register(VirtualAccounts::Opening::Events::Accepted)
+
 event_handlers.register(Accounts::Closure::Events::Requested)
 event_handlers.register(Accounts::Closure::Events::Accepted)
 event_handlers.register(Accounts::Closure::Closure::Events::Requested)
