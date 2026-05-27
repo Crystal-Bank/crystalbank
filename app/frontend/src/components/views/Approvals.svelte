@@ -1,10 +1,36 @@
 <script>
-  import { viewData, pagination, ui, approvalsMeta } from '../../lib/store.svelte.js'
+  import { untrack } from 'svelte'
+  import { auth, viewData, pagination, ui, approvalsMeta } from '../../lib/store.svelte.js'
   import { loadView, loadMore, collectApproval, rejectApproval } from '../../lib/actions.js'
 
   let activeTab = $state('pending')
   let completedFetchAttempted = false
   let rejectedFetchAttempted = false
+
+  // When scope changes, reset completed/rejected tabs so they re-fetch with the new scope.
+  // Uses untrack() for activeTab so tab switches don't trigger this effect.
+  let scopeEffectMounted = false
+  $effect(() => {
+    void auth.scope
+    if (!scopeEffectMounted) { scopeEffectMounted = true; return }
+    completedFetchAttempted = false
+    rejectedFetchAttempted = false
+    viewData.approvals_completed = []
+    viewData.approvals_rejected = []
+    pagination.cursors.approvals_completed = null
+    pagination.cursors.approvals_rejected = null
+    pagination.hasMore.approvals_completed = false
+    pagination.hasMore.approvals_rejected = false
+    untrack(() => {
+      if (activeTab === 'completed') {
+        completedFetchAttempted = true
+        loadMore('approvals_completed')
+      } else if (activeTab === 'rejected') {
+        rejectedFetchAttempted = true
+        loadMore('approvals_rejected')
+      }
+    })
+  })
 
   let drawerApproval = $state(null)
   let comment = $state('')
