@@ -2,4 +2,4 @@
 alias ApiKeys = CrystalBank::Domains::ApiKeys
 
 # Prepare projections
-ApiKeys::Projections::ApiKeys.new.prepare
+ApiKeys::Projections::ApiKeys.new.setup

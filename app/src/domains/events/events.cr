@@ -1,3 +1,3 @@
 alias Events = CrystalBank::Domains::Events
 
-Events::Projections::Events.new.prepare
+Events::Projections::Events.new.setup

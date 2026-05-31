@@ -1,31 +1,22 @@
 module CrystalBank::Domains::Scopes
   module Projections
     class Scopes < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'scopes');), as: Bool
-        return true if skip
+      include ES::ProjectionDSL
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."scopes" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "parent_scope_id" UUID,
-            "status" varchar NOT NULL
-          );
-        )
+      define_projection "projections.scopes", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, Int64, null: false
+        column :scope_id, UUID, null: false
+        column :created_at, Time, null: false
+        column :name, String, null: false
+        column :parent_scope_id, UUID, null: true
+        column :status, String, null: false
 
-        m << %(CREATE UNIQUE INDEX scopes_uuid_idx ON "projections"."scopes"(uuid);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:uuid], unique: true, name: "scopes_uuid_idx"
       end
 
-      # Requested
-      def apply(event : ::Scopes::Creation::Events::Requested)
+      apply(::Scopes::Creation::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -57,8 +48,7 @@ module CrystalBank::Domains::Scopes
         end
       end
 
-      # Accepted (name change) — updates the scope's name
-      def apply(event : ::Scopes::NameChange::Events::Accepted)
+      apply(::Scopes::NameChange::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
@@ -73,8 +63,7 @@ module CrystalBank::Domains::Scopes
         end
       end
 
-      # Accepted (creation)
-      def apply(event : ::Scopes::Creation::Events::Accepted)
+      apply(::Scopes::Creation::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 

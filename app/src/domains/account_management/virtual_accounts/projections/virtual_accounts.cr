@@ -1,35 +1,25 @@
 module CrystalBank::Domains::VirtualAccounts
   module Projections
     class VirtualAccounts < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'virtual_accounts');), as: Bool
+      include ES::ProjectionDSL
 
-        return true if skip
+      define_projection "projections.virtual_accounts", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, Int64, null: false
+        column :parent_account_id, UUID, null: false
+        column :scope_id, UUID, null: false
+        column :created_at, Time, null: false
+        column :name, String, null: false
+        column :currencies, JSON::Any, null: false
+        column :customer_ids, JSON::Any, null: false
+        column :status, String, null: false
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."virtual_accounts" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "parent_account_id" UUID NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "currencies" jsonb NOT NULL,
-            "customer_ids" jsonb NOT NULL,
-            "status" varchar NOT NULL
-          );
-        )
-
-        m << %(CREATE UNIQUE INDEX virtual_accounts_uuid_idx ON "projections"."virtual_accounts"(uuid);)
-        m << %(CREATE INDEX virtual_accounts_parent_idx ON "projections"."virtual_accounts"(parent_account_id);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:uuid], unique: true, name: "virtual_accounts_uuid_idx"
+        index [:parent_account_id], name: "virtual_accounts_parent_idx"
       end
 
-      # Requested — insert row as pending_activation
-      def apply(event : ::VirtualAccounts::Opening::Events::Requested)
+      apply(::VirtualAccounts::Opening::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -65,8 +55,7 @@ module CrystalBank::Domains::VirtualAccounts
         end
       end
 
-      # Accepted — activate
-      def apply(event : ::VirtualAccounts::Opening::Events::Accepted)
+      apply(::VirtualAccounts::Opening::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 

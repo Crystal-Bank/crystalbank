@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.16.0
+  version: 0.17.0
 paths:
   /.well-known/openid-configuration:
     get:
@@ -527,6 +527,153 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__Accounts__Api__Responses__Account_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+  /accounts/{account_id}/virtual:
+    get:
+      summary: List virtual subaccounts
+      description: 'List virtual subaccounts
+
+        Returns all virtual subaccounts under the specified parent account.
+
+
+        Required permission:
+
+        - **read_accounts_virtual_list**'
+      tags:
+      - VirtualAccounts
+      operationId: CrystalBank::Domains::VirtualAccounts::Api::VirtualAccounts_list_virtual_accounts
+      parameters:
+      - name: account_id
+        in: path
+        description: Parent account ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: cursor
+        in: query
+        description: Pagination cursor
+        schema:
+          type: string
+          format: uuid
+          nullable: true
+      - name: limit
+        in: query
+        description: Page size (default 20)
+        example: "20"
+        schema:
+          type: integer
+          format: Int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__VirtualAccounts__Api__Responses__VirtualAccount_'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
+    post:
+      summary: Request virtual subaccount opening
+      description: 'Request virtual subaccount opening
+
+        Opens a new virtual subaccount under the specified parent account.
+
+        Currencies, customer IDs, and scope are inherited from the parent and cannot
+        differ.
+
+
+        Required permission:
+
+        - **write_accounts_virtual_opening_request**'
+      tags:
+      - VirtualAccounts
+      operationId: CrystalBank::Domains::VirtualAccounts::Api::VirtualAccounts_request_virtual_opening
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrystalBank__Domains__VirtualAccounts__Api__Requests__VirtualOpeningRequest'
+        required: true
+      parameters:
+      - name: account_id
+        in: path
+        description: Parent account ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: idempotency_key
+        in: header
+        description: Idempotency key
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrystalBank__Domains__VirtualAccounts__Api__Responses__VirtualOpeningResponse'
         401:
           description: Unauthorized
           content:
@@ -2937,6 +3084,120 @@ components:
       - url
       - meta
       - data
+    CrystalBank__Domains__VirtualAccounts__Api__Requests__VirtualOpeningRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the virtual subaccount
+      required:
+      - name
+    CrystalBank__Domains__VirtualAccounts__Api__Responses__VirtualOpeningResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the requested virtual subaccount
+        parent_id:
+          type: string
+          format: uuid
+          description: ID of the parent account
+      required:
+      - id
+      - parent_id
+    CrystalBank__Api__Responses__ListResponse_CrystalBank__Domains__VirtualAccounts__Api__Responses__VirtualAccount_:
+      type: object
+      properties:
+        object:
+          type: string
+          description: Object type of the response
+        url:
+          type: string
+          format: uuid
+          description: Url of the entity
+        meta:
+          type: object
+          properties:
+            has_more:
+              type: boolean
+              description: Indicator if there are more entries
+            limit:
+              type: integer
+              format: Int32
+              description: Number of entries in the response
+            next_cursor:
+              type: string
+              format: uuid
+              description: Next cursor of the list
+              nullable: true
+          required:
+          - has_more
+          - limit
+        data:
+          type: array
+          description: Array of entities
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                description: Object type of the entity
+              attributes:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: ID of the virtual subaccount
+                  parent_account_id:
+                    type: string
+                    format: uuid
+                    description: ID of the parent account
+                  scope_id:
+                    type: string
+                    format: uuid
+                    description: Scope of the virtual subaccount
+                  name:
+                    type: string
+                    description: Name of the virtual subaccount
+                  currencies:
+                    type: array
+                    description: Supported currencies (inherited from parent)
+                    items:
+                      type: string
+                      enum:
+                      - chf
+                      - eur
+                      - gbp
+                      - jpy
+                      - usd
+                  customer_ids:
+                    type: array
+                    description: Account owners (inherited from parent)
+                    items:
+                      type: string
+                      format: uuid
+                  status:
+                    type: string
+                    description: 'Status: pending_activation, active, pending_deactivation,
+                      inactive'
+                required:
+                - id
+                - parent_account_id
+                - scope_id
+                - name
+                - currencies
+                - customer_ids
+                - status
+            required:
+            - object
+            - attributes
+      required:
+      - object
+      - url
+      - meta
+      - data
     CrystalBank__Domains__ApiKeys__Api__Requests__GenerationRequest:
       type: object
       properties:
@@ -3456,6 +3717,9 @@ components:
             - write_accounts_opening_board_approval
             - write_accounts_closure_request
             - write_accounts_closure_approval
+            - write_accounts_virtual_opening_request
+            - write_accounts_virtual_opening_approval
+            - read_accounts_virtual_list
             - write_api_keys_generation_request
             - write_api_keys_generation_approval
             - write_api_keys_revocation_request
@@ -3535,6 +3799,9 @@ components:
             - write_accounts_opening_board_approval
             - write_accounts_closure_request
             - write_accounts_closure_approval
+            - write_accounts_virtual_opening_request
+            - write_accounts_virtual_opening_approval
+            - read_accounts_virtual_list
             - write_api_keys_generation_request
             - write_api_keys_generation_approval
             - write_api_keys_revocation_request
@@ -3656,6 +3923,9 @@ components:
                       - write_accounts_opening_board_approval
                       - write_accounts_closure_request
                       - write_accounts_closure_approval
+                      - write_accounts_virtual_opening_request
+                      - write_accounts_virtual_opening_approval
+                      - read_accounts_virtual_list
                       - write_api_keys_generation_request
                       - write_api_keys_generation_approval
                       - write_api_keys_revocation_request

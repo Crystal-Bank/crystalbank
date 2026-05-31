@@ -2,4 +2,4 @@
 alias VirtualAccounts = CrystalBank::Domains::VirtualAccounts
 
 # Prepare projections
-VirtualAccounts::Projections::VirtualAccounts.new.prepare
+VirtualAccounts::Projections::VirtualAccounts.new.setup

@@ -2,5 +2,5 @@
 alias Roles = CrystalBank::Domains::Roles
 
 # Prepare projections
-Roles::Projections::Roles.new.prepare
-Roles::Projections::RolesPermissionsUpdates.new.prepare
+Roles::Projections::Roles.new.setup
+Roles::Projections::RolesPermissionsUpdates.new.setup

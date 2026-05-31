@@ -1,45 +1,31 @@
 module CrystalBank::Domains::Payments::Sepa::CreditTransfers
   module Projections
     class CreditTransfers < ES::Projection
-      def prepare
-        exists = @projection_database.query_one %(
-          SELECT EXISTS (
-            SELECT FROM pg_tables
-            WHERE schemaname = 'projections' AND tablename = 'sepa_credit_transfers'
-          );
-        ), as: Bool
+      include ES::ProjectionDSL
 
-        return true if exists
+      define_projection "projections.sepa_credit_transfers", init: true do
+        column :uuid, UUID, primary_key: true
+        column :aggregate_version, Int64, null: false
+        column :scope_id, UUID, null: false
+        column :end_to_end_id, String, null: false
+        column :debtor_account_id, UUID, null: false
+        column :creditor_iban, String, null: false
+        column :creditor_name, String, null: false
+        column :creditor_bic, String, null: true
+        column :amount, Int64, null: false
+        column :currency, String, null: false, default: "EUR"
+        column :execution_date, Time, null: false
+        column :remittance_information, String, null: false
+        column :status, String, null: false
+        column :ledger_transaction_id, UUID, null: true
+        column :created_at, Time, null: false
+        column :updated_at, Time, null: false
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."sepa_credit_transfers" (
-            "uuid"                  UUID PRIMARY KEY,
-            "aggregate_version"     int8 NOT NULL,
-            "scope_id"              UUID NOT NULL,
-            "end_to_end_id"         varchar NOT NULL,
-            "debtor_account_id"     UUID NOT NULL,
-            "creditor_iban"         varchar NOT NULL,
-            "creditor_name"         varchar NOT NULL,
-            "creditor_bic"          varchar,
-            "amount"                int8 NOT NULL,
-            "currency"              varchar NOT NULL DEFAULT 'EUR',
-            "execution_date"        date NOT NULL,
-            "remittance_information" varchar NOT NULL,
-            "status"                varchar NOT NULL,
-            "ledger_transaction_id" UUID,
-            "created_at"            timestamp NOT NULL,
-            "updated_at"            timestamp NOT NULL
-          );
-        )
-
-        m << %(CREATE INDEX sepa_credit_transfers_scope_id_idx ON "projections"."sepa_credit_transfers"(scope_id);)
-        m << %(CREATE INDEX sepa_credit_transfers_status_idx ON "projections"."sepa_credit_transfers"(status);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:scope_id], name: "sepa_credit_transfers_scope_id_idx"
+        index [:status], name: "sepa_credit_transfers_status_idx"
       end
 
-      def apply(event : Payments::Sepa::CreditTransfers::Initiation::Events::Requested)
+      apply(Payments::Sepa::CreditTransfers::Initiation::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -79,7 +65,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           created_at
       end
 
-      def apply(event : Payments::Sepa::CreditTransfers::Initiation::Events::Accepted)
+      apply(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at

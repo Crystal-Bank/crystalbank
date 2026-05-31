@@ -2,4 +2,4 @@
 alias Ledger::Transactions = CrystalBank::Domains::Ledger::Transactions
 
 # Prepare projections
-Ledger::Transactions::Projections::Postings.new.prepare
+Ledger::Transactions::Projections::Postings.new.setup

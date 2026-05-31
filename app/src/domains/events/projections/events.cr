@@ -1,85 +1,65 @@
 module CrystalBank::Domains::Events
   module Projections
     class Events < ES::Projection
-      def prepare
-        table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'events');), as: Bool
+      include ES::ProjectionDSL
 
-        if table_exists
-          # Migrate: drop and recreate if the old schema with redundant columns is present
-          old_schema = @projection_database.query_one %(SELECT EXISTS (SELECT FROM information_schema.columns WHERE table_schema = 'projections' AND table_name = 'events' AND column_name = 'aggregate_type');), as: Bool
-          if old_schema
-            @projection_database.exec %(DROP TABLE "projections"."events")
-          else
-            return true
-          end
-        end
+      define_projection "projections.events", init: true do
+        column :event_id, UUID, primary_key: true
+        column :aggregate_id, UUID, null: false
+        column :aggregate_version, Int64, null: false
+        column :scope_id, UUID, null: false
+        column :header, JSON::Any, null: false
+        column :body, JSON::Any, null: true
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."events" (
-            "event_id"          UUID PRIMARY KEY,
-            "aggregate_id"      UUID NOT NULL,
-            "aggregate_version" INT8 NOT NULL,
-            "scope_id"          UUID NOT NULL,
-            "header"            JSONB NOT NULL,
-            "body"              JSONB
-          );
-        )
-
-        m << %(CREATE INDEX events_aggregate_id_idx   ON "projections"."events"(aggregate_id);)
-        m << %(CREATE INDEX events_scope_id_idx       ON "projections"."events"(scope_id);)
-        m << %(CREATE INDEX events_aggregate_type_idx ON "projections"."events"((header->>'aggregate_type'));)
-        m << %(CREATE INDEX events_event_handle_idx   ON "projections"."events"((header->>'event_handle'));)
-        m << %(CREATE INDEX events_created_at_idx     ON "projections"."events"((header->>'created_at'));)
-
-        m.each { |s| @projection_database.exec s }
+        index [:aggregate_id], name: "events_aggregate_id_idx"
+        index [:scope_id], name: "events_scope_id_idx"
       end
 
       # ---------------------------------------------------------------------------
       # Category A — events with scope_id in body (all Requested events)
       # ---------------------------------------------------------------------------
 
-      def apply(event : ::Accounts::Opening::Events::Requested)
+      apply(::Accounts::Opening::Events::Requested) do
         insert_event(event, event.body.as(::Accounts::Opening::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::ApiKeys::Generation::Events::Requested)
+      apply(::ApiKeys::Generation::Events::Requested) do
         insert_event(event, event.body.as(::ApiKeys::Generation::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::ApiKeys::Revocation::Events::Requested)
+      apply(::ApiKeys::Revocation::Events::Requested) do
         insert_event(event, event.body.as(::ApiKeys::Revocation::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Approvals::Creation::Events::Requested)
+      apply(::Approvals::Creation::Events::Requested) do
         insert_event(event, event.body.as(::Approvals::Creation::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Customers::Onboarding::Events::Requested)
+      apply(::Customers::Onboarding::Events::Requested) do
         insert_event(event, event.body.as(::Customers::Onboarding::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Ledger::Transactions::Request::Events::Requested)
+      apply(::Ledger::Transactions::Request::Events::Requested) do
         insert_event(event, event.body.as(::Ledger::Transactions::Request::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Payments::Sepa::CreditTransfers::Initiation::Events::Requested)
+      apply(::Payments::Sepa::CreditTransfers::Initiation::Events::Requested) do
         insert_event(event, event.body.as(::Payments::Sepa::CreditTransfers::Initiation::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Roles::Creation::Events::Requested)
+      apply(::Roles::Creation::Events::Requested) do
         insert_event(event, event.body.as(::Roles::Creation::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Scopes::Creation::Events::Requested)
+      apply(::Scopes::Creation::Events::Requested) do
         insert_event(event, event.body.as(::Scopes::Creation::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Users::Onboarding::Events::Requested)
+      apply(::Users::Onboarding::Events::Requested) do
         insert_event(event, event.body.as(::Users::Onboarding::Events::Requested::Body).scope_id)
       end
 
-      def apply(event : ::Users::AssignRoles::Events::Requested)
+      apply(::Users::AssignRoles::Events::Requested) do
         insert_event(event, event.body.as(::Users::AssignRoles::Events::Requested::Body).scope_id)
       end
 
@@ -87,55 +67,55 @@ module CrystalBank::Domains::Events
       # Category B — events without scope_id in body; derived via self-lookup
       # ---------------------------------------------------------------------------
 
-      def apply(event : ::Accounts::Opening::Events::Accepted)
+      apply(::Accounts::Opening::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::ApiKeys::Generation::Events::Accepted)
+      apply(::ApiKeys::Generation::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::ApiKeys::Revocation::Events::Accepted)
+      apply(::ApiKeys::Revocation::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Approvals::Collection::Events::Collected)
+      apply(::Approvals::Collection::Events::Collected) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Approvals::Collection::Events::Completed)
+      apply(::Approvals::Collection::Events::Completed) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Approvals::Rejection::Events::Rejected)
+      apply(::Approvals::Rejection::Events::Rejected) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Customers::Onboarding::Events::Accepted)
+      apply(::Customers::Onboarding::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Ledger::Transactions::Request::Events::Accepted)
+      apply(::Ledger::Transactions::Request::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Payments::Sepa::CreditTransfers::Initiation::Events::Accepted)
+      apply(::Payments::Sepa::CreditTransfers::Initiation::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Roles::Creation::Events::Accepted)
+      apply(::Roles::Creation::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Scopes::Creation::Events::Accepted)
+      apply(::Scopes::Creation::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Users::Onboarding::Events::Accepted)
+      apply(::Users::Onboarding::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 
-      def apply(event : ::Users::AssignRoles::Events::Accepted)
+      apply(::Users::AssignRoles::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
       end
 

@@ -1,32 +1,23 @@
 module CrystalBank::Domains::Accounts
   module Projections
     class AccountBlocks < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'account_blocks');), as: Bool
-        return true if skip
+      include ES::ProjectionDSL
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."account_blocks" (
-            "id" SERIAL PRIMARY KEY,
-            "account_uuid" UUID NOT NULL,
-            "block_type" varchar NOT NULL,
-            "applied_at" timestamp NOT NULL,
-            "applied_by" UUID,
-            "reason" varchar,
-            "removed_at" timestamp,
-            "removed_by" UUID,
-            UNIQUE ("account_uuid", "block_type")
-          );
-        )
+      define_projection "projections.account_blocks", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :account_uuid, UUID, null: false
+        column :block_type, String, null: false
+        column :applied_at, Time, null: false
+        column :applied_by, UUID, null: true
+        column :reason, String, null: true
+        column :removed_at, Time, null: true
+        column :removed_by, UUID, null: true
 
-        m << %(CREATE INDEX account_blocks_account_uuid_idx ON "projections"."account_blocks"(account_uuid);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:account_uuid], name: "account_blocks_account_uuid_idx"
+        index [:account_uuid, :block_type], unique: true, name: "account_blocks_account_uuid_block_type_idx"
       end
 
-      # Block applied to account
-      def apply(event : ::Accounts::Blocking::Events::Applied)
+      apply(::Accounts::Blocking::Events::Applied) do
         account_uuid = event.header.aggregate_id
         applied_at = event.header.created_at
         applied_by = event.header.actor_id
@@ -59,8 +50,7 @@ module CrystalBank::Domains::Accounts
           reason
       end
 
-      # Block removed from account
-      def apply(event : ::Accounts::Blocking::Events::Removed)
+      apply(::Accounts::Blocking::Events::Removed) do
         account_uuid = event.header.aggregate_id
         removed_at = event.header.created_at
         removed_by = event.header.actor_id

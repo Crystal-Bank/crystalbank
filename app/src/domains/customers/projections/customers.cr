@@ -1,31 +1,22 @@
 module CrystalBank::Domains::Customers
   module Projections
     class Customers < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'customers');), as: Bool
-        return true if skip
+      include ES::ProjectionDSL
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."customers" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "type" varchar NOT NULL,
-            "status" varchar NOT NULL
-          );
-        )
+      define_projection "projections.customers", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, Int64, null: false
+        column :scope_id, UUID, null: false
+        column :created_at, Time, null: false
+        column :name, String, null: false
+        column :type, String, null: false
+        column :status, String, null: false
 
-        m << %(CREATE UNIQUE INDEX customers_uuid_idx ON "projections"."customers"(uuid);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:uuid], unique: true, name: "customers_uuid_idx"
       end
 
-      # Requested
-      def apply(event : ::Customers::Onboarding::Events::Requested)
+      apply(::Customers::Onboarding::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -57,8 +48,7 @@ module CrystalBank::Domains::Customers
         end
       end
 
-      # Accepted
-      def apply(event : ::Customers::Onboarding::Events::Accepted)
+      apply(::Customers::Onboarding::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 

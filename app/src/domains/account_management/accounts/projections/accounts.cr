@@ -1,34 +1,24 @@
 module CrystalBank::Domains::Accounts
   module Projections
     class Accounts < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'accounts');), as: Bool
+      include ES::ProjectionDSL
 
-        return true if skip
+      define_projection "projections.accounts", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, Int64, null: false
+        column :scope_id, UUID, null: false
+        column :created_at, Time, null: false
+        column :name, String, null: false
+        column :currencies, JSON::Any, null: false
+        column :customer_ids, JSON::Any, null: false
+        column :type, String, null: false
+        column :status, String, null: false
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."accounts" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "currencies" jsonb NOT NULL,
-            "customer_ids" jsonb NOT NULL,
-            "type" varchar NOT NULL,
-            "status" varchar NOT NULL
-          );
-        )
-
-        m << %(CREATE UNIQUE INDEX accounts_uuid_idx ON "projections"."accounts"(uuid);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:uuid], unique: true, name: "accounts_uuid_idx"
       end
 
-      # Requested
-      def apply(event : ::Accounts::Opening::Events::Requested)
+      apply(::Accounts::Opening::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -64,8 +54,7 @@ module CrystalBank::Domains::Accounts
         end
       end
 
-      # Accepted
-      def apply(event : ::Accounts::Opening::Events::Accepted)
+      apply(::Accounts::Opening::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
@@ -78,8 +67,7 @@ module CrystalBank::Domains::Accounts
         end
       end
 
-      # Closure requested — account enters pending closure state
-      def apply(event : ::Accounts::Closure::Events::Requested)
+      apply(::Accounts::Closure::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
@@ -92,8 +80,7 @@ module CrystalBank::Domains::Accounts
         end
       end
 
-      # Closure accepted — account is now closed
-      def apply(event : ::Accounts::Closure::Events::Accepted)
+      apply(::Accounts::Closure::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 

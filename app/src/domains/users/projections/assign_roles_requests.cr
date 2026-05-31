@@ -1,24 +1,18 @@
 module CrystalBank::Domains::Users
   module Projections
     class AssignRolesRequests < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'user_assign_roles_requests');), as: Bool
-        return true if skip
+      include ES::ProjectionDSL
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."user_assign_roles_requests" (
-            "id" UUID PRIMARY KEY,
-            "user_id" UUID NOT NULL,
-            "role_ids" JSONB NOT NULL,
-            "completed" boolean NOT NULL DEFAULT false
-          );
-        )
-        m << %(CREATE INDEX uarr_user_pending_idx ON "projections"."user_assign_roles_requests"(user_id) WHERE NOT completed;)
-        m.each { |s| @projection_database.exec s }
+      define_projection "projections.user_assign_roles_requests", init: true do
+        column :id, UUID, primary_key: true
+        column :user_id, UUID, null: false
+        column :role_ids, JSON::Any, null: false
+        column :completed, Bool, null: false, default: false
+
+        index [:user_id], name: "uarr_user_pending_idx"
       end
 
-      def apply(event : ::Users::AssignRoles::Events::Requested)
+      apply(::Users::AssignRoles::Events::Requested) do
         body = event.body.as(::Users::AssignRoles::Events::Requested::Body)
         user_id = body.user_id
         return unless user_id
@@ -33,14 +27,14 @@ module CrystalBank::Domains::Users
           body.role_ids.to_json
       end
 
-      def apply(event : ::Users::AssignRoles::Events::Completed)
+      apply(::Users::AssignRoles::Events::Completed) do
         @projection_database.exec %(
           UPDATE "projections"."user_assign_roles_requests" SET completed = true WHERE id = $1
         ),
           event.header.aggregate_id
       end
 
-      def apply(event : ::Users::AssignRoles::Events::Rejected)
+      apply(::Users::AssignRoles::Events::Rejected) do
         @projection_database.exec %(
           DELETE FROM "projections"."user_assign_roles_requests" WHERE id = $1
         ),

@@ -1,48 +1,31 @@
 module CrystalBank::Domains::Ledger::Transactions
   module Projections
     class Postings < ES::Projection
-      def prepare
-        exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename = 'postings');), as: Bool
+      include ES::ProjectionDSL
 
-        if exists
-          id_is_uuid = @projection_database.query_one %(
-            SELECT data_type = 'uuid' FROM information_schema.columns
-            WHERE table_schema = 'projections' AND table_name = 'postings' AND column_name = 'id'
-          ), as: Bool
-          return true if id_is_uuid
+      define_projection "projections.postings", init: true do
+        column :id, UUID, primary_key: true
+        column :transaction_id, UUID, null: false
+        column :aggregate_version, Int64, null: false
+        column :scope_id, UUID, null: false
+        column :created_at, Time, null: false
+        column :account_id, UUID, null: false
+        column :direction, String, null: false
+        column :amount, Int64, null: false
+        column :entry_type, String, null: false
+        column :currency, String, null: false
+        column :posting_date, Time, null: true
+        column :value_date, Time, null: true
+        column :remittance_information, String, null: false
+        column :payment_type, String, null: true
+        column :external_ref, String, null: true
+        column :channel, String, null: true
+        column :status, String, null: false
 
-          @projection_database.exec %(DROP TABLE "projections"."postings")
-        end
-
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."postings" (
-            "id" UUID PRIMARY KEY,
-            "transaction_id" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "account_id" UUID NOT NULL,
-            "direction" varchar NOT NULL,
-            "amount" int8 NOT NULL,
-            "entry_type" varchar NOT NULL,
-            "currency" varchar NOT NULL,
-            "posting_date" date,
-            "value_date" date,
-            "remittance_information" varchar NOT NULL,
-            "payment_type" varchar,
-            "external_ref" varchar,
-            "channel" varchar,
-            "status" varchar NOT NULL
-          );
-        )
-
-        m << %(CREATE INDEX postings_transaction_id_idx ON "projections"."postings"(transaction_id);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:transaction_id], name: "postings_transaction_id_idx"
       end
 
-      def apply(event : ::Ledger::Transactions::Request::Events::Accepted)
+      apply(::Ledger::Transactions::Request::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
