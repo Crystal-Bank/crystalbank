@@ -1,5 +1,5 @@
 name: crystalbank
-version: 0.16.0
+version: 0.17.0
 
 authors:
   - Tristan Holl <mail@tristanholl.com>
@@ -11,6 +11,7 @@ targets:
 dependencies:
   crystal-es:
     github: tristanholl/crystal-es
+    version: ~> 0.5.1
     
   pg:
     github: will/crystal-pg
