@@ -2,5 +2,5 @@
 alias Accounts = CrystalBank::Domains::Accounts
 
 # Prepare projections
-Accounts::Projections::Accounts.new.prepare
-Accounts::Projections::AccountBlocks.new.prepare
+Accounts::Projections::Accounts.new.setup
+Accounts::Projections::AccountBlocks.new.setup

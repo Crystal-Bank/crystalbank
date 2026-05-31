@@ -2,4 +2,4 @@
 alias Customers = CrystalBank::Domains::Customers
 
 # Prepare projections
-Customers::Projections::Customers.new.prepare
+Customers::Projections::Customers.new.setup

@@ -2,4 +2,4 @@
 alias Approvals = CrystalBank::Domains::Approvals
 
 # Prepare projections
-Approvals::Projections::Approvals.new.prepare
+Approvals::Projections::Approvals.new.setup

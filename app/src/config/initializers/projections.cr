@@ -19,4 +19,4 @@ end
 
 # Initializing projection database schema
 ES::Config.projection_database = DB.open(CrystalBank::Env.projection_database_uri)
-ProjectionDB.new(ES::Config.projection_database).prepare
+ProjectionDB.new(ES::Config.projection_database).setup
