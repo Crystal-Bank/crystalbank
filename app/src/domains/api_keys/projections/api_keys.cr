@@ -6,7 +6,7 @@ module CrystalBank::Domains::ApiKeys
       define_projection "projections.api_keys", init: true do
         column :id, Int32, serial: true, primary_key: true
         column :uuid, UUID, null: false
-        column :aggregate_version, int8, null: false
+        column :aggregate_version, Int64, null: false
         column :scope_id, UUID, null: false
         column :created_at, Time, null: false
         column :name, String, null: false

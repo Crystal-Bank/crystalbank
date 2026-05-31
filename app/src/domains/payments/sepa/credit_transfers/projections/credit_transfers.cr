@@ -5,14 +5,14 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
       define_projection "projections.sepa_credit_transfers", init: true do
         column :uuid, UUID, primary_key: true
-        column :aggregate_version, int8, null: false
+        column :aggregate_version, Int64, null: false
         column :scope_id, UUID, null: false
         column :end_to_end_id, String, null: false
         column :debtor_account_id, UUID, null: false
         column :creditor_iban, String, null: false
         column :creditor_name, String, null: false
         column :creditor_bic, String, null: true
-        column :amount, int8, null: false
+        column :amount, Int64, null: false
         column :currency, String, null: false, default: "EUR"
         column :execution_date, Time, null: false
         column :remittance_information, String, null: false

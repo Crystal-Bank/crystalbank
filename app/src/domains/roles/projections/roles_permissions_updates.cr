@@ -6,11 +6,11 @@ module CrystalBank::Domains::Roles
       define_projection "projections.roles_permissions_updates", init: true do
         column :id, Int32, serial: true, primary_key: true
         column :uuid, UUID, null: false
-        column :aggregate_version, int8, null: false
+        column :aggregate_version, Int64, null: false
         column :role_id, UUID, null: false
         column :scope_id, UUID, null: false
         column :created_at, Time, null: false
-        column :permissions, JSON, null: false
+        column :permissions, JSON::Any, null: false
         column :status, String, null: false
 
         index [:uuid], unique: true, name: "roles_permissions_updates_uuid_idx"

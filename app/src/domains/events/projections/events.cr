@@ -6,10 +6,10 @@ module CrystalBank::Domains::Events
       define_projection "projections.events", init: true do
         column :event_id, UUID, primary_key: true
         column :aggregate_id, UUID, null: false
-        column :aggregate_version, int8, null: false
+        column :aggregate_version, Int64, null: false
         column :scope_id, UUID, null: false
-        column :header, JSON, null: false
-        column :body, JSON, null: true
+        column :header, JSON::Any, null: false
+        column :body, JSON::Any, null: true
 
         index [:aggregate_id], name: "events_aggregate_id_idx"
         index [:scope_id], name: "events_scope_id_idx"

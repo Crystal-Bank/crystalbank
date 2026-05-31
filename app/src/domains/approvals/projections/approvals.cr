@@ -6,16 +6,16 @@ module CrystalBank::Domains::Approvals
       define_projection "projections.approvals", init: true do
         column :id, Int32, serial: true, primary_key: true
         column :uuid, UUID, null: false
-        column :aggregate_version, int8, null: false
+        column :aggregate_version, Int64, null: false
         column :scope_id, UUID, null: false
         column :source_aggregate_type, String, null: false
         column :source_aggregate_id, UUID, null: false
-        column :required_approvals, JSON, null: false
+        column :required_approvals, JSON::Any, null: false
         column :requestor_id, UUID, null: true
-        column :collected_approvals, JSON, null: false, default: "[]"
+        column :collected_approvals, JSON::Any, null: false, default: "[]"
         column :completed, Bool, null: false, default: false
         column :rejected, Bool, null: false, default: false
-        column :subject, JSON, null: true
+        column :subject, JSON::Any, null: true
         column :rejection_reason, String, null: true
         column :created_at, Time, null: false
         column :updated_at, Time, null: false

@@ -6,7 +6,7 @@ module CrystalBank::Domains::Users
       define_projection "projections.user_assign_roles_requests", init: true do
         column :id, UUID, primary_key: true
         column :user_id, UUID, null: false
-        column :role_ids, JSON, null: false
+        column :role_ids, JSON::Any, null: false
         column :completed, Bool, null: false, default: false
 
         index [:user_id], name: "uarr_user_pending_idx"

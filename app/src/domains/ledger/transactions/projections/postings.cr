@@ -6,12 +6,12 @@ module CrystalBank::Domains::Ledger::Transactions
       define_projection "projections.postings", init: true do
         column :id, UUID, primary_key: true
         column :transaction_id, UUID, null: false
-        column :aggregate_version, int8, null: false
+        column :aggregate_version, Int64, null: false
         column :scope_id, UUID, null: false
         column :created_at, Time, null: false
         column :account_id, UUID, null: false
         column :direction, String, null: false
-        column :amount, int8, null: false
+        column :amount, Int64, null: false
         column :entry_type, String, null: false
         column :currency, String, null: false
         column :posting_date, Time, null: true
