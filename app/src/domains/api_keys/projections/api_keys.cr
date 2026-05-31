@@ -1,34 +1,24 @@
 module CrystalBank::Domains::ApiKeys
   module Projections
     class ApiKeys < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'api_keys');), as: Bool
+      include ES::ProjectionDSL
 
-        return true if skip
+      define_projection "projections.api_keys", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, int8, null: false
+        column :scope_id, UUID, null: false
+        column :created_at, Time, null: false
+        column :name, String, null: false
+        column :user_id, UUID, null: false
+        column :encrypted_secret, String, null: false
+        column :status, String, null: false
+        column :revoked_at, Time, null: true
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."api_keys" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "user_id" UUID NOT NULL,
-            "encrypted_secret" varchar NOT NULL,
-            "status" varchar NOT NULL,
-            "revoked_at" timestamp NULL
-          );
-        )
-
-        m << %(CREATE UNIQUE INDEX api_keys_uuid_idx ON "projections"."api_keys"(uuid);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:uuid], unique: true, name: "api_keys_uuid_idx"
       end
 
-      # ApiKeys::Generation::Events::Requested
-      def apply(event : ::ApiKeys::Generation::Events::Requested)
+      apply(::ApiKeys::Generation::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -62,8 +52,7 @@ module CrystalBank::Domains::ApiKeys
         end
       end
 
-      # ApiKeys::Generation::Events::Accepted
-      def apply(event : ::ApiKeys::Generation::Events::Accepted)
+      apply(::ApiKeys::Generation::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
@@ -76,12 +65,10 @@ module CrystalBank::Domains::ApiKeys
         end
       end
 
-      # ApiKeys::Revocation::Events::Accepted
-      def apply(event : ::ApiKeys::Revocation::Events::Accepted)
+      apply(::ApiKeys::Revocation::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
-        # Build the aggregate up to the version of the event
         aggregate = ::ApiKeys::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 

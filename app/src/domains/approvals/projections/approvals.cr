@@ -1,45 +1,30 @@
 module CrystalBank::Domains::Approvals
   module Projections
     class Approvals < ES::Projection
-      def prepare
-        table_exists = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'approvals');), as: Bool
+      include ES::ProjectionDSL
 
-        if table_exists
-          # Migrate existing table: add rejected column if not present
-          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejected" boolean NOT NULL DEFAULT false)
-          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "subject" JSONB)
-          @projection_database.exec %(ALTER TABLE "projections"."approvals" ADD COLUMN IF NOT EXISTS "rejection_reason" varchar)
-        else
-          m = Array(String).new
-          m << %(
-            CREATE TABLE "projections"."approvals" (
-              "id" SERIAL PRIMARY KEY,
-              "uuid" UUID NOT NULL,
-              "aggregate_version" int8 NOT NULL,
-              "scope_id" UUID NOT NULL,
-              "source_aggregate_type" varchar NOT NULL,
-              "source_aggregate_id" UUID NOT NULL,
-              "required_approvals" JSONB NOT NULL,
-              "requestor_id" UUID,
-              "collected_approvals" JSONB NOT NULL DEFAULT '[]'::jsonb,
-              "completed" boolean NOT NULL DEFAULT false,
-              "rejected" boolean NOT NULL DEFAULT false,
-              "subject" JSONB,
-              "rejection_reason" varchar,
-              "created_at" timestamp NOT NULL,
-              "updated_at" timestamp NOT NULL
-            );
-          )
+      define_projection "projections.approvals", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, int8, null: false
+        column :scope_id, UUID, null: false
+        column :source_aggregate_type, String, null: false
+        column :source_aggregate_id, UUID, null: false
+        column :required_approvals, JSON, null: false
+        column :requestor_id, UUID, null: true
+        column :collected_approvals, JSON, null: false, default: "[]"
+        column :completed, Bool, null: false, default: false
+        column :rejected, Bool, null: false, default: false
+        column :subject, JSON, null: true
+        column :rejection_reason, String, null: true
+        column :created_at, Time, null: false
+        column :updated_at, Time, null: false
 
-          m << %(CREATE UNIQUE INDEX approvals_uuid_idx ON "projections"."approvals"(uuid);)
-          m << %(CREATE INDEX approvals_source_idx ON "projections"."approvals"(source_aggregate_type, source_aggregate_id);)
-
-          m.each { |s| @projection_database.exec s }
-        end
+        index [:uuid], unique: true, name: "approvals_uuid_idx"
+        index [:source_aggregate_type, :source_aggregate_id], name: "approvals_source_idx"
       end
 
-      # Created
-      def apply(event : ::Approvals::Creation::Events::Requested)
+      apply(::Approvals::Creation::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -80,8 +65,7 @@ module CrystalBank::Domains::Approvals
         end
       end
 
-      # Collected
-      def apply(event : ::Approvals::Collection::Events::Collected)
+      apply(::Approvals::Collection::Events::Collected) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
@@ -106,8 +90,7 @@ module CrystalBank::Domains::Approvals
         end
       end
 
-      # Completed
-      def apply(event : ::Approvals::Collection::Events::Completed)
+      apply(::Approvals::Collection::Events::Completed) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
@@ -128,8 +111,7 @@ module CrystalBank::Domains::Approvals
         end
       end
 
-      # Rejected
-      def apply(event : ::Approvals::Rejection::Events::Rejected)
+      apply(::Approvals::Rejection::Events::Rejected) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at

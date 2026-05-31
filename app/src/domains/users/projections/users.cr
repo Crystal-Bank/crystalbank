@@ -1,33 +1,23 @@
 module CrystalBank::Domains::Users
   module Projections
     class Users < ES::Projection
-      def prepare
-        skip = @projection_database.query_one %(SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'projections' AND tablename  = 'users');), as: Bool
+      include ES::ProjectionDSL
 
-        return true if skip
+      define_projection "projections.users", init: true do
+        column :id, Int32, serial: true, primary_key: true
+        column :uuid, UUID, null: false
+        column :aggregate_version, int8, null: false
+        column :scope_id, UUID, null: false
+        column :role_ids, JSON, null: false
+        column :created_at, Time, null: false
+        column :name, String, null: false
+        column :email, String, null: false
+        column :status, String, null: false
 
-        m = Array(String).new
-        m << %(
-          CREATE TABLE "projections"."users" (
-            "id" SERIAL PRIMARY KEY,
-            "uuid" UUID NOT NULL,
-            "aggregate_version" int8 NOT NULL,
-            "scope_id" UUID NOT NULL,
-            "role_ids" JSONB NOT NULL,
-            "created_at" timestamp NOT NULL,
-            "name" varchar NOT NULL,
-            "email" varchar NOT NULL,
-            "status" varchar NOT NULL
-          );
-        )
-
-        m << %(CREATE UNIQUE INDEX users_uuid_idx ON "projections"."users"(uuid);)
-
-        m.each { |s| @projection_database.exec s }
+        index [:uuid], unique: true, name: "users_uuid_idx"
       end
 
-      # Requested
-      def apply(event : ::Users::Onboarding::Events::Requested)
+      apply(::Users::Onboarding::Events::Requested) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
         created_at = event.header.created_at
@@ -61,8 +51,7 @@ module CrystalBank::Domains::Users
         end
       end
 
-      # Accepted
-      def apply(event : ::Users::Onboarding::Events::Accepted)
+      apply(::Users::Onboarding::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
@@ -75,12 +64,10 @@ module CrystalBank::Domains::Users
         end
       end
 
-      # Remove Roles Accepted
-      def apply(event : ::Users::RemoveRoles::Events::Accepted)
+      apply(::Users::RemoveRoles::Events::Accepted) do
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
-        # Build the user aggregate up to the version of the event
         aggregate = ::Users::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
@@ -103,19 +90,15 @@ module CrystalBank::Domains::Users
         end
       end
 
-      # Assign Roles Accepted
-      def apply(event : ::Users::AssignRoles::Events::Accepted)
-        # Extract attributes to local variables
+      apply(::Users::AssignRoles::Events::Accepted) do
         uuid = event.header.event_id
         created_at = event.header.created_at
         aggregate_id = event.header.aggregate_id
         aggregate_version = event.header.aggregate_version
 
-        # Build the account aggregate up to the version of the event
         aggregate = ::Users::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        # Extract attributes to local variables
         role_ids = aggregate.state.role_ids
 
         @projection_database.transaction do |tx|
