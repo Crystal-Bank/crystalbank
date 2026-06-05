@@ -1,7 +1,19 @@
+import { execSync } from 'child_process'
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 
+const gitSha = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim()
+  } catch {
+    return 'unknown'
+  }
+})()
+
 export default defineConfig({
+  define: {
+    __GIT_SHA__: JSON.stringify(gitSha),
+  },
   plugins: [svelte()],
   build: {
     outDir: '../public',
