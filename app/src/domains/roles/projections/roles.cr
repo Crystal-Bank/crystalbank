@@ -56,7 +56,6 @@ module CrystalBank::Domains::Roles
       end
 
       apply(::Roles::PermissionsUpdate::Events::Accepted) do
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."roles" SET permissions=$1, aggregate_version=$2 WHERE uuid=$3),

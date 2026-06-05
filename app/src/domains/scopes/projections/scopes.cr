@@ -43,7 +43,6 @@ module CrystalBank::Domains::Scopes
       end
 
       apply(::Scopes::NameChange::Events::Accepted) do
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."scopes" SET name=$1, aggregate_version=$2 WHERE uuid=$3),
