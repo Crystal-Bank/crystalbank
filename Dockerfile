@@ -3,6 +3,9 @@
 #
 FROM node:22-alpine AS frontend-builder
 
+# Upgrade npm to latest to eliminate outdated-version notice
+RUN npm install -g npm@latest
+
 WORKDIR /app/frontend
 COPY app/frontend/package.json ./
 RUN npm install
