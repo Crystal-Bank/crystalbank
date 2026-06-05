@@ -58,7 +58,9 @@ services:
       - ./app/openapi.yaml:/oas/openapi.yaml
 
   frontend:
-    image: node:22-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     working_dir: /app/frontend
     volumes:
       - ./app:/app
