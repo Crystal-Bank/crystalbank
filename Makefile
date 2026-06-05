@@ -141,7 +141,8 @@ test-clean:
 
 # Build the Svelte frontend inside Docker (node:22-alpine)
 build-frontend:
-	$(call dc-frontend-run, "npm install && npm run build")
+	GIT_SHA=$(shell git rev-parse --short HEAD 2>/dev/null || echo unknown) \
+	$(COMPOSE_CMD) $(COMPOSE_ARGS) run --entrypoint "sh -c" --rm -e GIT_SHA frontend "npm install && npm run build"
 
 # Run Linter
 lint:
