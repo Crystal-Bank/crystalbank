@@ -10,6 +10,8 @@ const gitSha = process.env.GIT_SHA || (() => {
   }
 })()
 
+console.log(`[vite] building with GIT_SHA=${gitSha}`)
+
 export default defineConfig({
   define: {
     __GIT_SHA__: JSON.stringify(gitSha),

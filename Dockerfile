@@ -6,6 +6,7 @@ FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY app/frontend/package.json ./
 RUN npm install
+RUN apk add --no-cache git
 COPY app/frontend/ ./
 COPY .git /app/.git
 # Vite outDir is '../public', so output lands at /app/public
