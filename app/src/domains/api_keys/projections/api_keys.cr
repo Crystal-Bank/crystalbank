@@ -19,12 +19,6 @@ module CrystalBank::Domains::ApiKeys
       end
 
       apply(::ApiKeys::Generation::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::ApiKeys::Generation::Events::Requested::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -53,9 +47,6 @@ module CrystalBank::Domains::ApiKeys
       end
 
       apply(::ApiKeys::Generation::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."api_keys" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
@@ -66,9 +57,6 @@ module CrystalBank::Domains::ApiKeys
       end
 
       apply(::ApiKeys::Revocation::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         aggregate = ::ApiKeys::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 

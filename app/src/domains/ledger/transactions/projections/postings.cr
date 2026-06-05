@@ -26,10 +26,6 @@ module CrystalBank::Domains::Ledger::Transactions
       end
 
       apply(::Ledger::Transactions::Request::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
         aggregate = ::Ledger::Transactions::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 

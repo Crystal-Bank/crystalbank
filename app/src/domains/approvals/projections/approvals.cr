@@ -25,12 +25,6 @@ module CrystalBank::Domains::Approvals
       end
 
       apply(::Approvals::Creation::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::Approvals::Creation::Events::Requested::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -66,11 +60,8 @@ module CrystalBank::Domains::Approvals
       end
 
       apply(::Approvals::Collection::Events::Collected) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
 
-        body = event.body.as(::Approvals::Collection::Events::Collected::Body)
         new_entry = {user_id: body.user_id, permissions: body.permissions, comment: body.comment}.to_json
 
         @projection_database.transaction do |tx|
@@ -91,8 +82,6 @@ module CrystalBank::Domains::Approvals
       end
 
       apply(::Approvals::Collection::Events::Completed) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
 
         @projection_database.transaction do |tx|
@@ -112,11 +101,7 @@ module CrystalBank::Domains::Approvals
       end
 
       apply(::Approvals::Rejection::Events::Rejected) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
-
-        body = event.body.as(::Approvals::Rejection::Events::Rejected::Body)
 
         @projection_database.transaction do |tx|
           cnn = tx.connection

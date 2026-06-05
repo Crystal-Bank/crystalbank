@@ -22,9 +22,6 @@ module CrystalBank::Domains::Accounts
         applied_at = event.header.created_at
         applied_by = event.header.actor_id
 
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         aggregate = ::Accounts::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
@@ -55,7 +52,6 @@ module CrystalBank::Domains::Accounts
         removed_at = event.header.created_at
         removed_by = event.header.actor_id
 
-        body = event.body.as(::Accounts::Blocking::Events::Removed::Body)
         block_type = body.block_type.to_s
 
         @projection_database.exec %(
