@@ -11,8 +11,8 @@ targets:
 dependencies:
   crystal-es:
     github: tristanholl/crystal-es
-    branch: master
-    
+    version: ~> 0.6.4
+
   pg:
     github: will/crystal-pg
 

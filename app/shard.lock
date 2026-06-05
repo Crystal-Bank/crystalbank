@@ -14,7 +14,7 @@ shards:
 
   crystal-es:
     git: https://github.com/tristanholl/crystal-es.git
-    version: 0.5.1+git.commit.142ca7124c1492219d17b9547302df8ab9481c15
+    version: 0.6.4
 
   crystal_iban:
     git: https://github.com/tristanholl/crystal-iban.git
@@ -22,7 +22,7 @@ shards:
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.13.1
+    version: 0.14.0
 
   ed25519:
     git: https://github.com/spider-gazelle/ed25519.git
@@ -58,5 +58,5 @@ shards:
 
   pg:
     git: https://github.com/will/crystal-pg.git
-    version: 0.29.0
+    version: 0.30.0
 
