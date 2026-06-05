@@ -130,6 +130,7 @@ module CrystalBank::Domains::Events
           as: UUID
         )
       rescue DB::NoResultsError
+        CrystalBank.print_verbose("Missing aggregate for events projection scope", aggregate_id.to_s)
         CrystalBank::Domains::Platform::SeedService::ROOT_SCOPE_ID
       end
 
