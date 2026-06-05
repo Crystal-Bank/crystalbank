@@ -2,6 +2,8 @@
   import { login } from '../lib/actions.js'
   import { ui } from '../lib/store.svelte.js'
 
+  const gitSha = __GIT_SHA__
+
   let clientId = $state('')
   let clientSecret = $state('')
   let error = $state('')
@@ -48,6 +50,6 @@
       </form>
     </div>
 
-    <p class="text-center text-xs text-zinc-400 mt-4">CrystalBank &mdash; Event-sourced Banking Platform</p>
+    <p class="text-center text-xs text-zinc-400 mt-4">CrystalBank &mdash; Event-sourced Banking Platform<br />version: {gitSha}</p>
   </div>
 </div>
