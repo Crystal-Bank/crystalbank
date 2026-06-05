@@ -18,12 +18,6 @@ module CrystalBank::Domains::Roles
       end
 
       apply(::Roles::PermissionsUpdate::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::Roles::PermissionsUpdate::Events::Requested::Body)
-
         role_scope_id = @projection_database.query_one(
           %(SELECT scope_id FROM "projections"."roles" WHERE uuid = $1),
           body.role_id,
@@ -56,9 +50,6 @@ module CrystalBank::Domains::Roles
       end
 
       apply(::Roles::PermissionsUpdate::Events::Completed) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."roles_permissions_updates" SET status=$1, aggregate_version=$2 WHERE uuid=$3),

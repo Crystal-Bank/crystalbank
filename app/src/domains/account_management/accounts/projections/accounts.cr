@@ -19,12 +19,6 @@ module CrystalBank::Domains::Accounts
       end
 
       apply(::Accounts::Opening::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::Accounts::Opening::Events::Requested::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -55,9 +49,6 @@ module CrystalBank::Domains::Accounts
       end
 
       apply(::Accounts::Opening::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."accounts" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
@@ -68,9 +59,6 @@ module CrystalBank::Domains::Accounts
       end
 
       apply(::Accounts::Closure::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."accounts" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
@@ -81,9 +69,6 @@ module CrystalBank::Domains::Accounts
       end
 
       apply(::Accounts::Closure::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."accounts" SET status=$1, aggregate_version=$2 WHERE uuid=$3),

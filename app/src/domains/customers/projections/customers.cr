@@ -17,12 +17,6 @@ module CrystalBank::Domains::Customers
       end
 
       apply(::Customers::Onboarding::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::Customers::Onboarding::Events::Requested::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -49,9 +43,6 @@ module CrystalBank::Domains::Customers
       end
 
       apply(::Customers::Onboarding::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."customers" SET status=$1, aggregate_version=$2 WHERE uuid=$3),

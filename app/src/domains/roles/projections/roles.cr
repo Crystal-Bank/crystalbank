@@ -18,12 +18,6 @@ module CrystalBank::Domains::Roles
       end
 
       apply(::Roles::Creation::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::Roles::Creation::Events::Requested::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -52,9 +46,6 @@ module CrystalBank::Domains::Roles
       end
 
       apply(::Roles::Creation::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."roles" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
@@ -65,11 +56,6 @@ module CrystalBank::Domains::Roles
       end
 
       apply(::Roles::PermissionsUpdate::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
-        body = event.body.as(::Roles::PermissionsUpdate::Events::Accepted::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."roles" SET permissions=$1, aggregate_version=$2 WHERE uuid=$3),

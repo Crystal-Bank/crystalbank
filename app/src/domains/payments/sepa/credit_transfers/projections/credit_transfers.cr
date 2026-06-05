@@ -26,12 +26,6 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
       end
 
       apply(Payments::Sepa::CreditTransfers::Initiation::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(Payments::Sepa::CreditTransfers::Initiation::Events::Requested::Body)
-
         @projection_database.exec %(
           INSERT INTO "projections"."sepa_credit_transfers" (
             uuid,
@@ -66,11 +60,7 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
       end
 
       apply(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
         updated_at = event.header.created_at
-
-        body = event.body.as(Payments::Sepa::CreditTransfers::Initiation::Events::Accepted::Body)
 
         @projection_database.exec %(
           UPDATE "projections"."sepa_credit_transfers"

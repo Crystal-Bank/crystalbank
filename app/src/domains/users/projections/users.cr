@@ -18,12 +18,6 @@ module CrystalBank::Domains::Users
       end
 
       apply(::Users::Onboarding::Events::Requested) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-        created_at = event.header.created_at
-
-        body = event.body.as(::Users::Onboarding::Events::Requested::Body)
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(
@@ -52,9 +46,6 @@ module CrystalBank::Domains::Users
       end
 
       apply(::Users::Onboarding::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         @projection_database.transaction do |tx|
           cnn = tx.connection
           cnn.exec %(UPDATE "projections"."users" SET status=$1, aggregate_version=$2 WHERE uuid=$3),
@@ -65,9 +56,6 @@ module CrystalBank::Domains::Users
       end
 
       apply(::Users::RemoveRoles::Events::Accepted) do
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
-
         aggregate = ::Users::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
@@ -92,9 +80,6 @@ module CrystalBank::Domains::Users
 
       apply(::Users::AssignRoles::Events::Accepted) do
         uuid = event.header.event_id
-        created_at = event.header.created_at
-        aggregate_id = event.header.aggregate_id
-        aggregate_version = event.header.aggregate_version
 
         aggregate = ::Users::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
