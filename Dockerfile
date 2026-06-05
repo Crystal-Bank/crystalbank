@@ -7,6 +7,7 @@ WORKDIR /app/frontend
 COPY app/frontend/package.json ./
 RUN npm install
 COPY app/frontend/ ./
+COPY .git /app/.git
 # Vite outDir is '../public', so output lands at /app/public
 RUN npm run build
 
