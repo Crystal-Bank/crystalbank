@@ -19,6 +19,16 @@ describe CrystalBank::Domains::Events::Projections::Events do
     end
 
     describe "Category B — events without scope_id in body" do
+      it "raises InvalidEventStream when the origin Requested event is missing from the projection" do
+        aggr_id = UUID.v7
+        acc = Test::User::Events::Onboarding::Accepted.new.create(aggr_id: aggr_id)
+        TEST_EVENT_STORE.append(acc)
+
+        expect_raises(ES::Exception::InvalidEventStream, /#{aggr_id}/) do
+          ::Events::Projections::Events.new.apply(acc)
+        end
+      end
+
       it "derives scope_id from the Requested event already in the projection" do
         aggr_id = UUID.v7
         projection = ::Events::Projections::Events.new
