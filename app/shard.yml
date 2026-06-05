@@ -12,7 +12,7 @@ dependencies:
   crystal-es:
     github: tristanholl/crystal-es
     version: ~> 0.6.4
-    
+
   pg:
     github: will/crystal-pg
 
