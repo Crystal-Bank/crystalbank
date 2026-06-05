@@ -15,7 +15,7 @@ RUN npm run build
 # Frontend assets are embedded at compile time via read_file, so they
 # must be present in /app/public before crystal build runs.
 #
-FROM 84codes/crystal:1.19.1-ubuntu-24.04 AS crystal-builder
+FROM 84codes/crystal:1.20.2-ubuntu-24.04 AS crystal-builder
 
 WORKDIR /app
 
