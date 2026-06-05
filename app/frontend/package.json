@@ -7,10 +7,6 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "engines": {
-    "npm": ">=11.16.0",
-    "node": ">=22.0.0"
-  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "autoprefixer": "^10.4.0",
