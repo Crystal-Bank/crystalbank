@@ -125,18 +125,18 @@
 
 <!-- Open Account modal -->
 {#if showModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Open Account</div>
       <div class="modal-desc">Request the opening of a new bank account. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Account Name</label>
-          <input type="text" bind:value={form.name} class="field-input" placeholder="e.g. Main Operating Account" required>
+          <label class="field-label" for="field-account-name">Account Name</label>
+          <input id="field-account-name" type="text" bind:value={form.name} class="field-input" placeholder="e.g. Main Operating Account" required>
         </div>
         <div class="mb-4">
-          <label class="field-label">Account Type</label>
-          <select bind:value={form.type} class="field-input field-select" required>
+          <label class="field-label" for="field-account-type">Account Type</label>
+          <select id="field-account-type" bind:value={form.type} class="field-input field-select" required>
             <option value="">Select type...</option>
             {#each accountTypeOptions as t (t)}
               <option value={t}>{t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
@@ -144,7 +144,7 @@
           </select>
         </div>
         <div class="mb-4">
-          <label class="field-label">Currencies</label>
+          <div class="field-label">Currencies</div>
           <div class="checkbox-grid flex gap-4 flex-wrap mt-1">
             {#each currencyOptions as c (c)}
               <label class="checkbox-item">
@@ -156,7 +156,7 @@
           <div class="field-hint">Select one or more supported currencies</div>
         </div>
         <div class="mb-5">
-          <label class="field-label">Customer IDs</label>
+          <div class="field-label">Customer IDs</div>
           {#if form.customerIds.length > 0}
             <div class="flex flex-wrap gap-1.5 mb-2">
               {#each form.customerIds as id (id)}

@@ -149,12 +149,11 @@
 
 <!-- ── Create modal ──────────────────────────────────────────────────────────── -->
 {#if showModal}
-  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-  <div class="modal-backdrop" onclick={() => showModal = false}></div>
+  <div class="modal-backdrop" role="presentation" onclick={() => showModal = false} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}></div>
   <div class="modal-box modal-box-lg" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:51;overflow-y:auto;">
     <div class="flex items-center justify-between mb-5">
       <h2 class="text-base font-semibold">New SEPA Credit Transfer</h2>
-      <button onclick={() => showModal = false} class="text-zinc-400 hover:text-zinc-700">
+      <button aria-label="Close" onclick={() => showModal = false} class="text-zinc-400 hover:text-zinc-700">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -181,14 +180,13 @@
           {#if debtorOpen && debtorSuggestions.length > 0}
             <div class="absolute z-10 w-full mt-1 bg-white border border-zinc-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
               {#each debtorSuggestions as a (a.id)}
-                <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-                <div onclick={() => selectDebtor(a.id)} class="px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
+                <button type="button" onclick={() => selectDebtor(a.id)} class="w-full text-left px-3 py-2 text-sm cursor-pointer hover:bg-zinc-50">
                   <div class="font-medium text-xs text-zinc-800">{a.name}</div>
                   <div class="flex items-center gap-2 mt-0.5">
                     <span class="font-mono text-xs text-zinc-400 flex-1 truncate">{a.id}</span>
                     <span class="text-zinc-400 text-xs shrink-0">{a.type}</span>
                   </div>
-                </div>
+                </button>
               {/each}
             </div>
           {/if}
@@ -251,12 +249,11 @@
 
 <!-- ── Detail drawer ──────────────────────────────────────────────────────────── -->
 {#if drawerTransfer}
-  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-  <div class="drawer-backdrop" onclick={() => drawerTransfer = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerTransfer = null} onkeydown={(e) => e.key === 'Escape' && (drawerTransfer = null)}></div>
   <div class="drawer-panel overflow-y-auto" style="z-index:41;box-shadow:-4px 0 24px rgba(0,0,0,0.08);padding:1.5rem;">
     <div class="flex items-center justify-between mb-5">
       <h2 class="text-base font-semibold">SEPA Credit Transfer</h2>
-      <button onclick={() => drawerTransfer = null} class="text-zinc-400 hover:text-zinc-700">
+      <button aria-label="Close" onclick={() => drawerTransfer = null} class="text-zinc-400 hover:text-zinc-700">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>

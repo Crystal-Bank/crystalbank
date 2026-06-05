@@ -69,11 +69,11 @@
 
 <!-- Customer detail drawer -->
 {#if drawerCustomer}
-  <div class="drawer-backdrop" onclick={() => drawerCustomer = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerCustomer = null} onkeydown={(e) => e.key === 'Escape' && (drawerCustomer = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Customer Details</div>
-      <button onclick={() => drawerCustomer = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerCustomer = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -108,18 +108,18 @@
 
 <!-- Onboard Customer modal -->
 {#if showModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Onboard Customer</div>
       <div class="modal-desc">Register a new customer in the system. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Name</label>
-          <input bind:value={form.name} type="text" class="field-input" placeholder="John Doe" required minlength="2">
+          <label class="field-label" for="field-customer-name">Name</label>
+          <input id="field-customer-name" bind:value={form.name} type="text" class="field-input" placeholder="John Doe" required minlength="2">
         </div>
         <div class="mb-5">
-          <label class="field-label">Customer Type</label>
-          <select bind:value={form.type} class="field-input field-select" required>
+          <label class="field-label" for="field-customer-type">Customer Type</label>
+          <select id="field-customer-type" bind:value={form.type} class="field-input field-select" required>
             <option value="">Select type...</option>
             {#each customerTypeOptions as t (t)}
               <option value={t}>{t.replace(/\b\w/g, c => c.toUpperCase())}</option>

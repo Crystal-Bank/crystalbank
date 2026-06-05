@@ -100,7 +100,7 @@
 <aside class="w-56 bg-zinc-900 flex flex-col flex-shrink-0">
   <!-- Invisible overlay to close dropdown when clicking outside -->
   {#if showDropdown}
-    <div class="fixed inset-0 z-40" onclick={() => showDropdown = false}></div>
+    <div class="fixed inset-0 z-40" role="presentation" onclick={() => showDropdown = false} onkeydown={(e) => e.key === 'Escape' && (showDropdown = false)}></div>
   {/if}
 
   <!-- Sidebar Header -->
@@ -195,10 +195,10 @@
         </div>
         <div class="space-y-0.5">
           {#each section.items as item (item.id)}
-            <a class="nav-link" class:active={currentView === item.id} onclick={() => switchView(item.id)}>
+            <button type="button" class="nav-link" class:active={currentView === item.id} onclick={() => switchView(item.id)}>
               {@html item.icon}
               <span>{item.label}</span>
-            </a>
+            </button>
           {/each}
         </div>
       </div>

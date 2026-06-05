@@ -162,11 +162,11 @@
 
 <!-- Posting detail drawer -->
 {#if drawerPosting}
-  <div class="drawer-backdrop" onclick={() => drawerPosting = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerPosting = null} onkeydown={(e) => e.key === 'Escape' && (drawerPosting = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Posting Details</div>
-      <button onclick={() => drawerPosting = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerPosting = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -221,7 +221,7 @@
 
 <!-- Create Ledger Transaction modal -->
 {#if showModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}>
     <div class="modal-box modal-box-lg">
       <div class="modal-title">Create Ledger Transaction</div>
       <div class="modal-desc">Submit a multi-entry ledger transaction. Debits and credits must balance per currency.</div>
@@ -230,8 +230,8 @@
 
         <div class="grid grid-cols-3 gap-3 mb-4">
           <div>
-            <label class="field-label">Currency</label>
-            <select bind:value={form.currency} class="field-input field-select" required>
+            <label class="field-label" for="field-tx-currency">Currency</label>
+            <select id="field-tx-currency" bind:value={form.currency} class="field-input field-select" required>
               <option value="">Select...</option>
               {#each currencyOptions as c (c)}
                 <option value={c}>{c.toUpperCase()}</option>
@@ -239,32 +239,32 @@
             </select>
           </div>
           <div>
-            <label class="field-label">Posting Date</label>
-            <input bind:value={form.posting_date} type="date" class="field-input" required>
+            <label class="field-label" for="field-tx-posting-date">Posting Date</label>
+            <input id="field-tx-posting-date" bind:value={form.posting_date} type="date" class="field-input" required>
           </div>
           <div>
-            <label class="field-label">Value Date</label>
-            <input bind:value={form.value_date} type="date" class="field-input" required>
+            <label class="field-label" for="field-tx-value-date">Value Date</label>
+            <input id="field-tx-value-date" bind:value={form.value_date} type="date" class="field-input" required>
           </div>
         </div>
 
         <div class="mb-4">
-          <label class="field-label">Remittance Information <span class="text-zinc-400 font-normal">(optional)</span></label>
-          <input bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services...">
+          <label class="field-label" for="field-tx-remittance">Remittance Information <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <input id="field-tx-remittance" bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services...">
         </div>
 
         <div class="grid grid-cols-3 gap-3 mb-5">
           <div>
-            <label class="field-label">Payment Type</label>
-            <input type="text" value="Internal Transfer" class="field-input" disabled>
+            <label class="field-label" for="field-tx-payment-type">Payment Type</label>
+            <input id="field-tx-payment-type" type="text" value="Internal Transfer" class="field-input" disabled>
           </div>
           <div>
-            <label class="field-label">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
-            <input bind:value={form.metadata.external_ref} type="text" class="field-input" placeholder="ext-ref-123">
+            <label class="field-label" for="field-tx-ext-ref">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
+            <input id="field-tx-ext-ref" bind:value={form.metadata.external_ref} type="text" class="field-input" placeholder="ext-ref-123">
           </div>
           <div>
-            <label class="field-label">Channel</label>
-            <select bind:value={form.metadata.channel} class="field-input field-select">
+            <label class="field-label" for="field-tx-channel">Channel</label>
+            <select id="field-tx-channel" bind:value={form.metadata.channel} class="field-input field-select">
               <option value="api">API</option>
               <option value="web">Web</option>
             </select>
@@ -285,7 +285,7 @@
               <div class="grid gap-2" style="grid-template-columns: 1fr 90px 110px 200px 32px">
 
                 <div class="relative">
-                  <label class="field-label text-xs">Account ID</label>
+                  <div class="field-label text-xs">Account ID</div>
                   <input
                     type="text"
                     value={entry.account_id}
@@ -313,7 +313,7 @@
                 </div>
 
                 <div>
-                  <label class="field-label text-xs">Direction</label>
+                  <div class="field-label text-xs">Direction</div>
                   <select bind:value={entry.direction} class="field-input field-select text-xs" required>
                     <option value="debit">Debit</option>
                     <option value="credit">Credit</option>
@@ -321,12 +321,12 @@
                 </div>
 
                 <div>
-                  <label class="field-label text-xs">Amount</label>
+                  <div class="field-label text-xs">Amount</div>
                   <input bind:value={entry.amount} type="number" min="1" class="field-input text-xs" placeholder="0" required>
                 </div>
 
                 <div>
-                  <label class="field-label text-xs">Entry Type</label>
+                  <div class="field-label text-xs">Entry Type</div>
                   <select bind:value={entry.entry_type} class="field-input field-select text-xs" required>
                     {#each ledgerEntryTypeOptions as t (t)}
                       <option value={t}>{t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>

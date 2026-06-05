@@ -227,11 +227,11 @@
 
 <!-- Approval detail drawer -->
 {#if drawerApproval}
-  <div class="drawer-backdrop" onclick={closeDrawer}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={closeDrawer} onkeydown={(e) => e.key === 'Escape' && closeDrawer()}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Approval Details</div>
-      <button onclick={closeDrawer} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={closeDrawer} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -278,12 +278,14 @@
               <div class="px-3 py-2 text-sm text-green-800 bg-green-50 border-b border-green-200">{drawerApproval.subject.summary}</div>
             {/if}
             <table class="w-full text-xs bg-white">
+              <tbody>
               {#each drawerApproval.subject.fields as f (f.label)}
                 <tr class="border-b border-zinc-100 last:border-0">
                   <td class="px-3 py-2 text-zinc-500 font-medium whitespace-nowrap w-1/3">{f.label}</td>
                   <td class="px-3 py-2 text-zinc-800 font-medium break-all">{f.value}</td>
                 </tr>
               {/each}
+              </tbody>
             </table>
           </div>
         </div>
@@ -354,8 +356,8 @@
         <div class="border-t border-zinc-100 pt-5 mt-1">
           <div class="text-sm font-semibold text-zinc-700 mb-3">Action</div>
           <div class="mb-3">
-            <label class="field-label">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
-            <input bind:value={comment} type="text" class="field-input" placeholder="Approved after review...">
+            <label class="field-label" for="field-approval-comment">Comment <span class="text-zinc-400 font-normal">(optional)</span></label>
+            <input id="field-approval-comment" bind:value={comment} type="text" class="field-input" placeholder="Approved after review...">
           </div>
         </div>
       {/if}
@@ -384,7 +386,7 @@
 
 <!-- ── Reject confirmation modal ─────────────────────── -->
 {#if showRejectConfirm}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showRejectConfirm = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showRejectConfirm = false }} onkeydown={(e) => e.key === 'Escape' && (showRejectConfirm = false)}>
     <div class="modal-box">
       <div class="modal-title">Reject Approval</div>
       <div class="modal-desc">Do you really want to reject this approval? This action cannot be undone.</div>
