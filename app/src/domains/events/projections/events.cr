@@ -129,6 +129,8 @@ module CrystalBank::Domains::Events
           aggregate_id,
           as: UUID
         )
+      rescue DB::NoResultsError
+        CrystalBank::Domains::Platform::SeedService::ROOT_SCOPE_ID
       end
 
       private def insert_event(event : ES::Event, scope_id : UUID)
