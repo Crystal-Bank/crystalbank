@@ -175,11 +175,11 @@
 
 <!-- User detail drawer -->
 {#if drawerUser}
-  <div class="drawer-backdrop" onclick={closeDrawer}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={closeDrawer} onkeydown={(e) => e.key === 'Escape' && closeDrawer()}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">User Details</div>
-      <button onclick={closeDrawer} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={closeDrawer} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -308,18 +308,18 @@
 
 <!-- Onboard User modal -->
 {#if showOnboardModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showOnboardModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showOnboardModal = false }} onkeydown={(e) => e.key === 'Escape' && (showOnboardModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Onboard User</div>
       <div class="modal-desc">Create a new system user. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleOnboard() }}>
         <div class="mb-4">
-          <label class="field-label">Name</label>
-          <input bind:value={form.name} type="text" class="field-input" placeholder="Jane Smith" required>
+          <label class="field-label" for="field-user-name">Name</label>
+          <input id="field-user-name" bind:value={form.name} type="text" class="field-input" placeholder="Jane Smith" required>
         </div>
         <div class="mb-5">
-          <label class="field-label">Email</label>
-          <input bind:value={form.email} type="email" class="field-input" placeholder="jane@example.com" required>
+          <label class="field-label" for="field-user-email">Email</label>
+          <input id="field-user-email" bind:value={form.email} type="email" class="field-input" placeholder="jane@example.com" required>
         </div>
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showOnboardModal = false} class="btn btn-ghost">Cancel</button>

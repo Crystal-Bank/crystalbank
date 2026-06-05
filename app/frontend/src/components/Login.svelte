@@ -28,12 +28,12 @@
     <div class="card p-6 shadow-sm">
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Client ID</label>
-          <input bind:value={clientId} type="text" class="field-input" placeholder="API key ID" required autocomplete="off">
+          <label class="field-label" for="field-client-id">Client ID</label>
+          <input id="field-client-id" bind:value={clientId} type="text" class="field-input" placeholder="API key ID" required autocomplete="off">
         </div>
         <div class="mb-4">
-          <label class="field-label">Client Secret</label>
-          <input bind:value={clientSecret} type="password" class="field-input" placeholder="API key secret" required>
+          <label class="field-label" for="field-client-secret">Client Secret</label>
+          <input id="field-client-secret" bind:value={clientSecret} type="password" class="field-input" placeholder="API key secret" required>
         </div>
         {#if error}
           <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">{error}</div>

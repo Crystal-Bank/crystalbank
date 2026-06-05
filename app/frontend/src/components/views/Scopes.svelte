@@ -110,11 +110,11 @@
 
 <!-- Scope detail drawer -->
 {#if drawerScope}
-  <div class="drawer-backdrop" onclick={() => drawerScope = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerScope = null} onkeydown={(e) => e.key === 'Escape' && (drawerScope = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Scope Details</div>
-      <button onclick={() => drawerScope = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerScope = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -152,7 +152,6 @@
                 class="field-input flex-1"
                 placeholder="New scope name"
                 required
-                autofocus
               >
               <button type="submit" class="btn btn-primary btn-sm" disabled={ui.loading}>Submit</button>
               <button type="button" onclick={() => showRenameForm = false} class="btn btn-ghost btn-sm">Cancel</button>
@@ -165,20 +164,20 @@
 {/if}
 
 {#if showModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Create Scope</div>
       <div class="modal-desc">Define a new data ownership scope. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Scope Name</label>
-          <input bind:value={form.name} type="text" class="field-input" placeholder="europe" required>
+          <label class="field-label" for="field-scope-name">Scope Name</label>
+          <input id="field-scope-name" bind:value={form.name} type="text" class="field-input" placeholder="europe" required>
         </div>
         <div class="mb-5">
-          <label class="field-label">
+          <div class="field-label">
             Parent Scope ID
             <span class="text-zinc-400 font-normal">(optional)</span>
-          </label>
+          </div>
           <div class="relative">
             <input
               bind:value={form.parent_scope_id}

@@ -109,11 +109,11 @@
 
 <!-- API Key detail drawer -->
 {#if drawerKey}
-  <div class="drawer-backdrop" onclick={() => drawerKey = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerKey = null} onkeydown={(e) => e.key === 'Escape' && (drawerKey = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">API Key Details</div>
-      <button onclick={() => drawerKey = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerKey = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -159,17 +159,17 @@
 
 <!-- Generate API Key modal -->
 {#if showModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Generate API Key</div>
       <div class="modal-desc">Create a new client credential pair. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Key Name</label>
-          <input bind:value={form.name} type="text" class="field-input" placeholder="my-service-key" required>
+          <label class="field-label" for="field-key-name">Key Name</label>
+          <input id="field-key-name" bind:value={form.name} type="text" class="field-input" placeholder="my-service-key" required>
         </div>
         <div class="mb-5">
-          <label class="field-label">User ID</label>
+          <div class="field-label">User ID</div>
           <div class="relative">
             <input
               bind:value={form.user_id}

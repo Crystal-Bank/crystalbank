@@ -113,8 +113,9 @@
 <div class="card mb-4 p-4">
   <div class="flex flex-wrap gap-3 items-end">
     <div class="flex-1 min-w-40">
-      <label class="field-label">Aggregate ID</label>
+      <label class="field-label" for="field-filter-aggregate-id">Aggregate ID</label>
       <input
+        id="field-filter-aggregate-id"
         bind:value={filterAggregateId}
         type="text"
         class="field-input font-mono text-xs"
@@ -123,8 +124,9 @@
       >
     </div>
     <div class="flex-1 min-w-40">
-      <label class="field-label">Event ID</label>
+      <label class="field-label" for="field-filter-event-id">Event ID</label>
       <input
+        id="field-filter-event-id"
         bind:value={filterEventId}
         type="text"
         class="field-input font-mono text-xs"
@@ -133,8 +135,9 @@
       >
     </div>
     <div class="flex-1 min-w-40">
-      <label class="field-label">Event Handle</label>
+      <label class="field-label" for="field-filter-event-handle">Event Handle</label>
       <input
+        id="field-filter-event-handle"
         bind:value={filterEventHandle}
         type="text"
         class="field-input text-xs"
@@ -191,11 +194,11 @@
 
 <!-- Event detail drawer -->
 {#if drawerEvent}
-  <div class="drawer-backdrop" onclick={() => drawerEvent = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerEvent = null} onkeydown={(e) => e.key === 'Escape' && (drawerEvent = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Event Details</div>
-      <button onclick={() => drawerEvent = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerEvent = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>

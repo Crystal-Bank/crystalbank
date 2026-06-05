@@ -432,7 +432,7 @@
 
 <!-- ── Request Block modal ──────────────────────────── -->
 {#if showBlockModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showBlockModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showBlockModal = false }} onkeydown={(e) => e.key === 'Escape' && (showBlockModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Request Block</div>
       <div class="modal-desc">The block will not take effect until approved by a user with the blocking approval permission.</div>
@@ -468,11 +468,11 @@
 
 <!-- ── Request Removal drawer ───────────────────────── -->
 {#if pendingRemoval}
-  <div class="drawer-backdrop" onclick={() => { pendingRemoval = null; removalReason = '' }}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => { pendingRemoval = null; removalReason = '' }} onkeydown={(e) => e.key === 'Escape' && (pendingRemoval = null) && (removalReason = '')}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Request Removal</div>
-      <button onclick={() => { pendingRemoval = null; removalReason = '' }} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => { pendingRemoval = null; removalReason = '' }} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -510,11 +510,11 @@
 
 <!-- ── Approval reference drawer ────────────────────── -->
 {#if lastRequest}
-  <div class="drawer-backdrop" onclick={() => lastRequest = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => lastRequest = null} onkeydown={(e) => e.key === 'Escape' && (lastRequest = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Request Submitted</div>
-      <button onclick={() => lastRequest = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => lastRequest = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -559,7 +559,7 @@
 
 <!-- ── Request Closure modal ────────────────────────── -->
 {#if showClosureModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showClosureModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showClosureModal = false }} onkeydown={(e) => e.key === 'Escape' && (showClosureModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Request Closure</div>
       <div class="modal-desc">The account will not be closed until approved by a user with the closure approval permission.</div>
@@ -593,11 +593,11 @@
 
 <!-- ── Closure request submitted drawer ─────────────── -->
 {#if lastClosureRequest}
-  <div class="drawer-backdrop" onclick={() => lastClosureRequest = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => lastClosureRequest = null} onkeydown={(e) => e.key === 'Escape' && (lastClosureRequest = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Closure Request Submitted</div>
-      <button onclick={() => lastClosureRequest = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => lastClosureRequest = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -632,7 +632,7 @@
 
 <!-- ── Request Virtual Account modal ────────────────── -->
 {#if showVirtualModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showVirtualModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showVirtualModal = false }} onkeydown={(e) => e.key === 'Escape' && (showVirtualModal = false)}>
     <div class="modal-box">
       <div class="modal-title">Request Virtual Account</div>
       <div class="modal-desc">A virtual subaccount will be created under this account. It inherits all currencies, customers, and scope from the parent.</div>
@@ -659,11 +659,11 @@
 
 <!-- ── Posting detail drawer ────────────────────────── -->
 {#if drawerPosting}
-  <div class="drawer-backdrop" onclick={() => drawerPosting = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerPosting = null} onkeydown={(e) => e.key === 'Escape' && (drawerPosting = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Posting Details</div>
-      <button onclick={() => drawerPosting = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerPosting = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>

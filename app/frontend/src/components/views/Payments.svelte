@@ -46,6 +46,7 @@
 
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
   {#each PAYMENT_TYPES as pt (pt.label)}
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
     <div
       class="card p-5 flex flex-col gap-3 {pt.available ? 'hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer group' : 'opacity-50'}"
       role={pt.available ? 'button' : undefined}

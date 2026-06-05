@@ -130,6 +130,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 /* ── Sidebar nav ──────────────────────────────────────── */
 .nav-link {
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 0.625rem;
   padding: 0.5rem 0.75rem;
@@ -140,6 +141,9 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   color: rgba(255,255,255,0.65);
   transition: all 0.15s;
   user-select: none;
+  background: none;
+  border: none;
+  text-align: left;
 }
 .nav-link:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
 .nav-link.active { background: rgba(255,255,255,0.13); color: white; }

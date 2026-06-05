@@ -191,7 +191,7 @@
     <div class="card p-10 text-center text-zinc-400 text-sm">No roles found</div>
   {/if}
   {#each viewData.roles as r (r.id)}
-    <div class="card p-4 cursor-pointer" onclick={() => drawerRole = r}>
+    <button type="button" class="card p-4 cursor-pointer w-full text-left" onclick={() => drawerRole = r}>
       <div class="flex items-center gap-2 mb-2">
         <span class="font-semibold text-sm">{r.name}</span>
         <span class="mono text-xs">{r.id}</span>
@@ -210,7 +210,7 @@
           {/each}
         </div>
       {/if}
-    </div>
+    </button>
   {/each}
 </div>
 
@@ -227,11 +227,11 @@
 
 <!-- Role detail drawer -->
 {#if drawerRole}
-  <div class="drawer-backdrop" onclick={() => drawerRole = null}></div>
+  <div class="drawer-backdrop" role="presentation" onclick={() => drawerRole = null} onkeydown={(e) => e.key === 'Escape' && (drawerRole = null)}></div>
   <div class="drawer-panel">
     <div class="drawer-header">
       <div class="drawer-title">Role Details</div>
-      <button onclick={() => drawerRole = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <button aria-label="Close" onclick={() => drawerRole = null} class="text-zinc-400 hover:text-zinc-700 transition-colors">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -281,13 +281,13 @@
 {/if}
 
 {#if showUpdateModal && updateTargetRole}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showUpdateModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showUpdateModal = false }} onkeydown={(e) => e.key === 'Escape' && (showUpdateModal = false)}>
     <div class="modal-box modal-box-lg">
       <div class="modal-title">Update Permissions</div>
       <div class="modal-desc">Select the full desired permission set for <strong>{updateTargetRole.name}</strong>. This will replace the current permissions.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleUpdateSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Permissions</label>
+          <div class="field-label">Permissions</div>
           <div class="permission-list">
             <label class="permission-item border-b border-zinc-200">
               <input type="checkbox" bind:this={updateSelectAllEl} checked={updateAllSelected} onchange={updateToggleAll}>
@@ -334,17 +334,17 @@
 {/if}
 
 {#if showModal}
-  <div class="modal-backdrop" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }}>
+  <div class="modal-backdrop" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) showModal = false }} onkeydown={(e) => e.key === 'Escape' && (showModal = false)}>
     <div class="modal-box modal-box-lg">
       <div class="modal-title">Create Role</div>
       <div class="modal-desc">Define a new permission role. Requires scope.</div>
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit() }}>
         <div class="mb-4">
-          <label class="field-label">Role Name</label>
-          <input bind:value={form.name} type="text" class="field-input" placeholder="admin" required>
+          <label class="field-label" for="field-role-name">Role Name</label>
+          <input id="field-role-name" bind:value={form.name} type="text" class="field-input" placeholder="admin" required>
         </div>
         <div class="mb-4">
-          <label class="field-label">Permissions</label>
+          <div class="field-label">Permissions</div>
           <div class="permission-list">
             <label class="permission-item border-b border-zinc-200">
               <input type="checkbox" bind:this={selectAllEl} checked={allSelected} onchange={toggleAll}>
@@ -382,7 +382,7 @@
           </div>
         </div>
         <div class="mb-5">
-          <label class="field-label">Scope UUIDs</label>
+          <div class="field-label">Scope UUIDs</div>
           {#if form.selectedScopes.length > 0}
             <div class="flex flex-wrap gap-1.5 mb-2">
               {#each form.selectedScopes as scopeId (scopeId)}
