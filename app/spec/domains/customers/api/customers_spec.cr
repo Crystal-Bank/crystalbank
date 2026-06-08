@@ -53,4 +53,41 @@ describe CrystalBank::Domains::Customers::Api::Customers do
       results.should be_empty
     end
   end
+
+  describe "GET /customers - ids filter" do
+    it "returns only the customer matching the given ids" do
+      other_id = UUID.v7
+      other_req = Test::Customer::Events::Onboarding::Requested.new.create(aggr_id: other_id)
+      other_acc = Test::Customer::Events::Onboarding::Accepted.new.create(aggr_id: other_id)
+      TEST_EVENT_STORE.append(other_req)
+      TEST_EVENT_STORE.append(other_acc)
+      Customers::Projections::Customers.new.apply(other_req)
+      Customers::Projections::Customers.new.apply(other_acc)
+
+      context = CrystalBank::Api::Context.new(
+        user_id: UUID.v7,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::READ_customers_list,
+        scope: available_scope_id,
+        available_scopes: [available_scope_id]
+      )
+
+      results = Customers::Queries::Customers.new.list(context, cursor: nil, limit: 100, uuids: [customer_id])
+      results.map(&.id).should contain(customer_id)
+      results.map(&.id).should_not contain(other_id)
+    end
+
+    it "returns empty when ids filter matches no accessible customers" do
+      context = CrystalBank::Api::Context.new(
+        user_id: UUID.v7,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::READ_customers_list,
+        scope: available_scope_id,
+        available_scopes: [available_scope_id]
+      )
+
+      results = Customers::Queries::Customers.new.list(context, cursor: nil, limit: 100, uuids: [UUID.v7])
+      results.should be_empty
+    end
+  end
 end

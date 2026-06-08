@@ -53,4 +53,41 @@ describe CrystalBank::Domains::Scopes::Api::Scopes do
       results.should be_empty
     end
   end
+
+  describe "GET /scopes - ids filter" do
+    it "returns only the scope matching the given ids" do
+      other_id = UUID.v7
+      other_req = Test::Scope::Events::Creation::Requested.new.create(aggr_id: other_id)
+      other_acc = Test::Scope::Events::Creation::Accepted.new.create(aggr_id: other_id)
+      TEST_EVENT_STORE.append(other_req)
+      TEST_EVENT_STORE.append(other_acc)
+      Scopes::Projections::Scopes.new.apply(other_req)
+      Scopes::Projections::Scopes.new.apply(other_acc)
+
+      context = CrystalBank::Api::Context.new(
+        user_id: UUID.v7,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::READ_scopes_list,
+        scope: available_scope_id,
+        available_scopes: [available_scope_id]
+      )
+
+      results = Scopes::Queries::Scopes.new.list(context, cursor: nil, limit: 100, uuids: [scope_item_id])
+      results.map(&.id).should contain(scope_item_id)
+      results.map(&.id).should_not contain(other_id)
+    end
+
+    it "returns empty when ids filter matches no accessible scopes" do
+      context = CrystalBank::Api::Context.new(
+        user_id: UUID.v7,
+        roles: [] of UUID,
+        required_permission: CrystalBank::Permissions::READ_scopes_list,
+        scope: available_scope_id,
+        available_scopes: [available_scope_id]
+      )
+
+      results = Scopes::Queries::Scopes.new.list(context, cursor: nil, limit: 100, uuids: [UUID.v7])
+      results.should be_empty
+    end
+  end
 end
