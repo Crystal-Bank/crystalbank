@@ -123,7 +123,7 @@
         </tr>
       {/if}
       {#each viewData.sepa_credit_transfers as t (t.id)}
-        <tr onclick={() => drawerTransfer = t} class="cursor-pointer">
+        <tr onclick={() => drawerTransfer = t} class="cursor-pointer" class:opacity-60={t.status === 'pending_approval'}>
           <td><span class="mono text-xs">{t.end_to_end_id}</span></td>
           <td class="font-medium">{t.creditor_name}</td>
           <td><span class="mono text-xs">{t.creditor_iban}</span></td>

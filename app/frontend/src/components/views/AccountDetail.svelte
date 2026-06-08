@@ -357,8 +357,8 @@
       </thead>
       <tbody>
         {#each virtualAccounts as va (va.id)}
-          <tr>
-            <td><span class="mono text-xs">{shortId(va.id)}</span></td>
+          <tr class:opacity-60={va.status === 'pending_activation' || va.status === 'inactive'}>
+            <td><span class="mono text-xs break-all select-all">{va.id}</span></td>
             <td class="font-medium">{va.name}</td>
             <td><span class="badge {statusBadgeClass(va.status)}">{formatStatus(va.status)}</span></td>
             <td>
