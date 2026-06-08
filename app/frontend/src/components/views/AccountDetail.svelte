@@ -14,9 +14,9 @@
 
   async function resolveAccountMeta() {
     const [scopeRes, customersRes] = await Promise.allSettled([
-      apiFetch('GET', `/scopes/?ids[]=${account.scope_id}&limit=1`),
+      apiFetch('GET', `/scopes/?ids=${account.scope_id}&limit=1`),
       account.customer_ids?.length
-        ? apiFetch('GET', `/customers/?${account.customer_ids.map(id => `ids[]=${id}`).join('&')}&limit=100`)
+        ? apiFetch('GET', `/customers/?ids=${account.customer_ids.join(',')}&limit=100`)
         : Promise.resolve(null),
     ])
     if (scopeRes.status === 'fulfilled' && scopeRes.value?.data?.length) {
