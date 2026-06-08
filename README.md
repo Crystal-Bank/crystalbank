@@ -36,10 +36,15 @@ A **Svelte-based frontend dashboard** provides a visual interface to the system,
 
 - More refined and optimized frontend
 - Dedicated project website
-- Self sign-up to the platform
 - Full event replay to re-project state at any point in time (via [crystal-es](https://github.com/tristanholl/crystal-es))
-- ISO 20022 connectors
+
+**Next up:**
+- Self sign-up to the platform
 - ISO 8583 connectors
+- ISO 20022 connectors
+
+**Potential improvements under exploration:**
+- [Dynamic Consistency Boundary](https://www.eventstore.com/blog/dynamic-consistency-boundary) — evaluating whether DCB-style aggregate boundaries could improve consistency guarantees and reduce coupling across domains without sacrificing the event-sourced model
 
 ## Project Structure
 
