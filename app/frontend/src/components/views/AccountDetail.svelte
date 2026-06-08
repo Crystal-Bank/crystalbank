@@ -8,6 +8,25 @@
   /** @type {{ account: object }} */
   let { account } = $props()
 
+  // ── Resolved scope / customers ───────────────────────
+  let resolvedScope = $state(null)
+  let resolvedCustomers = $state([])
+
+  async function resolveAccountMeta() {
+    const [scopeRes, customersRes] = await Promise.allSettled([
+      apiFetch('GET', `/scopes/?ids[]=${account.scope_id}&limit=1`),
+      account.customer_ids?.length
+        ? apiFetch('GET', `/customers/?${account.customer_ids.map(id => `ids[]=${id}`).join('&')}&limit=100`)
+        : Promise.resolve(null),
+    ])
+    if (scopeRes.status === 'fulfilled' && scopeRes.value?.data?.length) {
+      resolvedScope = scopeRes.value.data[0].attributes
+    }
+    if (customersRes.status === 'fulfilled' && customersRes.value?.data?.length) {
+      resolvedCustomers = customersRes.value.data.map(d => d.attributes)
+    }
+  }
+
   // ── Postings state ───────────────────────────────────
   let postings = $state([])
   let hasMore = $state(false)
@@ -172,6 +191,7 @@
   }
 
   onMount(() => {
+    resolveAccountMeta()
     loadPostings(true)
     loadBlocks()
     loadVirtualAccounts(true)
@@ -232,16 +252,30 @@
       <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all w-fit">{account.id}</div>
     </div>
     <div class="col-span-2 sm:col-span-3">
-      <div class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Scope ID</div>
-      <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all w-fit">{account.scope_id}</div>
+      <div class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Scope</div>
+      {#if resolvedScope}
+        <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm w-fit">
+          {resolvedScope.name} <span class="text-zinc-400 font-mono text-xs">{account.scope_id}</span>
+        </div>
+      {:else}
+        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all w-fit">{account.scope_id}</div>
+      {/if}
     </div>
     {#if (account.customer_ids?.length ?? 0) > 0}
       <div class="col-span-2 sm:col-span-3">
-        <div class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Customer IDs</div>
+        <div class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Customers</div>
         <div class="space-y-1">
-          {#each account.customer_ids as cid (cid)}
-            <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all w-fit">{cid}</div>
-          {/each}
+          {#if resolvedCustomers.length > 0}
+            {#each resolvedCustomers as c (c.id)}
+              <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm w-fit">
+                {c.name} <span class="text-zinc-400">&lt;{c.type}&gt;</span>
+              </div>
+            {/each}
+          {:else}
+            {#each account.customer_ids as cid (cid)}
+              <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all w-fit">{cid}</div>
+            {/each}
+          {/if}
         </div>
       </div>
     {/if}
