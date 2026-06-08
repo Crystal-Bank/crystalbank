@@ -45,7 +45,7 @@
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No customers found</td></tr>
       {/if}
       {#each viewData.customers as c (c.id)}
-        <tr onclick={() => drawerCustomer = c} class="cursor-pointer">
+        <tr onclick={() => drawerCustomer = c} class="cursor-pointer" class:opacity-60={c.status === 'pending_approval' || c.status === 'inactive'}>
           <td><span class="mono text-xs">{c.id}</span></td>
           <td class="font-medium">{c.name}</td>
           <td><span class="badge" class:badge-blue={c.type === 'individual'} class:badge-amber={c.type !== 'individual'}>{c.type}</span></td>

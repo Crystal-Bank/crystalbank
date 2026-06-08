@@ -151,7 +151,7 @@
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No users found</td></tr>
       {/if}
       {#each viewData.users as u (u.id)}
-        <tr onclick={() => openDrawer(u)} class="cursor-pointer">
+        <tr onclick={() => openDrawer(u)} class="cursor-pointer" class:opacity-60={u.status === 'pending_approval' || u.status === 'inactive'}>
           <td><span class="mono text-xs">{u.id}</span></td>
           <td class="font-medium">{u.name}</td>
           <td class="text-zinc-500">{u.email}</td>
