@@ -254,8 +254,8 @@
     <div class="col-span-2 sm:col-span-3">
       <div class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-1">Scope</div>
       {#if resolvedScope}
-        <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm w-fit">
-          {resolvedScope.name} <span class="text-zinc-400 font-mono text-xs">{account.scope_id}</span>
+        <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm w-fit cursor-default" title={account.scope_id}>
+          {resolvedScope.name}
         </div>
       {:else}
         <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all w-fit">{account.scope_id}</div>
@@ -267,8 +267,8 @@
         <div class="space-y-1">
           {#if resolvedCustomers.length > 0}
             {#each resolvedCustomers as c (c.id)}
-              <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm w-fit">
-                {c.name} <span class="text-zinc-400">&lt;{c.type}&gt;</span>
+              <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-2 text-sm w-fit cursor-default" title={c.id}>
+                {c.name}
               </div>
             {/each}
           {:else}
