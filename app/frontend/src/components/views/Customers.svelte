@@ -8,6 +8,16 @@
   let form = $state({ name: '', type: '' })
   let customerTypeOptions = $state([])
   let drawerCustomer = $state(null)
+  let resolvedScope = $state(null)
+
+  async function openDrawer(customer) {
+    drawerCustomer = customer
+    resolvedScope = null
+    try {
+      const res = await apiFetch('GET', `/scopes/?ids=${customer.scope_id}&limit=1`)
+      if (res?.data?.length) resolvedScope = res.data[0].attributes
+    } catch {}
+  }
 
   async function openModal() {
     form = { name: '', type: '' }
@@ -45,7 +55,7 @@
         <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No customers found</td></tr>
       {/if}
       {#each viewData.customers as c (c.id)}
-        <tr onclick={() => drawerCustomer = c} class="cursor-pointer" class:opacity-60={c.status === 'pending_approval' || c.status === 'inactive'}>
+        <tr onclick={() => openDrawer(c)} class="cursor-pointer" class:opacity-60={c.status === 'pending_approval' || c.status === 'inactive'}>
           <td><span class="mono text-xs">{c.id}</span></td>
           <td class="font-medium">{c.name}</td>
           <td><span class="badge" class:badge-blue={c.type === 'individual'} class:badge-amber={c.type !== 'individual'}>{c.type}</span></td>
@@ -99,8 +109,14 @@
         <div><span class="badge {statusBadgeClass(drawerCustomer.status)}">{formatStatus(drawerCustomer.status)}</span></div>
       </div>
       <div class="drawer-field">
-        <div class="drawer-field-label">Scope ID</div>
-        <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerCustomer.scope_id}</div>
+        <div class="drawer-field-label">Scope</div>
+        {#if resolvedScope}
+          <div class="bg-zinc-100 border border-zinc-200 rounded px-2.5 py-1.5 text-sm w-fit cursor-default" title={drawerCustomer.scope_id}>
+            {resolvedScope.name}
+          </div>
+        {:else}
+          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerCustomer.scope_id}</div>
+        {/if}
       </div>
     </div>
   </div>
