@@ -55,10 +55,13 @@ module CrystalBank::Domains::Scopes
         cursor : UUID?,
         @[AC::Param::Info(description: "Limit parameter for pagination (default 20)", example: "20")]
         limit : Int32 = 20,
+        @[AC::Param::Info(description: "Optional comma-separated list of scope UUIDs to filter by")]
+        ids : String? = nil,
       ) : ListResponse(Responses::Scope)
         authorized?("read_scopes_list", request_scope: false)
 
-        scopes = ::Scopes::Queries::Scopes.new.list(context, cursor: cursor, limit: limit + 1).map do |s|
+        uuids = ids.try(&.split(",").compact_map { |s| UUID.new(s.strip) rescue nil })
+        scopes = ::Scopes::Queries::Scopes.new.list(context, cursor: cursor, limit: limit + 1, uuids: uuids).map do |s|
           Responses::Scope.new(
             s.id,
             s.scope_id,

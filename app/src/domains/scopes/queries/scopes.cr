@@ -58,6 +58,7 @@ module CrystalBank::Domains::Scopes
         context : CrystalBank::Api::Context,
         cursor : UUID?,
         limit : Int32,
+        uuids : Array(UUID)? = nil,
       ) : Array(Scope)
         query_param_counter = 0
         query = [] of String
@@ -73,6 +74,11 @@ module CrystalBank::Domains::Scopes
         unless cursor.nil?
           query << %(AND "uuid" >= $#{query_param_counter += 1})
           query_params << cursor
+        end
+
+        unless uuids.nil?
+          query << %(AND "uuid" = ANY($#{query_param_counter += 1}::uuid[]))
+          query_params << uuids
         end
 
         query << %(ORDER BY "uuid" ASC)
