@@ -4,6 +4,27 @@
   import { apiFetch } from '../../lib/api.js'
   import { statusBadgeClass, formatStatus } from '../../lib/utils.js'
 
+  // ── Scope name resolution ─────────────────────────────
+  let allScopes = $state([])
+  $effect(() => {
+    apiFetch('GET', '/scopes/?limit=200').then(res => {
+      allScopes = res.data.map(e => e.attributes)
+    }).catch(() => {})
+  })
+  let scopeById = $derived(Object.fromEntries(allScopes.map(s => [s.id, s])))
+
+  // ── Expandable rows ───────────────────────────────────
+  let expandedIds = $state(new Set())
+  function toggleExpand(id, e) {
+    e.stopPropagation()
+    expandedIds = new Set(
+      expandedIds.has(id)
+        ? [...expandedIds].filter(x => x !== id)
+        : [...expandedIds, id]
+    )
+  }
+
+  // ── Create modal ──────────────────────────────────────
   let showModal = $state(false)
   let form = $state({ name: '', selectedPermissions: [], selectedScopes: [] })
   let scopeOptions = $state([])
@@ -186,44 +207,65 @@
   </button>
 </div>
 
-<div class="space-y-3">
-  {#if viewData.roles.length === 0 && !ui.loadingView}
-    <div class="card p-10 text-center text-zinc-400 text-sm">No roles found</div>
-  {/if}
-  {#each viewData.roles as r (r.id)}
-    <button type="button" class="card p-4 cursor-pointer w-full text-left" onclick={() => drawerRole = r}>
-      <div class="flex items-center gap-2 mb-2">
-        <span class="font-semibold text-sm">{r.name}</span>
-        <span class="mono text-xs">{r.id}</span>
-        <span class="badge {statusBadgeClass(r.status)}">{formatStatus(r.status)}</span>
-      </div>
-      <div class="flex flex-wrap gap-1.5">
-        {#each r.permissions ?? [] as p (p)}
-          <span class="badge badge-blue">{p}</span>
-        {/each}
-      </div>
-      {#if r.scopes?.length > 0}
-        <div class="mt-2 flex flex-wrap items-center gap-1">
-          <span class="text-xs text-zinc-400">Scopes:</span>
-          {#each r.scopes as s (s)}
-            <span class="mono text-xs">{s}</span>
-          {/each}
-        </div>
+<div class="card overflow-hidden">
+  <table class="data-table">
+    <thead>
+      <tr><th></th><th>ID</th><th>Name</th><th>Scopes</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {#if viewData.roles.length === 0 && !ui.loadingView}
+        <tr><td colspan="5" class="text-center py-10 text-zinc-400 text-sm">No roles found</td></tr>
       {/if}
-    </button>
-  {/each}
+      {#each viewData.roles as r (r.id)}
+        <tr onclick={() => drawerRole = r} class="cursor-pointer">
+          <td onclick={(e) => toggleExpand(r.id, e)} class="cursor-default" style="width:2.5rem">
+            <svg
+              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              style="transition: transform 0.15s; transform: rotate({expandedIds.has(r.id) ? 90 : 0}deg); display:block; color: #a1a1aa"
+            >
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </td>
+          <td><span class="mono text-xs">{r.id}</span></td>
+          <td class="font-medium">{r.name}</td>
+          <td>
+            <div class="flex flex-wrap gap-1">
+              {#each r.scopes ?? [] as s (s)}
+                <span class="badge badge-zinc" title={s}>{scopeById[s]?.name ?? s.slice(0, 8) + '…'}</span>
+              {/each}
+            </div>
+          </td>
+          <td><span class="badge {statusBadgeClass(r.status)}">{formatStatus(r.status)}</span></td>
+        </tr>
+        {#if expandedIds.has(r.id)}
+          <tr>
+            <td colspan="5" class="bg-zinc-50 px-6 py-3">
+              {#if !(r.permissions?.length)}
+                <span class="text-zinc-400 text-xs">No permissions assigned</span>
+              {:else}
+                <div class="flex flex-wrap gap-1.5">
+                  {#each [...r.permissions].sort() as p (p)}
+                    <span class="badge badge-blue">{p}</span>
+                  {/each}
+                </div>
+              {/if}
+            </td>
+          </tr>
+        {/if}
+      {/each}
+    </tbody>
+  </table>
+  {#if ui.loadingView === 'roles'}
+    <div class="flex justify-center py-6">
+      <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
+    </div>
+  {/if}
+  {#if pagination.hasMore.roles && !ui.loading}
+    <div class="p-4 border-t border-zinc-100 flex justify-center">
+      <button onclick={() => loadMore('roles')} class="btn btn-ghost btn-sm">Load more</button>
+    </div>
+  {/if}
 </div>
-
-{#if ui.loadingView === 'roles'}
-  <div class="flex justify-center py-6">
-    <div class="animate-spin w-5 h-5 border-2 border-zinc-300 border-t-zinc-700 rounded-full"></div>
-  </div>
-{/if}
-{#if pagination.hasMore.roles && !ui.loading}
-  <div class="mt-4 flex justify-center">
-    <button onclick={() => loadMore('roles')} class="btn btn-ghost btn-sm">Load more</button>
-  </div>
-{/if}
 
 <!-- Role detail drawer -->
 {#if drawerRole}
@@ -251,7 +293,7 @@
       <div class="drawer-field">
         <div class="drawer-field-label">Permissions</div>
         <div class="flex flex-wrap gap-1">
-          {#each drawerRole.permissions ?? [] as p (p)}
+          {#each [...(drawerRole.permissions ?? [])].sort() as p (p)}
             <span class="badge badge-blue">{p}</span>
           {/each}
           {#if (drawerRole.permissions ?? []).length === 0}
@@ -262,9 +304,14 @@
       {#if drawerRole.scopes?.length > 0}
         <div class="drawer-field">
           <div class="drawer-field-label">Scopes</div>
-          <div class="space-y-1">
+          <div class="space-y-2">
             {#each drawerRole.scopes as s (s)}
-              <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{s}</div>
+              <div>
+                {#if scopeById[s]}
+                  <div class="drawer-field-value font-medium mb-0.5">{scopeById[s].name}</div>
+                {/if}
+                <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{s}</div>
+              </div>
             {/each}
           </div>
         </div>
