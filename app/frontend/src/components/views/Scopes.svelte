@@ -60,6 +60,33 @@
   $effect(() => {
     if (!drawerScope) showRenameForm = false
   })
+
+  let scopeById = $derived(
+    Object.fromEntries(viewData.scopes.map(s => [s.id, s]))
+  )
+
+  let flatTree = $derived.by(() => {
+    if (viewData.scopes.length === 0) return []
+    const map = {}
+    viewData.scopes.forEach(s => { map[s.id] = { ...s, children: [] } })
+    const roots = []
+    viewData.scopes.forEach(s => {
+      if (s.parent_scope_id && map[s.parent_scope_id]) {
+        map[s.parent_scope_id].children.push(map[s.id])
+      } else {
+        roots.push(map[s.id])
+      }
+    })
+    const result = []
+    function walk(nodes, depth) {
+      nodes.forEach(n => {
+        result.push({ ...n, depth })
+        if (n.children.length) walk(n.children, depth + 1)
+      })
+    }
+    walk(roots, 0)
+    return result
+  })
 </script>
 
 <div class="page-header">
@@ -77,17 +104,26 @@
   <table class="data-table">
     <thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Parent Scope</th></tr></thead>
     <tbody>
-      {#if viewData.scopes.length === 0 && !ui.loadingView}
+      {#if flatTree.length === 0 && !ui.loadingView}
         <tr><td colspan="4" class="text-center py-10 text-zinc-400 text-sm">No scopes found</td></tr>
       {/if}
-      {#each viewData.scopes as s (s.id)}
+      {#each flatTree as s (s.id)}
         <tr onclick={() => drawerScope = s} class="cursor-pointer">
           <td><span class="mono text-xs">{s.id}</span></td>
-          <td class="font-medium">{s.name}</td>
+          <td class="font-medium">
+            <span style="padding-left: {s.depth * 1.25}rem" class="flex items-center gap-1">
+              {#if s.depth > 0}
+                <span class="text-zinc-300 select-none text-xs">└─</span>
+              {/if}
+              {s.name}
+            </span>
+          </td>
           <td><span class="badge {statusBadgeClass(s.status)}">{formatStatus(s.status)}</span></td>
           <td>
             {#if s.parent_scope_id}
-              <span class="mono text-xs">{s.parent_scope_id}</span>
+              <span class="text-sm text-zinc-700 cursor-default" title={s.parent_scope_id}>
+                {scopeById[s.parent_scope_id]?.name ?? s.parent_scope_id.slice(0, 8) + '…'}
+              </span>
             {:else}
               <span class="text-zinc-400 text-xs">Root</span>
             {/if}
@@ -132,8 +168,9 @@
         <div><span class="badge {statusBadgeClass(drawerScope.status)}">{formatStatus(drawerScope.status)}</span></div>
       </div>
       <div class="drawer-field">
-        <div class="drawer-field-label">Parent Scope ID</div>
+        <div class="drawer-field-label">Parent Scope</div>
         {#if drawerScope.parent_scope_id}
+          <div class="drawer-field-value font-medium mb-1">{scopeById[drawerScope.parent_scope_id]?.name ?? 'Unknown'}</div>
           <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerScope.parent_scope_id}</div>
         {:else}
           <div class="drawer-field-value text-zinc-400">Root scope</div>
