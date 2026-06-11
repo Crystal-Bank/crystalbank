@@ -90,10 +90,10 @@ module CrystalBank::Domains::Ledger::Transactions
           currency_str = r.currency.to_s.upcase
           amount_formatted = "%.2f %s" % [debit_total / 100.0, currency_str]
           summary = if (ref = r.remittance_information) && !ref.empty?
-            "#{amount_formatted} · #{ref}"
-          else
-            "#{amount_formatted} · #{entries.size} entries"
-          end
+                      "#{amount_formatted} · #{ref}"
+                    else
+                      "#{amount_formatted} · #{entries.size} entries"
+                    end
 
           approval_fields = [
             Approvals::ApprovalSubject::Field.new("Currency", currency_str),
