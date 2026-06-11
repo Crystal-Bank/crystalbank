@@ -1,6 +1,5 @@
 <script>
-  import { onMount } from 'svelte'
-  import { ui } from '../../lib/store.svelte.js'
+  import { auth, ui } from '../../lib/store.svelte.js'
   import { switchView } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
 
@@ -28,8 +27,13 @@
     sepa_credit_transfers: '/payments/sepa/credit-transfers/?limit=200&status=pending',
   }
 
-  onMount(async () => {
-    await Promise.allSettled(
+  $effect(() => {
+    // Track auth.scope so the effect re-runs on scope changes
+    const _scope = auth.scope
+    for (const key of Object.keys(stats)) {
+      stats[key] = { count: null, hasMore: false }
+    }
+    Promise.allSettled(
       Object.entries(PATHS).map(async ([key, path]) => {
         try {
           const res = await apiFetch('GET', path)
