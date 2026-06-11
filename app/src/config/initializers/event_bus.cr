@@ -32,6 +32,7 @@ bus.subscribe(Approvals::Collection::Events::Collected, Approvals::Projections::
 bus.subscribe(Approvals::Rejection::Events::Rejected, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Approvals::Projections::Approvals)
 bus.subscribe(Approvals::Collection::Events::Completed, Accounts::Opening::Commands::ProcessApproval)
+bus.subscribe(Approvals::Collection::Events::Completed, Ledger::Transactions::Request::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Payments::Sepa::CreditTransfers::Initiation::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Users::Onboarding::Commands::ProcessApproval)
 bus.subscribe(Approvals::Collection::Events::Completed, Users::AssignRoles::Commands::ProcessApproval)
@@ -75,7 +76,6 @@ bus.subscribe(Scopes::NameChange::Events::Accepted, Scopes::Projections::Scopes)
 bus.subscribe(Approvals::Collection::Events::Completed, Scopes::NameChange::Commands::ProcessApproval)
 
 # Ledger
-bus.subscribe(Ledger::Transactions::Request::Events::Requested, Ledger::Transactions::Request::Commands::ProcessRequest)
 bus.subscribe(Ledger::Transactions::Request::Events::Accepted, Ledger::Transactions::Projections::Postings)
 
 # Payments — SEPA Credit Transfers

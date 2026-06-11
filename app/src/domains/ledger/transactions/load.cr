@@ -7,6 +7,7 @@ require "./api/transactions"
 # Commands
 require "./commands/request/request"
 require "./commands/request/process_request"
+require "./commands/request/process_approval"
 
 # Events
 require "./events/request/accepted"

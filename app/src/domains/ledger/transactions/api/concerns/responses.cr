@@ -7,7 +7,10 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(format: "uuid", description: "ID of the created ledger transaction")]
         getter id : UUID
 
-        def initialize(@id : UUID)
+        @[JSON::Field(format: "uuid", description: "ID of the approval request — transaction posts only after approval is collected")]
+        getter approval_id : UUID
+
+        def initialize(@id : UUID, @approval_id : UUID)
         end
       end
 

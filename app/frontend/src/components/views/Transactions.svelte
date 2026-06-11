@@ -354,9 +354,13 @@
           {/each}
         </div>
 
+        <div class="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-700 mb-4">
+          This transaction will be submitted for approval. Postings appear in the ledger only after a user with the <strong>ledger transactions approval</strong> permission collects the approval.
+        </div>
+
         <div class="flex gap-2 justify-end">
           <button type="button" onclick={() => showModal = false} class="btn btn-ghost">Cancel</button>
-          <button type="submit" class="btn btn-primary" disabled={ui.loading}>Create Transaction</button>
+          <button type="submit" class="btn btn-primary" disabled={ui.loading}>Submit for Approval</button>
         </div>
 
       </form>

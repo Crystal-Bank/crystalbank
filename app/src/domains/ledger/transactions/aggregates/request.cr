@@ -5,6 +5,7 @@ module CrystalBank::Domains::Ledger::Transactions
         # Apply 'Ledger::Transactions::Request::Events::Accepted' to the aggregate state
         def apply(event : Ledger::Transactions::Request::Events::Accepted)
           @state.increase_version(event.header.aggregate_version)
+          @state.status = "accepted"
         end
 
         # Apply 'Ledger::Transactions::Request::Events::Requested' to the aggregate state
@@ -22,6 +23,7 @@ module CrystalBank::Domains::Ledger::Transactions
           @state.external_ref = body.external_ref
           @state.channel = body.channel
           @state.scope_id = body.scope_id
+          @state.status = "pending_approval"
         end
       end
     end
