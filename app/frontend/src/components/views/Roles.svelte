@@ -6,11 +6,18 @@
 
   // ── Scope name resolution ─────────────────────────────
   let allScopes = $state([])
+  let fetchedScopeIds = $state(new Set())
+
   $effect(() => {
-    apiFetch('GET', '/scopes/?limit=200').then(res => {
-      allScopes = res.data.map(e => e.attributes)
+    const needed = [...new Set(viewData.roles.flatMap(r => r.scopes ?? []))]
+      .filter(id => !fetchedScopeIds.has(id))
+    if (needed.length === 0) return
+    apiFetch('GET', `/scopes/?ids=${needed.join(',')}&limit=${needed.length}`).then(res => {
+      allScopes = [...allScopes, ...res.data.map(e => e.attributes)]
+      fetchedScopeIds = new Set([...fetchedScopeIds, ...needed])
     }).catch(() => {})
   })
+
   let scopeById = $derived(Object.fromEntries(allScopes.map(s => [s.id, s])))
 
   // ── Expandable rows ───────────────────────────────────
