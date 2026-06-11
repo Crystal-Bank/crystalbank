@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from 'svelte'
   import { auth, ui } from '../../lib/store.svelte.js'
   import { switchView } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
@@ -28,21 +29,22 @@
   }
 
   $effect(() => {
-    // Track auth.scope so the effect re-runs on scope changes
     const _scope = auth.scope
-    for (const key of Object.keys(stats)) {
-      stats[key] = { count: null, hasMore: false }
-    }
-    Promise.allSettled(
-      Object.entries(PATHS).map(async ([key, path]) => {
-        try {
-          const res = await apiFetch('GET', path)
-          stats[key] = { count: res.data.length, hasMore: res.meta.has_more }
-        } catch {
-          stats[key] = { count: null, hasMore: false }
-        }
-      })
-    )
+    untrack(() => {
+      for (const key of Object.keys(stats)) {
+        stats[key] = { count: null, hasMore: false }
+      }
+      Promise.allSettled(
+        Object.entries(PATHS).map(async ([key, path]) => {
+          try {
+            const res = await apiFetch('GET', path)
+            stats[key] = { count: res.data.length, hasMore: res.meta.has_more }
+          } catch {
+            stats[key] = { count: null, hasMore: false }
+          }
+        })
+      )
+    })
   })
 
   function fmt(s) {
