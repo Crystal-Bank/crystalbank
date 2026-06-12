@@ -71,3 +71,23 @@ event_handlers.register(Users::AssignRoles::Events::Requested)
 event_handlers.register(Users::RemoveRoles::Events::Accepted)
 event_handlers.register(Users::RemoveRoles::Events::Completed)
 event_handlers.register(Users::RemoveRoles::Events::Requested)
+
+# Cards — ISO 8583 v1987 Authorizations
+event_handlers.register(Cards::Iso8583::V1987::Authorizations::Request::Events::Received)
+event_handlers.register(Cards::Iso8583::V1987::Authorizations::Response::Events::Approved)
+event_handlers.register(Cards::Iso8583::V1987::Authorizations::Response::Events::Declined)
+
+# Cards — ISO 8583 v1987 Advices
+event_handlers.register(Cards::Iso8583::V1987::Advices::Advice::Events::Received)
+event_handlers.register(Cards::Iso8583::V1987::Advices::AdviceResponse::Events::Accepted)
+event_handlers.register(Cards::Iso8583::V1987::Advices::AdviceResponse::Events::Rejected)
+
+# Cards — ISO 8583 v1993 Authorizations
+event_handlers.register(Cards::Iso8583::V1993::Authorizations::Request::Events::Received)
+event_handlers.register(Cards::Iso8583::V1993::Authorizations::Response::Events::Approved)
+event_handlers.register(Cards::Iso8583::V1993::Authorizations::Response::Events::Declined)
+
+# Cards — ISO 8583 v1993 Advices
+event_handlers.register(Cards::Iso8583::V1993::Advices::Advice::Events::Received)
+event_handlers.register(Cards::Iso8583::V1993::Advices::AdviceResponse::Events::Accepted)
+event_handlers.register(Cards::Iso8583::V1993::Advices::AdviceResponse::Events::Rejected)

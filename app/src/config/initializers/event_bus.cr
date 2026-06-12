@@ -94,6 +94,26 @@ bus.subscribe(Users::AssignRoles::Events::Accepted, Users::Projections::Users)
 bus.subscribe(Users::RemoveRoles::Events::Requested, Users::RemoveRoles::Commands::ProcessRequest)
 bus.subscribe(Users::RemoveRoles::Events::Accepted, Users::Projections::Users)
 
+# Cards — ISO 8583 v1987 Authorizations
+bus.subscribe(Cards::Iso8583::V1987::Authorizations::Request::Events::Received, Cards::Iso8583::V1987::Authorizations::Projections::Authorizations)
+bus.subscribe(Cards::Iso8583::V1987::Authorizations::Response::Events::Approved, Cards::Iso8583::V1987::Authorizations::Projections::Authorizations)
+bus.subscribe(Cards::Iso8583::V1987::Authorizations::Response::Events::Declined, Cards::Iso8583::V1987::Authorizations::Projections::Authorizations)
+
+# Cards — ISO 8583 v1987 Advices
+bus.subscribe(Cards::Iso8583::V1987::Advices::Advice::Events::Received, Cards::Iso8583::V1987::Advices::Projections::Advices)
+bus.subscribe(Cards::Iso8583::V1987::Advices::AdviceResponse::Events::Accepted, Cards::Iso8583::V1987::Advices::Projections::Advices)
+bus.subscribe(Cards::Iso8583::V1987::Advices::AdviceResponse::Events::Rejected, Cards::Iso8583::V1987::Advices::Projections::Advices)
+
+# Cards — ISO 8583 v1993 Authorizations
+bus.subscribe(Cards::Iso8583::V1993::Authorizations::Request::Events::Received, Cards::Iso8583::V1993::Authorizations::Projections::Authorizations)
+bus.subscribe(Cards::Iso8583::V1993::Authorizations::Response::Events::Approved, Cards::Iso8583::V1993::Authorizations::Projections::Authorizations)
+bus.subscribe(Cards::Iso8583::V1993::Authorizations::Response::Events::Declined, Cards::Iso8583::V1993::Authorizations::Projections::Authorizations)
+
+# Cards — ISO 8583 v1993 Advices
+bus.subscribe(Cards::Iso8583::V1993::Advices::Advice::Events::Received, Cards::Iso8583::V1993::Advices::Projections::Advices)
+bus.subscribe(Cards::Iso8583::V1993::Advices::AdviceResponse::Events::Accepted, Cards::Iso8583::V1993::Advices::Projections::Advices)
+bus.subscribe(Cards::Iso8583::V1993::Advices::AdviceResponse::Events::Rejected, Cards::Iso8583::V1993::Advices::Projections::Advices)
+
 # Events (cross-cutting audit projection)
 bus.subscribe(Accounts::Opening::Events::Requested, Events::Projections::Events)
 bus.subscribe(Accounts::Opening::Events::Accepted, Events::Projections::Events)
@@ -130,3 +150,17 @@ bus.subscribe(Users::AssignRoles::Events::Rejected, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Requested, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Accepted, Events::Projections::Events)
 bus.subscribe(Users::RemoveRoles::Events::Completed, Events::Projections::Events)
+
+# Cards — ISO 8583 (audit)
+bus.subscribe(Cards::Iso8583::V1987::Authorizations::Request::Events::Received, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1987::Authorizations::Response::Events::Approved, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1987::Authorizations::Response::Events::Declined, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1987::Advices::Advice::Events::Received, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1987::Advices::AdviceResponse::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1987::Advices::AdviceResponse::Events::Rejected, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1993::Authorizations::Request::Events::Received, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1993::Authorizations::Response::Events::Approved, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1993::Authorizations::Response::Events::Declined, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1993::Advices::Advice::Events::Received, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1993::Advices::AdviceResponse::Events::Accepted, Events::Projections::Events)
+bus.subscribe(Cards::Iso8583::V1993::Advices::AdviceResponse::Events::Rejected, Events::Projections::Events)
