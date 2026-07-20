@@ -40,9 +40,11 @@ module CrystalBank::Domains::Ledger::Transactions
 
         postings = ::Ledger::Transactions::Queries::Postings.new.list(context, cursor: cursor, limit: limit + 1, account_id: account_id).map do |p|
           currency = CrystalBank::Types::Currencies::Supported.parse(p.currency)
+          direction = CrystalBank::Types::LedgerTransactions::Direction.parse(p.direction)
+          entry_type = CrystalBank::Types::LedgerTransactions::EntryType.parse(p.entry_type)
 
-          details = case p.entry_type
-                    when "sepa_credit_transfer"
+          details = case entry_type
+                    when .sepa_credit_transfer?
                       Responses::SepaCreditTransferDetails.new(p.external_ref)
                     else
                       nil
@@ -52,9 +54,9 @@ module CrystalBank::Domains::Ledger::Transactions
             p.id,
             p.transaction_id,
             p.account_id,
-            p.direction,
+            direction.to_s,
             Responses::Amount.new(p.amount, currency.to_s.upcase, currency.precision),
-            p.entry_type,
+            entry_type.to_s,
             p.posting_date.to_rfc3339,
             p.value_date.to_rfc3339,
             p.remittance_information,
