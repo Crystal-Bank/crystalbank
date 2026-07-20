@@ -2,6 +2,7 @@
   import { viewData, pagination, ui } from '../../lib/store.svelte.js'
   import { loadMore, createLedgerTransaction } from '../../lib/actions.js'
   import { apiFetch } from '../../lib/api.js'
+  import { formatAmount } from '../../lib/utils.js'
 
   const today = () => new Date().toISOString().split('T')[0]
 
@@ -17,7 +18,7 @@
     posting_date: '',
     value_date: '',
     remittance_information: '',
-    metadata: { payment_type: 'INTERNAL_TRANSFER', external_ref: '', channel: 'api' },
+    metadata: { external_ref: '' },
   })
   let entries = $state([
     { _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' },
@@ -42,7 +43,7 @@
       posting_date: today(),
       value_date: today(),
       remittance_information: '',
-      metadata: { payment_type: 'INTERNAL_TRANSFER', external_ref: '', channel: 'api' },
+      metadata: { external_ref: '' },
     }
     entries = [{ _id: 0, account_id: '', direction: 'debit', amount: '', entry_type: 'principal' }]
     entryCounter = 1
@@ -81,9 +82,7 @@
         value_date: form.value_date,
         remittance_information: form.remittance_information,
         metadata: {
-          payment_type: form.metadata.payment_type || undefined,
           external_ref: form.metadata.external_ref || undefined,
-          channel: form.metadata.channel || undefined,
         },
         entries: entries.map(e => ({
           account_id: e.account_id,
@@ -139,8 +138,8 @@
               {p.direction?.toLowerCase()}
             </span>
           </td>
-          <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
-          <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
+          <td class="font-semibold tabular-nums">{formatAmount(p.amount)}</td>
+          <td><span class="badge badge-zinc">{p.amount?.currency}</span></td>
           <td><span class="badge badge-zinc">{p.entry_type?.toLowerCase().replaceAll('_', ' ')}</span></td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.posting_date}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.value_date}</td>
@@ -193,11 +192,11 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Amount</div>
-        <div class="drawer-field-value font-semibold tabular-nums text-lg">{Number(drawerPosting.amount).toLocaleString()}</div>
+        <div class="drawer-field-value font-semibold tabular-nums text-lg">{formatAmount(drawerPosting.amount)}</div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Currency</div>
-        <div><span class="badge badge-zinc">{drawerPosting.currency?.toUpperCase()}</span></div>
+        <div><span class="badge badge-zinc">{drawerPosting.amount?.currency}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Entry Type</div>
@@ -215,6 +214,12 @@
         <div class="drawer-field-label">Remittance Information</div>
         <div class="drawer-field-value">{drawerPosting.remittance_information}</div>
       </div>
+      {#if drawerPosting.details?.external_ref}
+        <div class="drawer-field">
+          <div class="drawer-field-label">External Ref</div>
+          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerPosting.details.external_ref}</div>
+        </div>
+      {/if}
     </div>
   </div>
 {/if}
@@ -253,22 +258,9 @@
           <input id="field-tx-remittance" bind:value={form.remittance_information} type="text" class="field-input" placeholder="Payment for services...">
         </div>
 
-        <div class="grid grid-cols-3 gap-3 mb-5">
-          <div>
-            <label class="field-label" for="field-tx-payment-type">Payment Type</label>
-            <input id="field-tx-payment-type" type="text" value="Internal Transfer" class="field-input" disabled>
-          </div>
-          <div>
-            <label class="field-label" for="field-tx-ext-ref">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
-            <input id="field-tx-ext-ref" bind:value={form.metadata.external_ref} type="text" class="field-input" placeholder="ext-ref-123">
-          </div>
-          <div>
-            <label class="field-label" for="field-tx-channel">Channel</label>
-            <select id="field-tx-channel" bind:value={form.metadata.channel} class="field-input field-select">
-              <option value="api">API</option>
-              <option value="web">Web</option>
-            </select>
-          </div>
+        <div class="mb-5">
+          <label class="field-label" for="field-tx-ext-ref">External Ref <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <input id="field-tx-ext-ref" bind:value={form.metadata.external_ref} type="text" class="field-input" placeholder="ext-ref-123">
         </div>
 
         <div class="mb-2 flex items-center justify-between">

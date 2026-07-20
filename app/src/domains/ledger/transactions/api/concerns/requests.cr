@@ -6,14 +6,8 @@ module CrystalBank::Domains::Ledger::Transactions
       struct MetadataRequest
         include JSON::Serializable
 
-        @[JSON::Field(description: "Payment type (e.g. MANUAL_TRANSFER)")]
-        getter payment_type : String?
-
         @[JSON::Field(description: "External reference (e.g. ISO-20022 message ID)")]
         getter external_ref : String?
-
-        @[JSON::Field(description: "Channel through which the transaction was initiated")]
-        getter channel : String?
       end
 
       struct EntryRequest

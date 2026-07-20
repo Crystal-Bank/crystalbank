@@ -195,5 +195,10 @@ module CrystalBank::Types::Currencies
     def to_s
       super.to_s.downcase
     end
+
+    # Number of minor-unit decimal places for this currency (e.g. cents).
+    def precision : Int32
+      self == JPY ? 0 : 2
+    end
   end
 end

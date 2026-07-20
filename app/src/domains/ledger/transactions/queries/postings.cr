@@ -19,10 +19,7 @@ module CrystalBank::Domains::Ledger::Transactions
         getter posting_date : Time
         getter value_date : Time
         getter remittance_information : String
-        getter payment_type : String?
         getter external_ref : String?
-        getter channel : String?
-        getter status : String
       end
 
       def initialize

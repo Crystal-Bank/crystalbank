@@ -17,10 +17,7 @@ module CrystalBank::Domains::Ledger::Transactions
         column :posting_date, Time, null: true
         column :value_date, Time, null: true
         column :remittance_information, String, null: false
-        column :payment_type, String, null: true
         column :external_ref, String, null: true
-        column :channel, String, null: true
-        column :status, String, null: false
 
         index [:transaction_id], name: "postings_transaction_id_idx"
       end
@@ -29,11 +26,9 @@ module CrystalBank::Domains::Ledger::Transactions
         aggregate = ::Ledger::Transactions::Aggregate.new(aggregate_id)
         aggregate.hydrate(version: aggregate_version)
 
-        channel = aggregate.state.channel
         currency = aggregate.state.currency
         entries = aggregate.state.entries
         external_ref = aggregate.state.external_ref
-        payment_type = aggregate.state.payment_type
         posting_date = aggregate.state.posting_date
         remittance_information = aggregate.state.remittance_information.to_s
         scope_id = aggregate.state.scope_id
@@ -61,12 +56,9 @@ module CrystalBank::Domains::Ledger::Transactions
                   posting_date,
                   value_date,
                   remittance_information,
-                  payment_type,
-                  external_ref,
-                  channel,
-                  status
+                  external_ref
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             ),
               entry.id,
               aggregate_id,
@@ -81,10 +73,7 @@ module CrystalBank::Domains::Ledger::Transactions
               posting_date,
               value_date,
               remittance_information,
-              payment_type,
-              external_ref,
-              channel,
-              "active"
+              external_ref
           end
         end
       end
