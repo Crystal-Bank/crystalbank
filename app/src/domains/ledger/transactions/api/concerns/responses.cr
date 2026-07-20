@@ -11,6 +11,39 @@ module CrystalBank::Domains::Ledger::Transactions
         end
       end
 
+      struct Amount
+        include JSON::Serializable
+
+        @[JSON::Field(description: "Amount in minor currency units (e.g. cents)")]
+        getter value : Int64
+
+        @[JSON::Field(description: "ISO 4217 currency code")]
+        getter currency : String
+
+        @[JSON::Field(description: "Number of minor-unit decimal places for this currency")]
+        getter precision : Int32
+
+        def initialize(@value : Int64, @currency : String, @precision : Int32); end
+      end
+
+      # Base type for the per-entry-type `details` payload on a posting.
+      # Which concrete subtype is used is determined by the posting's `entry_type`
+      # (e.g. "sepa_credit_transfer" -> SepaCreditTransferDetails). Output-only:
+      # plain struct-hierarchy dispatch is sufficient since this API only ever
+      # serializes these, never parses them back.
+      abstract struct Details
+        include JSON::Serializable
+      end
+
+      struct SepaCreditTransferDetails < Details
+        include JSON::Serializable
+
+        @[JSON::Field(description: "External reference (e.g. ISO-20022 end-to-end ID)")]
+        getter external_ref : String?
+
+        def initialize(@external_ref : String?); end
+      end
+
       struct Posting
         include JSON::Serializable
 
@@ -23,17 +56,14 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(format: "uuid", description: "Account ID of the posting")]
         getter account_id : UUID
 
-        @[JSON::Field(description: "Direction of the posting (DEBIT or CREDIT)")]
+        @[JSON::Field(description: "Direction of the posting (debit or credit)")]
         getter direction : String
 
-        @[JSON::Field(description: "Amount of the posting in minor currency units")]
-        getter amount : Int64
+        @[JSON::Field(description: "Amount of the posting")]
+        getter amount : Amount
 
-        @[JSON::Field(description: "Entry type of the posting")]
+        @[JSON::Field(description: "Entry type of the posting; determines the shape of `details`")]
         getter entry_type : String
-
-        @[JSON::Field(description: "Currency of the posting")]
-        getter currency : String
 
         @[JSON::Field(format: "date", description: "Posting date")]
         getter posting_date : String
@@ -44,33 +74,20 @@ module CrystalBank::Domains::Ledger::Transactions
         @[JSON::Field(description: "Remittance information")]
         getter remittance_information : String
 
-        @[JSON::Field(description: "Payment type")]
-        getter payment_type : String?
-
-        @[JSON::Field(description: "External reference")]
-        getter external_ref : String?
-
-        @[JSON::Field(description: "Channel")]
-        getter channel : String?
-
-        @[JSON::Field(description: "Status of the posting: active, pending_approval")]
-        getter status : String
+        @[JSON::Field(description: "Entry-type-specific metadata, shape depends on entry_type")]
+        getter details : Details?
 
         def initialize(
           @id : UUID,
           @transaction_id : UUID,
           @account_id : UUID,
           @direction : String,
-          @amount : Int64,
+          @amount : Amount,
           @entry_type : String,
-          @currency : String,
           @posting_date : String?,
           @value_date : String?,
           @remittance_information : String,
-          @payment_type : String?,
-          @external_ref : String?,
-          @channel : String?,
-          @status : String,
+          @details : Details?,
         ); end
       end
     end

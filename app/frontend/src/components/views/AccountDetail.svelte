@@ -3,7 +3,7 @@
   import { ui } from '../../lib/store.svelte.js'
   import { apiFetch } from '../../lib/api.js'
   import { requestBlock, requestUnblock, requestClosure, requestVirtualAccount, switchView } from '../../lib/actions.js'
-  import { shortId, formatDate, statusBadgeClass, formatStatus } from '../../lib/utils.js'
+  import { shortId, formatDate, statusBadgeClass, formatStatus, formatAmount } from '../../lib/utils.js'
 
   /** @type {{ account: object }} */
   let { account } = $props()
@@ -443,8 +443,8 @@
               {p.direction?.toLowerCase()}
             </span>
           </td>
-          <td class="font-semibold tabular-nums">{Number(p.amount).toLocaleString()}</td>
-          <td><span class="badge badge-zinc">{p.currency?.toUpperCase()}</span></td>
+          <td class="font-semibold tabular-nums">{formatAmount(p.amount)}</td>
+          <td><span class="badge badge-zinc">{p.amount?.currency}</span></td>
           <td><span class="badge badge-zinc">{p.entry_type?.toLowerCase().replaceAll('_', ' ')}</span></td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.posting_date}</td>
           <td class="text-zinc-500 text-xs tabular-nums">{p.value_date}</td>
@@ -724,11 +724,11 @@
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Amount</div>
-        <div class="drawer-field-value font-semibold tabular-nums text-lg">{Number(drawerPosting.amount).toLocaleString()}</div>
+        <div class="drawer-field-value font-semibold tabular-nums text-lg">{formatAmount(drawerPosting.amount)}</div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Currency</div>
-        <div><span class="badge badge-zinc">{drawerPosting.currency?.toUpperCase()}</span></div>
+        <div><span class="badge badge-zinc">{drawerPosting.amount?.currency}</span></div>
       </div>
       <div class="drawer-field">
         <div class="drawer-field-label">Entry Type</div>
@@ -746,6 +746,12 @@
         <div class="drawer-field-label">Remittance Information</div>
         <div class="drawer-field-value">{drawerPosting.remittance_information}</div>
       </div>
+      {#if drawerPosting.details?.external_ref}
+        <div class="drawer-field">
+          <div class="drawer-field-label">External Ref</div>
+          <div class="font-mono text-xs bg-zinc-50 border border-zinc-200 rounded px-2.5 py-1.5 break-all select-all">{drawerPosting.details.external_ref}</div>
+        </div>
+      {/if}
     </div>
   </div>
 {/if}

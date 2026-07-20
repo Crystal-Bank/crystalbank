@@ -76,9 +76,9 @@ module CrystalBank::Domains::Ledger::Transactions
             posting_date: posting_date,
             value_date: value_date,
             remittance_information: r.remittance_information,
-            payment_type: metadata.try(&.payment_type),
+            payment_type: nil,
             external_ref: metadata.try(&.external_ref),
-            channel: metadata.try(&.channel),
+            channel: nil,
             scope_id: scope,
           )
 

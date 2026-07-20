@@ -8,6 +8,12 @@ export function formatDate(str) {
   } catch { return str }
 }
 
+export function formatAmount(amount) {
+  if (!amount) return ''
+  const decimals = (amount.value / 10 ** amount.precision).toFixed(amount.precision)
+  return Number(decimals).toLocaleString(undefined, { minimumFractionDigits: amount.precision, maximumFractionDigits: amount.precision })
+}
+
 export function shortId(id) {
   return id ? id.substring(0, 8) + '...' : ''
 }

@@ -45,16 +45,16 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             Ledger::Transactions::Aggregate::Entry.new(
               id: UUID.v7,
               account_id: debtor_account_id,
-              direction: "DEBIT",
+              direction: CrystalBank::Types::LedgerTransactions::Direction::DEBIT.to_s,
               amount: amount,
-              entry_type: "SEPA_CREDIT_TRANSFER",
+              entry_type: CrystalBank::Types::LedgerTransactions::EntryType::SEPA_CREDIT_TRANSFER.to_s,
             ),
             Ledger::Transactions::Aggregate::Entry.new(
               id: UUID.v7,
               account_id: settlement_account_id,
-              direction: "CREDIT",
+              direction: CrystalBank::Types::LedgerTransactions::Direction::CREDIT.to_s,
               amount: amount,
-              entry_type: "SEPA_CREDIT_TRANSFER",
+              entry_type: CrystalBank::Types::LedgerTransactions::EntryType::SEPA_CREDIT_TRANSFER.to_s,
             ),
           ]
           entries_json = entries_data.to_json
@@ -69,9 +69,9 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             posting_date: execution_date,
             value_date: execution_date,
             remittance_information: remittance_information,
-            payment_type: "SEPA_CREDIT_TRANSFER",
+            payment_type: nil,
             external_ref: end_to_end_id,
-            channel: "SEPA",
+            channel: nil,
             scope_id: scope_id,
           )
 

@@ -29,7 +29,7 @@ private def build_posting_requested(aggr_id : UUID, scope_id : UUID, debit_accou
     remittance_information: "test",
     payment_type: nil,
     external_ref: nil,
-    channel: "api",
+    channel: nil,
     scope_id: scope_id,
     command_handler: "test",
     comment: "test",
