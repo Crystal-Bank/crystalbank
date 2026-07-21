@@ -79,7 +79,7 @@ describe CrystalBank::Domains::Payments::Sepa::CreditTransfers::Initiation::Comm
     entries = ledger.state.entries.as(Array(Ledger::Transactions::Aggregate::Entry))
     entries.size.should eq(2)
     entries.each do |entry|
-      entry.entry_type.should eq("SEPA_CREDIT_TRANSFER")
+      entry.entry_type.should eq("sepa_credit_transfer")
     end
   end
 end
