@@ -10,6 +10,8 @@ module CrystalBank
     @@server_port : Int32?
     @@server_host : String?
     @@server_process_count : Int32?
+    @@issuer : String?
+    @@jwt_key_id : String?
 
     def application_name
       @@application_name ||= ENV["APPLICATION_NAME"]? || "crystalbank"
@@ -71,8 +73,12 @@ module CrystalBank
       @@jwt_pub_key ||= ENV["JWT_PUBLIC_KEY"]
     end
 
-    def jwt_public_key_uri : String
-      @@jwt_pub_key_uri ||= ENV["JWT_PUBLIC_KEY_URI"]? || "https://api.crystalbank.xyz"
+    def issuer : String
+      @@issuer ||= ENV["ISSUER"]? || "https://api.crystalbank.xyz"
+    end
+
+    def jwt_key_id : String
+      @@jwt_key_id ||= ENV["JWT_KEY_ID"]? || "2026-07-key-1"
     end
 
     def jwt_ttl : Int32

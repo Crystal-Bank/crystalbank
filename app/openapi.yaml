@@ -5,12 +5,14 @@ info:
   title: CrystalBank
   version: 0.17.0
 paths:
-  /.well-known/openid-configuration:
+  /.well-known/oauth-authorization-server:
     get:
-      summary: OpenID Configuration
-      description: 'OpenID Configuration
+      summary: RFC 8414 Authorization Server Metadata
+      description: 'RFC 8414 Authorization Server Metadata
 
-        Returns the OpenID Connect discovery document
+        Returns the OAuth 2.0 authorization server metadata document.
+        CrystalBank only supports client_credentials — no authorization endpoint,
+        no ID tokens.
 
 
         Required permission:
@@ -18,7 +20,7 @@ paths:
         - none'
       tags:
       - JWKS
-      operationId: CrystalBank::Api::JWKS_openid_configuration
+      operationId: CrystalBank::Api::JWKS_authorization_server_metadata
       parameters: []
       responses:
         200:
@@ -26,7 +28,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CrystalBank__Api__JWKS__OpenIDConfiguration'
+                $ref: '#/components/schemas/CrystalBank__Api__JWKS__AuthorizationServerMetadata'
         401:
           description: Unauthorized
           content:
@@ -912,11 +914,29 @@ paths:
       operationId: CrystalBank::Domains::ApiKeys::Api::Authentication_authenticate
       requestBody:
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/CrystalBank__Domains__ApiKeys__Api__Authentication__Request'
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  description: Grant type — must be 'client_credentials'
+                client_id:
+                  type: string
+                  description: API key ID (omit when using HTTP Basic auth)
+                client_secret:
+                  type: string
+                  description: API key secret (omit when using HTTP Basic auth)
+              required:
+              - grant_type
         required: true
-      parameters: []
+      parameters:
+      - name: Authorization
+        in: header
+        description: HTTP Basic auth — base64(client_id:client_secret). Takes precedence over body params when present.
+        required: false
+        schema:
+          type: string
       responses:
         200:
           description: OK
@@ -2742,21 +2762,39 @@ paths:
                 $ref: '#/components/schemas/CrystalBank__Api__Responses__ErrorResponse'
 components:
   schemas:
-    CrystalBank__Api__JWKS__OpenIDConfiguration:
+    CrystalBank__Api__JWKS__AuthorizationServerMetadata:
       type: object
       properties:
         issuer:
           type: string
         jwks_uri:
           type: string
-        id_token_signing_alg_values_supported:
+        token_endpoint:
+          type: string
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+        response_types_supported:
+          type: array
+          items:
+            type: string
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+        scopes_supported:
           type: array
           items:
             type: string
       required:
       - issuer
       - jwks_uri
-      - id_token_signing_alg_values_supported
+      - token_endpoint
+      - grant_types_supported
+      - response_types_supported
+      - token_endpoint_auth_methods_supported
+      - scopes_supported
     CrystalBank__Api__JWKS__JWKSResponse:
       type: object
       properties:
@@ -2773,6 +2811,8 @@ components:
                 type: string
               crv:
                 type: string
+              kid:
+                type: string
               x:
                 type: string
               y:
@@ -2782,6 +2822,7 @@ components:
             - use
             - alg
             - crv
+            - kid
             - x
             - y
       required:
@@ -3315,32 +3356,19 @@ components:
       - url
       - meta
       - data
-    CrystalBank__Domains__ApiKeys__Api__Authentication__Request:
-      type: object
-      properties:
-        grant_type:
-          type: string
-          description: Grant type of the token request, always 'client_credentials'
-        client_id:
-          type: string
-          description: ID of the api key
-        client_secret:
-          type: string
-          description: Secret of the api key
-      required:
-      - grant_type
-      - client_id
-      - client_secret
     CrystalBank__Domains__ApiKeys__Api__Authentication__Response:
       type: object
       properties:
-        token:
+        access_token:
           type: string
         token_type:
           type: string
+        expires_in:
+          type: integer
       required:
-      - token
+      - access_token
       - token_type
+      - expires_in
     CrystalBank__Domains__Approvals__Api__Requests__CollectRequest:
       type: object
       properties:

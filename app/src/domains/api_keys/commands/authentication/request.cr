@@ -34,7 +34,8 @@ module CrystalBank::Domains::ApiKeys
 
           # Create JWT and return it
           payload = CrystalBank::Api::JWT.new(roles: user_roles, user_id: user_id)
-          JWT.encode(payload, CrystalBank::Env.jwt_private_key, JWT::Algorithm::ES256)
+          header = {"typ" => "at+jwt", "kid" => CrystalBank::Env.jwt_key_id}
+          JWT.encode(payload, CrystalBank::Env.jwt_private_key, JWT::Algorithm::ES256, header)
         end
       end
     end
