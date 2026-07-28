@@ -47,7 +47,7 @@ module CrystalBank
           @grant_types_supported,
           @response_types_supported,
           @token_endpoint_auth_methods_supported,
-          @scopes_supported
+          @scopes_supported,
         )
         end
       end
