@@ -45,13 +45,15 @@ module CrystalBank::Domains::ApiKeys
         grant_type = params["grant_type"]? || ""
 
         # Prefer Authorization header; fall back to body params
-        client_id, client_secret = if auth_header.try(&.starts_with?("Basic "))
+        if auth_header.try(&.starts_with?("Basic "))
           b64 = auth_header.not_nil![6..]
           decoded = Base64.decode_string(b64)
           sep = decoded.index(':') || decoded.size
-          {decoded[0, sep], decoded[sep + 1..]}
+          client_id = decoded[0, sep]
+          client_secret = decoded[sep + 1..]
         else
-          {params["client_id"]? || "", params["client_secret"]? || ""}
+          client_id = params["client_id"]? || ""
+          client_secret = params["client_secret"]? || ""
         end
 
         unless grant_type == "client_credentials"
