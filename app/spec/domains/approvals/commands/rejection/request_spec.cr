@@ -18,28 +18,11 @@ private def seed_rejection_pending_approval(requestor_id : UUID) : UUID
   aggregate_id
 end
 
-describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
+describe CrystalBank::Domains::Approvals::Rejection::Commands::RequestHandler do
   requestor_id = UUID.new("00000000-0000-0000-0000-000000000010")
   other_user_id = UUID.new("00000000-0000-0000-0000-000000000020")
-  scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
   r = CrystalBank::Domains::Approvals::Api::Requests::RejectRequest.from_json("{}")
-
-  requestor_ctx = CrystalBank::Api::Context.new(
-    user_id: requestor_id,
-    roles: [] of UUID,
-    required_permission: CrystalBank::Permissions::WRITE_approvals_rejection_request,
-    scope: scope_id,
-    available_scopes: [scope_id]
-  )
-
-  other_ctx = CrystalBank::Api::Context.new(
-    user_id: other_user_id,
-    roles: [] of UUID,
-    required_permission: CrystalBank::Permissions::WRITE_approvals_rejection_request,
-    scope: scope_id,
-    available_scopes: [scope_id]
-  )
 
   describe "guard: already completed" do
     it "raises InvalidArgument" do
@@ -55,7 +38,9 @@ describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
       )
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "Approval process is already completed") do
-        Approvals::Rejection::Commands::Request.new.call(aggregate_id, r, requestor_ctx)
+        Approvals::Rejection::Commands::RequestHandler.new.handle(
+          Approvals::Rejection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: requestor_id, roles: [] of UUID)
+        )
       end
     end
   end
@@ -75,7 +60,9 @@ describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
       )
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "Approval process is already rejected") do
-        Approvals::Rejection::Commands::Request.new.call(aggregate_id, r, requestor_ctx)
+        Approvals::Rejection::Commands::RequestHandler.new.handle(
+          Approvals::Rejection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: requestor_id, roles: [] of UUID)
+        )
       end
     end
   end
@@ -85,7 +72,9 @@ describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
       aggregate_id = seed_rejection_pending_approval(requestor_id)
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "User does not have permission to reject this approval") do
-        Approvals::Rejection::Commands::Request.new.call(aggregate_id, r, other_ctx) # other_ctx has no roles
+        Approvals::Rejection::Commands::RequestHandler.new.handle(
+          Approvals::Rejection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: other_user_id, roles: [] of UUID)
+        )
       end
     end
   end
@@ -95,7 +84,9 @@ describe CrystalBank::Domains::Approvals::Rejection::Commands::Request do
       aggregate_id = seed_rejection_pending_approval(requestor_id)
 
       # Should not raise — requestor bypasses the permission check
-      Approvals::Rejection::Commands::Request.new.call(aggregate_id, r, requestor_ctx)
+      Approvals::Rejection::Commands::RequestHandler.new.handle(
+        Approvals::Rejection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: requestor_id, roles: [] of UUID)
+      )
 
       aggregate = Approvals::Aggregate.new(aggregate_id)
       aggregate.hydrate

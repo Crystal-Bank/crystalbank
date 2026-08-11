@@ -63,6 +63,14 @@ module CrystalBank::Domains::Events
         insert_event(event, event.body.as(::Users::AssignRoles::Events::Requested::Body).scope_id)
       end
 
+      apply(::Users::RemoveRoles::Events::Requested) do
+        insert_event(event, event.body.as(::Users::RemoveRoles::Events::Requested::Body).scope_id)
+      end
+
+      apply(::Scopes::NameChange::Events::Requested) do
+        insert_event(event, event.body.as(::Scopes::NameChange::Events::Requested::Body).scope_id)
+      end
+
       # ---------------------------------------------------------------------------
       # Category B — events without scope_id in body; derived via self-lookup
       # ---------------------------------------------------------------------------
@@ -117,6 +125,47 @@ module CrystalBank::Domains::Events
 
       apply(::Users::AssignRoles::Events::Accepted) do
         insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Users::AssignRoles::Events::Completed) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Users::AssignRoles::Events::Rejected) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Users::RemoveRoles::Events::Accepted) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Users::RemoveRoles::Events::Completed) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Accounts::Closure::Events::Requested) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Accounts::Closure::Events::Accepted) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Scopes::NameChange::Events::Accepted) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      apply(::Roles::PermissionsUpdate::Events::Accepted) do
+        insert_event(event, scope_id_for(event.header.aggregate_id))
+      end
+
+      # ---------------------------------------------------------------------------
+      # Category C — events on a brand-new secondary aggregate (no prior record of
+      # their own, no scope_id in body); resolved via the aggregate the body refers to
+      # ---------------------------------------------------------------------------
+
+      apply(::Roles::PermissionsUpdate::Events::Requested) do
+        insert_event(event, scope_id_for(event.body.as(::Roles::PermissionsUpdate::Events::Requested::Body).role_id))
       end
 
       # ---------------------------------------------------------------------------

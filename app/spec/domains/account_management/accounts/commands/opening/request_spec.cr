@@ -38,7 +38,14 @@ private def make_opening_request(customer_ids : Array(UUID)) : Accounts::Api::Re
   }.to_json)
 end
 
-describe CrystalBank::Domains::Accounts::Opening::Commands::Request do
+private def make_opening_command(aggregate_id : UUID, r : Accounts::Api::Requests::OpeningRequest, context : CrystalBank::Api::Context, scope_id : UUID) : Accounts::Opening::Commands::Request
+  Accounts::Opening::Commands::Request.new(
+    aggregate_id: aggregate_id, name: r.name, currencies: r.currencies, customer_ids: r.customer_ids,
+    scope_id: scope_id, type: r.type, actor_id: context.user_id, context: context
+  )
+end
+
+describe CrystalBank::Domains::Accounts::Opening::Commands::RequestHandler do
   scope_id = UUID.new("00000000-0000-0000-0000-000000000001")
 
   it "raises when customer_ids is empty" do
@@ -46,7 +53,7 @@ describe CrystalBank::Domains::Accounts::Opening::Commands::Request do
     request = make_opening_request([] of UUID)
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /At least one customer ID is required/) do
-      Accounts::Opening::Commands::Request.new.call(request, context)
+      Accounts::Opening::Commands::RequestHandler.new.handle(make_opening_command(UUID.v7, request, context, scope_id))
     end
   end
 
@@ -55,7 +62,7 @@ describe CrystalBank::Domains::Accounts::Opening::Commands::Request do
     request = make_opening_request([UUID.v7])
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /does not exist/) do
-      Accounts::Opening::Commands::Request.new.call(request, context)
+      Accounts::Opening::Commands::RequestHandler.new.handle(make_opening_command(UUID.v7, request, context, scope_id))
     end
   end
 
@@ -67,7 +74,7 @@ describe CrystalBank::Domains::Accounts::Opening::Commands::Request do
     request = make_opening_request([customer_id])
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /does not exist/) do
-      Accounts::Opening::Commands::Request.new.call(request, context)
+      Accounts::Opening::Commands::RequestHandler.new.handle(make_opening_command(UUID.v7, request, context, scope_id))
     end
   end
 
@@ -76,8 +83,12 @@ describe CrystalBank::Domains::Accounts::Opening::Commands::Request do
 
     context = make_opening_context(scope_id)
     request = make_opening_request([customer_id])
+    aggregate_id = UUID.v7
 
-    result = Accounts::Opening::Commands::Request.new.call(request, context)
-    result.should be_a(UUID)
+    Accounts::Opening::Commands::RequestHandler.new.handle(make_opening_command(aggregate_id, request, context, scope_id))
+
+    aggregate = Accounts::Aggregate.new(aggregate_id)
+    aggregate.hydrate
+    aggregate.state.name.should eq("Test Account")
   end
 end

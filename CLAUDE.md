@@ -52,12 +52,16 @@ CrystalBank is a strict **Event Sourcing + CQRS** system. Every state change flo
 ```
 HTTP Request
     → API Controller  (api/)          validates request, checks permission
-    → Command         (commands/)     validates business rules
+    → Command struct  (commands/)     pure data — aggregate_id + payload
+    → CommandHandler  (commands/)     validates business rules, appends the event
     → Event appended  (events/)       immutable fact, written to event store
     → Event Bus       (app/src/config/initializers/event_bus.cr)
+    → Reactor         (reactors/)     ← reacts to an event, calls the next CommandHandler
     → Projection      (projections/)  ← writes read model to DB
     → Query           (queries/)      ← reads from DB, scope-filtered
 ```
+
+CrystalBank is built on [crystal-es](https://github.com/tristanholl/crystal-es), which draws a hard line between a **Command** (a pure data struct — `aggregate_id` plus typed payload, no behavior) and its **CommandHandler** (hydrates the aggregate, enforces invariants, appends events). A **Reactor** is the only thing that may subscribe to the event bus on the app side; it consumes one event and calls a `CommandHandler` directly — it never runs business logic itself. See `docs/crystal-es-update.md` for the full rationale and the migration that introduced this split.
 
 **Domains** live under `app/src/domains/`. Two domains have nested subdomains — their paths have one extra level:
 
@@ -87,17 +91,21 @@ app/src/domains/
 {domain}/
 ├── aggregates/     # hydrated from events; current state for command validation
 ├── api/            # controllers + request/response structs (api/concerns/)
-├── commands/       # one folder per operation, e.g. commands/opening/
+├── commands/       # one folder per operation; each holds a Command struct + CommandHandler
 ├── events/         # one file per event, e.g. events/opening/requested.cr
 ├── projections/    # event → read-model row transformers
 ├── queries/        # scope-filtered reads from projection tables
+├── reactors/       # one folder per operation; Reactors that bridge an event back to a command
 └── load.cr         # explicit requires for every file in the domain
 ```
 
-**Command naming convention** — operations that need approval come as a triad:
-- `request.cr` — user-initiated command, appends a `Requested` event
-- `process_request.cr` — bus-triggered, decides auto-accept vs. approval workflow
-- `process_approval.cr` — bus-triggered when the approval collection completes
+**Command naming convention** — operations that need approval come as a triad, split across `commands/` and `reactors/`:
+- `commands/{operation}/request.cr` — a `Command` struct (`aggregate_id` + typed payload) plus its `CommandHandler`; the API controller resolves `Context`, builds the struct, and calls `RequestHandler#handle` directly. Validates business rules and appends the `Requested` event.
+- `reactors/{operation}/on_requested.cr` — bus-triggered `Reactor`, decides auto-accept vs. approval workflow. For approval workflows it builds an `Approvals::Creation::Commands::Request` and calls its `RequestHandler` directly.
+- `commands/{operation}/accept.cr` — a small `Accept` `Command` struct (usually just `aggregate_id`) plus its `CommandHandler`, which hydrates the aggregate and appends the `Accepted` event.
+- `reactors/{operation}/on_approval_completed.cr` — bus-triggered `Reactor`, subscribed to `Approvals::Collection::Events::Completed`. Hydrates the approval aggregate to check `source_aggregate_type`, then calls `AcceptHandler#handle`.
+
+A `Reactor` is the only thing that may subscribe to the event bus from application code — it never runs business logic itself, only routes an event to the right `CommandHandler`. Commands that don't act on an aggregate (read-only lookups, auth checks) aren't `ES::Command` subclasses at all — they're plain classes outside this convention.
 
 **Database layout:**
 - `eventstore` schema — immutable event log (event store)
@@ -124,9 +132,9 @@ Follow these steps in order. Missing a registration step causes runtime failures
 
 1. **Event** — create `events/{operation}/{name}.cr`. Subclass `ES::Event`, include `ES::EventDSL`, use `define_event "{Aggregate}", "{aggregate}.{operation}.{name}" do ... end` with `attribute` declarations.
 2. **Register the event** in `app/src/config/initializers/event_handlers.cr` with `event_handlers.register(...)`. Every event class must be registered or aggregate hydration fails at runtime.
-3. **Command** — create `commands/{operation}/request.cr` (plus `process_request.cr` / `process_approval.cr` if it needs the approval workflow). Subclass `ES::Command`; validate, build the event, `@event_store.append(event)`.
+3. **Command** — create `commands/{operation}/request.cr`: a `struct Request < ES::Command` (`aggregate_id` + typed payload) plus a `class RequestHandler < ES::CommandHandler(Request)` that validates and does `@event_store.append(event)`. If the operation needs the approval workflow, add `commands/{operation}/accept.cr` (a minimal `Accept` struct + `AcceptHandler`) and the matching reactors from step 5.
 4. **Projection** — handle the new event in the domain's projection under `projections/`.
-5. **Wire the bus** in `app/src/config/initializers/event_bus.cr`: `bus.subscribe(Event, Projection)` and any `bus.subscribe(Event, Command)` triggers.
+5. **Wire the bus** in `app/src/config/initializers/event_bus.cr`: `bus.subscribe(Event, Projection)` for read models, and `bus.subscribe(Event, Reactor)` for any cross-command trigger — the `Reactor` itself lives in `reactors/{operation}/on_{event}.cr` and calls the target `CommandHandler` directly.
 6. **API** — add the endpoint in `api/`, with request/response structs in `api/concerns/`, declaring the required permission.
 7. **Permission** — add the key to the matching group in `app/src/config/permissions.cr` (`READ_...` / `WRITE_...` naming).
 8. **Require every new file** in the domain's `load.cr`. New types go in `app/src/config/types/` and are required from `app/src/config/load.cr`. New domains are required from `app/src/load.cr` — insert at the correct position, order is intentional.

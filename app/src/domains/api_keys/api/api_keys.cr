@@ -20,10 +20,14 @@ module CrystalBank::Domains::ApiKeys
         idempotency_key : UUID,
       ) : GenerationResponse
         authorized?("write_api_keys_generation_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        response = ::ApiKeys::Generation::Commands::Request.new.call(r, context)
-
-        response
+        ::ApiKeys::Generation::Commands::RequestHandler.new.handle(
+          ::ApiKeys::Generation::Commands::Request.new(
+            aggregate_id: UUID.v7, name: r.name, user_id: r.user_id, actor_id: context.user_id, scope_id: scope
+          )
+        )
       end
 
       # Request revocation
@@ -39,7 +43,9 @@ module CrystalBank::Domains::ApiKeys
       )
         authorized?("write_api_keys_revocation_request", request_scope: false)
 
-        response = ::ApiKeys::Revocation::Commands::Request.new.call(id, r, context)
+        response = ::ApiKeys::Revocation::Commands::RequestHandler.new.handle(
+          ::ApiKeys::Revocation::Commands::Request.new(aggregate_id: id, reason: r.reason, actor_id: context.user_id)
+        )
 
         response ? head(:accepted) : head(:internal_server_error)
       end

@@ -21,8 +21,16 @@ module CrystalBank::Domains::Accounts
         idempotency_key : UUID,
       ) : OpeningResponse
         authorized?("write_accounts_opening_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        aggregate_id = ::Accounts::Opening::Commands::Request.new.call(r, context)
+        aggregate_id = UUID.v7
+        ::Accounts::Opening::Commands::RequestHandler.new.handle(
+          ::Accounts::Opening::Commands::Request.new(
+            aggregate_id: aggregate_id, name: r.name, currencies: r.currencies, customer_ids: r.customer_ids,
+            scope_id: scope, type: r.type, actor_id: context.user_id, context: context
+          )
+        )
 
         OpeningResponse.new(aggregate_id)
       end
@@ -42,8 +50,14 @@ module CrystalBank::Domains::Accounts
         r : ClosureRequest,
       ) : Responses::ClosureResponse
         authorized?("write_accounts_closure_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        result = ::Accounts::Closure::Commands::Request.new.call(r, account_id, context)
+        result = ::Accounts::Closure::Commands::RequestHandler.new.handle(
+          ::Accounts::Closure::Commands::Request.new(
+            aggregate_id: account_id, reason: r.reason, closure_comment: r.closure_comment, actor_id: context.user_id, scope_id: scope
+          )
+        )
 
         Responses::ClosureResponse.new(
           account_id: account_id,
@@ -80,10 +94,14 @@ module CrystalBank::Domains::Accounts
         r : BlockingRequest,
       ) : BlockRequestResponse
         authorized?("write_accounts_blocking_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        result = ::Accounts::Blocking::Commands::Block.new.call(
-          ::Accounts::Api::Requests::BlockingCommandRequest.new(account_id, r.block_type, r.reason),
-          context
+        result = ::Accounts::Blocking::Commands::BlockHandler.new.handle(
+          ::Accounts::Blocking::Commands::Block.new(
+            aggregate_id: UUID.v7, account_id: account_id, block_type: r.block_type, reason: r.reason,
+            actor_id: context.user_id, scope_id: scope
+          )
         )
 
         Responses::BlockRequestResponse.new(
@@ -116,10 +134,14 @@ module CrystalBank::Domains::Accounts
         reason : String? = nil,
       ) : BlockRequestResponse
         authorized?("write_accounts_unblocking_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        result = ::Accounts::Blocking::Commands::Unblock.new.call(
-          ::Accounts::Api::Requests::UnblockingCommandRequest.new(account_id, block_type, reason),
-          context
+        result = ::Accounts::Blocking::Commands::UnblockHandler.new.handle(
+          ::Accounts::Blocking::Commands::Unblock.new(
+            aggregate_id: UUID.v7, account_id: account_id, block_type: block_type, reason: reason,
+            actor_id: context.user_id, scope_id: scope
+          )
         )
 
         Responses::BlockRequestResponse.new(

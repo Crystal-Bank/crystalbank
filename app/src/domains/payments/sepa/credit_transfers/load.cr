@@ -6,7 +6,10 @@ require "./api/credit_transfers"
 
 # Commands
 require "./commands/initiation/request"
-require "./commands/initiation/process_approval"
+require "./commands/initiation/accept"
+
+# Reactors
+require "./reactors/initiation/on_approval_completed"
 
 # Events
 require "./events/initiation/requested"

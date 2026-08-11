@@ -11,23 +11,6 @@ module CrystalBank::Domains::Accounts
         @[JSON::Field(description: "Optional reason for applying the block")]
         getter reason : String?
       end
-
-      # Unified command request built by the API layer from URL params + body
-      struct BlockingCommandRequest
-        getter account_id : UUID
-        getter block_type : CrystalBank::Types::Accounts::BlockType
-        getter reason : String?
-
-        def initialize(@account_id, @block_type, @reason); end
-      end
-
-      struct UnblockingCommandRequest
-        getter account_id : UUID
-        getter block_type : CrystalBank::Types::Accounts::BlockType
-        getter reason : String?
-
-        def initialize(@account_id, @block_type, @reason); end
-      end
     end
 
     module Responses

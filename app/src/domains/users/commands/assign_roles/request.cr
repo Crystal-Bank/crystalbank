@@ -1,38 +1,43 @@
 module CrystalBank::Domains::Users
   module AssignRoles
     module Commands
-      class Request < ES::Command
-        def call(aggregate_id : UUID, r : Users::Api::Requests::AssignRolesRequest, c : CrystalBank::Api::Context) : UUID
-          actor = c.user_id
-          scope = c.scope
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter user_id : UUID
+        getter role_ids : Array(UUID)
+        getter actor_id : UUID
+        getter scope_id : UUID
 
+        def initialize(@aggregate_id : UUID, @user_id, @role_ids, @actor_id, @scope_id)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request)
           # Check if provided roles do exist
           repository = Users::Repositories::Roles.new
-          r.role_ids.each { |role_id| repository.exists!(role_id) }
+          command.role_ids.each { |role_id| repository.exists!(role_id) }
 
           # Build the user aggregate
-          user = Users::Aggregate.new(aggregate_id)
+          user = Users::Aggregate.new(command.user_id, event_store: @event_store, event_handlers: @event_handlers)
           user.hydrate
 
           # Check if roles are already assigned to the user
-          common_roles = r.role_ids & user.state.role_ids
+          common_roles = command.role_ids & user.state.role_ids
           if !common_roles.empty?
             raise CrystalBank::Exception::InvalidArgument.new("The roles [#{common_roles.map(&.to_s).join(", ")}] are already assigned to the user")
           end
 
-          # Create a new request aggregate (auto-generates its own UUID)
+          # Create the request aggregate under the given aggregate ID
           event = Users::AssignRoles::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
+            aggregate_id: command.aggregate_id,
             command_handler: self.class.to_s,
-            user_id: aggregate_id,
-            role_ids: r.role_ids,
-            scope_id: scope,
+            user_id: command.user_id,
+            role_ids: command.role_ids,
+            scope_id: command.scope_id,
           )
 
           @event_store.append(event)
-
-          UUID.new(event.header.aggregate_id.to_s)
         end
       end
     end

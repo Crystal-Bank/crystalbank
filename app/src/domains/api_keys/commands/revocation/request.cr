@@ -1,18 +1,23 @@
 module CrystalBank::Domains::ApiKeys
   module Revocation
     module Commands
-      class Request < ES::Command
-        def call(api_key_id : UUID, r : ApiKeys::Api::Requests::RevocationRequest, c : CrystalBank::Api::Context) : Bool
-          actor = c.user_id
+      struct Request < ES::Command
+        getter reason : String
+        getter actor_id : UUID
 
+        def initialize(@aggregate_id : UUID, @reason, @actor_id)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request) : Bool
           # Build the aggregate
-          aggregate = ApiKeys::Aggregate.new(api_key_id)
+          aggregate = ApiKeys::Aggregate.new(command.aggregate_id, event_store: @event_store, event_handlers: @event_handlers)
           aggregate.hydrate
 
           # Extract attributes to local variables
           next_version = aggregate.state.next_version
           aggregate_id = aggregate.state.aggregate_id
-          aggregate_type = aggregate.state.aggregate_type
           scope_id = aggregate.state.scope_id
 
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope_id
@@ -22,12 +27,12 @@ module CrystalBank::Domains::ApiKeys
 
           # Create the revocation request
           event = ApiKeys::Revocation::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
             aggregate_id: aggregate_id,
             aggregate_version: next_version,
             command_handler: self.class.to_s,
             scope_id: scope_id,
-            reason: r.reason
+            reason: command.reason
           )
 
           # Append event to event store

@@ -80,7 +80,12 @@ module CrystalBank::Domains::VirtualAccounts
       ) : VirtualOpeningResponse
         authorized?("write_accounts_virtual_opening_request")
 
-        aggregate_id = ::VirtualAccounts::Opening::Commands::Request.new.call(r, account_id, context)
+        aggregate_id = UUID.v7
+        ::VirtualAccounts::Opening::Commands::RequestHandler.new.handle(
+          ::VirtualAccounts::Opening::Commands::Request.new(
+            aggregate_id: aggregate_id, name: r.name, parent_account_id: account_id, actor_id: context.user_id
+          )
+        )
 
         VirtualOpeningResponse.new(aggregate_id, account_id)
       end

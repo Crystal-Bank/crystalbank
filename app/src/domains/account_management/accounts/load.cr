@@ -9,14 +9,20 @@ require "./api/accounts"
 
 # Commands
 require "./commands/opening/request"
-require "./commands/opening/process_request"
-require "./commands/opening/process_approval"
+require "./commands/opening/accept"
 require "./commands/blocking/block"
 require "./commands/blocking/unblock"
-require "./commands/blocking/process_block_approval"
-require "./commands/blocking/process_unblock_approval"
+require "./commands/blocking/apply"
+require "./commands/blocking/remove"
 require "./commands/closure/request"
-require "./commands/closure/process_approval"
+require "./commands/closure/accept"
+
+# Reactors
+require "./reactors/opening/on_requested"
+require "./reactors/opening/on_approval_completed"
+require "./reactors/blocking/on_block_approval_completed"
+require "./reactors/blocking/on_unblock_approval_completed"
+require "./reactors/closure/on_approval_completed"
 
 # Events
 require "./events/opening/accepted"

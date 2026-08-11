@@ -18,19 +18,11 @@ private def seed_collection_pending_approval(requestor_id : UUID) : UUID
   aggregate_id
 end
 
-describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
+describe CrystalBank::Domains::Approvals::Collection::Commands::RequestHandler do
   requestor_id = UUID.new("00000000-0000-0000-0000-000000000010")
   collector_id = UUID.new("00000000-0000-0000-0000-000000000020")
-  scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
 
   r = CrystalBank::Domains::Approvals::Api::Requests::CollectRequest.from_json("{}")
-  ctx = CrystalBank::Api::Context.new(
-    user_id: collector_id,
-    roles: [] of UUID,
-    required_permission: CrystalBank::Permissions::WRITE_approvals_collection_request,
-    scope: scope_id,
-    available_scopes: [scope_id]
-  )
 
   describe "guard: already completed" do
     it "raises InvalidArgument" do
@@ -46,7 +38,9 @@ describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
       )
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "Approval process is already completed") do
-        Approvals::Collection::Commands::Request.new.call(aggregate_id, r, ctx)
+        Approvals::Collection::Commands::RequestHandler.new.handle(
+          Approvals::Collection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: collector_id, roles: [] of UUID)
+        )
       end
     end
   end
@@ -66,7 +60,9 @@ describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
       )
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "Approval process is already rejected") do
-        Approvals::Collection::Commands::Request.new.call(aggregate_id, r, ctx)
+        Approvals::Collection::Commands::RequestHandler.new.handle(
+          Approvals::Collection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: collector_id, roles: [] of UUID)
+        )
       end
     end
   end
@@ -75,16 +71,10 @@ describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
     it "raises InvalidArgument" do
       aggregate_id = seed_collection_pending_approval(requestor_id)
 
-      requestor_ctx = CrystalBank::Api::Context.new(
-        user_id: requestor_id,
-        roles: [] of UUID,
-        required_permission: CrystalBank::Permissions::WRITE_approvals_collection_request,
-        scope: scope_id,
-        available_scopes: [scope_id]
-      )
-
       expect_raises(CrystalBank::Exception::InvalidArgument, "Requestor cannot approve their own request") do
-        Approvals::Collection::Commands::Request.new.call(aggregate_id, r, requestor_ctx)
+        Approvals::Collection::Commands::RequestHandler.new.handle(
+          Approvals::Collection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: requestor_id, roles: [] of UUID)
+        )
       end
     end
   end
@@ -94,7 +84,9 @@ describe CrystalBank::Domains::Approvals::Collection::Commands::Request do
       aggregate_id = seed_collection_pending_approval(requestor_id)
 
       expect_raises(CrystalBank::Exception::InvalidArgument, "User does not have any required approval permission") do
-        Approvals::Collection::Commands::Request.new.call(aggregate_id, r, ctx) # ctx has no roles
+        Approvals::Collection::Commands::RequestHandler.new.handle(
+          Approvals::Collection::Commands::Request.new(aggregate_id: aggregate_id, comment: r.comment, actor_id: collector_id, roles: [] of UUID)
+        )
       end
     end
   end

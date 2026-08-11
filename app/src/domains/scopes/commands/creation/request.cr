@@ -1,17 +1,23 @@
 module CrystalBank::Domains::Scopes
   module Creation
     module Commands
-      class Request < ES::Command
-        def call(r : Scopes::Api::Requests::CreationRequest, c : CrystalBank::Api::Context) : UUID
-          actor = c.user_id
-          scope = c.scope
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter name : String
+        getter parent_scope_id : UUID?
+        getter scope_id : UUID
+        getter actor_id : UUID
 
+        def initialize(@aggregate_id : UUID, @name, @parent_scope_id, @scope_id, @actor_id)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request)
           # Check if provided parent scope can be found and is active
           # Default to the current x-scope when no explicit parent is provided
-          parent_scope_id = r.parent_scope_id || scope
+          parent_scope_id = command.parent_scope_id || command.scope_id
           unless parent_scope_id.nil?
-            aggregate = Scopes::Aggregate.new(parent_scope_id)
+            aggregate = Scopes::Aggregate.new(parent_scope_id, event_store: @event_store, event_handlers: @event_handlers)
             begin
               aggregate.hydrate
             rescue ES::Exception::NotFound
@@ -22,18 +28,16 @@ module CrystalBank::Domains::Scopes
 
           # Create the scope creation request event
           event = Scopes::Creation::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
+            aggregate_id: command.aggregate_id,
             command_handler: self.class.to_s,
-            name: r.name,
+            name: command.name,
             parent_scope_id: parent_scope_id,
-            scope_id: scope,
+            scope_id: command.scope_id,
           )
 
           # Append event to event store
           @event_store.append(event)
-
-          # Return the aggregate ID of the newly created scope aggregate
-          UUID.new(event.header.aggregate_id.to_s)
         end
       end
     end

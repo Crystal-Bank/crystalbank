@@ -1,34 +1,39 @@
 require "../../../../spec_helper"
 
-describe CrystalBank::Domains::Approvals::Creation::Commands::Request do
+describe CrystalBank::Domains::Approvals::Creation::Commands::RequestHandler do
   scope_id = UUID.new("00000000-0000-0000-0000-100000000001")
   actor_id = UUID.new("00000000-0000-0000-0000-000000000001")
 
   describe "guard: empty required_approvals" do
     it "raises InvalidArgument" do
       expect_raises(CrystalBank::Exception::InvalidArgument, "Required approvals cannot be empty") do
-        Approvals::Creation::Commands::Request.new.call(
-          source_aggregate_type: "Account",
-          source_aggregate_id: UUID.v7,
-          scope_id: scope_id,
-          required_approvals: [] of String,
-          actor_id: actor_id,
+        Approvals::Creation::Commands::RequestHandler.new.handle(
+          Approvals::Creation::Commands::Request.new(
+            aggregate_id: UUID.v7,
+            source_aggregate_type: "Account",
+            source_aggregate_id: UUID.v7,
+            scope_id: scope_id,
+            required_approvals: [] of String,
+            actor_id: actor_id,
+          )
         )
       end
     end
   end
 
   describe "without subject" do
-    it "appends a Requested event and returns the approval aggregate ID" do
-      approval_id = Approvals::Creation::Commands::Request.new.call(
-        source_aggregate_type: "Account",
-        source_aggregate_id: UUID.v7,
-        scope_id: scope_id,
-        required_approvals: ["write_accounts_opening_compliance_approval"],
-        actor_id: actor_id,
+    it "appends a Requested event and stores it under the given approval aggregate ID" do
+      approval_id = UUID.v7
+      Approvals::Creation::Commands::RequestHandler.new.handle(
+        Approvals::Creation::Commands::Request.new(
+          aggregate_id: approval_id,
+          source_aggregate_type: "Account",
+          source_aggregate_id: UUID.v7,
+          scope_id: scope_id,
+          required_approvals: ["write_accounts_opening_compliance_approval"],
+          actor_id: actor_id,
+        )
       )
-
-      approval_id.should be_a(UUID)
 
       aggregate = Approvals::Aggregate.new(approval_id)
       aggregate.hydrate
@@ -49,13 +54,17 @@ describe CrystalBank::Domains::Approvals::Creation::Commands::Request do
         ]
       )
 
-      approval_id = Approvals::Creation::Commands::Request.new.call(
-        source_aggregate_type: "AccountBlock",
-        source_aggregate_id: UUID.v7,
-        scope_id: scope_id,
-        required_approvals: ["write_accounts_blocking_approval"],
-        actor_id: actor_id,
-        subject: subject_snapshot,
+      approval_id = UUID.v7
+      Approvals::Creation::Commands::RequestHandler.new.handle(
+        Approvals::Creation::Commands::Request.new(
+          aggregate_id: approval_id,
+          source_aggregate_type: "AccountBlock",
+          source_aggregate_id: UUID.v7,
+          scope_id: scope_id,
+          required_approvals: ["write_accounts_blocking_approval"],
+          actor_id: actor_id,
+          subject: subject_snapshot,
+        )
       )
 
       aggregate = Approvals::Aggregate.new(approval_id)

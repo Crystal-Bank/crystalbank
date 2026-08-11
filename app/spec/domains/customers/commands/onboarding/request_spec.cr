@@ -1,6 +1,6 @@
 require "../../../../spec_helper"
 
-describe CrystalBank::Domains::Customers::Onboarding::Commands::Request do
+describe CrystalBank::Domains::Customers::Onboarding::Commands::RequestHandler do
   pending "pending" do
     false.should eq(true)
   end

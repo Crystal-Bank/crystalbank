@@ -1,10 +1,10 @@
 module CrystalBank::Domains::ApiKeys
   module Authentication
     module Commands
-      class Request < ES::Command
+      # Not an ES::Command — this is a read-only credential check, not a state-changing
+      # intent against an aggregate, so it stays a plain class outside the command layer.
+      class Request
         def call(client_id : String, client_secret : String) : String
-          @aggregate_id = UUID.new(client_id)
-
           # Fetch API key
           aggregate = ApiKeys::Aggregate.new(UUID.new(client_id))
           aggregate.hydrate

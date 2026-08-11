@@ -10,10 +10,14 @@ require "./api/authentication"
 # Commands
 require "./commands/authentication/request"
 require "./commands/generation/request"
-require "./commands/generation/process_request"
-require "./commands/generation/process_approval"
+require "./commands/generation/accept"
 require "./commands/revocation/request"
-require "./commands/revocation/process_request"
+require "./commands/revocation/accept"
+
+# Reactors
+require "./reactors/generation/on_requested"
+require "./reactors/generation/on_approval_completed"
+require "./reactors/revocation/on_requested"
 
 # Events
 require "./events/generation/accepted"

@@ -5,7 +5,11 @@ module TestEnv
   class_property credit_account_id : UUID = UUID.random
 end
 
-describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request do
+private def ledger_command(r : Ledger::Transactions::Api::Requests::TransactionRequest, scope_id : UUID, user_id : UUID) : Ledger::Transactions::Request::Commands::Request
+  Ledger::Transactions::Request::Commands::Request.new(aggregate_id: UUID.v7, r: r, actor_id: user_id, scope_id: scope_id)
+end
+
+describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::RequestHandler do
   before_all do
     # This runs once before all tests in this describe block
     debit_account_id = UUID.v7
@@ -35,16 +39,6 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
   it "creates a transaction when accounts are open and scope is valid" do
     scope_id = UUID.v7
     user_id = UUID.v7
-    debit_account_id = UUID.v7
-    credit_account_id = UUID.v7
-
-    context = CrystalBank::Api::Context.new(
-      user_id: user_id,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
 
     json = {
       "currency"               => "EUR",
@@ -59,8 +53,7 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
 
     request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
-    result = Ledger::Transactions::Request::Commands::Request.new.call(request, context)
-    result.should be_a(UUID)
+    Ledger::Transactions::Request::Commands::RequestHandler.new.handle(ledger_command(request, scope_id, user_id))
   end
 
   it "raises when an account is not open" do
@@ -68,14 +61,6 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     user_id = UUID.v7
     debit_account_id = UUID.v7
     credit_account_id = UUID.v7
-
-    context = CrystalBank::Api::Context.new(
-      user_id: user_id,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
 
     json = {
       "currency"               => "EUR",
@@ -91,21 +76,13 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /not open/) do
-      Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+      Ledger::Transactions::Request::Commands::RequestHandler.new.handle(ledger_command(request, scope_id, user_id))
     end
   end
 
   it "raises when an account does not support the transfer currency" do
     scope_id = UUID.v7
     user_id = UUID.v7
-
-    context = CrystalBank::Api::Context.new(
-      user_id: user_id,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
 
     # Accounts in TestEnv support EUR and USD only; GBP is not in their supported currencies
     json = {
@@ -122,21 +99,13 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /does not support currency/) do
-      Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+      Ledger::Transactions::Request::Commands::RequestHandler.new.handle(ledger_command(request, scope_id, user_id))
     end
   end
 
   it "raises when entries do not balance" do
     scope_id = UUID.new("00000000-0000-0000-0000-000000000000")
     user_id = UUID.v7
-
-    context = CrystalBank::Api::Context.new(
-      user_id: user_id,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
 
     json = {
       "currency"               => "EUR",
@@ -152,21 +121,13 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /do not balance/) do
-      Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+      Ledger::Transactions::Request::Commands::RequestHandler.new.handle(ledger_command(request, scope_id, user_id))
     end
   end
 
   it "raises when fewer than two entries are provided" do
     scope_id = UUID.new("00000000-0000-0000-0000-000000000000")
     user_id = UUID.v7
-
-    context = CrystalBank::Api::Context.new(
-      user_id: user_id,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_ledger_transactions_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
 
     json = {
       "currency"               => "EUR",
@@ -181,7 +142,7 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /At least two entries/) do
-      Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+      Ledger::Transactions::Request::Commands::RequestHandler.new.handle(ledger_command(request, scope_id, user_id))
     end
   end
 end

@@ -1,7 +1,7 @@
 module CrystalBank::Domains::Platform
   module Types
     module Commands
-      class FetchPermissions < ES::Command
+      class FetchPermissions
         def call(c : CrystalBank::Api::Context) : Array(String)
           Queries::Permissions.new.list
         end

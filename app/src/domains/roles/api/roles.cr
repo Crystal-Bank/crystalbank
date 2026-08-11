@@ -20,8 +20,16 @@ module CrystalBank::Domains::Roles
         idempotency_key : UUID,
       ) : CreationResponse
         authorized?("write_roles_creation_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        aggregate_id = ::Roles::Creation::Commands::Request.new.call(r, context)
+        aggregate_id = UUID.v7
+        ::Roles::Creation::Commands::RequestHandler.new.handle(
+          ::Roles::Creation::Commands::Request.new(
+            aggregate_id: aggregate_id, name: r.name, permissions: r.permissions, scopes: r.scopes,
+            scope_id: scope, actor_id: context.user_id, context: context
+          )
+        )
 
         CreationResponse.new(aggregate_id)
       end
@@ -40,8 +48,14 @@ module CrystalBank::Domains::Roles
         idempotency_key : UUID,
       ) : Responses::PermissionsUpdateResponse
         authorized?("write_roles_permissions_update_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        result = ::Roles::PermissionsUpdate::Commands::Request.new.call(r, context)
+        result = ::Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(
+          ::Roles::PermissionsUpdate::Commands::Request.new(
+            aggregate_id: UUID.v7, role_id: r.role_id, permissions: r.permissions, actor_id: context.user_id, scope_id: scope
+          )
+        )
 
         Responses::PermissionsUpdateResponse.new(result[:update_request_id])
       end

@@ -1,12 +1,18 @@
 module CrystalBank::Domains::Ledger::Transactions
   module Request
     module Commands
-      class Request < ES::Command
-        def call(r : Ledger::Transactions::Api::Requests::TransactionRequest, c : CrystalBank::Api::Context) : UUID
-          actor = c.user_id
-          scope = c.scope
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter r : Ledger::Transactions::Api::Requests::TransactionRequest
+        getter actor_id : UUID
+        getter scope_id : UUID
 
+        def initialize(@aggregate_id : UUID, @r, @actor_id, @scope_id)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request)
+          r = command.r
           entries = r.entries
 
           # Check minimum entries
@@ -69,7 +75,8 @@ module CrystalBank::Domains::Ledger::Transactions
           metadata = r.metadata
 
           event = Ledger::Transactions::Request::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
+            aggregate_id: command.aggregate_id,
             command_handler: self.class.to_s,
             currency: r.currency,
             entries_json: entries_json,
@@ -79,12 +86,10 @@ module CrystalBank::Domains::Ledger::Transactions
             payment_type: nil,
             external_ref: metadata.try(&.external_ref),
             channel: nil,
-            scope_id: scope,
+            scope_id: command.scope_id,
           )
 
           @event_store.append(event)
-
-          UUID.new(event.header.aggregate_id.to_s)
         end
       end
     end
