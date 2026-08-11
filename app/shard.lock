@@ -14,7 +14,7 @@ shards:
 
   crystal-es:
     git: https://github.com/tristanholl/crystal-es.git
-    version: 0.6.6
+    version: 0.9.0
 
   crystal_iban:
     git: https://github.com/tristanholl/crystal-iban.git

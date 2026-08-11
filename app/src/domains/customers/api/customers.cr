@@ -20,8 +20,15 @@ module CrystalBank::Domains::Customers
         idempotency_key : UUID,
       ) : OnboardingResponse
         authorized?("write_customers_onboarding_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        aggregate_id = ::Customers::Onboarding::Commands::Request.new.call(r, context)
+        aggregate_id = UUID.v7
+        ::Customers::Onboarding::Commands::RequestHandler.new.handle(
+          ::Customers::Onboarding::Commands::Request.new(
+            aggregate_id: aggregate_id, name: r.name, type: r.type, scope_id: scope, actor_id: context.user_id
+          )
+        )
 
         OnboardingResponse.new(aggregate_id)
       end

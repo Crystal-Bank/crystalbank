@@ -4,7 +4,7 @@ module TestEnvAccountUnblock
   class_property account_id : UUID = UUID.random
 end
 
-describe CrystalBank::Domains::Accounts::Blocking::Commands::Unblock do
+describe CrystalBank::Domains::Accounts::Blocking::Commands::UnblockHandler do
   before_all do
     account_id = UUID.v7
 
@@ -28,21 +28,13 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::Unblock do
     scope_id = UUID.v7
     user_id = UUID.v7
 
-    context = CrystalBank::Api::Context.new(
-      user_id: user_id,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_accounts_unblocking_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
+    result = Accounts::Blocking::Commands::UnblockHandler.new.handle(
+      Accounts::Blocking::Commands::Unblock.new(
+        aggregate_id: UUID.v7, account_id: TestEnvAccountUnblock.account_id,
+        block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK, reason: "Block resolved",
+        actor_id: user_id, scope_id: scope_id
+      )
     )
-
-    request = Accounts::Api::Requests::UnblockingCommandRequest.new(
-      TestEnvAccountUnblock.account_id,
-      CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
-      "Block resolved"
-    )
-
-    result = Accounts::Blocking::Commands::Unblock.new.call(request, context)
 
     result[:block_request_id].should be_a(UUID)
     result[:approval_id].should be_a(UUID)
@@ -75,34 +67,20 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::Unblock do
 
   it "raises when account does not exist or is not open" do
     scope_id = UUID.v7
-    context = CrystalBank::Api::Context.new(
-      user_id: UUID.v7,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_accounts_unblocking_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
-
-    request = Accounts::Api::Requests::UnblockingCommandRequest.new(
-      UUID.v7,
-      CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
-      nil
-    )
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /does not exist or is not open/) do
-      Accounts::Blocking::Commands::Unblock.new.call(request, context)
+      Accounts::Blocking::Commands::UnblockHandler.new.handle(
+        Accounts::Blocking::Commands::Unblock.new(
+          aggregate_id: UUID.v7, account_id: UUID.v7,
+          block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK, reason: nil,
+          actor_id: UUID.v7, scope_id: scope_id
+        )
+      )
     end
   end
 
   it "raises when the block type is not active on the account" do
     scope_id = UUID.v7
-    context = CrystalBank::Api::Context.new(
-      user_id: UUID.v7,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_accounts_unblocking_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
-    )
 
     # Open a fresh account with no active blocks
     account_id = UUID.v7
@@ -111,34 +89,14 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::Unblock do
     TEST_EVENT_STORE.append(requested)
     TEST_EVENT_STORE.append(accepted)
 
-    request = Accounts::Api::Requests::UnblockingCommandRequest.new(
-      account_id,
-      CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
-      nil
-    )
-
     expect_raises(CrystalBank::Exception::InvalidArgument, /is not active/) do
-      Accounts::Blocking::Commands::Unblock.new.call(request, context)
-    end
-  end
-
-  it "raises when scope is missing from context" do
-    context = CrystalBank::Api::Context.new(
-      user_id: UUID.v7,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_accounts_unblocking_request,
-      scope: nil,
-      available_scopes: [] of UUID
-    )
-
-    request = Accounts::Api::Requests::UnblockingCommandRequest.new(
-      TestEnvAccountUnblock.account_id,
-      CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
-      nil
-    )
-
-    expect_raises(CrystalBank::Exception::InvalidArgument, /Invalid scope/) do
-      Accounts::Blocking::Commands::Unblock.new.call(request, context)
+      Accounts::Blocking::Commands::UnblockHandler.new.handle(
+        Accounts::Blocking::Commands::Unblock.new(
+          aggregate_id: UUID.v7, account_id: account_id,
+          block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK, reason: nil,
+          actor_id: UUID.v7, scope_id: scope_id
+        )
+      )
     end
   end
 end

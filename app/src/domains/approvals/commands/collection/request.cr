@@ -1,15 +1,22 @@
 module CrystalBank::Domains::Approvals
   module Collection
     module Commands
-      class Request < ES::Command
-        def call(approval_id : UUID, r : CrystalBank::Domains::Approvals::Api::Requests::CollectRequest, c : CrystalBank::Api::Context) : Nil
-          actor_id = c.user_id
-          scope = c.scope
-          roles = c.roles
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter comment : String
+        getter actor_id : UUID
+        getter roles : Array(UUID)
+
+        def initialize(@aggregate_id : UUID, @comment, @actor_id, @roles)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request) : Nil
+          approval_id = command.aggregate_id
+          actor_id = command.actor_id
 
           # Hydrate the approval aggregate
-          aggregate = Approvals::Aggregate.new(approval_id)
+          aggregate = Approvals::Aggregate.new(approval_id, event_store: @event_store, event_handlers: @event_handlers)
           aggregate.hydrate
 
           state = aggregate.state
@@ -28,7 +35,7 @@ module CrystalBank::Domains::Approvals
           raise CrystalBank::Exception::InvalidArgument.new("User has already provided an approval for this process") if already_approved
 
           # Find all required permissions this user can satisfy
-          user_permissions = find_matching_permissions(state.required_approvals, roles)
+          user_permissions = find_matching_permissions(state.required_approvals, command.roles)
           raise CrystalBank::Exception::InvalidArgument.new("User does not have any required approval permission") if user_permissions.empty?
 
           # Build the full set of collected permissions for the completion check
@@ -45,7 +52,7 @@ module CrystalBank::Domains::Approvals
             command_handler: self.class.to_s,
             user_id: actor_id,
             permissions: user_permissions,
-            comment: r.comment
+            comment: command.comment
           )
           @event_store.append(collected_event)
 

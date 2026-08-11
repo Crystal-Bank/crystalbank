@@ -19,8 +19,12 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
       @[AC::Route::POST("/", body: :r)]
       def create(r : CreditTransferRequest) : Responses::CreditTransferResponse
         authorized?("write_payments_sepa_credit_transfers_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        result = ::Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new.call(r, context)
+        result = ::Payments::Sepa::CreditTransfers::Initiation::Commands::RequestHandler.new.handle(
+          ::Payments::Sepa::CreditTransfers::Initiation::Commands::Request.new(aggregate_id: UUID.v7, r: r, actor_id: context.user_id, scope_id: scope)
+        )
 
         Responses::CreditTransferResponse.new(result[:payment_id])
       end

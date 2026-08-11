@@ -21,8 +21,12 @@ module CrystalBank::Domains::Approvals
         idempotency_key : UUID,
       ) : CollectResponse
         authorized?("write_approvals_collection_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        ::Approvals::Collection::Commands::Request.new.call(id, r, context)
+        ::Approvals::Collection::Commands::RequestHandler.new.handle(
+          ::Approvals::Collection::Commands::Request.new(aggregate_id: id, comment: r.comment, actor_id: context.user_id, roles: context.roles)
+        )
 
         # Hydrate the aggregate to check current status
         aggregate = ::Approvals::Aggregate.new(id)
@@ -43,8 +47,12 @@ module CrystalBank::Domains::Approvals
         id : UUID,
       ) : RejectResponse
         authorized?("write_approvals_rejection_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        ::Approvals::Rejection::Commands::Request.new.call(id, r, context)
+        ::Approvals::Rejection::Commands::RequestHandler.new.handle(
+          ::Approvals::Rejection::Commands::Request.new(aggregate_id: id, comment: r.comment, actor_id: context.user_id, roles: context.roles)
+        )
         RejectResponse.new(id, "rejected")
       end
 

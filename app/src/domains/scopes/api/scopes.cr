@@ -20,8 +20,15 @@ module CrystalBank::Domains::Scopes
         idempotency_key : UUID,
       ) : CreationResponse
         authorized?("write_scopes_creation_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        aggregate_id = ::Scopes::Creation::Commands::Request.new.call(r, context)
+        aggregate_id = UUID.v7
+        ::Scopes::Creation::Commands::RequestHandler.new.handle(
+          ::Scopes::Creation::Commands::Request.new(
+            aggregate_id: aggregate_id, name: r.name, parent_scope_id: r.parent_scope_id, scope_id: scope, actor_id: context.user_id
+          )
+        )
 
         CreationResponse.new(aggregate_id)
       end
@@ -38,8 +45,14 @@ module CrystalBank::Domains::Scopes
         idempotency_key : UUID,
       ) : NameChangeResponse
         authorized?("write_scopes_name_change_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        result = ::Scopes::NameChange::Commands::Request.new.call(r, context)
+        result = ::Scopes::NameChange::Commands::RequestHandler.new.handle(
+          ::Scopes::NameChange::Commands::Request.new(
+            aggregate_id: UUID.v7, target_scope_id: r.scope_id, name: r.name, actor_id: context.user_id, scope_id: scope
+          )
+        )
 
         NameChangeResponse.new(result[:name_change_request_id])
       end

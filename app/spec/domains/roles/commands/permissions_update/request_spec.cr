@@ -1,20 +1,10 @@
 require "../../../../spec_helper"
 
-private def permissions_update_context(scope : UUID? = UUID.new("00000000-0000-0000-0000-100000000001"))
-  CrystalBank::Api::Context.new(
-    user_id: UUID.v7,
-    roles: [] of UUID,
-    required_permission: CrystalBank::Permissions::WRITE_roles_permissions_update_request,
-    scope: scope,
-    available_scopes: scope ? [scope] : [] of UUID
+private def permissions_update_command(aggregate_id : UUID, role_id : UUID, permissions : Array(CrystalBank::Permissions) = [CrystalBank::Permissions::WRITE_roles_permissions_update_request]) : Roles::PermissionsUpdate::Commands::Request
+  Roles::PermissionsUpdate::Commands::Request.new(
+    aggregate_id: aggregate_id, role_id: role_id, permissions: permissions,
+    actor_id: UUID.v7, scope_id: UUID.new("00000000-0000-0000-0000-100000000001")
   )
-end
-
-private def permissions_update_request(role_id : UUID, permissions : Array(String) = ["write_roles_permissions_update_request"])
-  Roles::Api::Requests::PermissionsUpdateRequest.from_json({
-    role_id:     role_id.to_s,
-    permissions: permissions,
-  }.to_json)
 end
 
 private def seed_active_role(role_id : UUID)
@@ -24,22 +14,25 @@ private def seed_active_role(role_id : UUID)
   TEST_EVENT_STORE.append(acc)
   Roles::Projections::Roles.new.apply(req)
   Roles::Projections::Roles.new.apply(acc)
+  # The audit projection's scope_id_for self-lookup (used by the
+  # RolePermissionsUpdate::Requested apply overload) needs the role's own
+  # audit trail populated, exactly as the real event bus would do.
+  Events::Projections::Events.new.apply(req)
+  Events::Projections::Events.new.apply(acc)
 end
 
-describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
-  it "returns a permissions update request UUID and creates an approval" do
+describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::RequestHandler do
+  it "creates a permissions update request and an approval under the given aggregate ID" do
     role_id = UUID.v7
     seed_active_role(role_id)
+    update_request_id = UUID.v7
 
-    result = Roles::PermissionsUpdate::Commands::Request.new.call(
-      permissions_update_request(role_id: role_id),
-      permissions_update_context
-    )
+    result = Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(permissions_update_command(update_request_id, role_id))
 
-    result[:update_request_id].should be_a(UUID)
+    result[:update_request_id].should eq(update_request_id)
     result[:approval_id].should be_a(UUID)
 
-    aggregate = Roles::PermissionsUpdate::Aggregate.new(result[:update_request_id])
+    aggregate = Roles::PermissionsUpdate::Aggregate.new(update_request_id)
     aggregate.hydrate
 
     aggregate.state.role_id.should eq(role_id)
@@ -50,15 +43,13 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
   it "creates an approval with a subject snapshot containing role name and permission count" do
     role_id = UUID.v7
     seed_active_role(role_id)
+    update_request_id = UUID.v7
 
-    result = Roles::PermissionsUpdate::Commands::Request.new.call(
-      permissions_update_request(role_id: role_id),
-      permissions_update_context
-    )
+    result = Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(permissions_update_command(update_request_id, role_id))
 
     apply_projection(result[:approval_id])
 
-    approval = Approvals::Queries::Approvals.new.find_by_source("RolePermissionsUpdate", result[:update_request_id])
+    approval = Approvals::Queries::Approvals.new.find_by_source("RolePermissionsUpdate", update_request_id)
     approval.should_not be_nil
 
     subject = approval.not_nil!.subject
@@ -75,10 +66,7 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
 
   it "raises when the role does not exist" do
     expect_raises(CrystalBank::Exception::InvalidArgument, /not found/) do
-      Roles::PermissionsUpdate::Commands::Request.new.call(
-        permissions_update_request(role_id: UUID.v7),
-        permissions_update_context
-      )
+      Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(permissions_update_command(UUID.v7, UUID.v7))
     end
   end
 
@@ -89,10 +77,7 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
     Roles::Projections::Roles.new.apply(req)
 
     expect_raises(CrystalBank::Exception::InvalidArgument, /not active/) do
-      Roles::PermissionsUpdate::Commands::Request.new.call(
-        permissions_update_request(role_id: role_id),
-        permissions_update_context
-      )
+      Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(permissions_update_command(UUID.v7, role_id))
     end
   end
 
@@ -102,9 +87,8 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
 
     # The factory seeds the role with WRITE_roles_creation_request
     expect_raises(CrystalBank::Exception::InvalidArgument, /unchanged/) do
-      Roles::PermissionsUpdate::Commands::Request.new.call(
-        permissions_update_request(role_id: role_id, permissions: ["write_roles_creation_request"]),
-        permissions_update_context
+      Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(
+        permissions_update_command(UUID.v7, role_id, [CrystalBank::Permissions::WRITE_roles_creation_request])
       )
     end
   end
@@ -114,31 +98,15 @@ describe CrystalBank::Domains::Roles::PermissionsUpdate::Commands::Request do
     seed_active_role(role_id)
 
     # First request succeeds
-    result = Roles::PermissionsUpdate::Commands::Request.new.call(
-      permissions_update_request(role_id: role_id),
-      permissions_update_context
-    )
+    result = Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(permissions_update_command(UUID.v7, role_id))
 
     # Project the Requested event so the pending guard has data
     apply_projection(result[:update_request_id])
 
     # Second request for the same role must be rejected
     expect_raises(CrystalBank::Exception::InvalidArgument, /already has a pending permissions update/) do
-      Roles::PermissionsUpdate::Commands::Request.new.call(
-        permissions_update_request(role_id: role_id, permissions: ["write_roles_permissions_update_approval"]),
-        permissions_update_context
-      )
-    end
-  end
-
-  it "raises when scope is missing from context" do
-    role_id = UUID.v7
-    seed_active_role(role_id)
-
-    expect_raises(CrystalBank::Exception::InvalidArgument, /Invalid scope/) do
-      Roles::PermissionsUpdate::Commands::Request.new.call(
-        permissions_update_request(role_id: role_id),
-        permissions_update_context(scope: nil)
+      Roles::PermissionsUpdate::Commands::RequestHandler.new.handle(
+        permissions_update_command(UUID.v7, role_id, [CrystalBank::Permissions::WRITE_roles_permissions_update_approval])
       )
     end
   end

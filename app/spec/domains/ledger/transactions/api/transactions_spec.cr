@@ -1,10 +1,10 @@
 require "../../../../spec_helper"
 
 # POST /ledger/transactions
-# The endpoint calls `Ledger::Transactions::Request::Commands::Request#call` with
-# a `TransactionRequest` body and a `CrystalBank::Api::Context` that includes
-# the actor's user_id and scope. These integration tests exercise that full
-# command path, verifying the contract the API controller enforces.
+# The endpoint builds a `Ledger::Transactions::Request::Commands::Request` from a
+# `TransactionRequest` body plus the actor's user_id and scope, then calls
+# `RequestHandler#handle`. These integration tests exercise that full command
+# path, verifying the contract the API controller enforces.
 describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
   describe "POST /ledger/transactions - requires valid scope and open accounts" do
     it "stores a Requested event and returns a transaction id when scope is valid and accounts are open" do
@@ -50,9 +50,10 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
       }.to_json
 
       request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
-      transaction_id = Ledger::Transactions::Request::Commands::Request.new.call(request, context)
-
-      transaction_id.should be_a(UUID)
+      transaction_id = UUID.v7
+      Ledger::Transactions::Request::Commands::RequestHandler.new.handle(
+        Ledger::Transactions::Request::Commands::Request.new(aggregate_id: transaction_id, r: request, actor_id: context.user_id, scope_id: context.scope.not_nil!)
+      )
 
       # Verify the Requested event was persisted for the returned id
       aggregate = Ledger::Transactions::Aggregate.new(transaction_id)
@@ -92,7 +93,9 @@ describe CrystalBank::Domains::Ledger::Transactions::Api::Transactions do
       request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
       expect_raises(CrystalBank::Exception::InvalidArgument, /not open/) do
-        Ledger::Transactions::Request::Commands::Request.new.call(request, context)
+        Ledger::Transactions::Request::Commands::RequestHandler.new.handle(
+          Ledger::Transactions::Request::Commands::Request.new(aggregate_id: UUID.v7, r: request, actor_id: context.user_id, scope_id: context.scope.not_nil!)
+        )
       end
     end
   end

@@ -6,8 +6,11 @@ require "./api/customers"
 
 # Commands
 require "./commands/onboarding/request"
-require "./commands/onboarding/process_request"
-require "./commands/onboarding/process_approval"
+require "./commands/onboarding/accept"
+
+# Reactors
+require "./reactors/onboarding/on_requested"
+require "./reactors/onboarding/on_approval_completed"
 
 # Events
 require "./events/onboarding/accepted"

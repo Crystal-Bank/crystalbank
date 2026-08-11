@@ -16,8 +16,13 @@ module CrystalBank::Domains::Ledger::Transactions
       @[AC::Route::POST("/", body: :r)]
       def create(r : TransactionRequest) : Responses::TransactionResponse
         authorized?("write_ledger_transactions_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        aggregate_id = ::Ledger::Transactions::Request::Commands::Request.new.call(r, context)
+        aggregate_id = UUID.v7
+        ::Ledger::Transactions::Request::Commands::RequestHandler.new.handle(
+          ::Ledger::Transactions::Request::Commands::Request.new(aggregate_id: aggregate_id, r: r, actor_id: context.user_id, scope_id: scope)
+        )
 
         Responses::TransactionResponse.new(aggregate_id)
       end

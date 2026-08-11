@@ -9,15 +9,21 @@ require "./api/me"
 
 # Commands
 require "./commands/assign_roles/request"
-require "./commands/assign_roles/process_request"
-require "./commands/assign_roles/process_approval"
-require "./commands/assign_roles/process_rejection"
+require "./commands/assign_roles/accept"
+require "./commands/assign_roles/reject"
 require "./commands/remove_roles/request"
-require "./commands/remove_roles/process_request"
-require "./commands/remove_roles/process_approval"
+require "./commands/remove_roles/accept"
 require "./commands/onboarding/request"
-require "./commands/onboarding/process_request"
-require "./commands/onboarding/process_approval"
+require "./commands/onboarding/accept"
+
+# Reactors
+require "./reactors/assign_roles/on_requested"
+require "./reactors/assign_roles/on_approval_completed"
+require "./reactors/assign_roles/on_rejected"
+require "./reactors/remove_roles/on_requested"
+require "./reactors/remove_roles/on_approval_completed"
+require "./reactors/onboarding/on_requested"
+require "./reactors/onboarding/on_approval_completed"
 
 # Events
 require "./events/assign_roles/accepted"

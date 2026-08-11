@@ -1,13 +1,21 @@
 module CrystalBank::Domains::Accounts
   module Closure
     module Commands
-      class Request < ES::Command
-        def call(r : Accounts::Api::Requests::ClosureRequest, account_id : UUID, c : CrystalBank::Api::Context) : {closure_request_id: UUID, approval_id: UUID}
-          actor = c.user_id
-          scope = c.scope
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter reason : CrystalBank::Types::Accounts::ClosureReason
+        getter closure_comment : String?
+        getter actor_id : UUID
+        getter scope_id : UUID
 
-          account = ::Accounts::Aggregate.new(account_id)
+        def initialize(@aggregate_id : UUID, @reason, @closure_comment, @actor_id, @scope_id)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request)
+          account_id = command.aggregate_id
+
+          account = ::Accounts::Aggregate.new(account_id, event_store: @event_store, event_handlers: @event_handlers)
           begin
             account.hydrate
           rescue ES::Exception::NotFound
@@ -20,33 +28,37 @@ module CrystalBank::Domains::Accounts
 
           # Mark the account as closure-pending
           account_event = ::Accounts::Closure::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
             aggregate_id: account_id,
             aggregate_version: account.state.next_version,
             command_handler: self.class.to_s,
-            reason: r.reason,
-            closure_comment: r.closure_comment
+            reason: command.reason,
+            closure_comment: command.closure_comment
           )
           @event_store.append(account_event)
 
           # Create the AccountClosure request aggregate to carry the full intent
+          closure_request_id = UUID.v7
           closure_request_event = ::Accounts::Closure::Closure::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
+            aggregate_id: closure_request_id,
             command_handler: self.class.to_s,
             account_id: account_id,
-            reason: r.reason,
-            closure_comment: r.closure_comment
+            reason: command.reason,
+            closure_comment: command.closure_comment
           )
           @event_store.append(closure_request_event)
 
-          closure_request_id = UUID.new(closure_request_event.header.aggregate_id.to_s)
-
-          approval_id = Approvals::Creation::Commands::Request.new.call(
-            source_aggregate_type: "AccountClosure",
-            source_aggregate_id: closure_request_id,
-            scope_id: scope,
-            required_approvals: ["write_accounts_closure_approval"],
-            actor_id: actor
+          approval_id = UUID.v7
+          Approvals::Creation::Commands::RequestHandler.new(event_store: @event_store, event_handlers: @event_handlers).handle(
+            Approvals::Creation::Commands::Request.new(
+              aggregate_id: approval_id,
+              source_aggregate_type: "AccountClosure",
+              source_aggregate_id: closure_request_id,
+              scope_id: command.scope_id,
+              required_approvals: ["write_accounts_closure_approval"],
+              actor_id: command.actor_id
+            )
           )
 
           {closure_request_id: closure_request_id, approval_id: approval_id}

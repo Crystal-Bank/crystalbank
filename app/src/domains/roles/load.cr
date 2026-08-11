@@ -7,10 +7,14 @@ require "./api/roles"
 
 # Commands
 require "./commands/creation/request"
-require "./commands/creation/process_request"
-require "./commands/creation/process_approval"
+require "./commands/creation/accept"
 require "./commands/permissions_update/request"
-require "./commands/permissions_update/process_approval"
+require "./commands/permissions_update/accept"
+
+# Reactors
+require "./reactors/creation/on_requested"
+require "./reactors/creation/on_approval_completed"
+require "./reactors/permissions_update/on_approval_completed"
 
 # Events
 require "./events/creation/accepted"

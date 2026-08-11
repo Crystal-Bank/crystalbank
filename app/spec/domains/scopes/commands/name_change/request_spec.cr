@@ -9,23 +9,16 @@ private def seed_active_scope_for_rename(scope_id : UUID)
   Scopes::Projections::Scopes.new.apply(acc)
 end
 
-describe CrystalBank::Domains::Scopes::NameChange::Commands::Request do
+describe CrystalBank::Domains::Scopes::NameChange::Commands::RequestHandler do
   it "creates an approval with a subject snapshot containing old and new name" do
     scope_id = UUID.v7
     seed_active_scope_for_rename(scope_id)
 
-    context = CrystalBank::Api::Context.new(
-      user_id: UUID.v7,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_scopes_name_change_request,
-      scope: scope_id,
-      available_scopes: [scope_id]
+    result = Scopes::NameChange::Commands::RequestHandler.new.handle(
+      Scopes::NameChange::Commands::Request.new(
+        aggregate_id: UUID.v7, target_scope_id: scope_id, name: "New Scope Name", actor_id: UUID.v7, scope_id: scope_id
+      )
     )
-
-    request = Scopes::Api::Requests::NameChangeRequest.from_json(
-      {scope_id: scope_id.to_s, name: "New Scope Name"}.to_json
-    )
-    result = Scopes::NameChange::Commands::Request.new.call(request, context)
 
     apply_projection(result[:approval_id])
 
@@ -43,26 +36,5 @@ describe CrystalBank::Domains::Scopes::NameChange::Commands::Request do
     field_labels.should contain("To")
     subject.not_nil!.fields.find { |f| f.label == "From" }.not_nil!.value.should eq("Scope name test")
     subject.not_nil!.fields.find { |f| f.label == "To" }.not_nil!.value.should eq("New Scope Name")
-  end
-
-  it "raises when scope is missing from context" do
-    scope_id = UUID.v7
-    seed_active_scope_for_rename(scope_id)
-
-    context = CrystalBank::Api::Context.new(
-      user_id: UUID.v7,
-      roles: [] of UUID,
-      required_permission: CrystalBank::Permissions::WRITE_scopes_name_change_request,
-      scope: nil,
-      available_scopes: [] of UUID
-    )
-
-    request = Scopes::Api::Requests::NameChangeRequest.from_json(
-      {scope_id: scope_id.to_s, name: "New Scope Name"}.to_json
-    )
-
-    expect_raises(CrystalBank::Exception::InvalidArgument, /Invalid scope/) do
-      Scopes::NameChange::Commands::Request.new.call(request, context)
-    end
   end
 end

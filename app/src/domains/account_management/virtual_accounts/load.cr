@@ -7,8 +7,11 @@ require "./aggregate"
 
 # Commands
 require "./commands/opening/request"
-require "./commands/opening/process_request"
-require "./commands/opening/process_approval"
+require "./commands/opening/accept"
+
+# Reactors
+require "./reactors/opening/on_requested"
+require "./reactors/opening/on_approval_completed"
 
 # Projections
 require "./projections/virtual_accounts"

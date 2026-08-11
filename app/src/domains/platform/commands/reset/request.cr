@@ -1,11 +1,14 @@
 module CrystalBank::Domains::Platform
   module Reset
     module Commands
-      class Request < ES::Command
+      class Request
         PROJECTION_TABLES = %w[
           account_blocks accounts api_keys approvals customers events
           postings roles scopes sepa_credit_transfers users
         ]
+
+        def initialize(@event_store : ES::EventStore = ES::Config.event_store)
+        end
 
         def call : CrystalBank::Domains::Platform::Api::Responses::ResetResponse
           db = ES::Config.projection_database

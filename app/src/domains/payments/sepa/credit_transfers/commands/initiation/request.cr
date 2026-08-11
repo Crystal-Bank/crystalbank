@@ -1,14 +1,19 @@
 module CrystalBank::Domains::Payments::Sepa::CreditTransfers
   module Initiation
     module Commands
-      class Request < ES::Command
-        def call(
-          r : Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest,
-          c : CrystalBank::Api::Context,
-        ) : {payment_id: UUID, approval_id: UUID}
-          actor = c.user_id
-          scope = c.scope
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter r : Payments::Sepa::CreditTransfers::Api::Requests::CreditTransferRequest
+        getter actor_id : UUID
+        getter scope_id : UUID
+
+        def initialize(@aggregate_id : UUID, @r, @actor_id, @scope_id)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request)
+          r = command.r
+          payment_id = command.aggregate_id
 
           # Resolve execution date — default to today if not provided
           execution_date = Time.utc
@@ -52,7 +57,8 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
           # Create the SEPA Credit Transfer aggregate
           event = Payments::Sepa::CreditTransfers::Initiation::Events::Requested.new(
-            actor_id: actor,
+            actor_id: command.actor_id,
+            aggregate_id: payment_id,
             command_handler: self.class.to_s,
             end_to_end_id: end_to_end_id,
             debtor_account_id: r.debtor_account_id,
@@ -62,12 +68,10 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
             amount: r.amount,
             execution_date: execution_date,
             remittance_information: r.remittance_information,
-            scope_id: scope,
+            scope_id: command.scope_id,
           )
 
           @event_store.append(event)
-
-          payment_id = UUID.new(event.header.aggregate_id.to_s)
 
           # Build approval subject snapshot for the approver's benefit
           debtor_name = found_by_id[r.debtor_account_id]?.try(&.name) || r.debtor_account_id.to_s
@@ -85,13 +89,17 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
           )
 
           # Create the approval workflow, referencing the payment aggregate
-          approval_id = Approvals::Creation::Commands::Request.new.call(
-            source_aggregate_type: "SepaCreditTransfer",
-            source_aggregate_id: payment_id,
-            scope_id: scope,
-            required_approvals: ["write_payments_sepa_credit_transfers_approval"],
-            actor_id: actor,
-            subject: approval_subject,
+          approval_id = UUID.v7
+          Approvals::Creation::Commands::RequestHandler.new(event_store: @event_store, event_handlers: @event_handlers).handle(
+            Approvals::Creation::Commands::Request.new(
+              aggregate_id: approval_id,
+              source_aggregate_type: "SepaCreditTransfer",
+              source_aggregate_id: payment_id,
+              scope_id: command.scope_id,
+              required_approvals: ["write_payments_sepa_credit_transfers_approval"],
+              actor_id: command.actor_id,
+              subject: approval_subject,
+            )
           )
 
           {payment_id: payment_id, approval_id: approval_id}

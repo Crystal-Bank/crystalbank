@@ -1,15 +1,22 @@
 module CrystalBank::Domains::Approvals
   module Rejection
     module Commands
-      class Request < ES::Command
-        def call(approval_id : UUID, r : CrystalBank::Domains::Approvals::Api::Requests::RejectRequest, c : CrystalBank::Api::Context) : Nil
-          actor_id = c.user_id
-          scope = c.scope
-          roles = c.roles
-          raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
+      struct Request < ES::Command
+        getter comment : String
+        getter actor_id : UUID
+        getter roles : Array(UUID)
+
+        def initialize(@aggregate_id : UUID, @comment, @actor_id, @roles)
+        end
+      end
+
+      class RequestHandler < ES::CommandHandler(Request)
+        def handle(command : Request) : Nil
+          approval_id = command.aggregate_id
+          actor_id = command.actor_id
 
           # Hydrate the approval aggregate
-          aggregate = Approvals::Aggregate.new(approval_id)
+          aggregate = Approvals::Aggregate.new(approval_id, event_store: @event_store, event_handlers: @event_handlers)
           aggregate.hydrate
 
           state = aggregate.state
@@ -24,7 +31,7 @@ module CrystalBank::Domains::Approvals
           # This is the key distinction from collection: the requestor IS allowed to reject their own request.
           is_requestor = state.requestor_id == actor_id
           unless is_requestor
-            user_permissions = find_matching_permissions(state.required_approvals, roles)
+            user_permissions = find_matching_permissions(state.required_approvals, command.roles)
             raise CrystalBank::Exception::InvalidArgument.new("User does not have permission to reject this approval") if user_permissions.empty?
           end
 
@@ -36,7 +43,7 @@ module CrystalBank::Domains::Approvals
             aggregate_version: next_version,
             command_handler: self.class.to_s,
             user_id: actor_id,
-            comment: r.comment
+            comment: command.comment
           )
           @event_store.append(rejected_event)
         end

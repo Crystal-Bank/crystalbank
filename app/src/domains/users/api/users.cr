@@ -20,8 +20,13 @@ module CrystalBank::Domains::Users
         idempotency_key : UUID,
       ) : OnboardingResponse
         authorized?("write_users_onboarding_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
-        aggregate_id = ::Users::Onboarding::Commands::Request.new.call(r, context)
+        aggregate_id = UUID.v7
+        ::Users::Onboarding::Commands::RequestHandler.new.handle(
+          ::Users::Onboarding::Commands::Request.new(aggregate_id: aggregate_id, name: r.name, email: r.email, scope_id: scope, actor_id: context.user_id)
+        )
 
         OnboardingResponse.new(aggregate_id)
       end
@@ -39,9 +44,15 @@ module CrystalBank::Domains::Users
         idempotency_key : UUID,
       )
         authorized?("write_users_assign_roles_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
         user_id = UUID.new(id)
-        aggregate_id = ::Users::AssignRoles::Commands::Request.new.call(user_id, r, context)
+        ::Users::AssignRoles::Commands::RequestHandler.new.handle(
+          ::Users::AssignRoles::Commands::Request.new(
+            aggregate_id: UUID.v7, user_id: user_id, role_ids: r.role_ids, actor_id: context.user_id, scope_id: scope
+          )
+        )
 
         head :accepted
       end
@@ -59,9 +70,15 @@ module CrystalBank::Domains::Users
         idempotency_key : UUID,
       )
         authorized?("write_users_remove_roles_request")
+        scope = context.scope
+        raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
 
         user_id = UUID.new(id)
-        ::Users::RemoveRoles::Commands::Request.new.call(user_id, r, context)
+        ::Users::RemoveRoles::Commands::RequestHandler.new.handle(
+          ::Users::RemoveRoles::Commands::Request.new(
+            aggregate_id: UUID.v7, user_id: user_id, role_ids: r.role_ids, actor_id: context.user_id, scope_id: scope
+          )
+        )
 
         head :accepted
       end
