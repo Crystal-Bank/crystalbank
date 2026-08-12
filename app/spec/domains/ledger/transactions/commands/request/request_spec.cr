@@ -32,11 +32,9 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     TestEnv.credit_account_id = credit_account_id
   end
 
-  it "creates a transaction when accounts are open and scope is valid" do
+  it "creates a transaction and an approval request when accounts are open and scope is valid" do
     scope_id = UUID.v7
     user_id = UUID.v7
-    debit_account_id = UUID.v7
-    credit_account_id = UUID.v7
 
     context = CrystalBank::Api::Context.new(
       user_id: user_id,
@@ -60,7 +58,19 @@ describe CrystalBank::Domains::Ledger::Transactions::Request::Commands::Request 
     request = Ledger::Transactions::Api::Requests::TransactionRequest.from_json(json)
 
     result = Ledger::Transactions::Request::Commands::Request.new.call(request, context)
-    result.should be_a(UUID)
+    result[:transaction_id].should be_a(UUID)
+    result[:approval_id].should be_a(UUID)
+
+    # Ledger transaction should be in pending_approval state
+    aggregate = Ledger::Transactions::Aggregate.new(result[:transaction_id])
+    aggregate.hydrate
+    aggregate.state.status.should eq("pending_approval")
+
+    # Approval aggregate should reference the ledger transaction
+    approval = Approvals::Aggregate.new(result[:approval_id])
+    approval.hydrate
+    approval.state.source_aggregate_type.should eq("LedgerTransaction")
+    approval.state.source_aggregate_id.should eq(result[:transaction_id])
   end
 
   it "raises when an account is not open" do

@@ -79,6 +79,18 @@ module CrystalBank::Domains::Payments::Sepa::CreditTransfers
 
           ledger_transaction_id = UUID.new(ledger_event.header.aggregate_id.to_s)
 
+          # Immediately accept the ledger transaction — no separate approval is required
+          # because this transaction is already the result of an approved SEPA CT.
+          ledger_aggregate = Ledger::Transactions::Aggregate.new(ledger_transaction_id)
+          ledger_aggregate.hydrate
+          ledger_accepted_event = Ledger::Transactions::Request::Events::Accepted.new(
+            actor_id: nil,
+            aggregate_id: ledger_transaction_id,
+            aggregate_version: ledger_aggregate.state.next_version,
+            command_handler: self.class.to_s,
+          )
+          @event_store.append(ledger_accepted_event)
+
           # Mark the SEPA CT as accepted
           next_version = payment.state.next_version
 

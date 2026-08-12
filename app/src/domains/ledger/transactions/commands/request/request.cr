@@ -2,7 +2,7 @@ module CrystalBank::Domains::Ledger::Transactions
   module Request
     module Commands
       class Request < ES::Command
-        def call(r : Ledger::Transactions::Api::Requests::TransactionRequest, c : CrystalBank::Api::Context) : UUID
+        def call(r : Ledger::Transactions::Api::Requests::TransactionRequest, c : CrystalBank::Api::Context) : {transaction_id: UUID, approval_id: UUID}
           actor = c.user_id
           scope = c.scope
           raise CrystalBank::Exception::InvalidArgument.new("Invalid scope") unless scope
@@ -84,7 +84,52 @@ module CrystalBank::Domains::Ledger::Transactions
 
           @event_store.append(event)
 
-          UUID.new(event.header.aggregate_id.to_s)
+          transaction_id = UUID.new(event.header.aggregate_id.to_s)
+
+          # Build a human-readable snapshot so approvers have full context
+          currency_str = r.currency.to_s.upcase
+          amount_formatted = "%.2f %s" % [debit_total / 100.0, currency_str]
+          summary = if (ref = r.remittance_information) && !ref.empty?
+                      "#{amount_formatted} · #{ref}"
+                    else
+                      "#{amount_formatted} · #{entries.size} entries"
+                    end
+
+          approval_fields = [
+            Approvals::ApprovalSubject::Field.new("Currency", currency_str),
+            Approvals::ApprovalSubject::Field.new("Total Amount", amount_formatted),
+            Approvals::ApprovalSubject::Field.new("Entries", entries.size.to_s),
+            Approvals::ApprovalSubject::Field.new("Posting Date", r.posting_date),
+            Approvals::ApprovalSubject::Field.new("Value Date", r.value_date),
+          ] of Approvals::ApprovalSubject::Field
+
+          if (ref = r.remittance_information) && !ref.empty?
+            approval_fields << Approvals::ApprovalSubject::Field.new("Remittance", ref)
+          end
+
+          entries_data.each_with_index do |entry, i|
+            account_name = found_by_id[entry.account_id]?.try(&.name) || entry.account_id.to_s
+            entry_amount = "%.2f %s" % [entry.amount / 100.0, currency_str]
+            label = "Entry #{i + 1} (#{entry.direction.capitalize})"
+            approval_fields << Approvals::ApprovalSubject::Field.new(label, "#{account_name} · #{entry_amount} · #{entry.entry_type}")
+          end
+
+          approval_subject = Approvals::ApprovalSubject.new(
+            title: "Ledger Transaction",
+            summary: summary,
+            fields: approval_fields,
+          )
+
+          approval_id = Approvals::Creation::Commands::Request.new.call(
+            source_aggregate_type: "LedgerTransaction",
+            source_aggregate_id: transaction_id,
+            scope_id: scope,
+            required_approvals: ["write_ledger_transactions_request_approval"],
+            actor_id: actor,
+            subject: approval_subject,
+          )
+
+          {transaction_id: transaction_id, approval_id: approval_id}
         end
       end
     end

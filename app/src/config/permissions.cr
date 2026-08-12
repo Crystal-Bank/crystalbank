@@ -68,6 +68,7 @@ module CrystalBank
       description: "Permissions for creating ledger entries and reading posting records.",
       permissions: [
         {key: "WRITE_ledger_transactions_request", description: "Submit a double-entry ledger transaction request."},
+        {key: "WRITE_ledger_transactions_request_approval", description: "Approve or reject a pending ledger transaction request."},
         {key: "READ_postings_list", description: "List ledger posting records visible within the caller's scope."},
       ],
     },

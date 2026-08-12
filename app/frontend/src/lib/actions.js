@@ -290,8 +290,8 @@ export async function createLedgerTransaction({ currency, entries, posting_date,
       ...(remittance_information ? { remittance_information } : {}),
       ...(Object.keys(meta).length > 0 ? { metadata: meta } : {}),
     }, { idempotency: true })
-    addToast('Transaction created')
-    await loadView('postings')
+    addToast('Transaction submitted — awaiting approval')
+    await loadView('approvals')
   } catch (e) {
     addToast(e.message, 'error')
     throw e

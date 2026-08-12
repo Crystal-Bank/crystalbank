@@ -35,6 +35,7 @@ module CrystalBank::Domains::Ledger::Transactions
       property external_ref : String?
       property channel : String?
       property scope_id : UUID?
+      property status : String?
     end
 
     getter state : State
