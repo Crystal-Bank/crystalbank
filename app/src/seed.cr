@@ -91,6 +91,7 @@ def seed_customer(event_store, actor_id, name, scope_id, type)
   event = Customers::Onboarding::Events::Requested.new(
     actor_id: actor_id,
     command_handler: "seed",
+    encryption_key_id: ES::Config.encryption.create_key,
     name: name,
     scope_id: scope_id,
     type: type

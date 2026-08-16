@@ -37,6 +37,7 @@ module Test::Customer::Events
         Customers::Onboarding::Events::Requested.new(
           actor_id: actor_id,
           aggregate_id: aggregate_id,
+          encryption_key_id: ES::Config.encryption.create_key,
           name: name,
           scope_id: scope_id,
           type: customer_type,

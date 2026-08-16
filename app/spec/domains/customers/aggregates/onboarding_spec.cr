@@ -15,6 +15,7 @@ describe CrystalBank::Domains::Customers::Aggregates::Concerns::Onboarding do
       event_1 = Customers::Onboarding::Events::Requested.new(
         actor_id: actor_id,
         command_handler: "test",
+        encryption_key_id: UUID.new("00000000-0000-0000-0000-000000000099"),
         name: name,
         scope_id: scope_id,
         type: type
