@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   description: App description for OpenAPI docs
   title: CrystalBank
-  version: 0.17.0
+  version: 0.18.0
 paths:
   /.well-known/openid-configuration:
     get:
@@ -1257,6 +1257,12 @@ paths:
         schema:
           type: integer
           format: Int32
+      - name: ids
+        in: query
+        description: Optional comma-separated list of customer UUIDs to filter by
+        schema:
+          type: string
+          nullable: true
       responses:
         200:
           description: OK
@@ -1739,6 +1745,12 @@ paths:
         schema:
           type: integer
           format: Int32
+      - name: ids
+        in: query
+        description: Optional comma-separated list of scope UUIDs to filter by
+        schema:
+          type: string
+          nullable: true
       responses:
         200:
           description: OK
@@ -2997,6 +3009,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3024,6 +3037,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -3118,6 +3132,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3145,6 +3160,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -3244,6 +3260,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3271,6 +3288,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -3395,6 +3413,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3422,6 +3441,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -3445,6 +3465,7 @@ components:
                     nullable: true
                   requestor:
                     type: object
+                    description: Resolved name and email of the requesting user
                     properties:
                       name:
                         type: string
@@ -3491,6 +3512,7 @@ components:
                     description: Whether the approval process is rejected
                   subject:
                     type: object
+                    description: Human-readable snapshot of the entity pending approval
                     properties:
                       title:
                         type: string
@@ -3571,6 +3593,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3598,6 +3621,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -3645,6 +3669,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3672,6 +3697,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -3863,6 +3889,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -3890,6 +3917,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -4045,6 +4073,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -4072,6 +4101,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -4173,19 +4203,13 @@ components:
             - entry_type
         metadata:
           type: object
+          description: Optional metadata for the movement
           properties:
-            payment_type:
-              type: string
-              description: Payment type (e.g. MANUAL_TRANSFER)
-              nullable: true
             external_ref:
               type: string
               description: External reference (e.g. ISO-20022 message ID)
               nullable: true
-            channel:
-              type: string
-              description: Channel through which the transaction was initiated
-              nullable: true
+          required: []
           nullable: true
         posting_date:
           type: string
@@ -4225,6 +4249,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -4252,6 +4277,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -4267,17 +4293,31 @@ components:
                     description: Account ID of the posting
                   direction:
                     type: string
-                    description: Direction of the posting (DEBIT or CREDIT)
+                    description: Direction of the posting (debit or credit)
                   amount:
-                    type: integer
-                    format: Int64
-                    description: Amount of the posting in minor currency units
+                    type: object
+                    description: Amount of the posting
+                    properties:
+                      value:
+                        type: integer
+                        format: Int64
+                        description: Amount in minor currency units (e.g. cents)
+                      currency:
+                        type: string
+                        description: ISO 4217 currency code
+                      precision:
+                        type: integer
+                        format: Int32
+                        description: Number of minor-unit decimal places for this
+                          currency
+                    required:
+                    - value
+                    - currency
+                    - precision
                   entry_type:
                     type: string
-                    description: Entry type of the posting
-                  currency:
-                    type: string
-                    description: Currency of the posting
+                    description: Entry type of the posting; determines the shape of
+                      `details`
                   posting_date:
                     type: string
                     format: date
@@ -4289,21 +4329,17 @@ components:
                   remittance_information:
                     type: string
                     description: Remittance information
-                  payment_type:
-                    type: string
-                    description: Payment type
+                  details:
+                    type: object
+                    description: Entry-type-specific metadata, shape depends on entry_type
+                    properties:
+                      external_ref:
+                        type: string
+                        description: External reference (e.g. ISO-20022 end-to-end
+                          ID)
+                        nullable: true
+                    required: []
                     nullable: true
-                  external_ref:
-                    type: string
-                    description: External reference
-                    nullable: true
-                  channel:
-                    type: string
-                    description: Channel
-                    nullable: true
-                  status:
-                    type: string
-                    description: 'Status of the posting: active, pending_approval'
                 required:
                 - id
                 - transaction_id
@@ -4311,11 +4347,9 @@ components:
                 - direction
                 - amount
                 - entry_type
-                - currency
                 - posting_date
                 - value_date
                 - remittance_information
-                - status
             required:
             - object
             - attributes
@@ -4390,6 +4424,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -4417,6 +4452,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
@@ -4557,6 +4593,7 @@ components:
           description: Url of the entity
         meta:
           type: object
+          description: Meta information about the dataset
           properties:
             has_more:
               type: boolean
@@ -4584,6 +4621,7 @@ components:
                 description: Object type of the entity
               attributes:
                 type: object
+                description: Attributes of the entity
                 properties:
                   id:
                     type: string
