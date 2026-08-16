@@ -26,16 +26,11 @@ module CrystalBank::Domains::Ledger::Transactions
         def initialize(@value : Int64, @currency : String, @precision : Int32); end
       end
 
-      # Base type for the per-entry-type `details` payload on a posting.
-      # Which concrete subtype is used is determined by the posting's `entry_type`
-      # (e.g. "sepa_credit_transfer" -> SepaCreditTransferDetails). Output-only:
-      # plain struct-hierarchy dispatch is sufficient since this API only ever
-      # serializes these, never parses them back.
-      abstract struct Details
-        include JSON::Serializable
-      end
-
-      struct SepaCreditTransferDetails < Details
+      # Per-entry-type `details` payload on a posting. Which struct is used is
+      # determined by the posting's `entry_type` (e.g. "sepa_credit_transfer" ->
+      # SepaCreditTransferDetails). As more entry types gain their own details,
+      # add their structs here and widen `Posting#details` to the union.
+      struct SepaCreditTransferDetails
         include JSON::Serializable
 
         @[JSON::Field(description: "External reference (e.g. ISO-20022 end-to-end ID)")]
@@ -75,7 +70,7 @@ module CrystalBank::Domains::Ledger::Transactions
         getter remittance_information : String
 
         @[JSON::Field(description: "Entry-type-specific metadata, shape depends on entry_type")]
-        getter details : Details?
+        getter details : SepaCreditTransferDetails?
 
         def initialize(
           @id : UUID,
@@ -87,7 +82,7 @@ module CrystalBank::Domains::Ledger::Transactions
           @posting_date : String?,
           @value_date : String?,
           @remittance_information : String,
-          @details : Details?,
+          @details : SepaCreditTransferDetails?,
         ); end
       end
     end
