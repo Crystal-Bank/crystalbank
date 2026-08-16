@@ -4,7 +4,7 @@ module CrystalBank::Domains::Customers
       class Requested < ES::Event
         include ::ES::EventDSL
 
-        define_event "Customer", "customer.onboarding.requested" do
+        define_event "Customer", "customer.onboarding.requested", encrypted: true do
           attribute :name, String
           attribute :scope_id, UUID
           attribute :type, CrystalBank::Types::Customers::Type

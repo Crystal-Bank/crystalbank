@@ -21,6 +21,7 @@ module CrystalBank::Domains::Customers
             actor_id: command.actor_id,
             aggregate_id: command.aggregate_id,
             command_handler: self.class.to_s,
+            encryption_key_id: ES::Config.encryption.create_key,
             name: command.name,
             scope_id: command.scope_id,
             type: command.type
