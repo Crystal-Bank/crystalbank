@@ -79,6 +79,10 @@ module CrystalBank
       3600
     end
 
+    def application_encryption_key : Bytes
+      @@application_encryption_key ||= Base64.decode(ENV["APPLICATION_ENCRYPTION_KEY"])
+    end
+
     def sepa_settlement_account_id : UUID
       UUID.new(ENV["SEPA_SETTLEMENT_ACCOUNT_ID"]? || "00000000-0000-0000-0000-900000000001")
     end

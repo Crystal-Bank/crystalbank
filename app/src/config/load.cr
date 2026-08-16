@@ -1,5 +1,6 @@
 require "./initializers/env"
 require "./initializers/event_handlers"
+require "./initializers/encryption"
 require "./initializers/eventstore"
 require "./initializers/event_bus"
 require "./initializers/projections"
