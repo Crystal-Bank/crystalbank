@@ -15,6 +15,7 @@ private def seed_opening_customer(scope_id : UUID) : UUID
   requested = Customers::Onboarding::Events::Requested.new(
     actor_id: UUID.v7,
     aggregate_id: customer_id,
+    encryption_key_id: ES::Config.encryption.create_key,
     name: "Test Customer",
     scope_id: scope_id,
     type: CrystalBank::Types::Customers::Type::Individual,
