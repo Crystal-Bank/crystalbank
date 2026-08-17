@@ -19,19 +19,19 @@ export async function login(clientId, clientSecret) {
   try {
     const res = await fetch(API_BASE + '/oauth/token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
         grant_type: 'client_credentials',
         client_id: clientId,
         client_secret: clientSecret,
-      }),
+      }).toString(),
     })
     if (!res.ok) {
       const err = await res.json().catch(() => ({}))
-      throw new Error(err.message || 'Authentication failed')
+      throw new Error(err.error || err.message || 'Authentication failed')
     }
     const body = await res.json()
-    auth.token = body.token
+    auth.token = body.access_token
     localStorage.setItem('cb_token', auth.token)
     auth.scope = ''
     auth.scopeInput = ''

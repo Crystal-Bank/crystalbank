@@ -19,13 +19,15 @@ module CrystalBank
       getter iat : Int64    # Issued at
       getter iss : String   # Issuer
       getter jti : UUID     # JWT id
+      getter sub : UUID     # Subject (mirrors data.user; additive — existing readers of data.user are unaffected)
       getter data : JWTData # JWTData instance containing user information
 
       def initialize(roles : Array(UUID), user_id : UUID)
         @exp = Time.utc.to_unix + CrystalBank::Env.jwt_ttl
         @iat = Time.utc.to_unix
-        @iss = CrystalBank::Env.jwt_public_key_uri
+        @iss = CrystalBank::Env.issuer
         @jti = UUID.random
+        @sub = user_id
 
         @data = JWTData.new(roles, user_id)
       end
