@@ -27,7 +27,7 @@ module CrystalBank::Domains::Accounts
           raise CrystalBank::Exception::InvalidArgument.new("Block '#{command.block_type}' is not active on account '#{command.account_id}'") unless account.state.active_blocks.includes?(command.block_type)
 
           block_request_id = command.aggregate_id
-          unblock_request_event = ::Accounts::Blocking::Unblocking::Events::Requested.new(
+          unblock_request_event = ::Accounts::UnblockingRequest::Events::Requested.new(
             actor_id: command.actor_id,
             aggregate_id: block_request_id,
             command_handler: self.class.to_s,

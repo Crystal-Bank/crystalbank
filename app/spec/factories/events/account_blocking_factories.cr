@@ -38,7 +38,7 @@ module Test::Account::Events
       end
     end
 
-    module Blocking
+    module BlockingRequest
       class Requested
         def create(
           aggr_id : UUID,
@@ -46,8 +46,8 @@ module Test::Account::Events
           block_type : CrystalBank::Types::Accounts::BlockType = CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
           actor_id : UUID = UUID.new("00000000-0000-0000-0000-000000000000"),
           reason : String? = nil,
-        ) : Accounts::Blocking::Blocking::Events::Requested
-          Accounts::Blocking::Blocking::Events::Requested.new(
+        ) : Accounts::BlockingRequest::Events::Requested
+          Accounts::BlockingRequest::Events::Requested.new(
             actor_id: actor_id,
             aggregate_id: aggr_id,
             command_handler: "test",
@@ -62,8 +62,8 @@ module Test::Account::Events
         def create(
           aggr_id : UUID,
           aggregate_version : Int32 = 2,
-        ) : Accounts::Blocking::Blocking::Events::Completed
-          Accounts::Blocking::Blocking::Events::Completed.new(
+        ) : Accounts::BlockingRequest::Events::Completed
+          Accounts::BlockingRequest::Events::Completed.new(
             actor_id: nil,
             aggregate_id: aggr_id,
             aggregate_version: aggregate_version,
@@ -73,7 +73,7 @@ module Test::Account::Events
       end
     end
 
-    module Unblocking
+    module UnblockingRequest
       class Requested
         def create(
           aggr_id : UUID,
@@ -81,8 +81,8 @@ module Test::Account::Events
           block_type : CrystalBank::Types::Accounts::BlockType = CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK,
           actor_id : UUID = UUID.new("00000000-0000-0000-0000-000000000000"),
           reason : String? = nil,
-        ) : Accounts::Blocking::Unblocking::Events::Requested
-          Accounts::Blocking::Unblocking::Events::Requested.new(
+        ) : Accounts::UnblockingRequest::Events::Requested
+          Accounts::UnblockingRequest::Events::Requested.new(
             actor_id: actor_id,
             aggregate_id: aggr_id,
             command_handler: "test",
@@ -97,8 +97,8 @@ module Test::Account::Events
         def create(
           aggr_id : UUID,
           aggregate_version : Int32 = 2,
-        ) : Accounts::Blocking::Unblocking::Events::Completed
-          Accounts::Blocking::Unblocking::Events::Completed.new(
+        ) : Accounts::UnblockingRequest::Events::Completed
+          Accounts::UnblockingRequest::Events::Completed.new(
             actor_id: nil,
             aggregate_id: aggr_id,
             aggregate_version: aggregate_version,

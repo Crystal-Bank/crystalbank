@@ -1,10 +1,10 @@
 require "../../../../../spec_helper"
 
-module TestEnvProcessBlockApproval
+module TestEnvProcessClosureApproval
   class_property account_id : UUID = UUID.random
 end
 
-describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnBlockApprovalCompleted do
+describe CrystalBank::Domains::Accounts::Reactors::Closure::OnApprovalCompleted do
   before_all do
     account_id = UUID.v7
 
@@ -14,24 +14,25 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnBlockApprovalComp
     TEST_EVENT_STORE.append(accepted)
     Accounts::Projections::Accounts.new.apply(accepted)
 
-    TestEnvProcessBlockApproval.account_id = account_id
+    TestEnvProcessClosureApproval.account_id = account_id
   end
 
-  it "applies the block to the account after the approval is completed" do
+  it "closes the account after the closure approval is completed" do
     scope_id = UUID.v7
     user_id = UUID.v7
 
-    result = Accounts::Blocking::Commands::BlockHandler.new.handle(
-      Accounts::Blocking::Commands::Block.new(
-        aggregate_id: UUID.v7, account_id: TestEnvProcessBlockApproval.account_id,
-        block_type: CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK, reason: "Regulatory hold",
+    result = Accounts::Closure::Commands::RequestHandler.new.handle(
+      Accounts::Closure::Commands::Request.new(
+        aggregate_id: TestEnvProcessClosureApproval.account_id,
+        reason: CrystalBank::Types::Accounts::ClosureReason::BY_CUSTOMER,
+        closure_comment: "Account no longer needed",
         actor_id: user_id, scope_id: scope_id
       )
     )
     approval_id = result[:approval_id]
-    block_request_id = result[:block_request_id]
+    closure_request_id = result[:closure_request_id]
 
-    # Complete the approval (Block command creates version 1 via Creation::Requested)
+    # Complete the approval (Request command creates version 1 via Creation::Requested)
     completed_event = Approvals::Collection::Events::Completed.new(
       actor_id: nil,
       aggregate_id: approval_id,
@@ -41,22 +42,23 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnBlockApprovalComp
     )
     TEST_EVENT_STORE.append(completed_event)
 
-    Accounts::Reactors::Blocking::OnBlockApprovalCompleted.new.call(completed_event)
+    Accounts::Reactors::Closure::OnApprovalCompleted.new.call(completed_event)
 
-    # The account aggregate should now have the compliance block active
-    account = Accounts::Aggregate.new(TestEnvProcessBlockApproval.account_id)
+    # The account aggregate should now be closed
+    account = Accounts::Aggregate.new(TestEnvProcessClosureApproval.account_id)
     account.hydrate
 
-    account.state.active_blocks.should contain(CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK)
+    account.state.open.should be_false
+    account.state.closure_pending.should be_false
 
-    # The block request aggregate should be marked as completed
-    block_request = Accounts::BlockingRequest::Aggregate.new(block_request_id)
-    block_request.hydrate
+    # The closure request aggregate should be marked as completed
+    closure_request = Accounts::ClosureRequest::Aggregate.new(closure_request_id)
+    closure_request.hydrate
 
-    block_request.state.completed.should be_true
+    closure_request.state.completed.should be_true
   end
 
-  it "is idempotent — does not apply the block twice if the request is already completed" do
+  it "is idempotent — does not re-close the account if the request is already completed" do
     scope_id = UUID.v7
     user_id = UUID.v7
 
@@ -67,15 +69,16 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnBlockApprovalComp
     TEST_EVENT_STORE.append(accepted)
     Accounts::Projections::Accounts.new.apply(accepted)
 
-    result = Accounts::Blocking::Commands::BlockHandler.new.handle(
-      Accounts::Blocking::Commands::Block.new(
-        aggregate_id: UUID.v7, account_id: account_id,
-        block_type: CrystalBank::Types::Accounts::BlockType::OPERATIONS_BLOCK, reason: nil,
+    result = Accounts::Closure::Commands::RequestHandler.new.handle(
+      Accounts::Closure::Commands::Request.new(
+        aggregate_id: account_id,
+        reason: CrystalBank::Types::Accounts::ClosureReason::BY_CUSTOMER,
+        closure_comment: nil,
         actor_id: user_id, scope_id: scope_id
       )
     )
     approval_id = result[:approval_id]
-    block_request_id = result[:block_request_id]
+    closure_request_id = result[:closure_request_id]
 
     completed_event = Approvals::Collection::Events::Completed.new(
       actor_id: nil,
@@ -85,23 +88,20 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnBlockApprovalComp
       comment: "approved",
     )
     TEST_EVENT_STORE.append(completed_event)
-    Accounts::Reactors::Blocking::OnBlockApprovalCompleted.new.call(completed_event)
+    Accounts::Reactors::Closure::OnApprovalCompleted.new.call(completed_event)
 
-    # The block request is now completed — the guard flag ensures future re-runs are no-ops
-    block_request = Accounts::BlockingRequest::Aggregate.new(block_request_id)
-    block_request.hydrate
-    block_request.state.completed.should be_true
+    # The closure request is now completed — the guard flag ensures future re-runs are no-ops
+    closure_request = Accounts::ClosureRequest::Aggregate.new(closure_request_id)
+    closure_request.hydrate
+    closure_request.state.completed.should be_true
 
-    # Account should have exactly one operations block
     account = Accounts::Aggregate.new(account_id)
     account.hydrate
-
-    ops_blocks = account.state.active_blocks.count { |b| b == CrystalBank::Types::Accounts::BlockType::OPERATIONS_BLOCK }
-    ops_blocks.should eq(1)
+    account.state.open.should be_false
   end
 
   it "ignores an approval with a different source aggregate type" do
-    # Seed an approval with source_aggregate_type = "SomeUnhandledType" (not "AccountBlock")
+    # Seed an approval with source_aggregate_type = "SomeUnhandledType" (not "AccountClosure")
     scope_id = UUID.v7
     source_id = UUID.v7
 
@@ -126,8 +126,8 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnBlockApprovalComp
     )
     TEST_EVENT_STORE.append(completed_event)
 
-    # OnBlockApprovalCompleted should silently return because source_aggregate_type != "AccountBlock".
+    # OnApprovalCompleted should silently return because source_aggregate_type != "AccountClosure".
     # No exception should be raised.
-    Accounts::Reactors::Blocking::OnBlockApprovalCompleted.new.call(completed_event)
+    Accounts::Reactors::Closure::OnApprovalCompleted.new.call(completed_event)
   end
 end

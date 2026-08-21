@@ -27,7 +27,7 @@ module CrystalBank::Domains::Accounts
           raise CrystalBank::Exception::InvalidArgument.new("Block '#{command.block_type}' is already active on account '#{command.account_id}'") if account.state.active_blocks.includes?(command.block_type)
 
           block_request_id = command.aggregate_id
-          block_request_event = ::Accounts::Blocking::Blocking::Events::Requested.new(
+          block_request_event = ::Accounts::BlockingRequest::Events::Requested.new(
             actor_id: command.actor_id,
             aggregate_id: block_request_id,
             command_handler: self.class.to_s,

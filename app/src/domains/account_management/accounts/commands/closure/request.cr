@@ -39,7 +39,7 @@ module CrystalBank::Domains::Accounts
 
           # Create the AccountClosure request aggregate to carry the full intent
           closure_request_id = UUID.v7
-          closure_request_event = ::Accounts::Closure::Closure::Events::Requested.new(
+          closure_request_event = ::Accounts::ClosureRequest::Events::Requested.new(
             actor_id: command.actor_id,
             aggregate_id: closure_request_id,
             command_handler: self.class.to_s,

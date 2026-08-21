@@ -40,7 +40,7 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::UnblockHandler do
     result[:approval_id].should be_a(UUID)
 
     # Verify the unblocking request aggregate was created with correct state
-    unblock_request = Accounts::Blocking::Unblocking::Aggregate.new(result[:block_request_id])
+    unblock_request = Accounts::UnblockingRequest::Aggregate.new(result[:block_request_id])
     unblock_request.hydrate
 
     unblock_request.state.account_id.should eq(TestEnvAccountUnblock.account_id)

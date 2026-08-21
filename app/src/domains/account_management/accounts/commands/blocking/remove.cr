@@ -15,7 +15,7 @@ module CrystalBank::Domains::Accounts
         def handle(command : Remove)
           unblock_request_id = command.aggregate_id
 
-          unblock_request = ::Accounts::Blocking::Unblocking::Aggregate.new(unblock_request_id, event_store: @event_store, event_handlers: @event_handlers)
+          unblock_request = ::Accounts::UnblockingRequest::Aggregate.new(unblock_request_id, event_store: @event_store, event_handlers: @event_handlers)
           unblock_request.hydrate
 
           return if unblock_request.state.completed
@@ -37,7 +37,7 @@ module CrystalBank::Domains::Accounts
           )
           @event_store.append(removed_event)
 
-          completed_event = ::Accounts::Blocking::Unblocking::Events::Completed.new(
+          completed_event = ::Accounts::UnblockingRequest::Events::Completed.new(
             actor_id: nil,
             aggregate_id: unblock_request_id,
             aggregate_version: unblock_request.state.next_version,

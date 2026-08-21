@@ -11,17 +11,17 @@ event_handlers.register(VirtualAccounts::Opening::Events::Accepted)
 
 event_handlers.register(Accounts::Closure::Events::Requested)
 event_handlers.register(Accounts::Closure::Events::Accepted)
-event_handlers.register(Accounts::Closure::Closure::Events::Requested)
-event_handlers.register(Accounts::Closure::Closure::Events::Completed)
+event_handlers.register(Accounts::ClosureRequest::Events::Requested)
+event_handlers.register(Accounts::ClosureRequest::Events::Completed)
 
 # Account Blocks
 event_handlers.register(Accounts::Blocking::Events::Applied)
 event_handlers.register(Accounts::Blocking::Events::Removed)
 
-event_handlers.register(Accounts::Blocking::Blocking::Events::Requested)
-event_handlers.register(Accounts::Blocking::Blocking::Events::Completed)
-event_handlers.register(Accounts::Blocking::Unblocking::Events::Requested)
-event_handlers.register(Accounts::Blocking::Unblocking::Events::Completed)
+event_handlers.register(Accounts::BlockingRequest::Events::Requested)
+event_handlers.register(Accounts::BlockingRequest::Events::Completed)
+event_handlers.register(Accounts::UnblockingRequest::Events::Requested)
+event_handlers.register(Accounts::UnblockingRequest::Events::Completed)
 
 # Approvals
 event_handlers.register(Approvals::Creation::Events::Requested)
