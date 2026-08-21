@@ -33,7 +33,7 @@ describe CrystalBank::Domains::Accounts::Blocking::Commands::BlockHandler do
     result[:approval_id].should be_a(UUID)
 
     # Verify the blocking request aggregate was created with correct state
-    block_request = Accounts::Blocking::Blocking::Aggregate.new(result[:block_request_id])
+    block_request = Accounts::BlockingRequest::Aggregate.new(result[:block_request_id])
     block_request.hydrate
 
     block_request.state.account_id.should eq(TestEnvAccountBlock.account_id)

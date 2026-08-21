@@ -58,7 +58,7 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnUnblockApprovalCo
     account.state.active_blocks.should_not contain(CrystalBank::Types::Accounts::BlockType::COMPLIANCE_BLOCK)
 
     # The unblock request aggregate should be marked as completed
-    unblock_request = Accounts::Blocking::Unblocking::Aggregate.new(unblock_request_id)
+    unblock_request = Accounts::UnblockingRequest::Aggregate.new(unblock_request_id)
     unblock_request.hydrate
 
     unblock_request.state.completed.should be_true
@@ -103,7 +103,7 @@ describe CrystalBank::Domains::Accounts::Reactors::Blocking::OnUnblockApprovalCo
     Accounts::Reactors::Blocking::OnUnblockApprovalCompleted.new.call(completed_event)
 
     # The unblock request is now completed — the guard flag ensures future re-runs are no-ops
-    unblock_request = Accounts::Blocking::Unblocking::Aggregate.new(unblock_request_id)
+    unblock_request = Accounts::UnblockingRequest::Aggregate.new(unblock_request_id)
     unblock_request.hydrate
     unblock_request.state.completed.should be_true
 

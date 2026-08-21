@@ -15,7 +15,7 @@ module CrystalBank::Domains::Accounts
         def handle(command : Apply)
           block_request_id = command.aggregate_id
 
-          block_request = ::Accounts::Blocking::Blocking::Aggregate.new(block_request_id, event_store: @event_store, event_handlers: @event_handlers)
+          block_request = ::Accounts::BlockingRequest::Aggregate.new(block_request_id, event_store: @event_store, event_handlers: @event_handlers)
           block_request.hydrate
 
           return if block_request.state.completed
@@ -37,7 +37,7 @@ module CrystalBank::Domains::Accounts
           )
           @event_store.append(applied_event)
 
-          completed_event = ::Accounts::Blocking::Blocking::Events::Completed.new(
+          completed_event = ::Accounts::BlockingRequest::Events::Completed.new(
             actor_id: nil,
             aggregate_id: block_request_id,
             aggregate_version: block_request.state.next_version,

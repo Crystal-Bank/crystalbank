@@ -1,5 +1,5 @@
 module CrystalBank::Domains::Accounts
-  module Closure
+  module ClosureRequest
     class Aggregate < ES::Aggregate
       @@type = "AccountClosure"
 
@@ -22,15 +22,15 @@ module CrystalBank::Domains::Accounts
         @state.set_type(@@type)
       end
 
-      def apply(event : ::Accounts::Closure::Closure::Events::Requested)
+      def apply(event : ::Accounts::ClosureRequest::Events::Requested)
         @state.increase_version(event.header.aggregate_version)
-        body = event.body.as(::Accounts::Closure::Closure::Events::Requested::Body)
+        body = event.body.as(::Accounts::ClosureRequest::Events::Requested::Body)
         @state.account_id = body.account_id
         @state.reason = body.reason
         @state.closure_comment = body.closure_comment
       end
 
-      def apply(event : ::Accounts::Closure::Closure::Events::Completed)
+      def apply(event : ::Accounts::ClosureRequest::Events::Completed)
         @state.increase_version(event.header.aggregate_version)
         @state.completed = true
       end

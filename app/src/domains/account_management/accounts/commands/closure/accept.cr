@@ -8,7 +8,7 @@ module CrystalBank::Domains::Accounts
         def handle(command : Accept)
           closure_request_id = command.aggregate_id
 
-          closure_request = ::Accounts::Closure::Aggregate.new(closure_request_id, event_store: @event_store, event_handlers: @event_handlers)
+          closure_request = ::Accounts::ClosureRequest::Aggregate.new(closure_request_id, event_store: @event_store, event_handlers: @event_handlers)
           closure_request.hydrate
 
           return if closure_request.state.completed
@@ -26,7 +26,7 @@ module CrystalBank::Domains::Accounts
           )
           @event_store.append(accepted_event)
 
-          completed_event = ::Accounts::Closure::Closure::Events::Completed.new(
+          completed_event = ::Accounts::ClosureRequest::Events::Completed.new(
             actor_id: nil,
             aggregate_id: closure_request_id,
             aggregate_version: closure_request.state.next_version,
